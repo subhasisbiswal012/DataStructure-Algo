@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Course Overview — KnowledgeForge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/csharp.min.js"></script>
+<style>
+:root {
+  --bg: #0d0d0f;
+  --surface: #141417;
+  --card: #1a1a1f;
+  --border: #2a2a32;
+  --accent: #c8f060;
+  --accent2: #60c8f0;
+  --accent3: #f060c8;
+  --text: #f0ede8;
+  --muted: #6b6878;
+  --danger: #f06060;
+  --success: #60f0a0;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(rgba(200,240,96,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,240,96,0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* HEADER */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(13,13,15,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text);
+  white-space: nowrap;
+}
+.logo span { color: var(--accent); }
+
+.topic-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-align: center;
+  flex: 1;
+}
+
+.tab-switcher {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.tab-btn {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.tab-btn.active {
+  background: var(--accent);
+  color: #0d0d0f;
+  border: 1px solid var(--accent);
+}
+.tab-btn.inactive {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+.tab-btn.inactive:hover { color: var(--text); border-color: var(--muted); }
+
+/* TABS */
+.tab { transition: opacity 0.2s ease; }
+.tab.hidden { display: none; opacity: 0; }
+
+/* HANDBOOK */
+#tab-handbook {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+h1.page-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 2rem;
+}
+
+h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--accent);
+  border-bottom: 1px solid rgba(200,240,96,0.2);
+  padding-bottom: 0.4rem;
+  margin: 2.5rem 0 1rem;
+}
+
+h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent2);
+  margin: 1.5rem 0 0.5rem;
+}
+
+p { color: #ccc; font-size: 0.85rem; margin-bottom: 0.75rem; }
+
+ul, ol {
+  padding-left: 1.4rem;
+  color: #ccc;
+  font-size: 0.85rem;
+}
+ul li, ol li { margin-bottom: 0.35rem; }
+strong { color: var(--text); }
+
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2.5rem 0;
+}
+
+/* CALLOUTS */
+.callout {
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin: 1rem 0;
+  line-height: 1.6;
+}
+.callout.tip {
+  border-left: 3px solid var(--accent);
+  background: rgba(200,240,96,0.05);
+  color: #ccc;
+}
+.callout.warning {
+  border-left: 3px solid var(--accent3);
+  background: rgba(240,96,200,0.05);
+  color: #ccc;
+}
+.callout.rule {
+  border-left: 3px solid var(--accent2);
+  background: rgba(96,200,240,0.05);
+  color: #ccc;
+}
+
+/* CODE BLOCKS */
+.code-block {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin: 1rem 0;
+  overflow: hidden;
+}
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+.code-lang {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.copy-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.copy-btn:hover { color: var(--text); border-color: var(--muted); }
+.code-block pre { margin: 0; }
+.code-block pre code { font-family: 'DM Mono', monospace; font-size: 0.8rem; padding: 0.85rem 1rem !important; display: block; }
+
+/* TERMINAL */
+.terminal-block {
+  background: #0a0a0c;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin: 1rem 0;
+  overflow: hidden;
+}
+.terminal-header {
+  padding: 0.4rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.terminal-output {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.8rem;
+  padding: 0.85rem 1rem;
+  color: var(--success);
+  white-space: pre;
+  overflow-x: auto;
+}
+
+/* TABLES */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.82rem;
+}
+thead tr {
+  background: var(--card);
+}
+thead th {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  padding: 0.6rem 1rem;
+  text-align: left;
+  border: 1px solid var(--border);
+}
+tbody tr:nth-child(odd) { background: var(--surface); }
+tbody tr:nth-child(even) { background: var(--bg); }
+tbody td {
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border);
+  color: #ccc;
+  vertical-align: top;
+}
+
+/* FIGURES */
+figure {
+  margin: 1.5rem 0;
+}
+figcaption {
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 0.5rem;
+  font-family: 'DM Mono', monospace;
+}
+
+/* ACTIVE RECALL */
+#tab-recall {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.recall-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.progress-counter {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.progress-counter span { color: var(--accent); font-weight: 500; }
+
+.bulk-btns { display: flex; gap: 0.5rem; }
+.bulk-btn {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  transition: all 0.2s;
+}
+.bulk-btn:hover { color: var(--text); border-color: var(--muted); }
+
+/* QUESTION CARDS */
+.question-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+.question-card.revealed { border-color: rgba(200,240,96,0.3); }
+
+.question-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  flex-wrap: wrap;
+}
+
+.q-number {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.q-type {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+}
+.q-type.def     { background: rgba(96,200,240,0.1); color: var(--accent2); }
+.q-type.apply   { background: rgba(200,240,96,0.1); color: var(--accent); }
+.q-type.why     { background: rgba(240,96,200,0.1); color: var(--accent3); }
+.q-type.compare { background: rgba(200,240,96,0.1); color: var(--accent); }
+.q-type.sequence{ background: rgba(96,240,200,0.1); color: #60f0c8; }
+.q-type.gotcha  { background: rgba(240,96,96,0.1); color: var(--danger); }
+.q-type.draw    { background: rgba(240,200,96,0.1); color: #f0c860; }
+
+.q-text {
+  font-size: 0.85rem;
+  color: var(--text);
+  flex: 1;
+  line-height: 1.5;
+}
+
+.show-answer-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  transition: all 0.2s;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.show-answer-btn.revealed {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.answer-block {
+  border-top: 1px solid var(--border);
+  padding: 1rem;
+  background: var(--surface);
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease;
+}
+.answer-block.open { max-height: 2000px; }
+
+.answer-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+.answer-content {
+  font-size: 0.84rem;
+  color: #ccc;
+  line-height: 1.6;
+}
+.answer-content strong { color: var(--text); }
+.answer-content ul { padding-left: 1.2rem; margin-top: 0.4rem; }
+.answer-content li { margin-bottom: 0.25rem; }
+
+.answer-example {
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.85rem;
+  background: rgba(200,240,96,0.04);
+  border-left: 2px solid rgba(200,240,96,0.3);
+  border-radius: 0 4px 4px 0;
+  font-size: 0.82rem;
+  color: #ccc;
+}
+.example-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-right: 0.4rem;
+}
+
+/* SVG diagrams in answers */
+.answer-block svg { max-width: 100%; height: auto; margin: 0.75rem 0; }
+
+@media (max-width: 600px) {
+  header { flex-wrap: wrap; padding: 0.75rem 1rem; }
+  .topic-title { order: 3; width: 100%; text-align: left; }
+  #tab-handbook, #tab-recall { padding: 1.25rem; }
+  h1.page-title { font-size: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Knowledge<span>Forge</span></div>
+  <div class="topic-title">DSA in C# — Course Overview &amp; Foundations</div>
+  <div class="tab-switcher">
+    <button class="tab-btn active" onclick="switchTab('handbook', this)">📘 Handbook</button>
+    <button class="tab-btn inactive" onclick="switchTab('recall', this)">🧠 Active Recall</button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--  TAB 1 — HANDBOOK                                          -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<main id="tab-handbook" class="tab">
+
+  <h1 class="page-title">Data Structures &amp; Algorithms in C#<br>Course Overview &amp; Foundations</h1>
+
+  <!-- ───────── SECTION 1: WHAT IS DATA ───────── -->
+  <h2>🗄️ What is Data &amp; Why Store It Efficiently?</h2>
+
+  <div class="callout tip">💡 Everything on your computer — documents, photos, videos, programs — is data. A <strong>data structure</strong> is just a smart way to organise that data so your program can find and use it fast.</div>
+
+  <ul>
+    <li><strong>Data</strong> = useful information stored in computer memory</li>
+    <li>Examples: a document file, a photo, an audio clip, a software program</li>
+    <li><strong>Data structure</strong> = a systematic method to organise and access data efficiently</li>
+    <li>Without a structure, your app would have to scan everything every time — like searching a library with no shelves</li>
+  </ul>
+
+  <div class="callout rule">📌 Every program that does something real uses both a <strong>data structure</strong> (to store info) and an <strong>algorithm</strong> (to act on it). These two always come as a pair.</div>
+
+  <h3>The Two-Component Model of Problem Solving</h3>
+  <ul>
+    <li>Component 1 — <strong>Data Structures</strong>: store information associated with the problem</li>
+    <li>Component 2 — <strong>Algorithms</strong>: the step-by-step method that solves the problem</li>
+    <li><strong>Efficiency</strong> is the critical design factor in both — a slow algorithm or poorly chosen structure can make software unusable</li>
+  </ul>
+
+  <figure>
+    <svg viewBox="0 0 600 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:600px;display:block;margin:0 auto;">
+      <defs>
+        <marker id="arr1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#c8f060"/>
+        </marker>
+      </defs>
+      <!-- Problem box -->
+      <rect x="10" y="55" width="130" height="50" rx="8" fill="#1a1a1f" stroke="#2a2a32"/>
+      <text x="75" y="75" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">Problem</text>
+      <text x="75" y="92" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">(real-world)</text>
+      <!-- Arrow to DS -->
+      <line x1="140" y1="80" x2="195" y2="80" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr1)"/>
+      <!-- DS box -->
+      <rect x="200" y="30" width="170" height="50" rx="8" fill="#1a1a1f" stroke="#2a2a32"/>
+      <text x="285" y="50" text-anchor="middle" fill="#60c8f0" font-family="DM Mono,monospace" font-size="11">Data Structure</text>
+      <text x="285" y="67" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">stores information</text>
+      <!-- Algo box -->
+      <rect x="200" y="100" width="170" height="50" rx="8" fill="#1a1a1f" stroke="#2a2a32"/>
+      <text x="285" y="120" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="11">Algorithm</text>
+      <text x="285" y="137" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">solves the problem</text>
+      <!-- Lines from Problem to both -->
+      <line x1="140" y1="72" x2="195" y2="55" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr1)"/>
+      <line x1="140" y1="88" x2="195" y2="120" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr1)"/>
+      <!-- Arrow to Solution -->
+      <line x1="370" y1="55" x2="430" y2="72" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr1)"/>
+      <line x1="370" y1="120" x2="430" y2="88" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr1)"/>
+      <!-- Solution box -->
+      <rect x="435" y="55" width="150" height="50" rx="8" fill="#1a1a1f" stroke="#c8f060" stroke-opacity="0.4"/>
+      <text x="510" y="75" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">Solution</text>
+      <text x="510" y="92" text-anchor="middle" fill="#60f0a0" font-family="DM Mono,monospace" font-size="10">efficient &amp; correct</text>
+    </svg>
+    <figcaption>Every computer science solution = Data Structure + Algorithm working together</figcaption>
+  </figure>
+
+  <hr class="section-divider">
+
+  <!-- ───────── SECTION 2: CATEGORIES OF DATA STRUCTURES ───────── -->
+  <h2>📦 Categories of Data Structures</h2>
+
+  <div class="callout tip">💡 Think of <strong>linear</strong> structures like a line of people — each element connects to the next. <strong>Non-linear</strong> structures are like a family tree — one element can connect to many others.</div>
+
+  <h3>Linear Data Structures</h3>
+  <ul>
+    <li><strong>Stack</strong> — last in, first out (LIFO). Like a stack of plates.</li>
+    <li><strong>Queue</strong> — first in, first out (FIFO). Like a checkout line.</li>
+    <li><strong>Linked List</strong> — chain of nodes, each pointing to the next. Dynamic size.</li>
+  </ul>
+
+  <h3>Non-Linear Data Structures</h3>
+  <ul>
+    <li><strong>Trees</strong> — hierarchical. Parent nodes branch to children. Used in file systems, databases.</li>
+    <li><strong>Heaps</strong> — specialised tree. Always keeps the min or max at the root. Powers priority queues.</li>
+    <li><strong>Graphs</strong> — nodes connected by edges (no strict hierarchy). Used in maps, social networks.</li>
+  </ul>
+
+  <figure>
+    <svg viewBox="0 0 620 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:0 auto;">
+      <!-- LINEAR label -->
+      <text x="140" y="20" text-anchor="middle" fill="#c8f060" font-family="Syne,sans-serif" font-size="12" font-weight="700">LINEAR</text>
+      <!-- Stack -->
+      <rect x="20" y="35" width="80" height="25" rx="4" fill="#1a1a1f" stroke="#2a2a32"/>
+      <rect x="20" y="62" width="80" height="25" rx="4" fill="#1a1a1f" stroke="#2a2a32"/>
+      <rect x="20" y="89" width="80" height="25" rx="4" fill="#1a1a1f" stroke="#2a2a32"/>
+      <text x="60" y="52" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="9">item 3 ↑ top</text>
+      <text x="60" y="79" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="9">item 2</text>
+      <text x="60" y="106" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="9">item 1</text>
+      <text x="60" y="130" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="10">Stack</text>
+      <!-- Queue -->
+      <rect x="120" y="62" width="30" height="25" rx="3" fill="#1a1a1f" stroke="#2a2a32"/>
+      <rect x="152" y="62" width="30" height="25" rx="3" fill="#1a1a1f" stroke="#2a2a32"/>
+      <rect x="184" y="62" width="30" height="25" rx="3" fill="#1a1a1f" stroke="#2a2a32"/>
+      <text x="116" y="58" fill="#60f0a0" font-family="DM Mono,monospace" font-size="8">in →</text>
+      <text x="214" y="58" fill="#f06060" font-family="DM Mono,monospace" font-size="8">→ out</text>
+      <text x="135" y="76" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="9">A</text>
+      <text x="167" y="76" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="9">B</text>
+      <text x="199" y="76" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="9">C</text>
+      <text x="167" y="107" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="10">Queue</text>
+      <!-- Linked List -->
+      <rect x="250" y="62" width="35" height="25" rx="3" fill="#1a1a1f" stroke="#2a2a32"/>
+      <text x="267" y="79" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="9">10→</text>
+      <rect x="295" y="62" width="35" height="25" rx="3" fill="#1a1a1f" stroke="#2a2a32"/>
+      <text x="312" y="79" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="9">20→</text>
+      <rect x="340" y="62" width="40" height="25" rx="3" fill="#1a1a1f" stroke="#2a2a32"/>
+      <text x="360" y="79" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="9">30→∅</text>
+      <text x="310" y="107" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="10">Linked List</text>
+
+      <!-- NON-LINEAR label -->
+      <text x="510" y="20" text-anchor="middle" fill="#60c8f0" font-family="Syne,sans-serif" font-size="12" font-weight="700">NON-LINEAR</text>
+      <!-- Tree -->
+      <circle cx="500" cy="50" r="15" fill="#1a1a1f" stroke="#2a2a32"/>
+      <text x="500" y="55" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">A</text>
+      <circle cx="460" cy="95" r="15" fill="#1a1a1f" stroke="#2a2a32"/>
+      <text x="460" y="100" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">B</text>
+      <circle cx="540" cy="95" r="15" fill="#1a1a1f" stroke="#2a2a32"/>
+      <text x="540" y="100" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">C</text>
+      <line x1="500" y1="65" x2="460" y2="80" stroke="#2a2a32" stroke-width="1.5"/>
+      <line x1="500" y1="65" x2="540" y2="80" stroke="#2a2a32" stroke-width="1.5"/>
+      <text x="500" y="130" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="10">Tree</text>
+
+      <!-- Application labels below -->
+      <text x="60" y="155" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="9">undo/redo</text>
+      <text x="167" y="125" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="9">print queues</text>
+      <text x="310" y="122" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="9">dynamic lists</text>
+      <text x="500" y="145" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="9">file systems, DBs</text>
+
+      <!-- Use-case band -->
+      <rect x="10" y="170" width="600" height="75" rx="8" fill="#141417" stroke="#2a2a32"/>
+      <text x="20" y="192" fill="#c8f060" font-family="Syne,sans-serif" font-size="10" font-weight="700">REAL-WORLD APPLICATIONS</text>
+      <text x="20" y="212" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Internet &amp; security</text>
+      <text x="170" y="212" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Multimedia processing</text>
+      <text x="360" y="212" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Social networks</text>
+      <text x="20" y="232" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Scientific computing</text>
+      <text x="220" y="232" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Video games</text>
+      <text x="360" y="232" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Maps &amp; navigation</text>
+    </svg>
+    <figcaption>Linear vs Non-Linear data structures and their typical applications</figcaption>
+  </figure>
+
+  <hr class="section-divider">
+
+  <!-- ───────── SECTION 3: WHY LEARN ALGORITHMS ───────── -->
+  <h2>⚙️ Why Learn Algorithms?</h2>
+
+  <div class="callout tip">💡 An algorithm is just a recipe — a finite list of steps that takes an input and produces an output. Without a good recipe, even the best ingredients (data) produce a bad meal (slow app).</div>
+
+  <ul>
+    <li><strong>Algorithm</strong> = a set of instructions that solves a problem in a <em>finite</em> number of steps</li>
+    <li>Essential for real-world applications requiring systematic approaches</li>
+    <li>Small problems are solvable by hand — large problems are not</li>
+  </ul>
+
+  <div class="callout warning">⚠️ Faster hardware does NOT fix a bad algorithm. Data volume grows faster than CPU speed. An O(n²) algorithm that works for 1,000 items can become unusable at 1,000,000 items — even on a faster machine.</div>
+
+  <h3>The Navigation Example</h3>
+  <ul>
+    <li><strong>Small road network</strong> → you can find the best path manually</li>
+    <li><strong>City-wide road network</strong> → impossible without a computer and an efficient pathfinding algorithm (e.g. Dijkstra's)</li>
+    <li>Same principle applies everywhere: search engines, social feeds, recommendations</li>
+  </ul>
+
+  <h3>The Data Growth Problem</h3>
+  <ul>
+    <li>15 years ago: Facebook had thousands of users → brute force worked</li>
+    <li>Today: billions of users → the same brute-force approach would take days</li>
+    <li>Hardware improvements slow down; data volumes keep accelerating</li>
+    <li>Conclusion: <strong>Algorithm efficiency is a permanent engineering concern</strong>, not a one-time optimisation</li>
+  </ul>
+
+  <div class="callout rule">📌 You need a systematic way to compare algorithms BEFORE writing code — not after. That's what <strong>algorithm analysis</strong> (Big O, time complexity, space complexity) gives you.</div>
+
+  <h3>What Algorithm Analysis Lets You Do</h3>
+  <ul>
+    <li><strong>Predict</strong> execution speed and memory use before implementation</li>
+    <li><strong>Compare</strong> two solutions on paper — pick the better one</li>
+    <li><strong>Guarantee</strong> an algorithm actually finishes (termination proof)</li>
+    <li><strong>Understand</strong> the theoretical limits of what's possible</li>
+  </ul>
+
+  <hr class="section-divider">
+
+  <!-- ───────── SECTION 4: COURSE STRUCTURE ───────── -->
+  <h2>🗺️ Course Curriculum Map</h2>
+
+  <div class="callout tip">💡 The course is a deliberate progression — each topic builds on the previous. Don't skip ahead; the later structures (trees, graphs) need the earlier foundations (recursion, complexity).</div>
+
+  <figure>
+    <svg viewBox="0 0 620 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:0 auto;">
+      <defs>
+        <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#c8f060"/>
+        </marker>
+      </defs>
+      <!-- Phases -->
+      <!-- Phase 0: Setup -->
+      <rect x="200" y="10" width="220" height="45" rx="8" fill="#1a1a1f" stroke="#2a2a32"/>
+      <text x="310" y="29" text-anchor="middle" fill="#6b6878" font-family="Syne,sans-serif" font-size="9" font-weight="700">PHASE 0</text>
+      <text x="310" y="46" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">Setup &amp; Prerequisites</text>
+      <!-- Arrow -->
+      <line x1="310" y1="55" x2="310" y2="75" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <!-- Phase 1: Complexity -->
+      <rect x="170" y="80" width="280" height="45" rx="8" fill="#1a1a1f" stroke="#c8f060" stroke-opacity="0.4"/>
+      <text x="310" y="99" text-anchor="middle" fill="#6b6878" font-family="Syne,sans-serif" font-size="9" font-weight="700">PHASE 1 — ANALYSIS FOUNDATION</text>
+      <text x="310" y="116" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="11">Time &amp; Space Complexity · Big O</text>
+      <!-- Arrow -->
+      <line x1="310" y1="125" x2="310" y2="145" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <!-- Phase 2: Recursion -->
+      <rect x="185" y="150" width="250" height="45" rx="8" fill="#1a1a1f" stroke="#2a2a32"/>
+      <text x="310" y="169" text-anchor="middle" fill="#6b6878" font-family="Syne,sans-serif" font-size="9" font-weight="700">PHASE 2</text>
+      <text x="310" y="186" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">Recursion &amp; Recursive Analysis</text>
+      <!-- Arrow -->
+      <line x1="310" y1="195" x2="310" y2="215" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <!-- Phase 3: Search/Sort -->
+      <rect x="170" y="220" width="280" height="45" rx="8" fill="#1a1a1f" stroke="#2a2a32"/>
+      <text x="310" y="239" text-anchor="middle" fill="#6b6878" font-family="Syne,sans-serif" font-size="9" font-weight="700">PHASE 3</text>
+      <text x="310" y="256" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">Searching &amp; Sorting Algorithms</text>
+      <!-- Arrow -->
+      <line x1="310" y1="265" x2="310" y2="285" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <!-- Phase 4: Linear DS -->
+      <rect x="160" y="290" width="120" height="75" rx="8" fill="#1a1a1f" stroke="#2a2a32"/>
+      <text x="220" y="309" text-anchor="middle" fill="#6b6878" font-family="Syne,sans-serif" font-size="9" font-weight="700">PHASE 4 — LINEAR</text>
+      <text x="220" y="326" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="10">Linked Lists</text>
+      <text x="220" y="342" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="10">Stacks · Queues</text>
+      <text x="220" y="358" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="10">Deques</text>
+      <!-- Phase 5: Non-linear DS -->
+      <rect x="340" y="290" width="120" height="75" rx="8" fill="#1a1a1f" stroke="#60c8f0" stroke-opacity="0.4"/>
+      <text x="400" y="309" text-anchor="middle" fill="#6b6878" font-family="Syne,sans-serif" font-size="9" font-weight="700">PHASE 5 — NON-LINEAR</text>
+      <text x="400" y="326" text-anchor="middle" fill="#60c8f0" font-family="DM Mono,monospace" font-size="10">Trees · BSTs</text>
+      <text x="400" y="342" text-anchor="middle" fill="#60c8f0" font-family="DM Mono,monospace" font-size="10">Heaps · Hashing</text>
+      <text x="400" y="358" text-anchor="middle" fill="#60c8f0" font-family="DM Mono,monospace" font-size="10">Graphs · BFS/DFS</text>
+      <!-- Arrows to phases 4 and 5 -->
+      <line x1="265" y1="285" x2="230" y2="290" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <line x1="355" y1="285" x2="380" y2="290" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr2)"/>
+    </svg>
+    <figcaption>Course learning progression — each phase depends on the one above it</figcaption>
+  </figure>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Phase</th>
+        <th>Topics</th>
+        <th>Why This Order</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>0 — Setup</td>
+        <td>Visual Studio, C# basics</td>
+        <td>You need a working environment before anything else</td>
+      </tr>
+      <tr>
+        <td>1 — Analysis</td>
+        <td>Big O, time/space complexity, asymptotic notation</td>
+        <td>Gives you the language to compare all future algorithms</td>
+      </tr>
+      <tr>
+        <td>2 — Recursion</td>
+        <td>Recursive algorithms, stack frames, base cases</td>
+        <td>Trees, graphs, and many sorting algorithms are recursive</td>
+      </tr>
+      <tr>
+        <td>3 — Searching/Sorting</td>
+        <td>Binary search, bubble/merge/quick sort</td>
+        <td>Foundational operations used everywhere</td>
+      </tr>
+      <tr>
+        <td>4 — Linear DS</td>
+        <td>Linked list, stack, queue, deque</td>
+        <td>Simpler structures; build intuition for traversal</td>
+      </tr>
+      <tr>
+        <td>5 — Non-linear DS</td>
+        <td>Binary trees, BST, heaps, hashing, graphs, BFS, DFS</td>
+        <td>Complex structures that use all prior knowledge</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr class="section-divider">
+
+  <!-- ───────── SECTION 5: VISUAL STUDIO SETUP ───────── -->
+  <h2>🛠️ Visual Studio Setup for C#</h2>
+
+  <div class="callout tip">💡 Visual Studio is the IDE (Integrated Development Environment) — it's the workshop where you write, run, and debug C# code. Think of it like Word, but for writing programs instead of documents.</div>
+
+  <h3>Creating a New Project</h3>
+  <p>Three ways to start — all lead to the same dialog:</p>
+  <ul>
+    <li><strong>File menu</strong> → New → Project</li>
+    <li><strong>New Project button</strong> on the menu bar</li>
+    <li><strong>New Project link</strong> on the start page</li>
+  </ul>
+
+  <div class="callout rule">📌 For this course: always select <strong>Console Application</strong> under Visual C#. It gives you a plain terminal window to run and test your data structure code without UI overhead.</div>
+
+  <h3>Project Configuration Steps</h3>
+  <ol>
+    <li>Open the New Project dialog</li>
+    <li>Select <strong>Visual C#</strong> in the leftmost column</li>
+    <li>Choose <strong>Console Application</strong></li>
+    <li>Enter a project name (e.g. <code>LearnDSAlgorithms</code>)</li>
+    <li>Choose save location (default or custom)</li>
+    <li>Solution name auto-fills from project name — leave it</li>
+    <li>Click OK → Visual Studio generates the starter code</li>
+  </ol>
+
+  <h3>The Auto-Generated Program Structure</h3>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">csharp</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><code class="language-csharp">using System;
+
+namespace LearnDSAlgorithms
+{
+    class Program
+    {
+        // Entry point — execution starts here
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Hello World");
+            Console.ReadKey(); // pause so you can see the output
+        }
+    }
+}</code></pre>
+  </div>
+
+  <ul>
+    <li><strong><code>using System;</code></strong> — imports the System namespace so you can use Console, etc.</li>
+    <li><strong><code>namespace</code></strong> — a container that gives your class a unique scope</li>
+    <li><strong><code>static void Main(string[] args)</code></strong> — the program entry point; execution always starts here</li>
+    <li><strong><code>Console.ReadKey()</code></strong> — pauses the console window so output doesn't disappear immediately</li>
+  </ul>
+
+  <h3>Key Interface Areas</h3>
+  <table>
+    <thead>
+      <tr><th>Area</th><th>What It Does</th><th>How to Use</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Editor Window</td>
+        <td>Write and edit code</td>
+        <td>Main workspace — centre of the screen</td>
+      </tr>
+      <tr>
+        <td>Solution Explorer</td>
+        <td>Manage files in your project</td>
+        <td>Right-click → Add → New Item to add new .cs files</td>
+      </tr>
+      <tr>
+        <td>Green Play Button</td>
+        <td>Build &amp; run the program</td>
+        <td>Click it or press F5</td>
+      </tr>
+      <tr>
+        <td>Error List</td>
+        <td>Shows build errors</td>
+        <td>Missing semicolons, typos — listed here with line numbers</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Adding a New Class File</h3>
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">csharp</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><code class="language-csharp">// Student.cs — a separate class file added via Solution Explorer
+namespace LearnDSAlgorithms
+{
+    class Student
+    {
+        public string Name { get; set; }
+        public int Grade { get; set; }
+    }
+}</code></pre>
+  </div>
+
+  <div class="callout warning">⚠️ If you get a build error, click <strong>No</strong> in the error dialog — don't run the previous build. Fix the error (usually a missing semicolon), then run again. You must also close the console window before making new code edits.</div>
+
+  <hr class="section-divider">
+
+  <!-- ───────── SECTION 6: QUICK REFERENCE ───────── -->
+  <h2>⚡ Quick Reference</h2>
+
+  <h3>Key Terms</h3>
+  <table>
+    <thead>
+      <tr><th>Term</th><th>Plain-English Definition</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Data Structure</td><td>A systematic way to organise data in memory so it can be accessed efficiently</td></tr>
+      <tr><td>Algorithm</td><td>A finite set of steps that solves a problem — like a recipe for code</td></tr>
+      <tr><td>Linear DS</td><td>Elements arranged in sequence: stack, queue, linked list</td></tr>
+      <tr><td>Non-linear DS</td><td>Elements with branching/mesh relationships: trees, heaps, graphs</td></tr>
+      <tr><td>Time Complexity</td><td>How the runtime of an algorithm grows as input size grows</td></tr>
+      <tr><td>Space Complexity</td><td>How memory usage grows as input size grows</td></tr>
+      <tr><td>Big O Notation</td><td>Mathematical shorthand for describing the worst-case growth of an algorithm</td></tr>
+      <tr><td>IDE</td><td>Integrated Development Environment — editor + compiler + debugger in one tool</td></tr>
+      <tr><td>Namespace</td><td>A named container that groups related code and avoids name collisions</td></tr>
+      <tr><td>Entry Point</td><td>The <code>Main()</code> method — where the C# runtime starts executing your program</td></tr>
+      <tr><td>Console Application</td><td>A program that runs in a terminal/command window with no graphical UI</td></tr>
+      <tr><td>BFS</td><td>Breadth-First Search — graph traversal exploring all neighbours before going deeper</td></tr>
+      <tr><td>DFS</td><td>Depth-First Search — graph traversal going as deep as possible before backtracking</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Syntax / Commands</h3>
+  <table>
+    <thead>
+      <tr><th>Syntax / Action</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Console.WriteLine("text")</code></td><td>Print a line of text to the terminal</td></tr>
+      <tr><td><code>Console.ReadKey()</code></td><td>Pause execution — wait for any key press before closing</td></tr>
+      <tr><td><code>static void Main(string[] args)</code></td><td>Program entry point — execution begins here</td></tr>
+      <tr><td><code>using System;</code></td><td>Import the System namespace to access Console, Math, etc.</td></tr>
+      <tr><td><code>namespace X { }</code></td><td>Wrap code in a named scope to avoid collisions</td></tr>
+      <tr><td>Right-click → Add → New Item</td><td>Add a new .cs class file to the project in Solution Explorer</td></tr>
+      <tr><td>F5 / Green Play Button</td><td>Build and run the project</td></tr>
+    </tbody>
+  </table>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--  TAB 2 — ACTIVE RECALL                                     -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<main id="tab-recall" class="tab hidden">
+
+  <div class="recall-topbar">
+    <div class="progress-counter"><span id="answered-count">0</span> of <span id="total-count">20</span> answered</div>
+    <div class="bulk-btns">
+      <button class="bulk-btn" onclick="revealAll()">Reveal All</button>
+      <button class="bulk-btn" onclick="hideAll()">Hide All</button>
+    </div>
+  </div>
+
+  <!-- Q01 -->
+  <div class="question-card" id="q1">
+    <div class="question-header">
+      <span class="q-number">Q01</span>
+      <span class="q-type def">DEF</span>
+      <span class="q-text">In one sentence, what is a <strong>data structure</strong>?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q1')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q1-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">A <strong>data structure</strong> is a systematic method of organising and storing data in computer memory so that programs can access and manipulate it efficiently.</div>
+      <div class="answer-example"><span class="example-label">Example:</span> A list of student names stored as a linked list — each name points to the next — so you can traverse, insert, or delete without shifting everything.</div>
+    </div>
+  </div>
+
+  <!-- Q02 -->
+  <div class="question-card" id="q2">
+    <div class="question-header">
+      <span class="q-number">Q02</span>
+      <span class="q-type why">WHY</span>
+      <span class="q-text">Why can't you solve every problem by just throwing faster hardware at it?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q2')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q2-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Data volume grows much faster than CPU speed. An inefficient algorithm that works for 1,000 items can take exponentially longer at 1,000,000 items — no hardware improvement covers that gap. <strong>Algorithm efficiency is a software-side constraint</strong>, not a hardware one.</div>
+      <div class="answer-example"><span class="example-label">Example:</span> Facebook scaled from thousands to billions of users. Brute-force search that ran in seconds for thousands would take days for billions — regardless of processor speed.</div>
+    </div>
+  </div>
+
+  <!-- Q03 -->
+  <div class="question-card" id="q3">
+    <div class="question-header">
+      <span class="q-number">Q03</span>
+      <span class="q-type compare">COMPARE</span>
+      <span class="q-text">What is the difference between a <strong>linear</strong> and a <strong>non-linear</strong> data structure? Give one example of each.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q3')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q3-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ul>
+          <li><strong>Linear</strong>: elements are arranged in a single sequence — each element has at most one predecessor and one successor. <em>Example: Queue</em></li>
+          <li><strong>Non-linear</strong>: elements have branching or mesh relationships — one element can connect to many others. <em>Example: Tree</em></li>
+        </ul>
+      </div>
+      <div class="answer-example"><span class="example-label">Analogy:</span> A queue is a straight line of people. A tree is a company org chart — one CEO, many branches below.</div>
+    </div>
+  </div>
+
+  <!-- Q04 -->
+  <div class="question-card" id="q4">
+    <div class="question-header">
+      <span class="q-number">Q04</span>
+      <span class="q-type def">DEF</span>
+      <span class="q-text">What is an <strong>algorithm</strong>, and what does "finite" mean in its definition?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q4')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q4-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">An <strong>algorithm</strong> is a set of instructions that solves a problem in a <strong>finite</strong> number of steps. <em>Finite</em> means it must terminate — it can't run forever. An algorithm that loops indefinitely is not a valid algorithm.</div>
+      <div class="answer-example"><span class="example-label">Example:</span> Dijkstra's shortest-path algorithm terminates once every node has been visited — it doesn't run forever.</div>
+    </div>
+  </div>
+
+  <!-- Q05 -->
+  <div class="question-card" id="q5">
+    <div class="question-header">
+      <span class="q-number">Q05</span>
+      <span class="q-type sequence">SEQUENCE</span>
+      <span class="q-text">List the course topics in the correct learning order, from first to last.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q5')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q5-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ol>
+          <li>Setup &amp; prerequisites (Visual Studio, C# basics)</li>
+          <li>Algorithm analysis — time/space complexity, Big O</li>
+          <li>Recursion and recursive algorithm analysis</li>
+          <li>Searching and sorting algorithms</li>
+          <li>Linear data structures — linked lists, stacks, queues, deques</li>
+          <li>Non-linear structures — binary trees, BSTs, heaps, hashing, graphs, BFS/DFS</li>
+        </ol>
+      </div>
+      <div class="answer-example"><span class="example-label">Why this order:</span> Each phase depends on the previous. You can't analyse a tree traversal without understanding recursion first.</div>
+    </div>
+  </div>
+
+  <!-- Q06 -->
+  <div class="question-card" id="q6">
+    <div class="question-header">
+      <span class="q-number">Q06</span>
+      <span class="q-type apply">APPLY</span>
+      <span class="q-text">Write the minimum C# console program that prints "Hello World" and keeps the window open. What is the role of each line?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q6')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q6-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <div class="code-block" style="margin:0.5rem 0;">
+          <div class="code-header"><span class="code-lang">csharp</span></div>
+          <pre><code class="language-csharp">using System;                    // gives access to Console class
+
+namespace HelloApp
+{
+    class Program
+    {
+        static void Main(string[] args)  // entry point
+        {
+            Console.WriteLine("Hello World"); // print to terminal
+            Console.ReadKey();               // pause — waits for key press
+        }
+    }
+}</code></pre>
+        </div>
+        <ul>
+          <li><strong>using System;</strong> — imports Console, Math, etc.</li>
+          <li><strong>namespace</strong> — scopes the class to avoid name conflicts</li>
+          <li><strong>Main()</strong> — runtime calls this first</li>
+          <li><strong>ReadKey()</strong> — without this the window closes instantly</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q07 -->
+  <div class="question-card" id="q7">
+    <div class="question-header">
+      <span class="q-number">Q07</span>
+      <span class="q-type gotcha">GOTCHA</span>
+      <span class="q-text">You run your C# program and a build error dialog appears. What should you click — <strong>Yes</strong> or <strong>No</strong> — and why?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q7')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q7-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Click <strong>No</strong>. Clicking Yes runs the <em>previous</em> successful build — not your current code. You'll see old output and incorrectly think the error is gone. Click No, find the error in the Error List, fix it, then run again.</div>
+      <div class="answer-example"><span class="example-label">Common error:</span> A missing semicolon triggers this dialog. The error list will show the exact line number.</div>
+    </div>
+  </div>
+
+  <!-- Q08 -->
+  <div class="question-card" id="q8">
+    <div class="question-header">
+      <span class="q-number">Q08</span>
+      <span class="q-type why">WHY</span>
+      <span class="q-text">Why does this course teach algorithm <strong>analysis</strong> before teaching individual algorithms?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q8')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q8-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Analysis gives you the language and tools to compare algorithms before writing code. Without it you'd have to implement every candidate solution and benchmark it — which is slow, error-prone, and impossible for large inputs. <strong>Big O notation lets you compare on paper first.</strong></div>
+      <div class="answer-example"><span class="example-label">Example:</span> You can say O(n log n) sort &gt; O(n²) sort without writing a single line of either.</div>
+    </div>
+  </div>
+
+  <!-- Q09 -->
+  <div class="question-card" id="q9">
+    <div class="question-header">
+      <span class="q-number">Q09</span>
+      <span class="q-type compare">COMPARE</span>
+      <span class="q-text">Compare a <strong>Stack</strong> and a <strong>Queue</strong>: how does each structure determine which element to remove first?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q9')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q9-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ul>
+          <li><strong>Stack (LIFO)</strong> — <em>Last In, First Out</em>. The most recently added item is removed first. Like a stack of plates — you take from the top.</li>
+          <li><strong>Queue (FIFO)</strong> — <em>First In, First Out</em>. The oldest item is removed first. Like a checkout line — the first person in line is served first.</li>
+        </ul>
+      </div>
+      <div class="answer-example"><span class="example-label">Real use:</span> Stack → undo/redo history. Queue → print job queue, HTTP request handling.</div>
+    </div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="question-card" id="q10">
+    <div class="question-header">
+      <span class="q-number">Q10</span>
+      <span class="q-type apply">APPLY</span>
+      <span class="q-text">How do you add a <strong>new class file</strong> to an existing project in Visual Studio? What is the file extension for C# files?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q10')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q10-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ol>
+          <li>Go to <strong>Solution Explorer</strong></li>
+          <li>Right-click the project/application name</li>
+          <li>Select <strong>Add → New Item</strong></li>
+          <li>Choose "Class" and name it (e.g. <code>Student.cs</code>)</li>
+        </ol>
+        <p style="margin-top:0.5rem;">C# files use the <strong>.cs</strong> extension.</p>
+      </div>
+      <div class="answer-example"><span class="example-label">Example filename:</span> <code>Student.cs</code>, <code>LinkedList.cs</code>, <code>BinaryTree.cs</code></div>
+    </div>
+  </div>
+
+  <!-- Q11 -->
+  <div class="question-card" id="q11">
+    <div class="question-header">
+      <span class="q-number">Q11</span>
+      <span class="q-type def">DEF</span>
+      <span class="q-text">What are the two components every computer science solution requires, and what does each do?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q11')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q11-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ul>
+          <li><strong>Data Structure</strong> — stores the information associated with the problem</li>
+          <li><strong>Algorithm</strong> — the method/steps that act on that information to solve the problem</li>
+        </ul>
+        They always come as a pair. One without the other is incomplete.
+      </div>
+      <div class="answer-example"><span class="example-label">Example:</span> A contact book app needs a data structure (list of contacts) and algorithms (search by name, sort alphabetically).</div>
+    </div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="question-card" id="q12">
+    <div class="question-header">
+      <span class="q-number">Q12</span>
+      <span class="q-type gotcha">GOTCHA</span>
+      <span class="q-text">After running your program, you try to edit the code but can't type. What did you forget to do?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q12')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q12-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">You forgot to <strong>close the console window</strong>. While a console application is running (even if it appears idle waiting for a key press), Visual Studio locks the editor. Close the terminal/console window first, then edit.</div>
+    </div>
+  </div>
+
+  <!-- Q13 -->
+  <div class="question-card" id="q13">
+    <div class="question-header">
+      <span class="q-number">Q13</span>
+      <span class="q-type apply">APPLY</span>
+      <span class="q-text">Name three non-linear data structures covered in this course and one real-world application for each.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q13')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q13-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ul>
+          <li><strong>Binary Tree / BST</strong> → database indexing, autocomplete suggestions</li>
+          <li><strong>Heap</strong> → priority queues (OS task scheduling, Dijkstra's algorithm)</li>
+          <li><strong>Graph</strong> → social networks (friend suggestions), maps/navigation (shortest path)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q14 -->
+  <div class="question-card" id="q14">
+    <div class="question-header">
+      <span class="q-number">Q14</span>
+      <span class="q-type why">WHY</span>
+      <span class="q-text">Why is <strong>recursion</strong> taught before trees and graphs in this course?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q14')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q14-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Tree traversal (in-order, pre-order, post-order) and graph search (DFS) are inherently recursive operations. If you don't understand recursion — base cases, call stack, return values — you can't understand why these algorithms work. <strong>Recursion is the prerequisite for most non-linear DS operations.</strong></div>
+    </div>
+  </div>
+
+  <!-- Q15 -->
+  <div class="question-card" id="q15">
+    <div class="question-header">
+      <span class="q-number">Q15</span>
+      <span class="q-type sequence">SEQUENCE</span>
+      <span class="q-text">What are the three ways to open the "New Project" dialog in Visual Studio?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q15')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q15-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ol>
+          <li><strong>File menu → New → Project</strong></li>
+          <li><strong>New Project button</strong> on the toolbar/menu bar</li>
+          <li><strong>New Project link</strong> on the Visual Studio start page</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q16 -->
+  <div class="question-card" id="q16">
+    <div class="question-header">
+      <span class="q-number">Q16</span>
+      <span class="q-type draw">DRAW</span>
+      <span class="q-text">Sketch the two-component model of computer science problem-solving. Show how a problem flows through data structure and algorithm to produce a solution.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q16')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q16-answer">
+      <div class="answer-label">Answer</div>
+      <svg viewBox="0 0 600 160" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrD" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#c8f060"/>
+          </marker>
+        </defs>
+        <rect x="10" y="55" width="130" height="50" rx="8" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="75" y="75" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">Problem</text>
+        <text x="75" y="92" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">(real-world)</text>
+        <line x1="140" y1="72" x2="195" y2="55" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arrD)"/>
+        <line x1="140" y1="88" x2="195" y2="120" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arrD)"/>
+        <rect x="200" y="30" width="170" height="50" rx="8" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="285" y="50" text-anchor="middle" fill="#60c8f0" font-family="DM Mono,monospace" font-size="11">Data Structure</text>
+        <text x="285" y="67" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">stores information</text>
+        <rect x="200" y="100" width="170" height="50" rx="8" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="285" y="120" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="11">Algorithm</text>
+        <text x="285" y="137" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">solves the problem</text>
+        <line x1="370" y1="55" x2="430" y2="72" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arrD)"/>
+        <line x1="370" y1="120" x2="430" y2="88" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arrD)"/>
+        <rect x="435" y="55" width="150" height="50" rx="8" fill="#1a1a1f" stroke="#c8f060" stroke-opacity="0.4"/>
+        <text x="510" y="75" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">Solution</text>
+        <text x="510" y="92" text-anchor="middle" fill="#60f0a0" font-family="DM Mono,monospace" font-size="10">efficient &amp; correct</text>
+      </svg>
+      <div class="answer-content" style="margin-top:0.5rem;">Check your labels: Problem → [Data Structure + Algorithm] → Solution. Both components are needed — neither is optional.</div>
+    </div>
+  </div>
+
+  <!-- Q17 -->
+  <div class="question-card" id="q17">
+    <div class="question-header">
+      <span class="q-number">Q17</span>
+      <span class="q-type def">DEF</span>
+      <span class="q-text">What is an <strong>IDE</strong>, and which IDE does this course use?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q17')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q17-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">An <strong>IDE</strong> (Integrated Development Environment) is a single application that combines a code editor, compiler, debugger, and project manager. This course uses <strong>Visual Studio</strong> — Microsoft's IDE for .NET/C# development.</div>
+      <div class="answer-example"><span class="example-label">Analogy:</span> An IDE is like a fully-equipped workshop — saw, drill, and workbench in one place — vs. owning each tool separately and switching between them.</div>
+    </div>
+  </div>
+
+  <!-- Q18 -->
+  <div class="question-card" id="q18">
+    <div class="question-header">
+      <span class="q-number">Q18</span>
+      <span class="q-type apply">APPLY</span>
+      <span class="q-text">What project type should you select in Visual Studio for this course, and why not a Windows Forms or Web Application?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q18')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q18-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Select <strong>Console Application</strong>. It gives a plain terminal window — no UI overhead, no event loops, no HTML. For DSA work you just need to run code, print output, and verify behaviour. Windows Forms adds GUI complexity; Web apps add HTTP complexity. Neither is needed here.</div>
+    </div>
+  </div>
+
+  <!-- Q19 -->
+  <div class="question-card" id="q19">
+    <div class="question-header">
+      <span class="q-number">Q19</span>
+      <span class="q-type gotcha">GOTCHA</span>
+      <span class="q-text">A classmate says: "My algorithm works perfectly for 500 items, so we don't need to worry about efficiency." What's wrong with this reasoning?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q19')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q19-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Performance for small inputs doesn't predict performance at scale. An O(n²) algorithm at 500 items might run in milliseconds — but at 500,000 items it's 1,000,000× slower in theoretical terms, making it completely unusable. <strong>Efficiency must be analysed as a function of input size, not tested only at one small size.</strong></div>
+      <div class="answer-example"><span class="example-label">Numbers:</span> If 500 items takes 0.01s with O(n²), then 500,000 items would take ~10,000 seconds. That's 2.7 hours.</div>
+    </div>
+  </div>
+
+  <!-- Q20 -->
+  <div class="question-card" id="q20">
+    <div class="question-header">
+      <span class="q-number">Q20</span>
+      <span class="q-type compare">COMPARE</span>
+      <span class="q-text">What is the difference between <strong>BFS</strong> and <strong>DFS</strong> in terms of how they explore a graph?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q20')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q20-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ul>
+          <li><strong>BFS (Breadth-First Search)</strong> — visits all neighbours of the current node before going deeper. Explores level by level. Uses a <em>Queue</em> internally.</li>
+          <li><strong>DFS (Depth-First Search)</strong> — goes as deep as possible down one branch before backtracking. Uses a <em>Stack</em> (or recursion) internally.</li>
+        </ul>
+      </div>
+      <div class="answer-example"><span class="example-label">Analogy:</span> BFS = exploring a building floor by floor. DFS = entering every room on one floor fully before moving to the next floor.</div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ── Tab switching ──────────────────────────────────────────
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.add('hidden'));
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.remove('active'); b.classList.add('inactive');
+  });
+  document.getElementById('tab-' + tab).classList.remove('hidden');
+  btn.classList.add('active'); btn.classList.remove('inactive');
+}
+
+// ── Answer toggling ────────────────────────────────────────
+let answeredSet = new Set();
+
+function toggleAnswer(id) {
+  const card = document.getElementById(id);
+  const block = document.getElementById(id + '-answer');
+  const btn = card.querySelector('.show-answer-btn');
+  const isOpen = block.classList.contains('open');
+
+  if (isOpen) {
+    block.classList.remove('open');
+    card.classList.remove('revealed');
+    btn.textContent = 'Show Answer';
+    btn.classList.remove('revealed');
+    answeredSet.delete(id);
+  } else {
+    block.classList.add('open');
+    card.classList.add('revealed');
+    btn.textContent = 'Hide Answer';
+    btn.classList.add('revealed');
+    answeredSet.add(id);
+  }
+  updateCounter();
+}
+
+function updateCounter() {
+  document.getElementById('answered-count').textContent = answeredSet.size;
+}
+
+function revealAll() {
+  document.querySelectorAll('.question-card').forEach(card => {
+    const id = card.id;
+    const block = document.getElementById(id + '-answer');
+    const btn = card.querySelector('.show-answer-btn');
+    block.classList.add('open');
+    card.classList.add('revealed');
+    btn.textContent = 'Hide Answer';
+    btn.classList.add('revealed');
+    answeredSet.add(id);
+  });
+  updateCounter();
+}
+
+function hideAll() {
+  document.querySelectorAll('.question-card').forEach(card => {
+    const id = card.id;
+    const block = document.getElementById(id + '-answer');
+    const btn = card.querySelector('.show-answer-btn');
+    block.classList.remove('open');
+    card.classList.remove('revealed');
+    btn.textContent = 'Show Answer';
+    btn.classList.remove('revealed');
+  });
+  answeredSet.clear();
+  updateCounter();
+}
+
+// ── Copy button ────────────────────────────────────────────
+function copyCode(btn) {
+  const code = btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+
+// ── Set total count ────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const total = document.querySelectorAll('.question-card').length;
+  document.getElementById('total-count').textContent = total;
+  hljs.highlightAll();
+});
+</script>
+</body>
+</html>
