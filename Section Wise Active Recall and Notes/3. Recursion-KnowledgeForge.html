@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recursion — KnowledgeForge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/csharp.min.js"></script>
+<style>
+:root{
+  --bg:#0d0d0f;--surface:#141417;--card:#1a1a1f;--border:#2a2a32;
+  --accent:#c8f060;--accent2:#60c8f0;--accent3:#f060c8;
+  --text:#f0ede8;--muted:#6b6878;--danger:#f06060;--success:#60f0a0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background-color:var(--bg);
+  background-image:linear-gradient(rgba(200,240,96,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(200,240,96,.02) 1px,transparent 1px);
+  background-size:40px 40px;
+  color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:.9rem;line-height:1.7;min-height:100vh;
+}
+header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(13,13,15,.96);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:.75rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;
+}
+.logo{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text);white-space:nowrap;}
+.logo span{color:var(--accent);}
+.topic-title{font-family:'Syne',sans-serif;font-size:.88rem;font-weight:700;color:var(--muted);text-align:center;flex:1;}
+.tab-switcher{display:flex;gap:.5rem;flex-shrink:0;}
+.tab-btn{font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;padding:.4rem .9rem;border-radius:6px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.tab-btn.active{background:var(--accent);color:#0d0d0f;border:1px solid var(--accent);}
+.tab-btn.inactive{background:transparent;color:var(--muted);border:1px solid var(--border);}
+.tab-btn.inactive:hover{color:var(--text);border-color:var(--muted);}
+.tab{transition:opacity .2s;}
+.tab.hidden{display:none;opacity:0;}
+
+/* HANDBOOK */
+.hb{max-width:940px;margin:0 auto;padding:2rem;}
+h1.page-title{font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;color:var(--text);margin-bottom:2rem;}
+h2{font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:800;color:var(--accent);border-bottom:1px solid rgba(200,240,96,.2);padding-bottom:.4rem;margin:2.5rem 0 1rem;}
+h3{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;color:var(--accent2);margin:1.5rem 0 .5rem;}
+p{color:#ccc;font-size:.85rem;margin-bottom:.75rem;}
+ul,ol{padding-left:1.4rem;color:#ccc;font-size:.85rem;}
+ul li,ol li{margin-bottom:.35rem;}
+strong{color:var(--text);}
+.section-divider{border:none;border-top:1px solid var(--border);margin:2.5rem 0;}
+
+.callout{padding:.75rem 1rem;border-radius:6px;font-size:.85rem;margin:1rem 0;line-height:1.6;}
+.callout.tip{border-left:3px solid var(--accent);background:rgba(200,240,96,.05);color:#ccc;}
+.callout.warning{border-left:3px solid var(--accent3);background:rgba(240,96,200,.05);color:#ccc;}
+.callout.rule{border-left:3px solid var(--accent2);background:rgba(96,200,240,.05);color:#ccc;}
+
+.code-block{background:var(--card);border:1px solid var(--border);border-radius:6px;margin:1rem 0;overflow:hidden;}
+.code-header{display:flex;justify-content:space-between;align-items:center;padding:.4rem .75rem;border-bottom:1px solid var(--border);}
+.code-lang{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);text-transform:uppercase;}
+.copy-btn{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);background:transparent;border:1px solid var(--border);padding:.2rem .5rem;border-radius:4px;cursor:pointer;transition:all .2s;}
+.copy-btn:hover{color:var(--text);border-color:var(--muted);}
+.code-block pre{margin:0;}
+.code-block pre code{font-family:'DM Mono',monospace;font-size:.8rem;padding:.85rem 1rem !important;display:block;}
+
+.code-compare{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;}
+@media(max-width:640px){.code-compare{grid-template-columns:1fr;}}
+.code-panel{background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.code-panel.wrong{border-top:3px solid var(--danger);}
+.code-panel.right{border-top:3px solid var(--success);}
+.panel-header{padding:.4rem .75rem;font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;border-bottom:1px solid var(--border);}
+.code-panel.wrong .panel-header{color:var(--danger);}
+.code-panel.right .panel-header{color:var(--success);}
+.code-panel pre{margin:0;}
+.code-panel pre code{font-family:'DM Mono',monospace;font-size:.78rem;padding:.75rem !important;display:block;}
+
+/* Math block */
+.math-block{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-family:'DM Mono',monospace;font-size:.88rem;color:var(--accent2);line-height:2;}
+.math-block .label{font-family:'Syne',sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);display:block;margin-bottom:.3rem;}
+.math-block .step{display:flex;gap:.75rem;margin:.15rem 0;}
+.math-block .step-num{color:var(--muted);font-size:.75rem;min-width:1.4rem;padding-top:.1rem;}
+.math-block .eq{color:var(--accent2);}
+.math-block .note{color:var(--muted);font-size:.76rem;font-family:sans-serif;}
+.math-block .result{color:var(--accent);font-weight:700;font-size:1rem;}
+.math-block .sep{border:none;border-top:1px dashed var(--border);margin:.5rem 0;}
+
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.82rem;}
+thead tr{background:var(--card);}
+thead th{font-family:'Syne',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);padding:.6rem 1rem;text-align:left;border:1px solid var(--border);}
+tbody tr:nth-child(odd){background:var(--surface);}
+tbody tr:nth-child(even){background:var(--bg);}
+tbody td{padding:.6rem 1rem;border:1px solid var(--border);color:#ccc;vertical-align:top;}
+
+figure{margin:1.5rem 0;}
+figcaption{font-size:.75rem;color:var(--muted);text-align:center;margin-top:.6rem;font-family:'DM Mono',monospace;}
+.fig-wrap{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.25rem;display:flex;justify-content:center;}
+.fig-wrap svg{max-width:100%;height:auto;}
+
+/* RECALL */
+#tab-recall{max-width:800px;margin:0 auto;padding:2rem;}
+.recall-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:.75rem;}
+.progress-counter{font-family:'DM Mono',monospace;font-size:.8rem;color:var(--muted);}
+.progress-counter span{color:var(--accent);font-weight:500;}
+.bulk-btns{display:flex;gap:.5rem;}
+.bulk-btn{font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;padding:.35rem .75rem;border-radius:6px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;}
+.bulk-btn:hover{color:var(--text);border-color:var(--muted);}
+.question-card{background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:.75rem;overflow:hidden;transition:border-color .2s;}
+.question-card.revealed{border-color:rgba(200,240,96,.3);}
+.question-header{display:flex;align-items:flex-start;gap:.75rem;padding:.9rem 1rem;flex-wrap:wrap;}
+.q-number{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);flex-shrink:0;margin-top:.1rem;}
+.q-type{font-family:'Syne',sans-serif;font-size:.65rem;font-weight:700;padding:.15rem .45rem;border-radius:4px;flex-shrink:0;margin-top:.05rem;}
+.q-type.def    {background:rgba(96,200,240,.1);color:var(--accent2);}
+.q-type.apply  {background:rgba(200,240,96,.1);color:var(--accent);}
+.q-type.why    {background:rgba(240,96,200,.1);color:var(--accent3);}
+.q-type.compare{background:rgba(200,240,96,.1);color:var(--accent);}
+.q-type.sequence{background:rgba(96,240,200,.1);color:#60f0c8;}
+.q-type.gotcha {background:rgba(240,96,96,.1);color:var(--danger);}
+.q-type.draw   {background:rgba(240,200,96,.1);color:#f0c860;}
+.q-text{font-size:.85rem;color:var(--text);flex:1;line-height:1.5;}
+.show-answer-btn{font-family:'DM Mono',monospace;font-size:.72rem;padding:.3rem .65rem;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;flex-shrink:0;white-space:nowrap;}
+.show-answer-btn.revealed{border-color:var(--accent);color:var(--accent);}
+.answer-block{border-top:1px solid var(--border);padding:1rem;background:var(--surface);overflow:hidden;max-height:0;transition:max-height .35s ease;}
+.answer-block.open{max-height:4000px;}
+.answer-label{font-family:'Syne',sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:.5rem;}
+.answer-content{font-size:.84rem;color:#ccc;line-height:1.6;}
+.answer-content strong{color:var(--text);}
+.answer-content ul{padding-left:1.2rem;margin-top:.4rem;}
+.answer-content li{margin-bottom:.25rem;}
+.answer-content .code-block{margin:.5rem 0;}
+.answer-example{margin-top:.75rem;padding:.6rem .85rem;background:rgba(200,240,96,.04);border-left:2px solid rgba(200,240,96,.3);border-radius:0 4px 4px 0;font-size:.82rem;color:#ccc;}
+.example-label{font-family:'Syne',sans-serif;font-size:.65rem;font-weight:700;color:var(--accent);margin-right:.4rem;}
+.answer-block svg{max-width:100%;height:auto;margin:.75rem 0;}
+.answer-block .math-block{margin:.5rem 0;}
+
+@media(max-width:600px){
+  header{flex-wrap:wrap;padding:.75rem 1rem;}
+  .topic-title{order:3;width:100%;text-align:left;}
+  .hb,#tab-recall{padding:1.25rem;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Knowledge<span>Forge</span></div>
+  <div class="topic-title">Recursion — Types · Recurrence Relations · Complexity · Applications</div>
+  <div class="tab-switcher">
+    <button class="tab-btn active" onclick="switchTab('handbook',this)">📘 Handbook</button>
+    <button class="tab-btn inactive" onclick="switchTab('recall',this)">🧠 Active Recall</button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════ HANDBOOK ═══════════════════════════ -->
+<main id="tab-handbook" class="tab">
+<div class="hb">
+
+<h1 class="page-title">Recursion in C#<br>Types · Complexity · Applications</h1>
+
+<!-- ─── S1: HOW RECURSION WORKS ─── -->
+<h2>🔁 How Recursion Works</h2>
+
+<div class="callout tip">💡 A function that calls itself is recursive. Think of it like Russian dolls — each doll opens to reveal a smaller version, until you reach the smallest one (the base case) that doesn't open further.</div>
+
+<h3>Two Required Components</h3>
+<ul>
+  <li><strong>Base condition</strong> — the stopping rule. Without it, recursion runs forever (stack overflow).</li>
+  <li><strong>Self-call</strong> — the function calls itself with a smaller input, moving toward the base case.</li>
+</ul>
+
+<h3>What Happens on Every Function Call</h3>
+<ol>
+  <li>Calling function <strong>pauses</strong></li>
+  <li>Control transfers to the called function</li>
+  <li>Called function executes completely</li>
+  <li>Control <strong>returns</strong> to the caller</li>
+  <li>Remaining statements execute</li>
+</ol>
+
+<h3>Worked Example — Fun(n) prints n²</h3>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">static void Fun(int n)
+{
+    if (n > 0)           // base condition: stop when n = 0
+    {
+        int k = n * n;
+        Console.WriteLine(k);
+        Fun(n - 1);      // recursive call — smaller input
+    }
+}
+// Fun(4) → prints: 16, 9, 4, 1</code></pre>
+</div>
+
+<figure>
+  <div class="fig-wrap">
+  <svg viewBox="0 0 520 320" xmlns="http://www.w3.org/2000/svg" style="max-width:520px;">
+    <defs>
+      <marker id="da" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#c8f060"/></marker>
+      <marker id="dr" markerWidth="7" markerHeight="7" refX="2" refY="3" orient="auto"><path d="M7,0 L7,6 L0,3z" fill="#6b6878"/></marker>
+    </defs>
+    <!-- Stack frames — call phase -->
+    <!-- Frame Fun(4) -->
+    <rect x="30" y="20" width="200" height="52" rx="6" fill="#1a1a1f" stroke="#c8f060" stroke-opacity=".5"/>
+    <text x="42" y="40" fill="#c8f060" font-family="DM Mono,monospace" font-size="12" font-weight="700">Fun(4)</text>
+    <text x="42" y="58" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">k=16 → print(16) → Fun(3)↓</text>
+    <!-- Frame Fun(3) -->
+    <rect x="60" y="88" width="200" height="52" rx="6" fill="#1a1a1f" stroke="#2a2a32"/>
+    <text x="72" y="108" fill="#f0ede8" font-family="DM Mono,monospace" font-size="12">Fun(3)</text>
+    <text x="72" y="126" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">k=9  → print(9)  → Fun(2)↓</text>
+    <!-- Frame Fun(2) -->
+    <rect x="90" y="156" width="200" height="52" rx="6" fill="#1a1a1f" stroke="#2a2a32"/>
+    <text x="102" y="176" fill="#f0ede8" font-family="DM Mono,monospace" font-size="12">Fun(2)</text>
+    <text x="102" y="194" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">k=4  → print(4)  → Fun(1)↓</text>
+    <!-- Frame Fun(1) -->
+    <rect x="120" y="224" width="200" height="52" rx="6" fill="#1a1a1f" stroke="#2a2a32"/>
+    <text x="132" y="244" fill="#f0ede8" font-family="DM Mono,monospace" font-size="12">Fun(1)</text>
+    <text x="132" y="262" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">k=1  → print(1)  → Fun(0)↓</text>
+    <!-- Base case Fun(0) -->
+    <rect x="150" y="292" width="130" height="24" rx="6" fill="rgba(96,200,240,.1)" stroke="#60c8f0" stroke-opacity=".5"/>
+    <text x="215" y="309" text-anchor="middle" fill="#60c8f0" font-family="DM Mono,monospace" font-size="10">Fun(0) — base case, stop</text>
+    <!-- Call arrows -->
+    <line x1="130" y1="72" x2="160" y2="88" stroke="#c8f060" stroke-width="1.5" marker-end="url(#da)"/>
+    <line x1="160" y1="140" x2="190" y2="156" stroke="#c8f060" stroke-width="1.5" marker-end="url(#da)"/>
+    <line x1="190" y1="208" x2="220" y2="224" stroke="#c8f060" stroke-width="1.5" marker-end="url(#da)"/>
+    <line x1="220" y1="276" x2="250" y2="292" stroke="#c8f060" stroke-width="1.5" marker-end="url(#da)"/>
+    <!-- Labels -->
+    <text x="350" y="32" fill="#c8f060" font-family="Syne,sans-serif" font-size="11" font-weight="700">CALL PHASE</text>
+    <text x="350" y="48" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Each call pauses,</text>
+    <text x="350" y="62" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">pushes frame to stack</text>
+    <rect x="340" y="72" width="110" height="1" fill="var(--border)"/>
+    <text x="350" y="90" fill="#60f0a0" font-family="Syne,sans-serif" font-size="11" font-weight="700">OUTPUT</text>
+    <text x="350" y="108" fill="#60f0a0" font-family="DM Mono,monospace" font-size="13">16</text>
+    <text x="350" y="128" fill="#60f0a0" font-family="DM Mono,monospace" font-size="13">9</text>
+    <text x="350" y="148" fill="#60f0a0" font-family="DM Mono,monospace" font-size="13">4</text>
+    <text x="350" y="168" fill="#60f0a0" font-family="DM Mono,monospace" font-size="13">1</text>
+    <text x="350" y="200" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Printed before</text>
+    <text x="350" y="214" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">each recursive call</text>
+    <text x="350" y="240" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">→ descending order</text>
+  </svg>
+  </div>
+  <figcaption>Call stack for Fun(4) — each frame pauses and waits for its child to complete</figcaption>
+</figure>
+
+<hr class="section-divider">
+
+<!-- ─── S2: ITERATION vs RECURSION ─── -->
+<h2>⚖️ Iteration vs Recursion</h2>
+
+<div class="callout tip">💡 Iteration and recursion solve the same problems. Iteration uses a loop; recursion uses self-calls. The <strong>while condition</strong> becomes the <strong>if base condition</strong>.</div>
+
+<div class="code-compare">
+  <div class="code-panel right">
+    <div class="panel-header">🔄 Iterative</div>
+    <pre><code class="language-csharp">void CalcIterative(int n)
+{
+  while (n > 0)
+  {
+    int k = n * n;
+    Console.WriteLine(k);
+    n = n - 1;
+  }
+}</code></pre>
+  </div>
+  <div class="code-panel right">
+    <div class="panel-header">🔁 Recursive</div>
+    <pre><code class="language-csharp">void CalcRecursive(int n)
+{
+  if (n > 0)         // base condition
+  {
+    int k = n * n;
+    Console.WriteLine(k);
+    CalcRecursive(n - 1);
+  }
+}</code></pre>
+  </div>
+</div>
+
+<table>
+  <thead><tr><th>Aspect</th><th>Iterative</th><th>Recursive</th></tr></thead>
+  <tbody>
+    <tr><td>Loop/stop mechanism</td><td>while / for condition</td><td>Base condition in if</td></tr>
+    <tr><td>State storage</td><td>Loop variables on heap</td><td>Stack frames (call stack)</td></tr>
+    <tr><td>Time complexity</td><td>O(n) — loop runs n+1 times</td><td>O(n) — n+1 function calls</td></tr>
+    <tr><td>Space complexity</td><td>O(1) — constant</td><td>O(n) — n frames on stack</td></tr>
+    <tr><td>Risk</td><td>Infinite loop</td><td>Stack overflow (missing base case)</td></tr>
+    <tr><td>Readability</td><td>Explicit, straightforward</td><td>Elegant for tree/graph problems</td></tr>
+  </tbody>
+</table>
+
+<div class="callout rule">📌 Both produce identical output. Recursion uses <strong>O(n) extra stack space</strong> that iteration doesn't. For simple loops, prefer iteration. For tree traversal and divide-and-conquer, recursion is natural.</div>
+
+<hr class="section-divider">
+
+<!-- ─── S3: TIME COMPLEXITY (RECURRENCE) ─── -->
+<h2>⏱️ Time Complexity of Recursive Functions — Recurrence Relations</h2>
+
+<div class="callout tip">💡 You can't analyse a recursive function the same way as a loop. Instead, write a <strong>recurrence relation</strong> — a math equation that expresses T(n) in terms of T(n-1) — then solve it.</div>
+
+<h3>How to Write a Recurrence Relation</h3>
+<ol>
+  <li>Count every primitive operation in one call → that's the constant part</li>
+  <li>Add the cost of the recursive call → T(n-1)</li>
+  <li>State the base case T(0) or T(1)</li>
+</ol>
+
+<h3>Example 1 — T(n) = T(n-1) + 1 → O(n)</h3>
+
+<div class="math-block">
+  <span class="label">Recurrence</span>
+  <div class="step"><span class="step-num">—</span><span class="eq">T(n) = T(n-1) + 3,   T(0) = 1</span></div>
+  <div class="step"><span class="step-num">—</span><span class="note">Simplified (constants don't affect Big-O):</span></div>
+  <div class="step"><span class="step-num">—</span><span class="eq">T(n) = T(n-1) + 1</span></div>
+  <hr class="sep">
+  <span class="label">Successive Substitution</span>
+  <div class="step"><span class="step-num">1</span><span class="eq">T(n) = T(n-1) + 1</span></div>
+  <div class="step"><span class="step-num">2</span><span class="eq">T(n) = T(n-2) + 1 + 1 = T(n-2) + 2</span></div>
+  <div class="step"><span class="step-num">3</span><span class="eq">T(n) = T(n-3) + 3</span></div>
+  <div class="step"><span class="step-num">k</span><span class="eq">T(n) = T(n-k) + k</span></div>
+  <hr class="sep">
+  <span class="label">Reach Base Case — set n−k = 0 → k = n</span>
+  <div class="step"><span class="step-num">—</span><span class="eq">T(n) = T(0) + n = 1 + n</span></div>
+  <div class="step"><span class="step-num">—</span><span class="result">T(n) = O(n)</span></div>
+</div>
+
+<h3>Example 2 — T(n) = T(n-1) + n → O(n²)</h3>
+
+<div class="math-block">
+  <span class="label">Recurrence</span>
+  <div class="step"><span class="step-num">—</span><span class="eq">T(n) = T(n-1) + n,   T(1) = 1</span></div>
+  <hr class="sep">
+  <span class="label">Expansion</span>
+  <div class="step"><span class="step-num">1</span><span class="eq">T(n) = T(n-1) + n</span></div>
+  <div class="step"><span class="step-num">2</span><span class="eq">T(n) = T(n-2) + (n-1) + n</span></div>
+  <div class="step"><span class="step-num">3</span><span class="eq">T(n) = T(n-3) + (n-2) + (n-1) + n</span></div>
+  <div class="step"><span class="step-num">k</span><span class="eq">T(n) = T(n-k) + (n-k+1) + … + n</span></div>
+  <hr class="sep">
+  <span class="label">Reach Base Case — set n−k = 1 → k = n-1</span>
+  <div class="step"><span class="step-num">—</span><span class="eq">T(n) = T(1) + 2 + 3 + … + n = 1 + Σᵢ₌₂ⁿ i</span></div>
+  <div class="step"><span class="step-num">—</span><span class="eq">Σᵢ₌₁ⁿ i = n(n+1)/2 → Σᵢ₌₂ⁿ i = n(n+1)/2 − 1</span></div>
+  <div class="step"><span class="step-num">—</span><span class="eq">T(n) = 1 + n(n+1)/2 − 1 = n(n+1)/2 = (n²+n)/2</span></div>
+  <div class="step"><span class="step-num">—</span><span class="result">T(n) = O(n²)</span></div>
+</div>
+
+<h3>Three Methods to Solve Recurrences</h3>
+<table>
+  <thead><tr><th>Method</th><th>How</th><th>When to Use</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Successive Substitution</strong></td><td>Expand T(n) step by step until pattern emerges, then reach base case</td><td>Always works — use as default</td></tr>
+    <tr><td><strong>Substitution / Induction</strong></td><td>Guess the answer, prove by substitution</td><td>When you can guess the pattern</td></tr>
+    <tr><td><strong>Master's Theorem</strong></td><td>Direct formula for divide-and-conquer recurrences T(n) = aT(n/b) + f(n)</td><td>Only for specific form — limited applicability</td></tr>
+  </tbody>
+</table>
+
+<hr class="section-divider">
+
+<!-- ─── S4: TAIL RECURSION ─── -->
+<h2>🔽 Tail Recursion</h2>
+
+<div class="callout tip">💡 <strong>Tail recursion</strong> = the recursive call is the <em>last statement</em>. No work happens after the call returns. Think: do your job, then hand off.</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">void CalculateTail(int n)
+{
+    if (n > 0)
+    {
+        int k = n * n;
+        Console.WriteLine(k);   // work BEFORE the call
+        CalculateTail(n - 1);   // recursive call LAST ← tail
+    }
+}
+// Output for n=4: 16, 9, 4, 1  (descending)</code></pre>
+</div>
+
+<figure>
+  <div class="fig-wrap">
+  <svg viewBox="0 0 560 230" xmlns="http://www.w3.org/2000/svg" style="max-width:560px;">
+    <defs>
+      <marker id="ta" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#c8f060"/></marker>
+    </defs>
+    <!-- Title -->
+    <text x="10" y="18" fill="#c8f060" font-family="Syne,sans-serif" font-size="11" font-weight="700">TAIL RECURSION — execution flows top → down only</text>
+    <!-- Boxes -->
+    <rect x="10" y="28" width="500" height="34" rx="6" fill="#1a1a1f" stroke="#c8f060" stroke-opacity=".4"/>
+    <text x="20" y="48" fill="#c8f060" font-family="DM Mono,monospace" font-size="11">CalculateTail(4)</text>
+    <text x="180" y="48" fill="#60f0a0" font-family="DM Mono,monospace" font-size="11">→ print 16</text>
+    <text x="310" y="48" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">→ call(3) ↓</text>
+
+    <rect x="30" y="74" width="480" height="34" rx="6" fill="#1a1a1f" stroke="#2a2a32"/>
+    <text x="40" y="94" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">CalculateTail(3)</text>
+    <text x="200" y="94" fill="#60f0a0" font-family="DM Mono,monospace" font-size="11">→ print 9 </text>
+    <text x="310" y="94" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">→ call(2) ↓</text>
+
+    <rect x="50" y="120" width="460" height="34" rx="6" fill="#1a1a1f" stroke="#2a2a32"/>
+    <text x="60" y="140" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">CalculateTail(2)</text>
+    <text x="220" y="140" fill="#60f0a0" font-family="DM Mono,monospace" font-size="11">→ print 4 </text>
+    <text x="310" y="140" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">→ call(1) ↓</text>
+
+    <rect x="70" y="166" width="440" height="34" rx="6" fill="#1a1a1f" stroke="#2a2a32"/>
+    <text x="80" y="186" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">CalculateTail(1)</text>
+    <text x="240" y="186" fill="#60f0a0" font-family="DM Mono,monospace" font-size="11">→ print 1 </text>
+    <text x="310" y="186" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">→ call(0) → stop</text>
+
+    <!-- Down arrows -->
+    <line x1="280" y1="62" x2="280" y2="74" stroke="#c8f060" stroke-width="1.5" marker-end="url(#ta)"/>
+    <line x1="280" y1="108" x2="280" y2="120" stroke="#c8f060" stroke-width="1.5" marker-end="url(#ta)"/>
+    <line x1="280" y1="154" x2="280" y2="166" stroke="#c8f060" stroke-width="1.5" marker-end="url(#ta)"/>
+
+    <!-- Key insight -->
+    <text x="10" y="218" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Work done BEFORE call → no pending operations on return → can be optimized by compiler (Tail Call Optimization)</text>
+  </svg>
+  </div>
+  <figcaption>Tail recursion — work executes before each recursive call. Output is descending (16 → 1).</figcaption>
+</figure>
+
+<div class="callout rule">📌 Tail recursion can be converted to a loop automatically by the compiler (Tail Call Optimization / TCO). It is <strong>iteration-equivalent</strong> — no pending work accumulates on the stack.</div>
+
+<hr class="section-divider">
+
+<!-- ─── S5: HEAD RECURSION ─── -->
+<h2>🔼 Head Recursion</h2>
+
+<div class="callout tip">💡 <strong>Head recursion</strong> = the recursive call comes <em>first</em>, before any work. The function dives all the way to the base case, then does work on the way back up.</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">void CalculateHead(int n)
+{
+    if (n > 0)
+    {
+        CalculateHead(n - 1);   // recursive call FIRST ← head
+        int k = n * n;
+        Console.WriteLine(k);   // work AFTER the call returns
+    }
+}
+// Output for n=4: 1, 4, 9, 16  (ascending — reversed!)</code></pre>
+</div>
+
+<figure>
+  <div class="fig-wrap">
+  <svg viewBox="0 0 560 290" xmlns="http://www.w3.org/2000/svg" style="max-width:560px;">
+    <defs>
+      <marker id="ha" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#f060c8"/></marker>
+      <marker id="hb" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#60f0a0"/></marker>
+    </defs>
+    <!-- Call phase label -->
+    <text x="10" y="16" fill="#f060c8" font-family="Syne,sans-serif" font-size="11" font-weight="700">PHASE 1 — CALL (dive down, no work yet)</text>
+
+    <rect x="10" y="24" width="200" height="32" rx="6" fill="#1a1a1f" stroke="#f060c8" stroke-opacity=".4"/>
+    <text x="20" y="45" fill="#f060c8" font-family="DM Mono,monospace" font-size="11">CalculateHead(4)</text>
+    <text x="220" y="42" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">→ call(3) first</text>
+
+    <rect x="30" y="68" width="200" height="32" rx="6" fill="#1a1a1f" stroke="#2a2a32"/>
+    <text x="40" y="89" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">CalculateHead(3)</text>
+    <text x="240" y="82" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">→ call(2) first</text>
+
+    <rect x="50" y="112" width="200" height="32" rx="6" fill="#1a1a1f" stroke="#2a2a32"/>
+    <text x="60" y="133" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">CalculateHead(2)</text>
+    <text x="260" y="122" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">→ call(1) first</text>
+
+    <rect x="70" y="156" width="200" height="32" rx="6" fill="#1a1a1f" stroke="#2a2a32"/>
+    <text x="80" y="177" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">CalculateHead(1)</text>
+    <text x="280" y="162" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">→ call(0) first</text>
+
+    <rect x="90" y="200" width="140" height="24" rx="6" fill="rgba(96,200,240,.08)" stroke="#60c8f0" stroke-opacity=".4"/>
+    <text x="160" y="217" text-anchor="middle" fill="#60c8f0" font-family="DM Mono,monospace" font-size="10">CalculateHead(0) — STOP</text>
+
+    <!-- Down arrows (call phase) -->
+    <line x1="110" y1="56" x2="110" y2="68" stroke="#f060c8" stroke-width="1.5" marker-end="url(#ha)"/>
+    <line x1="130" y1="100" x2="130" y2="112" stroke="#f060c8" stroke-width="1.5" marker-end="url(#ha)"/>
+    <line x1="150" y1="144" x2="150" y2="156" stroke="#f060c8" stroke-width="1.5" marker-end="url(#ha)"/>
+    <line x1="170" y1="188" x2="170" y2="200" stroke="#f060c8" stroke-width="1.5" marker-end="url(#ha)"/>
+
+    <!-- Return phase label -->
+    <text x="340" y="16" fill="#60f0a0" font-family="Syne,sans-serif" font-size="11" font-weight="700">PHASE 2 — RETURN (work on way up)</text>
+
+    <!-- Return boxes (right side) -->
+    <rect x="340" y="156" width="195" height="32" rx="6" fill="#1a1a1f" stroke="#60f0a0" stroke-opacity=".3"/>
+    <text x="350" y="177" fill="#60f0a0" font-family="DM Mono,monospace" font-size="11">n=1 returns → print 1</text>
+
+    <rect x="340" y="112" width="195" height="32" rx="6" fill="#1a1a1f" stroke="#60f0a0" stroke-opacity=".3"/>
+    <text x="350" y="133" fill="#60f0a0" font-family="DM Mono,monospace" font-size="11">n=2 returns → print 4</text>
+
+    <rect x="340" y="68" width="195" height="32" rx="6" fill="#1a1a1f" stroke="#60f0a0" stroke-opacity=".3"/>
+    <text x="350" y="89" fill="#60f0a0" font-family="DM Mono,monospace" font-size="11">n=3 returns → print 9</text>
+
+    <rect x="340" y="24" width="195" height="32" rx="6" fill="#1a1a1f" stroke="#60f0a0" stroke-opacity=".3"/>
+    <text x="350" y="45" fill="#60f0a0" font-family="DM Mono,monospace" font-size="11">n=4 returns → print 16</text>
+
+    <!-- Up arrows (return phase) -->
+    <line x1="437" y1="188" x2="437" y2="156" stroke="#60f0a0" stroke-width="1.5" marker-end="url(#hb)"/>
+    <line x1="437" y1="144" x2="437" y2="112" stroke="#60f0a0" stroke-width="1.5" marker-end="url(#hb)"/>
+    <line x1="437" y1="100" x2="437" y2="68" stroke="#60f0a0" stroke-width="1.5" marker-end="url(#hb)"/>
+    <line x1="437" y1="56" x2="437" y2="24" stroke="#60f0a0" stroke-width="1.5" marker-end="url(#hb)"/>
+
+    <!-- Output label -->
+    <text x="340" y="268" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Output: 1, 4, 9, 16 (ascending — work done on return)</text>
+  </svg>
+  </div>
+  <figcaption>Head recursion — dive all the way down first (pink), then work happens on the way back up (green).</figcaption>
+</figure>
+
+<h3>Tail vs Head — Side by Side</h3>
+<table>
+  <thead><tr><th>Feature</th><th>Tail Recursion</th><th>Head Recursion</th></tr></thead>
+  <tbody>
+    <tr><td>Call position</td><td>Last statement</td><td>First statement</td></tr>
+    <tr><td>Work happens</td><td>Before the call</td><td>After the call returns</td></tr>
+    <tr><td>Output order (n=4)</td><td>16, 9, 4, 1 (descending)</td><td>1, 4, 9, 16 (ascending)</td></tr>
+    <tr><td>Stack behaviour</td><td>No pending work — can unwind</td><td>Work pending on every frame</td></tr>
+    <tr><td>Compiler optimization</td><td>✅ TCO possible</td><td>❌ Cannot be optimized away</td></tr>
+  </tbody>
+</table>
+
+<hr class="section-divider">
+
+<!-- ─── S6: TREE RECURSION ─── -->
+<h2>🌳 Tree Recursion</h2>
+
+<div class="callout tip">💡 <strong>Tree recursion</strong> = a function calls itself <em>more than once</em> per invocation. Each call spawns multiple children → the call structure fans out like a tree.</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">void Calculate(int n)
+{
+    if (n > 0)
+    {
+        Calculate(n - 1);        // first recursive call
+        int k = n * n;
+        Console.WriteLine(k);
+        Calculate(n - 1);        // second recursive call
+    }
+}
+// Calculate(3) → output: 1, 4, 1, 9, 1, 4, 1</code></pre>
+</div>
+
+<figure>
+  <div class="fig-wrap">
+  <svg viewBox="0 0 580 280" xmlns="http://www.w3.org/2000/svg" style="max-width:580px;">
+    <defs>
+      <marker id="tree-a" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3z" fill="#c8f060"/></marker>
+    </defs>
+    <!-- Level 0 -->
+    <rect x="240" y="10" width="100" height="30" rx="6" fill="#1a1a1f" stroke="#c8f060" stroke-opacity=".6"/>
+    <text x="290" y="30" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="11">cal(3)</text>
+
+    <!-- Level 1 -->
+    <rect x="80" y="72" width="90" height="30" rx="6" fill="#1a1a1f" stroke="#2a2a32"/>
+    <text x="125" y="92" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">cal(2)</text>
+    <rect x="220" y="72" width="60" height="30" rx="6" fill="rgba(200,240,96,.08)" stroke="#c8f060" stroke-opacity=".3"/>
+    <text x="250" y="92" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="12">9</text>
+    <rect x="410" y="72" width="90" height="30" rx="6" fill="#1a1a1f" stroke="#2a2a32"/>
+    <text x="455" y="92" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">cal(2)</text>
+
+    <!-- Level 2 -->
+    <rect x="10" y="140" width="75" height="28" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
+    <text x="47" y="159" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="10">cal(1)</text>
+    <rect x="95" y="140" width="45" height="28" rx="5" fill="rgba(200,240,96,.08)" stroke="#c8f060" stroke-opacity=".3"/>
+    <text x="117" y="159" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="12">4</text>
+    <rect x="150" y="140" width="75" height="28" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
+    <text x="187" y="159" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="10">cal(1)</text>
+
+    <rect x="350" y="140" width="75" height="28" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
+    <text x="387" y="159" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="10">cal(1)</text>
+    <rect x="435" y="140" width="45" height="28" rx="5" fill="rgba(200,240,96,.08)" stroke="#c8f060" stroke-opacity=".3"/>
+    <text x="457" y="159" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="12">4</text>
+    <rect x="490" y="140" width="75" height="28" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
+    <text x="527" y="159" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="10">cal(1)</text>
+
+    <!-- Level 3 — base cases + print 1 -->
+    <!-- Under first cal(1) -->
+    <rect x="0" y="208" width="30" height="22" rx="4" fill="rgba(96,200,240,.07)" stroke="#60c8f0" stroke-opacity=".3"/>
+    <text x="15" y="224" text-anchor="middle" fill="#60c8f0" font-family="DM Mono,monospace" font-size="9">c0</text>
+    <rect x="35" y="208" width="24" height="22" rx="4" fill="rgba(200,240,96,.08)" stroke="#c8f060" stroke-opacity=".3"/>
+    <text x="47" y="224" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="12">1</text>
+    <rect x="64" y="208" width="30" height="22" rx="4" fill="rgba(96,200,240,.07)" stroke="#60c8f0" stroke-opacity=".3"/>
+    <text x="79" y="224" text-anchor="middle" fill="#60c8f0" font-family="DM Mono,monospace" font-size="9">c0</text>
+    <!-- Under second cal(1) -->
+    <rect x="140" y="208" width="30" height="22" rx="4" fill="rgba(96,200,240,.07)" stroke="#60c8f0" stroke-opacity=".3"/>
+    <text x="155" y="224" text-anchor="middle" fill="#60c8f0" font-family="DM Mono,monospace" font-size="9">c0</text>
+    <rect x="175" y="208" width="24" height="22" rx="4" fill="rgba(200,240,96,.08)" stroke="#c8f060" stroke-opacity=".3"/>
+    <text x="187" y="224" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="12">1</text>
+    <rect x="204" y="208" width="30" height="22" rx="4" fill="rgba(96,200,240,.07)" stroke="#60c8f0" stroke-opacity=".3"/>
+    <text x="219" y="224" text-anchor="middle" fill="#60c8f0" font-family="DM Mono,monospace" font-size="9">c0</text>
+    <!-- Under third cal(1) -->
+    <rect x="340" y="208" width="30" height="22" rx="4" fill="rgba(96,200,240,.07)" stroke="#60c8f0" stroke-opacity=".3"/>
+    <text x="355" y="224" text-anchor="middle" fill="#60c8f0" font-family="DM Mono,monospace" font-size="9">c0</text>
+    <rect x="375" y="208" width="24" height="22" rx="4" fill="rgba(200,240,96,.08)" stroke="#c8f060" stroke-opacity=".3"/>
+    <text x="387" y="224" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="12">1</text>
+    <rect x="404" y="208" width="30" height="22" rx="4" fill="rgba(96,200,240,.07)" stroke="#60c8f0" stroke-opacity=".3"/>
+    <text x="419" y="224" text-anchor="middle" fill="#60c8f0" font-family="DM Mono,monospace" font-size="9">c0</text>
+    <!-- Under fourth cal(1) -->
+    <rect x="480" y="208" width="30" height="22" rx="4" fill="rgba(96,200,240,.07)" stroke="#60c8f0" stroke-opacity=".3"/>
+    <text x="495" y="224" text-anchor="middle" fill="#60c8f0" font-family="DM Mono,monospace" font-size="9">c0</text>
+    <rect x="515" y="208" width="24" height="22" rx="4" fill="rgba(200,240,96,.08)" stroke="#c8f060" stroke-opacity=".3"/>
+    <text x="527" y="224" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="12">1</text>
+    <rect x="544" y="208" width="30" height="22" rx="4" fill="rgba(96,200,240,.07)" stroke="#60c8f0" stroke-opacity=".3"/>
+    <text x="559" y="224" text-anchor="middle" fill="#60c8f0" font-family="DM Mono,monospace" font-size="9">c0</text>
+
+    <!-- Edges level 0→1 -->
+    <line x1="265" y1="40" x2="155" y2="72" stroke="#c8f060" stroke-opacity=".5" stroke-width="1.5" marker-end="url(#tree-a)"/>
+    <line x1="290" y1="40" x2="250" y2="72" stroke="#c8f060" stroke-opacity=".3" stroke-width="1"/>
+    <line x1="315" y1="40" x2="430" y2="72" stroke="#c8f060" stroke-opacity=".5" stroke-width="1.5" marker-end="url(#tree-a)"/>
+
+    <!-- Edges level 1→2 (left cal(2)) -->
+    <line x1="100" y1="102" x2="55" y2="140" stroke="#2a2a32" stroke-width="1.5" marker-end="url(#tree-a)"/>
+    <line x1="125" y1="102" x2="117" y2="140" stroke="#2a2a32" stroke-width="1"/>
+    <line x1="148" y1="102" x2="177" y2="140" stroke="#2a2a32" stroke-width="1.5" marker-end="url(#tree-a)"/>
+
+    <!-- Edges level 1→2 (right cal(2)) -->
+    <line x1="430" y1="102" x2="387" y2="140" stroke="#2a2a32" stroke-width="1.5" marker-end="url(#tree-a)"/>
+    <line x1="455" y1="102" x2="457" y2="140" stroke="#2a2a32" stroke-width="1"/>
+    <line x1="480" y1="102" x2="517" y2="140" stroke="#2a2a32" stroke-width="1.5" marker-end="url(#tree-a)"/>
+
+    <!-- Edges level 2→3 (cal(1) left) -->
+    <line x1="35" y1="168" x2="22" y2="208" stroke="#2a2a32" stroke-width="1"/>
+    <line x1="47" y1="168" x2="47" y2="208" stroke="#2a2a32" stroke-width="1"/>
+    <line x1="60" y1="168" x2="72" y2="208" stroke="#2a2a32" stroke-width="1"/>
+    <!-- cal(1) second -->
+    <line x1="168" y1="168" x2="158" y2="208" stroke="#2a2a32" stroke-width="1"/>
+    <line x1="187" y1="168" x2="187" y2="208" stroke="#2a2a32" stroke-width="1"/>
+    <line x1="205" y1="168" x2="212" y2="208" stroke="#2a2a32" stroke-width="1"/>
+    <!-- cal(1) third -->
+    <line x1="370" y1="168" x2="358" y2="208" stroke="#2a2a32" stroke-width="1"/>
+    <line x1="387" y1="168" x2="387" y2="208" stroke="#2a2a32" stroke-width="1"/>
+    <line x1="402" y1="168" x2="412" y2="208" stroke="#2a2a32" stroke-width="1"/>
+    <!-- cal(1) fourth -->
+    <line x1="510" y1="168" x2="498" y2="208" stroke="#2a2a32" stroke-width="1"/>
+    <line x1="527" y1="168" x2="527" y2="208" stroke="#2a2a32" stroke-width="1"/>
+    <line x1="543" y1="168" x2="552" y2="208" stroke="#2a2a32" stroke-width="1"/>
+
+    <!-- Legend -->
+    <rect x="5" y="248" width="14" height="10" rx="2" fill="rgba(200,240,96,.15)" stroke="#c8f060" stroke-opacity=".4"/>
+    <text x="24" y="258" fill="#6b6878" font-family="DM Mono,monospace" font-size="9">= printed value</text>
+    <rect x="140" y="248" width="14" height="10" rx="2" fill="rgba(96,200,240,.07)" stroke="#60c8f0" stroke-opacity=".4"/>
+    <text x="159" y="258" fill="#6b6878" font-family="DM Mono,monospace" font-size="9">c0 = base case (n=0)</text>
+    <text x="330" y="258" fill="#6b6878" font-family="DM Mono,monospace" font-size="9">Output order: 1, 4, 1, 9, 1, 4, 1 (in-order traversal)</text>
+    <text x="0" y="272" fill="#6b6878" font-family="DM Mono,monospace" font-size="9">Total nodes = 2⁴-1 = 15   |   Levels = n+1 = 4</text>
+  </svg>
+  </div>
+  <figcaption>Tree recursion call tree for Calculate(3) — each node spawns 2 children. Total calls = 2⁴ - 1 = 15.</figcaption>
+</figure>
+
+<h3>Time Complexity of Tree Recursion</h3>
+<div class="math-block">
+  <span class="label">Recurrence (2 calls per level)</span>
+  <div class="step"><span class="step-num">—</span><span class="eq">T(n) = 2·T(n-1) + 1,   T(0) = 1</span></div>
+  <hr class="sep">
+  <span class="label">Expansion</span>
+  <div class="step"><span class="step-num">1</span><span class="eq">T(n) = 2·T(n-1) + 1</span></div>
+  <div class="step"><span class="step-num">2</span><span class="eq">T(n) = 2·[2·T(n-2)+1] + 1 = 2²·T(n-2) + 2 + 1</span></div>
+  <div class="step"><span class="step-num">3</span><span class="eq">T(n) = 2³·T(n-3) + 2² + 2 + 1</span></div>
+  <div class="step"><span class="step-num">k</span><span class="eq">T(n) = 2ᵏ·T(n-k) + (2ᵏ - 1)</span></div>
+  <hr class="sep">
+  <span class="label">Set n - k = 0 → k = n</span>
+  <div class="step"><span class="step-num">—</span><span class="eq">T(n) = 2ⁿ·T(0) + (2ⁿ - 1) = 2ⁿ + 2ⁿ - 1 = 2ⁿ⁺¹ - 1</span></div>
+  <div class="step"><span class="step-num">—</span><span class="result">T(n) = O(2ⁿ)</span></div>
+</div>
+
+<table>
+  <thead><tr><th>Level</th><th>Nodes (calls)</th><th>Formula</th></tr></thead>
+  <tbody>
+    <tr><td>0</td><td>1</td><td>2⁰</td></tr>
+    <tr><td>1</td><td>2</td><td>2¹</td></tr>
+    <tr><td>2</td><td>4</td><td>2²</td></tr>
+    <tr><td>3 (n=3)</td><td>8</td><td>2³</td></tr>
+    <tr><td><strong>Total (n=3)</strong></td><td><strong>15</strong></td><td>2⁴ - 1 = 15</td></tr>
+  </tbody>
+</table>
+
+<div class="callout warning">⚠️ Tree recursion is <strong>O(2ⁿ)</strong> — exponential. Avoid for large n without memoization. Classic example: naive Fibonacci. With memoization / DP, tree recursion collapses back to O(n).</div>
+
+<hr class="section-divider">
+
+<!-- ─── S7: INDIRECT RECURSION ─── -->
+<h2>🔀 Indirect Recursion</h2>
+
+<div class="callout tip">💡 <strong>Indirect recursion</strong> = functions call each other in a circle. A calls B, B calls A, and so on. No function calls itself directly — but the chain loops back.</div>
+
+<figure>
+  <div class="fig-wrap">
+  <svg viewBox="0 0 420 180" xmlns="http://www.w3.org/2000/svg" style="max-width:420px;">
+    <defs>
+      <marker id="ia" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#f060c8"/></marker>
+      <marker id="ib" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#60c8f0"/></marker>
+    </defs>
+    <!-- Function A -->
+    <rect x="30" y="50" width="150" height="80" rx="8" fill="#1a1a1f" stroke="#f060c8" stroke-opacity=".5"/>
+    <text x="105" y="76" text-anchor="middle" fill="#f060c8" font-family="Syne,sans-serif" font-size="12" font-weight="700">calculateA(n)</text>
+    <text x="105" y="96" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">if (n > 0)</text>
+    <text x="105" y="113" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">→ calls calculateB(n-1)</text>
+    <!-- Function B -->
+    <rect x="240" y="50" width="150" height="80" rx="8" fill="#1a1a1f" stroke="#60c8f0" stroke-opacity=".5"/>
+    <text x="315" y="76" text-anchor="middle" fill="#60c8f0" font-family="Syne,sans-serif" font-size="12" font-weight="700">calculateB(n)</text>
+    <text x="315" y="96" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">if (n > 1)</text>
+    <text x="315" y="113" text-anchor="middle" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">→ calls calculateA(n-1)</text>
+    <!-- A → B arrow (top) -->
+    <path d="M 180 68 Q 210 30 240 68" stroke="#f060c8" stroke-width="1.8" fill="none" stroke-opacity=".8" marker-end="url(#ia)"/>
+    <text x="210" y="24" text-anchor="middle" fill="#f060c8" font-family="DM Mono,monospace" font-size="10">A calls B</text>
+    <!-- B → A arrow (bottom) -->
+    <path d="M 240 112 Q 210 152 180 112" stroke="#60c8f0" stroke-width="1.8" fill="none" stroke-opacity=".8" marker-end="url(#ib)"/>
+    <text x="210" y="168" text-anchor="middle" fill="#60c8f0" font-family="DM Mono,monospace" font-size="10">B calls A</text>
+    <!-- Chain label -->
+    <text x="210" y="12" text-anchor="middle" fill="#6b6878" font-family="Syne,sans-serif" font-size="10" font-weight="700">CIRCULAR CALL CHAIN</text>
+  </svg>
+  </div>
+  <figcaption>Indirect recursion — A and B call each other. Base conditions in both prevent infinite looping.</figcaption>
+</figure>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">void CalculateA(int n)
+{
+    if (n > 0)
+    {
+        Console.WriteLine("A(" + n + ")");
+        CalculateB(n - 1);     // A calls B
+    }
+}
+
+void CalculateB(int n)
+{
+    if (n > 1)
+    {
+        Console.WriteLine("B(" + n + ")");
+        CalculateA(n - 1);     // B calls A
+    }
+}
+// CalculateA(5) → A(5) B(4) A(3) B(2) A(1)</code></pre>
+</div>
+
+<div class="callout rule">📌 Base conditions are <strong>mandatory in every participating function</strong> — not just one. Missing a base condition in either function causes infinite recursion and stack overflow.</div>
+
+<hr class="section-divider">
+
+<!-- ─── S8: SUM OF N NUMBERS ─── -->
+<h2>Σ Sum of N Natural Numbers — Three Approaches</h2>
+
+<div class="callout tip">💡 Problem: compute 1 + 2 + 3 + … + n. Three solutions with very different complexity. Knowing all three shows when to prefer each.</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">// 1. Direct Formula — O(1) time, O(1) space
+int SumFormula(int n) => n * (n + 1) / 2;
+
+// 2. Iterative — O(n) time, O(1) space
+int SumIterative(int n)
+{
+    int total = 0;
+    for (int i = 1; i <= n; i++) total += i;
+    return total;
+}
+
+// 3. Recursive (Head Recursion) — O(n) time, O(n) space
+int SumRecursive(int n)
+{
+    if (n == 0) return 0;         // base case
+    return SumRecursive(n - 1) + n; // head: recurse first, add on return
+}
+// SumRecursive(5) → 15</code></pre>
+</div>
+
+<h3>Recurrence for SumRecursive</h3>
+<div class="math-block">
+  <span class="label">Recurrence</span>
+  <div class="step"><span class="step-num">—</span><span class="eq">sum(n) = sum(n-1) + n,   sum(0) = 0</span></div>
+  <div class="step"><span class="step-num">—</span><span class="note">This is the same as Example 2 above → T(n) = O(n)</span></div>
+  <div class="step"><span class="step-num">—</span><span class="result">T(n) = O(n)</span></div>
+</div>
+
+<table>
+  <thead><tr><th>Method</th><th>Time</th><th>Space</th><th>When to Use</th></tr></thead>
+  <tbody>
+    <tr><td>Formula n(n+1)/2</td><td>O(1)</td><td>O(1)</td><td>Always — if formula exists</td></tr>
+    <tr><td>Iterative loop</td><td>O(n)</td><td>O(1)</td><td>When no formula; prefer over recursion</td></tr>
+    <tr><td>Recursive</td><td>O(n)</td><td>O(n) stack</td><td>Teaching recursion; not for production sum</td></tr>
+  </tbody>
+</table>
+
+<hr class="section-divider">
+
+<!-- ─── S9: FACTORIAL ─── -->
+<h2>! Factorial — Recursive and Iterative</h2>
+
+<div class="callout tip">💡 n! = 1 × 2 × 3 × … × n. Unlike sum, there's no O(1) formula, so iterative and recursive are both O(n).</div>
+
+<h3>Mathematical Definition</h3>
+<div class="math-block">
+  <span class="label">Definition</span>
+  <div class="step"><span class="step-num">—</span><span class="eq">0! = 1</span><span style="margin-left:1rem;" class="note">(special base case)</span></div>
+  <div class="step"><span class="step-num">—</span><span class="eq">n! = (n-1)! × n &nbsp;&nbsp; for n > 0</span></div>
+  <div class="step"><span class="step-num">—</span><span class="note">4! = 3! × 4 = 2! × 3 × 4 = 1 × 2 × 3 × 4 = 24</span></div>
+</div>
+
+<div class="code-compare">
+  <div class="code-panel right">
+    <div class="panel-header">🔄 Iterative — O(n) time, O(1) space</div>
+    <pre><code class="language-csharp">int FactIterative(int n)
+{
+  int result = 1;
+  for (int i = 1; i <= n; i++)
+    result *= i;
+  return result;
+}
+// FactIterative(5) → 120</code></pre>
+  </div>
+  <div class="code-panel right">
+    <div class="panel-header">🔁 Recursive — O(n) time, O(n) space</div>
+    <pre><code class="language-csharp">int FactRecursive(int n)
+{
+  if (n == 0) return 1;  // base
+  return FactRecursive(n - 1) * n;
+}
+// FactRecursive(5) → 120</code></pre>
+  </div>
+</div>
+
+<figure>
+  <div class="fig-wrap">
+  <svg viewBox="0 0 520 210" xmlns="http://www.w3.org/2000/svg" style="max-width:520px;">
+    <defs>
+      <marker id="fa" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#f060c8"/></marker>
+      <marker id="fb" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#60f0a0"/></marker>
+    </defs>
+    <text x="10" y="16" fill="#f060c8" font-family="Syne,sans-serif" font-size="11" font-weight="700">CALL PHASE (dive down)</text>
+    <text x="320" y="16" fill="#60f0a0" font-family="Syne,sans-serif" font-size="11" font-weight="700">RETURN PHASE (multiply up)</text>
+
+    <!-- Call boxes -->
+    <rect x="10" y="24" width="160" height="28" rx="5" fill="#1a1a1f" stroke="#f060c8" stroke-opacity=".4"/>
+    <text x="90" y="43" text-anchor="middle" fill="#f060c8" font-family="DM Mono,monospace" font-size="11">Fact(5)</text>
+    <rect x="25" y="64" width="160" height="28" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
+    <text x="105" y="83" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">Fact(4)</text>
+    <rect x="40" y="104" width="160" height="28" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
+    <text x="120" y="123" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">Fact(3)</text>
+    <rect x="55" y="144" width="160" height="28" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
+    <text x="135" y="163" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">Fact(2)</text>
+    <rect x="70" y="184" width="160" height="24" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
+    <text x="150" y="200" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">Fact(1) → Fact(0)=1</text>
+
+    <!-- Down arrows -->
+    <line x1="90" y1="52" x2="90" y2="64" stroke="#f060c8" stroke-width="1.5" marker-end="url(#fa)"/>
+    <line x1="105" y1="92" x2="105" y2="104" stroke="#f060c8" stroke-width="1.5" marker-end="url(#fa)"/>
+    <line x1="120" y1="132" x2="120" y2="144" stroke="#f060c8" stroke-width="1.5" marker-end="url(#fa)"/>
+    <line x1="135" y1="172" x2="135" y2="184" stroke="#f060c8" stroke-width="1.5" marker-end="url(#fa)"/>
+
+    <!-- Return boxes -->
+    <rect x="340" y="184" width="165" height="24" rx="5" fill="#1a1a1f" stroke="#60f0a0" stroke-opacity=".3"/>
+    <text x="422" y="200" text-anchor="middle" fill="#60f0a0" font-family="DM Mono,monospace" font-size="11">return 1×1 = 1</text>
+    <rect x="340" y="144" width="165" height="28" rx="5" fill="#1a1a1f" stroke="#60f0a0" stroke-opacity=".3"/>
+    <text x="422" y="163" text-anchor="middle" fill="#60f0a0" font-family="DM Mono,monospace" font-size="11">return 1×2 = 2</text>
+    <rect x="340" y="104" width="165" height="28" rx="5" fill="#1a1a1f" stroke="#60f0a0" stroke-opacity=".3"/>
+    <text x="422" y="123" text-anchor="middle" fill="#60f0a0" font-family="DM Mono,monospace" font-size="11">return 2×3 = 6</text>
+    <rect x="340" y="64" width="165" height="28" rx="5" fill="#1a1a1f" stroke="#60f0a0" stroke-opacity=".3"/>
+    <text x="422" y="83" text-anchor="middle" fill="#60f0a0" font-family="DM Mono,monospace" font-size="11">return 6×4 = 24</text>
+    <rect x="340" y="24" width="165" height="28" rx="5" fill="#1a1a1f" stroke="#60f0a0" stroke-opacity=".5"/>
+    <text x="422" y="43" text-anchor="middle" fill="#60f0a0" font-family="DM Mono,monospace" font-size="11">return 24×5 = 120 ✓</text>
+
+    <!-- Up arrows -->
+    <line x1="422" y1="184" x2="422" y2="172" stroke="#60f0a0" stroke-width="1.5" marker-end="url(#fb)"/>
+    <line x1="422" y1="144" x2="422" y2="132" stroke="#60f0a0" stroke-width="1.5" marker-end="url(#fb)"/>
+    <line x1="422" y1="104" x2="422" y2="92" stroke="#60f0a0" stroke-width="1.5" marker-end="url(#fb)"/>
+    <line x1="422" y1="64" x2="422" y2="52" stroke="#60f0a0" stroke-width="1.5" marker-end="url(#fb)"/>
+  </svg>
+  </div>
+  <figcaption>Factorial(5) — dive down (call phase) then multiply on the way back up (return phase). Final result = 120.</figcaption>
+</figure>
+
+<hr class="section-divider">
+
+<!-- ─── QUICK REFERENCE ─── -->
+<h2>⚡ Quick Reference</h2>
+
+<h3>Recursion Types at a Glance</h3>
+<table>
+  <thead><tr><th>Type</th><th>Call Position</th><th>Output Order (n=4)</th><th>Complexity</th><th>Key Trait</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Tail</strong></td><td>Last statement</td><td>16, 9, 4, 1 (descending)</td><td>O(n) / O(n)</td><td>TCO-optimizable; like iteration</td></tr>
+    <tr><td><strong>Head</strong></td><td>First statement</td><td>1, 4, 9, 16 (ascending)</td><td>O(n) / O(n)</td><td>Work on return; stack-dependent</td></tr>
+    <tr><td><strong>Tree</strong></td><td>Multiple calls</td><td>1,4,1,9,1,4,1</td><td>O(2ⁿ) / O(n)</td><td>Exponential — avoid without DP</td></tr>
+    <tr><td><strong>Indirect</strong></td><td>Calls another fn</td><td>Depends on logic</td><td>Depends</td><td>Circular call chain; base in all fns</td></tr>
+  </tbody>
+</table>
+
+<h3>Key Terms</h3>
+<table>
+  <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+  <tbody>
+    <tr><td>Base case</td><td>The stopping condition — a return without a recursive call</td></tr>
+    <tr><td>Recurrence relation</td><td>Equation expressing T(n) in terms of T(n-k); used to find time complexity</td></tr>
+    <tr><td>Successive substitution</td><td>Method of expanding T(n) step-by-step until base case is reached</td></tr>
+    <tr><td>Tail Call Optimization (TCO)</td><td>Compiler reuses current stack frame for tail-recursive calls — O(1) stack</td></tr>
+    <tr><td>Call stack</td><td>Memory region where function frames are pushed (on call) and popped (on return)</td></tr>
+    <tr><td>Stack overflow</td><td>Too many nested calls exceed stack memory — caused by missing/wrong base case</td></tr>
+  </tbody>
+</table>
+
+<h3>Recurrence Patterns → Complexity</h3>
+<table>
+  <thead><tr><th>Recurrence</th><th>Solution</th><th>Complexity</th><th>Example</th></tr></thead>
+  <tbody>
+    <tr><td>T(n) = T(n-1) + 1</td><td>T(n) = n + 1</td><td>O(n)</td><td>Linear recursion, sum</td></tr>
+    <tr><td>T(n) = T(n-1) + n</td><td>T(n) = n(n+1)/2</td><td>O(n²)</td><td>Insertion sort inner loop</td></tr>
+    <tr><td>T(n) = 2·T(n-1) + 1</td><td>T(n) = 2ⁿ⁺¹ - 1</td><td>O(2ⁿ)</td><td>Tree recursion, Fibonacci</td></tr>
+    <tr><td>T(n) = T(n/2) + 1</td><td>T(n) = log₂n + 1</td><td>O(log n)</td><td>Binary search</td></tr>
+  </tbody>
+</table>
+
+</div>
+</main>
+
+<!-- ═══════════════════════════ RECALL ═══════════════════════════ -->
+<main id="tab-recall" class="tab hidden">
+<div style="max-width:800px;margin:0 auto;padding:2rem;">
+
+  <div class="recall-topbar">
+    <div class="progress-counter"><span id="answered-count">0</span> of <span id="total-count">26</span> answered</div>
+    <div class="bulk-btns">
+      <button class="bulk-btn" onclick="revealAll()">Reveal All</button>
+      <button class="bulk-btn" onclick="hideAll()">Hide All</button>
+    </div>
+  </div>
+
+  <!-- Q01 -->
+  <div class="question-card" id="q1">
+    <div class="question-header">
+      <span class="q-number">Q01</span><span class="q-type def">DEF</span>
+      <span class="q-text">What are the two <strong>required components</strong> every recursive function must have?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q1')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q1-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ul>
+          <li><strong>Base condition</strong> — the stopping rule. When this is true, the function returns without calling itself. Prevents infinite recursion.</li>
+          <li><strong>Self-call with reduced input</strong> — the function calls itself with a smaller version of the problem, converging toward the base case.</li>
+        </ul>
+      </div>
+      <div class="answer-example"><span class="example-label">Missing base case:</span> leads to infinite recursion → stack overflow crash.</div>
+    </div>
+  </div>
+
+  <!-- Q02 -->
+  <div class="question-card" id="q2">
+    <div class="question-header">
+      <span class="q-number">Q02</span><span class="q-type compare">COMPARE</span>
+      <span class="q-text">Convert this iterative method to recursive. Identify what changes:<br><code>while (n &gt; 0) { print(n*n); n--; }</code></span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q2')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q2-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <div class="code-block" style="margin:.5rem 0;">
+          <div class="code-header"><span class="code-lang">csharp</span></div>
+          <pre><code class="language-csharp">void Calc(int n)
+{
+    if (n > 0)          // while → if (same condition)
+    {
+        Console.WriteLine(n * n);
+        Calc(n - 1);    // n-- → recursive call with n-1
+    }
+}</code></pre>
+        </div>
+        <strong>Three changes:</strong>
+        <ul>
+          <li><code>while</code> → <code>if</code> (base condition)</li>
+          <li><code>n--</code> → recursive call <code>Calc(n-1)</code></li>
+          <li>Loop body → function body</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q03 -->
+  <div class="question-card" id="q3">
+    <div class="question-header">
+      <span class="q-number">Q03</span><span class="q-type why">WHY</span>
+      <span class="q-text">Recursion and iteration produce the same output. Why does recursion use <strong>more memory</strong>?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q3')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q3-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Each recursive call pushes a new <strong>stack frame</strong> onto the call stack. The frame holds local variables, parameters, and the return address. For n calls, you have n frames simultaneously in memory — <strong>O(n) stack space</strong>. Iteration uses a fixed number of variables — <strong>O(1) space</strong>.</div>
+      <div class="answer-example"><span class="example-label">Risk:</span> Deep recursion (large n) can exhaust the call stack → StackOverflowException.</div>
+    </div>
+  </div>
+
+  <!-- Q04 -->
+  <div class="question-card" id="q4">
+    <div class="question-header">
+      <span class="q-number">Q04</span><span class="q-type apply">APPLY</span>
+      <span class="q-text">Write the recurrence relation for this function and find its Big-O:<br><code>void F(int n) { if(n&gt;0) { print(n); F(n-1); } }</code></span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q4')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q4-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <strong>Recurrence:</strong><br>
+        <div class="math-block" style="margin:.5rem 0;">
+          <div class="step"><span class="step-num">—</span><span class="eq">T(n) = T(n-1) + 1,   T(0) = 1</span></div>
+          <div class="step"><span class="step-num">—</span><span class="eq">T(n) = T(n-k) + k → at k=n: T(0)+n = 1+n</span></div>
+          <div class="step"><span class="step-num">—</span><span class="result">T(n) = O(n)</span></div>
+        </div>
+        One print + one comparison = constant work per call. n+1 calls total.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q05 -->
+  <div class="question-card" id="q5">
+    <div class="question-header">
+      <span class="q-number">Q05</span><span class="q-type def">DEF</span>
+      <span class="q-text">What is <strong>tail recursion</strong>? How does it differ from general recursion?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q5')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q5-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Tail recursion is when the <strong>recursive call is the last statement</strong> in the function — no computation occurs after the call returns. The function completes all its work before delegating to itself. In general recursion, there may be pending work after the recursive call returns (e.g., head recursion multiplies after returning).</div>
+      <div class="answer-example"><span class="example-label">Key benefit:</span> Tail calls can be optimized by the compiler (TCO) — the current stack frame is reused instead of a new one being pushed, making it O(1) space like iteration.</div>
+    </div>
+  </div>
+
+  <!-- Q06 -->
+  <div class="question-card" id="q6">
+    <div class="question-header">
+      <span class="q-number">Q06</span><span class="q-type gotcha">GOTCHA</span>
+      <span class="q-text"><code>CalculateTail(4)</code> outputs <strong>16, 9, 4, 1</strong>. If you move the recursive call before the print, what does the output become and why?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q6')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q6-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Output becomes <strong>1, 4, 9, 16</strong> (ascending). Moving the call before the print converts it to <strong>head recursion</strong>. The function dives all the way to n=1 first, printing nothing. Then on the way back up, each returning frame executes its print — so the smallest value (1) prints first.</div>
+      <div class="answer-example"><span class="example-label">Rule:</span> Tail = work before call = top-down order. Head = work after call = bottom-up order.</div>
+    </div>
+  </div>
+
+  <!-- Q07 -->
+  <div class="question-card" id="q7">
+    <div class="question-header">
+      <span class="q-number">Q07</span><span class="q-type draw">DRAW</span>
+      <span class="q-text">Draw the call stack for <code>CalculateHead(3)</code> — show both the descent (call phase) and the ascent (return phase) with what gets printed at each step.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q7')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q7-answer">
+      <div class="answer-label">Answer</div>
+      <svg viewBox="0 0 480 220" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="ra" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3z" fill="#f060c8"/></marker>
+          <marker id="rb" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3z" fill="#60f0a0"/></marker>
+        </defs>
+        <text x="10" y="14" fill="#f060c8" font-family="Syne,sans-serif" font-size="10" font-weight="700">CALL PHASE (no work yet)</text>
+        <rect x="10" y="20" width="150" height="26" rx="5" fill="#1a1a1f" stroke="#f060c8" stroke-opacity=".4"/>
+        <text x="85" y="38" text-anchor="middle" fill="#f060c8" font-family="DM Mono,monospace" font-size="11">CalculateHead(3)</text>
+        <rect x="25" y="58" width="150" height="26" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="100" y="76" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">CalculateHead(2)</text>
+        <rect x="40" y="96" width="150" height="26" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="115" y="114" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">CalculateHead(1)</text>
+        <rect x="55" y="134" width="130" height="22" rx="5" fill="rgba(96,200,240,.07)" stroke="#60c8f0" stroke-opacity=".4"/>
+        <text x="120" y="150" text-anchor="middle" fill="#60c8f0" font-family="DM Mono,monospace" font-size="10">CalculateHead(0) stop</text>
+        <line x1="85" y1="46" x2="85" y2="58" stroke="#f060c8" stroke-width="1.5" marker-end="url(#ra)"/>
+        <line x1="100" y1="84" x2="100" y2="96" stroke="#f060c8" stroke-width="1.5" marker-end="url(#ra)"/>
+        <line x1="115" y1="122" x2="115" y2="134" stroke="#f060c8" stroke-width="1.5" marker-end="url(#ra)"/>
+        <text x="250" y="14" fill="#60f0a0" font-family="Syne,sans-serif" font-size="10" font-weight="700">RETURN PHASE (work now)</text>
+        <rect x="250" y="134" width="210" height="22" rx="5" fill="#1a1a1f" stroke="#60f0a0" stroke-opacity=".3"/>
+        <text x="355" y="150" text-anchor="middle" fill="#60f0a0" font-family="DM Mono,monospace" font-size="11">n=1 → k=1 → print 1</text>
+        <rect x="250" y="96" width="210" height="26" rx="5" fill="#1a1a1f" stroke="#60f0a0" stroke-opacity=".3"/>
+        <text x="355" y="114" text-anchor="middle" fill="#60f0a0" font-family="DM Mono,monospace" font-size="11">n=2 → k=4 → print 4</text>
+        <rect x="250" y="58" width="210" height="26" rx="5" fill="#1a1a1f" stroke="#60f0a0" stroke-opacity=".3"/>
+        <text x="355" y="76" text-anchor="middle" fill="#60f0a0" font-family="DM Mono,monospace" font-size="11">n=3 → k=9 → print 9</text>
+        <line x1="355" y1="134" x2="355" y2="122" stroke="#60f0a0" stroke-width="1.5" marker-end="url(#rb)"/>
+        <line x1="355" y1="96" x2="355" y2="84" stroke="#60f0a0" stroke-width="1.5" marker-end="url(#rb)"/>
+        <text x="10" y="196" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Output: 1, 4, 9 (ascending — printed on return)</text>
+      </svg>
+      <div class="answer-content" style="margin-top:.5rem;">Check: call phase goes to n=0 (no print). Return phase prints n=1 → n=2 → n=3 in that order.</div>
+    </div>
+  </div>
+
+  <!-- Q08 -->
+  <div class="question-card" id="q8">
+    <div class="question-header">
+      <span class="q-number">Q08</span><span class="q-type apply">APPLY</span>
+      <span class="q-text">Solve this recurrence using successive substitution:<br><code>T(n) = T(n-1) + n,  T(1) = 1</code></span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q8')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q8-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <div class="math-block" style="margin:.4rem 0;">
+          <div class="step"><span class="step-num">1</span><span class="eq">T(n) = T(n-1) + n</span></div>
+          <div class="step"><span class="step-num">2</span><span class="eq">T(n) = T(n-2) + (n-1) + n</span></div>
+          <div class="step"><span class="step-num">3</span><span class="eq">T(n) = T(n-3) + (n-2) + (n-1) + n</span></div>
+          <div class="step"><span class="step-num">k</span><span class="eq">T(n) = T(n-k) + Σᵢ from (n-k+1) to n</span></div>
+          <div class="step"><span class="step-num">—</span><span class="note">Set n-k=1 → k=n-1</span></div>
+          <div class="step"><span class="step-num">—</span><span class="eq">T(n) = T(1) + 2+3+…+n = 1 + n(n+1)/2 - 1 = n(n+1)/2</span></div>
+          <div class="step"><span class="step-num">—</span><span class="result">T(n) = O(n²)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q09 -->
+  <div class="question-card" id="q9">
+    <div class="question-header">
+      <span class="q-number">Q09</span><span class="q-type def">DEF</span>
+      <span class="q-text">What is <strong>tree recursion</strong> and why is it exponential?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q9')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q9-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Tree recursion is when a function calls itself <strong>more than once</strong> per invocation. Each call spawns multiple children, which each spawn more children — the call count doubles (or multiplies) at every level. With 2 calls per level and n levels: total calls = 2⁰ + 2¹ + 2² + … + 2ⁿ = 2ⁿ⁺¹ - 1 → <strong>O(2ⁿ)</strong>.</div>
+      <div class="answer-example"><span class="example-label">Classic example:</span> Fibonacci(n) = Fibonacci(n-1) + Fibonacci(n-2) — two calls per invocation → O(2ⁿ) without memoization.</div>
+    </div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="question-card" id="q10">
+    <div class="question-header">
+      <span class="q-number">Q10</span><span class="q-type apply">APPLY</span>
+      <span class="q-text">Solve the tree recursion recurrence:<br><code>T(n) = 2·T(n-1) + 1,  T(0) = 1</code></span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q10')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q10-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <div class="math-block" style="margin:.4rem 0;">
+          <div class="step"><span class="step-num">1</span><span class="eq">T(n) = 2·T(n-1) + 1</span></div>
+          <div class="step"><span class="step-num">2</span><span class="eq">T(n) = 2²·T(n-2) + 2 + 1</span></div>
+          <div class="step"><span class="step-num">k</span><span class="eq">T(n) = 2ᵏ·T(n-k) + (2ᵏ - 1)</span></div>
+          <div class="step"><span class="step-num">—</span><span class="note">Set n-k=0 → k=n</span></div>
+          <div class="step"><span class="step-num">—</span><span class="eq">T(n) = 2ⁿ·T(0) + 2ⁿ - 1 = 2ⁿ + 2ⁿ - 1 = 2ⁿ⁺¹ - 1</span></div>
+          <div class="step"><span class="step-num">—</span><span class="result">T(n) = O(2ⁿ)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q11 -->
+  <div class="question-card" id="q11">
+    <div class="question-header">
+      <span class="q-number">Q11</span><span class="q-type gotcha">GOTCHA</span>
+      <span class="q-text">Tree recursion with n=3 makes exactly <strong>15 calls</strong>. How do you get that number without tracing every call?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q11')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q11-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Use the formula: <strong>Total calls = 2ⁿ⁺¹ - 1</strong>. For n=3: 2⁴ - 1 = 16 - 1 = <strong>15</strong>. This comes from summing all nodes at each level of the binary call tree: 2⁰ + 2¹ + 2² + 2³ = 1 + 2 + 4 + 8 = 15.</div>
+    </div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="question-card" id="q12">
+    <div class="question-header">
+      <span class="q-number">Q12</span><span class="q-type def">DEF</span>
+      <span class="q-text">What is <strong>indirect recursion</strong>? What is the minimum requirement for it to terminate?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q12')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q12-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Indirect recursion is when two or more functions call each other in a cycle — A calls B, B calls A, creating a loop without any function calling itself directly. For it to terminate, <strong>every participating function must have a base condition</strong> — not just one of them. If any function in the chain lacks a base condition, the chain will loop forever.</div>
+    </div>
+  </div>
+
+  <!-- Q13 -->
+  <div class="question-card" id="q13">
+    <div class="question-header">
+      <span class="q-number">Q13</span><span class="q-type compare">COMPARE</span>
+      <span class="q-text">Compare the <strong>three methods</strong> for computing the sum of n natural numbers on time and space complexity.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q13')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q13-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ul>
+          <li><strong>Formula n(n+1)/2</strong>: Time O(1), Space O(1). Best when formula exists.</li>
+          <li><strong>Iterative loop</strong>: Time O(n), Space O(1). Good general solution.</li>
+          <li><strong>Recursive</strong>: Time O(n), Space O(n) stack. Same time as iteration but uses more memory. Use only for teaching recursion.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q14 -->
+  <div class="question-card" id="q14">
+    <div class="question-header">
+      <span class="q-number">Q14</span><span class="q-type apply">APPLY</span>
+      <span class="q-text">Write the recursive C# function for factorial. What is its recurrence relation and Big-O?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q14')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q14-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <div class="code-block" style="margin:.5rem 0;">
+          <div class="code-header"><span class="code-lang">csharp</span></div>
+          <pre><code class="language-csharp">int Factorial(int n)
+{
+    if (n == 0) return 1;           // base: 0! = 1
+    return Factorial(n - 1) * n;   // n! = (n-1)! × n
+}</code></pre>
+        </div>
+        <div class="math-block" style="margin:.4rem 0;">
+          <div class="step"><span class="step-num">—</span><span class="eq">T(n) = T(n-1) + 1,   T(0) = 1</span></div>
+          <div class="step"><span class="step-num">—</span><span class="result">T(n) = O(n)</span></div>
+        </div>
+        The function is called n+1 times (n down to 0), each doing O(1) work.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q15 -->
+  <div class="question-card" id="q15">
+    <div class="question-header">
+      <span class="q-number">Q15</span><span class="q-type sequence">SEQUENCE</span>
+      <span class="q-text">Trace <code>Factorial(4)</code> step by step — show both the call phase and the return/multiply phase.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q15')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q15-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <strong>Call phase (descending):</strong>
+        <ul>
+          <li>Fact(4) → calls Fact(3)</li>
+          <li>Fact(3) → calls Fact(2)</li>
+          <li>Fact(2) → calls Fact(1)</li>
+          <li>Fact(1) → calls Fact(0)</li>
+          <li>Fact(0) → <strong>returns 1</strong> (base case)</li>
+        </ul>
+        <strong>Return phase (ascending — multiplying):</strong>
+        <ul>
+          <li>Fact(1) → 1 × 1 = <strong>1</strong></li>
+          <li>Fact(2) → 1 × 2 = <strong>2</strong></li>
+          <li>Fact(3) → 2 × 3 = <strong>6</strong></li>
+          <li>Fact(4) → 6 × 4 = <strong>24</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q16 -->
+  <div class="question-card" id="q16">
+    <div class="question-header">
+      <span class="q-number">Q16</span><span class="q-type why">WHY</span>
+      <span class="q-text">Why is tail recursion said to be <strong>equivalent to iteration</strong>?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q16')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q16-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">In tail recursion, no work is pending after the recursive call returns — all computation is complete before the self-call. This means the current stack frame is no longer needed once the recursive call starts. A compiler with Tail Call Optimization (TCO) can <strong>reuse the same stack frame</strong> for every call, making the total stack usage O(1) — exactly like a while loop. The execution is identical to iteration.</div>
+    </div>
+  </div>
+
+  <!-- Q17 -->
+  <div class="question-card" id="q17">
+    <div class="question-header">
+      <span class="q-number">Q17</span><span class="q-type gotcha">GOTCHA</span>
+      <span class="q-text">Is <code>return Factorial(n-1) * n</code> tail recursion? Why or why not?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q17')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q17-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content"><strong>No</strong> — it is <em>not</em> tail recursion. Although the recursive call appears last in the source code, the actual last operation is the <strong>multiplication</strong> (<code>× n</code>) which happens <em>after</em> the recursive call returns. There is pending work on the stack. This is head/general recursion, not tail recursion.</div>
+      <div class="answer-example"><span class="example-label">Tail version:</span> use an accumulator — <code>FactTail(n-1, acc * n)</code> where the multiply happens before the call.</div>
+    </div>
+  </div>
+
+  <!-- Q18 -->
+  <div class="question-card" id="q18">
+    <div class="question-header">
+      <span class="q-number">Q18</span><span class="q-type compare">COMPARE</span>
+      <span class="q-text">What is the output of <code>CalculateTail(3)</code> vs <code>CalculateHead(3)</code> (printing n²)? Explain the difference.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q18')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q18-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ul>
+          <li><strong>Tail(3)</strong>: 9, 4, 1 — prints n² before calling, so prints in descending order (3→2→1)</li>
+          <li><strong>Head(3)</strong>: 1, 4, 9 — calls first, prints on return, so the deepest frame (n=1) prints first → ascending order</li>
+        </ul>
+        Same values, opposite order. The only structural difference is where the recursive call sits relative to the print statement.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q19 -->
+  <div class="question-card" id="q19">
+    <div class="question-header">
+      <span class="q-number">Q19</span><span class="q-type sequence">SEQUENCE</span>
+      <span class="q-text">List the 4 main types of recursion covered in this module. For each: where does the self-call sit?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q19')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q19-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ol>
+          <li><strong>Tail recursion</strong> — self-call is the last statement</li>
+          <li><strong>Head recursion</strong> — self-call is the first statement (after base check)</li>
+          <li><strong>Tree recursion</strong> — multiple self-calls within the same invocation</li>
+          <li><strong>Indirect recursion</strong> — no direct self-call; function calls another that eventually calls back</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q20 -->
+  <div class="question-card" id="q20">
+    <div class="question-header">
+      <span class="q-number">Q20</span><span class="q-type why">WHY</span>
+      <span class="q-text">Why is tree recursion <strong>avoided in practice</strong> for problems like Fibonacci without optimization?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q20')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q20-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Tree recursion recomputes the same subproblems repeatedly. Fibonacci(5) calls Fibonacci(3) twice — and each of those calls Fibonacci(2) twice — leading to exponential redundant work. The total calls grow as O(2ⁿ). For n=40, that's over a trillion calls. Memoization (caching results) reduces this back to O(n) by ensuring each subproblem is computed only once.</div>
+    </div>
+  </div>
+
+  <!-- Q21 -->
+  <div class="question-card" id="q21">
+    <div class="question-header">
+      <span class="q-number">Q21</span><span class="q-type apply">APPLY</span>
+      <span class="q-text">What is the recurrence relation and Big-O for a function that calls itself <strong>twice</strong> per level with constant extra work?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q21')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q21-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <div class="math-block" style="margin:.4rem 0;">
+          <div class="step"><span class="step-num">—</span><span class="eq">T(n) = 2·T(n-1) + 1,   T(0) = 1</span></div>
+          <div class="step"><span class="step-num">—</span><span class="eq">Solution: T(n) = 2ⁿ⁺¹ - 1</span></div>
+          <div class="step"><span class="step-num">—</span><span class="result">T(n) = O(2ⁿ)</span></div>
+        </div>
+        The branching factor of 2 causes exponential growth. Each level doubles the number of active calls.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q22 -->
+  <div class="question-card" id="q22">
+    <div class="question-header">
+      <span class="q-number">Q22</span><span class="q-type gotcha">GOTCHA</span>
+      <span class="q-text">A function has <strong>two separate recursive calls</strong> (not nested). Someone says: "Two calls, so it's O(2n) = O(n)." What's wrong?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q22')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q22-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Wrong. O(2n) = O(n) applies when two separate <em>loops</em> run sequentially. Two <em>recursive calls</em> in the same function create tree recursion — each call spawns two more at the next level, leading to exponential growth: 1 → 2 → 4 → 8 → ... → 2ⁿ calls total. The complexity is <strong>O(2ⁿ)</strong>, not O(n).</div>
+    </div>
+  </div>
+
+  <!-- Q23 -->
+  <div class="question-card" id="q23">
+    <div class="question-header">
+      <span class="q-number">Q23</span><span class="q-type apply">APPLY</span>
+      <span class="q-text">Write the sum of n numbers recursively in C#. Is this head or tail recursion?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q23')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q23-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <div class="code-block" style="margin:.5rem 0;">
+          <div class="code-header"><span class="code-lang">csharp</span></div>
+          <pre><code class="language-csharp">int Sum(int n)
+{
+    if (n == 0) return 0;
+    return Sum(n - 1) + n;  // recurse first, then add
+}</code></pre>
+        </div>
+        This is <strong>head recursion</strong> — the self-call happens before the addition <code>+ n</code>. Work (adding n) happens after the call returns.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q24 -->
+  <div class="question-card" id="q24">
+    <div class="question-header">
+      <span class="q-number">Q24</span><span class="q-type sequence">SEQUENCE</span>
+      <span class="q-text">What are the steps of the <strong>successive substitution method</strong> for solving a recurrence?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q24')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q24-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ol>
+          <li>Write the recurrence: T(n) = T(n-1) + f(n)</li>
+          <li>Substitute the relation for T(n-1), T(n-2), etc. to find a pattern</li>
+          <li>Express the general form after k substitutions: T(n) = T(n-k) + g(k)</li>
+          <li>Set n-k = base case value (0 or 1) → solve for k</li>
+          <li>Substitute the base case T(0) or T(1) to get the closed form</li>
+          <li>Apply Big-O — drop constants and lower-order terms</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q25 -->
+  <div class="question-card" id="q25">
+    <div class="question-header">
+      <span class="q-number">Q25</span><span class="q-type why">WHY</span>
+      <span class="q-text">Why must the recursive call in a recursive function always use a <strong>smaller input</strong>?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q25')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q25-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">The recursion must converge toward the base case. If each call uses the same or larger input, the base case is never reached — the function recurses infinitely and eventually crashes with a stack overflow. Using n-1, n/2, etc. guarantees that after a finite number of calls, the base condition triggers and recursion terminates.</div>
+    </div>
+  </div>
+
+  <!-- Q26 -->
+  <div class="question-card" id="q26">
+    <div class="question-header">
+      <span class="q-number">Q26</span><span class="q-type draw">DRAW</span>
+      <span class="q-text">Sketch the recursion tree for <code>Calculate(2)</code> where Calculate makes <strong>two recursive calls</strong> each time. Label nodes and show total call count.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q26')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q26-answer">
+      <div class="answer-label">Answer</div>
+      <svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="175" y="8" width="70" height="26" rx="5" fill="#1a1a1f" stroke="#c8f060" stroke-opacity=".5"/>
+        <text x="210" y="26" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="11">cal(2)</text>
+        <rect x="50" y="60" width="65" height="26" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="82" y="78" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">cal(1)</text>
+        <rect x="190" y="60" width="40" height="26" rx="5" fill="rgba(200,240,96,.08)" stroke="#c8f060" stroke-opacity=".3"/>
+        <text x="210" y="78" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="12">4</text>
+        <rect x="305" y="60" width="65" height="26" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="337" y="78" text-anchor="middle" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11">cal(1)</text>
+        <rect x="10" y="116" width="50" height="22" rx="4" fill="rgba(96,200,240,.07)" stroke="#60c8f0" stroke-opacity=".3"/>
+        <text x="35" y="132" text-anchor="middle" fill="#60c8f0" font-family="DM Mono,monospace" font-size="10">cal(0)</text>
+        <rect x="65" y="116" width="34" height="22" rx="4" fill="rgba(200,240,96,.08)" stroke="#c8f060" stroke-opacity=".3"/>
+        <text x="82" y="132" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="12">1</text>
+        <rect x="105" y="116" width="50" height="22" rx="4" fill="rgba(96,200,240,.07)" stroke="#60c8f0" stroke-opacity=".3"/>
+        <text x="130" y="132" text-anchor="middle" fill="#60c8f0" font-family="DM Mono,monospace" font-size="10">cal(0)</text>
+        <rect x="265" y="116" width="50" height="22" rx="4" fill="rgba(96,200,240,.07)" stroke="#60c8f0" stroke-opacity=".3"/>
+        <text x="290" y="132" text-anchor="middle" fill="#60c8f0" font-family="DM Mono,monospace" font-size="10">cal(0)</text>
+        <rect x="320" y="116" width="34" height="22" rx="4" fill="rgba(200,240,96,.08)" stroke="#c8f060" stroke-opacity=".3"/>
+        <text x="337" y="132" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="12">1</text>
+        <rect x="360" y="116" width="50" height="22" rx="4" fill="rgba(96,200,240,.07)" stroke="#60c8f0" stroke-opacity=".3"/>
+        <text x="385" y="132" text-anchor="middle" fill="#60c8f0" font-family="DM Mono,monospace" font-size="10">cal(0)</text>
+        <!-- edges level0→1 -->
+        <line x1="190" y1="34" x2="100" y2="60" stroke="#c8f060" stroke-opacity=".4" stroke-width="1.2"/>
+        <line x1="210" y1="34" x2="210" y2="60" stroke="#c8f060" stroke-opacity=".3" stroke-width="1"/>
+        <line x1="230" y1="34" x2="320" y2="60" stroke="#c8f060" stroke-opacity=".4" stroke-width="1.2"/>
+        <!-- edges level1→2 left cal(1) -->
+        <line x1="65" y1="86" x2="38" y2="116" stroke="#2a2a32" stroke-width="1"/>
+        <line x1="82" y1="86" x2="82" y2="116" stroke="#2a2a32" stroke-width="1"/>
+        <line x1="100" y1="86" x2="128" y2="116" stroke="#2a2a32" stroke-width="1"/>
+        <!-- edges level1→2 right cal(1) -->
+        <line x1="320" y1="86" x2="292" y2="116" stroke="#2a2a32" stroke-width="1"/>
+        <line x1="337" y1="86" x2="337" y2="116" stroke="#2a2a32" stroke-width="1"/>
+        <line x1="354" y1="86" x2="383" y2="116" stroke="#2a2a32" stroke-width="1"/>
+        <!-- totals -->
+        <text x="10" y="170" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Total nodes = 2³ - 1 = 7 = 2ⁿ⁺¹ - 1 where n=2</text>
+        <text x="10" y="186" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Output: 1, 4, 1 (in-order)   |   T(2) = O(2²) = O(4) → O(2ⁿ)</text>
+      </svg>
+      <div class="answer-content" style="margin-top:.5rem;">Check: 3 levels (0,1,2), total nodes = 2⁰+2¹+2² = 7 = 2³-1. Formula 2ⁿ⁺¹-1 = 2³-1 = 7 ✓</div>
+    </div>
+  </div>
+
+</div>
+</main>
+
+<script>
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.add('hidden'));
+  document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.classList.add('inactive'); });
+  document.getElementById('tab-' + tab).classList.remove('hidden');
+  btn.classList.add('active'); btn.classList.remove('inactive');
+}
+
+let answeredSet = new Set();
+function toggleAnswer(id) {
+  const card = document.getElementById(id);
+  const block = document.getElementById(id + '-answer');
+  const btn = card.querySelector('.show-answer-btn');
+  const isOpen = block.classList.contains('open');
+  if (isOpen) {
+    block.classList.remove('open'); card.classList.remove('revealed');
+    btn.textContent = 'Show Answer'; btn.classList.remove('revealed');
+    answeredSet.delete(id);
+  } else {
+    block.classList.add('open'); card.classList.add('revealed');
+    btn.textContent = 'Hide Answer'; btn.classList.add('revealed');
+    answeredSet.add(id);
+  }
+  document.getElementById('answered-count').textContent = answeredSet.size;
+}
+function revealAll() {
+  document.querySelectorAll('.question-card').forEach(card => {
+    const id = card.id;
+    document.getElementById(id + '-answer').classList.add('open');
+    card.classList.add('revealed');
+    const btn = card.querySelector('.show-answer-btn');
+    btn.textContent = 'Hide Answer'; btn.classList.add('revealed');
+    answeredSet.add(id);
+  });
+  document.getElementById('answered-count').textContent = answeredSet.size;
+}
+function hideAll() {
+  document.querySelectorAll('.question-card').forEach(card => {
+    const id = card.id;
+    document.getElementById(id + '-answer').classList.remove('open');
+    card.classList.remove('revealed');
+    const btn = card.querySelector('.show-answer-btn');
+    btn.textContent = 'Show Answer'; btn.classList.remove('revealed');
+  });
+  answeredSet.clear();
+  document.getElementById('answered-count').textContent = 0;
+}
+function copyCode(btn) {
+  const code = btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(() => {
+    btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+document.addEventListener('DOMContentLoaded', () => {
+  hljs.highlightAll();
+  document.getElementById('total-count').textContent = document.querySelectorAll('.question-card').length;
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Searching Algorithms — KnowledgeForge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/csharp.min.js"></script>
+<style>
+:root {
+  --bg:#0d0d0f; --surface:#141417; --card:#1a1a1f; --border:#2a2a32;
+  --accent:#c8f060; --accent2:#60c8f0; --accent3:#f060c8;
+  --text:#f0ede8; --muted:#6b6878; --danger:#f06060; --success:#60f0a0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background-color:var(--bg);
+  background-image:linear-gradient(rgba(200,240,96,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(200,240,96,.018) 1px,transparent 1px);
+  background-size:40px 40px;
+  color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:.9rem;line-height:1.7;min-height:100vh;
+}
+
+/* ── HEADER ── */
+header{
+  position:sticky;top:0;z-index:200;
+  background:rgba(13,13,15,.97);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  padding:.8rem 2.5rem;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+}
+.logo{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text);white-space:nowrap;}
+.logo span{color:var(--accent);}
+.topic-title{font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;color:var(--muted);text-align:center;flex:1;}
+.tab-switcher{display:flex;gap:.5rem;flex-shrink:0;}
+.tab-btn{font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;padding:.4rem 1rem;border-radius:6px;cursor:pointer;transition:all .2s;white-space:nowrap;border:1px solid var(--border);}
+.tab-btn.active{background:var(--accent);color:#0d0d0f;border-color:var(--accent);}
+.tab-btn.inactive{background:transparent;color:var(--muted);}
+.tab-btn.inactive:hover{color:var(--text);border-color:var(--muted);}
+.tab{transition:opacity .2s;}
+.tab.hidden{display:none;opacity:0;}
+
+/* ── LAYOUT ── */
+.hb{max-width:900px;margin:0 auto;padding:2.5rem 2rem;}
+h1.page-title{font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;color:var(--text);margin-bottom:2.2rem;line-height:1.2;}
+h2{font-family:'Syne',sans-serif;font-size:1.22rem;font-weight:800;color:var(--accent);border-bottom:1px solid rgba(200,240,96,.18);padding-bottom:.4rem;margin:2.6rem 0 1rem;}
+h3{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;color:var(--accent2);margin:1.5rem 0 .5rem;}
+p{color:#ccc;font-size:.85rem;margin-bottom:.75rem;}
+ul,ol{padding-left:1.4rem;color:#ccc;font-size:.85rem;}
+ul li,ol li{margin-bottom:.35rem;}
+strong{color:var(--text);}
+.section-divider{border:none;border-top:1px solid var(--border);margin:2.8rem 0;}
+
+/* ── CALLOUTS ── */
+.callout{padding:.8rem 1.1rem;border-radius:7px;font-size:.84rem;margin:1rem 0;line-height:1.65;}
+.callout.tip{border-left:3px solid var(--accent);background:rgba(200,240,96,.05);color:#ccc;}
+.callout.warning{border-left:3px solid var(--accent3);background:rgba(240,96,200,.05);color:#ccc;}
+.callout.rule{border-left:3px solid var(--accent2);background:rgba(96,200,240,.05);color:#ccc;}
+
+/* ── CODE ── */
+.code-block{background:var(--card);border:1px solid var(--border);border-radius:7px;margin:1rem 0;overflow:hidden;}
+.code-header{display:flex;justify-content:space-between;align-items:center;padding:.4rem .8rem;border-bottom:1px solid var(--border);}
+.code-lang{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);text-transform:uppercase;}
+.copy-btn{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);background:transparent;border:1px solid var(--border);padding:.18rem .5rem;border-radius:4px;cursor:pointer;transition:all .2s;}
+.copy-btn:hover{color:var(--text);border-color:var(--muted);}
+.code-block pre{margin:0;}
+.code-block pre code{font-family:'DM Mono',monospace;font-size:.79rem;padding:.9rem 1rem !important;display:block;}
+
+.code-compare{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;}
+@media(max-width:640px){.code-compare{grid-template-columns:1fr;}}
+.code-panel{background:var(--card);border:1px solid var(--border);border-radius:7px;overflow:hidden;}
+.code-panel.right{border-top:3px solid var(--success);}
+.panel-header{padding:.4rem .8rem;font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;border-bottom:1px solid var(--border);color:var(--success);}
+.code-panel pre{margin:0;}
+.code-panel pre code{font-family:'DM Mono',monospace;font-size:.77rem;padding:.75rem !important;display:block;}
+
+/* ── TABLES ── */
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.82rem;}
+thead th{font-family:'Syne',sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);background:var(--card);padding:.6rem 1rem;text-align:left;border:1px solid var(--border);}
+tbody tr:nth-child(odd){background:var(--surface);}
+tbody tr:nth-child(even){background:var(--bg);}
+tbody td{padding:.6rem 1rem;border:1px solid var(--border);color:#ccc;vertical-align:top;}
+
+figure{margin:1.5rem 0;}
+figcaption{font-size:.73rem;color:var(--muted);text-align:center;margin-top:.55rem;font-family:'DM Mono',monospace;}
+.fig-wrap{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.2rem;display:flex;justify-content:center;overflow:hidden;}
+
+/* ── ANIMATED VISUALISER ── */
+.viz-container{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem 1.75rem;margin:1.25rem 0;}
+.viz-title{font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem;}
+.viz-controls{display:flex;align-items:center;gap:.75rem;margin-bottom:1.2rem;flex-wrap:wrap;}
+.viz-btn{font-family:'DM Mono',monospace;font-size:.75rem;padding:.35rem .85rem;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;}
+.viz-btn:hover{color:var(--text);border-color:var(--muted);}
+.viz-btn.primary{background:var(--accent);color:#0d0d0f;border-color:var(--accent);font-weight:700;}
+.viz-btn.primary:hover{opacity:.88;}
+.viz-btn:disabled{opacity:.3;cursor:not-allowed;}
+.viz-speed{display:flex;align-items:center;gap:.4rem;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);}
+.viz-speed input{width:80px;accent-color:var(--accent);}
+.viz-status{font-family:'DM Mono',monospace;font-size:.8rem;min-height:1.4rem;margin-bottom:.9rem;transition:color .3s;}
+.viz-status.found{color:var(--success);}
+.viz-status.searching{color:var(--accent);}
+.viz-status.notfound{color:var(--danger);}
+
+/* Array display */
+.arr-display{display:flex;gap:4px;align-items:flex-end;justify-content:center;flex-wrap:nowrap;overflow-x:auto;padding:1rem 0 .5rem;}
+.arr-cell{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:44px;transition:transform .25s;}
+.arr-box{
+  width:44px;height:44px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:.88rem;font-weight:500;
+  border:2px solid var(--border);border-radius:6px;
+  background:var(--surface);color:#ccc;
+  transition:background .3s, border-color .3s, transform .3s, box-shadow .3s;
+}
+.arr-idx{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted);}
+
+/* Pointer labels */
+.arr-ptr-row{display:flex;gap:4px;justify-content:center;margin-top:.4rem;min-height:1.3rem;}
+.arr-ptr{width:44px;text-align:center;font-family:'DM Mono',monospace;font-size:.65rem;font-weight:700;transition:opacity .3s;}
+
+/* States */
+.arr-box.state-active  {background:rgba(200,240,96,.15);border-color:var(--accent);color:var(--accent);transform:scale(1.08);box-shadow:0 0 14px rgba(200,240,96,.25);}
+.arr-box.state-found   {background:rgba(96,240,160,.18);border-color:var(--success);color:var(--success);transform:scale(1.14);box-shadow:0 0 18px rgba(96,240,160,.35);}
+.arr-box.state-elim    {background:rgba(42,42,50,.5);border-color:#1e1e24;color:#3a3a48;transition:all .4s;}
+.arr-box.state-range   {background:rgba(96,200,240,.08);border-color:rgba(96,200,240,.3);color:var(--accent2);}
+.arr-box.state-left    {background:rgba(240,96,200,.1);border-color:var(--accent3);color:var(--accent3);}
+.arr-box.state-right   {background:rgba(240,200,96,.1);border-color:#f0c860;color:#f0c860;}
+
+.ptr-l {color:var(--accent3);}
+.ptr-r {color:#f0c860;}
+.ptr-m {color:var(--accent);}
+
+/* Step log */
+.step-log{margin-top:.9rem;max-height:130px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;background:var(--bg);}
+.step-log::-webkit-scrollbar{width:4px;}
+.step-log::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.log-entry{font-family:'DM Mono',monospace;font-size:.73rem;color:var(--muted);padding:.3rem .7rem;border-bottom:1px solid rgba(42,42,50,.5);line-height:1.5;}
+.log-entry:last-child{border:none;}
+.log-entry.log-found{color:var(--success);}
+.log-entry.log-active{color:var(--accent);}
+.log-entry.log-miss{color:var(--danger);}
+
+/* Custom input row */
+.viz-input-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.8rem;}
+.viz-input-row label{font-family:'DM Mono',monospace;font-size:.73rem;color:var(--muted);}
+.viz-input-row input[type=text]{
+  font-family:'DM Mono',monospace;font-size:.75rem;
+  background:var(--surface);color:var(--text);
+  border:1px solid var(--border);border-radius:5px;
+  padding:.25rem .5rem;width:200px;
+}
+.viz-input-row input[type=number]{
+  font-family:'DM Mono',monospace;font-size:.75rem;
+  background:var(--surface);color:var(--text);
+  border:1px solid var(--border);border-radius:5px;
+  padding:.25rem .5rem;width:70px;
+}
+.viz-input-row input:focus{outline:none;border-color:var(--accent);}
+
+/* Linear search specific */
+.linear-cell-wrap{position:relative;}
+.scan-arrow{font-size:1.1rem;color:var(--accent);opacity:0;transition:opacity .2s;position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);}
+.scan-arrow.visible{opacity:1;}
+
+/* Complexity comparison bar */
+.complexity-compare{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;}
+@media(max-width:540px){.complexity-compare{grid-template-columns:1fr;}}
+.cx-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;}
+.cx-card h4{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;margin-bottom:.6rem;}
+.cx-card.linear h4{color:var(--accent3);}
+.cx-card.binary h4{color:var(--accent);}
+.cx-row{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;padding:.2rem 0;border-bottom:1px solid rgba(42,42,50,.6);}
+.cx-row:last-child{border:none;}
+.cx-label{color:var(--muted);font-family:'DM Mono',monospace;font-size:.72rem;}
+.cx-val{font-family:'DM Mono',monospace;font-size:.75rem;font-weight:500;}
+.cx-card.linear .cx-val{color:var(--accent3);}
+.cx-card.binary .cx-val{color:var(--accent);}
+
+/* Halving diagram */
+.halve-viz{display:flex;flex-direction:column;gap:.5rem;padding:.5rem 0;}
+.halve-row{display:flex;align-items:center;gap:.75rem;}
+.halve-label{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);min-width:60px;text-align:right;}
+.halve-bar{height:22px;border-radius:4px;background:rgba(200,240,96,.15);border:1px solid rgba(200,240,96,.3);display:flex;align-items:center;padding:0 .5rem;transition:width .5s;}
+.halve-bar span{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--accent);white-space:nowrap;}
+
+/* Recursive call stack viz */
+.call-stack{display:flex;flex-direction:column;gap:2px;}
+.cs-frame{font-family:'DM Mono',monospace;font-size:.78rem;padding:.4rem .85rem;border-radius:5px;background:var(--surface);border-left:3px solid var(--border);color:#ccc;transition:all .3s;}
+.cs-frame.cs-active{background:rgba(200,240,96,.07);border-left-color:var(--accent);color:var(--accent);}
+.cs-frame.cs-return{background:rgba(96,240,160,.06);border-left-color:var(--success);color:var(--success);}
+
+/* RECALL */
+#tab-recall{max-width:800px;margin:0 auto;padding:2.5rem 2rem;}
+.recall-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:.75rem;}
+.progress-counter{font-family:'DM Mono',monospace;font-size:.8rem;color:var(--muted);}
+.progress-counter span{color:var(--accent);font-weight:500;}
+.bulk-btns{display:flex;gap:.5rem;}
+.bulk-btn{font-family:'Syne',sans-serif;font-size:.74rem;font-weight:700;padding:.33rem .72rem;border-radius:6px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;}
+.bulk-btn:hover{color:var(--text);border-color:var(--muted);}
+.question-card{background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:.75rem;overflow:hidden;transition:border-color .2s;}
+.question-card.revealed{border-color:rgba(200,240,96,.3);}
+.question-header{display:flex;align-items:flex-start;gap:.75rem;padding:.9rem 1rem;flex-wrap:wrap;}
+.q-number{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);flex-shrink:0;margin-top:.1rem;}
+.q-type{font-family:'Syne',sans-serif;font-size:.63rem;font-weight:700;padding:.13rem .42rem;border-radius:4px;flex-shrink:0;margin-top:.05rem;}
+.q-type.def    {background:rgba(96,200,240,.1);color:var(--accent2);}
+.q-type.apply  {background:rgba(200,240,96,.1);color:var(--accent);}
+.q-type.why    {background:rgba(240,96,200,.1);color:var(--accent3);}
+.q-type.compare{background:rgba(200,240,96,.1);color:var(--accent);}
+.q-type.sequence{background:rgba(96,240,200,.1);color:#60f0c8;}
+.q-type.gotcha {background:rgba(240,96,96,.1);color:var(--danger);}
+.q-type.draw   {background:rgba(240,200,96,.1);color:#f0c860;}
+.q-text{font-size:.85rem;color:var(--text);flex:1;line-height:1.5;}
+.show-answer-btn{font-family:'DM Mono',monospace;font-size:.7rem;padding:.28rem .62rem;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;flex-shrink:0;white-space:nowrap;}
+.show-answer-btn.revealed{border-color:var(--accent);color:var(--accent);}
+.answer-block{border-top:1px solid var(--border);padding:1rem;background:var(--surface);overflow:hidden;max-height:0;transition:max-height .35s ease;}
+.answer-block.open{max-height:3000px;}
+.answer-label{font-family:'Syne',sans-serif;font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:.5rem;}
+.answer-content{font-size:.83rem;color:#ccc;line-height:1.65;}
+.answer-content strong{color:var(--text);}
+.answer-content ul{padding-left:1.2rem;margin-top:.4rem;}
+.answer-content li{margin-bottom:.25rem;}
+.answer-content .code-block{margin:.5rem 0;}
+.answer-example{margin-top:.75rem;padding:.6rem .85rem;background:rgba(200,240,96,.04);border-left:2px solid rgba(200,240,96,.3);border-radius:0 4px 4px 0;font-size:.81rem;color:#ccc;}
+.example-label{font-family:'Syne',sans-serif;font-size:.63rem;font-weight:700;color:var(--accent);margin-right:.4rem;}
+
+@media(max-width:600px){
+  header{flex-wrap:wrap;padding:.75rem 1rem;}
+  .topic-title{order:3;width:100%;text-align:left;}
+  .hb,#tab-recall{padding:1.5rem 1rem;}
+  .arr-box{width:36px;height:36px;font-size:.78rem;}
+  .arr-cell{min-width:36px;}
+  .arr-ptr{width:36px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Knowledge<span>Forge</span></div>
+  <div class="topic-title">Searching Algorithms — Linear &amp; Binary Search · Iterative &amp; Recursive</div>
+  <div class="tab-switcher">
+    <button class="tab-btn active" onclick="switchTab('handbook',this)">📘 Handbook</button>
+    <button class="tab-btn inactive" onclick="switchTab('recall',this)">🧠 Active Recall</button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════ HANDBOOK ═══════════════════════════ -->
+<main id="tab-handbook" class="tab">
+<div class="hb">
+
+<h1 class="page-title">Searching Algorithms in C#<br>Linear · Binary (Iterative) · Binary (Recursive)</h1>
+
+<!-- ─── S1: LINEAR SEARCH ─── -->
+<h2>🔍 Linear Search — Sequential Scan</h2>
+
+<div class="callout tip">💡 Linear search is the simplest search. Start at index 0, check each element one by one. If it matches the key, return the index. If you reach the end without a match, return −1. No sorting required.</div>
+
+<h3>Algorithm Steps</h3>
+<ol>
+  <li>Set <code>i = 0</code></li>
+  <li>While <code>i &lt; n</code>: compare <code>arr[i]</code> with <code>key</code></li>
+  <li>If match → return <code>i</code></li>
+  <li>Else → <code>i++</code>, repeat</li>
+  <li>If loop ends → return <code>-1</code></li>
+</ol>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">public int LinearSearch(int[] arr, int key)
+{
+    int i = 0;
+    while (i < arr.Length)
+    {
+        if (arr[i] == key)
+            return i;     // ✅ found — return index
+        i++;              // move to next
+    }
+    return -1;            // ❌ not found
+}</code></pre>
+</div>
+
+<!-- LINEAR SEARCH ANIMATED VISUALISER -->
+<h3>🎬 Interactive Visualiser — Linear Search</h3>
+<div class="viz-container">
+  <div class="viz-title">Linear Search — Step Through</div>
+
+  <div class="viz-input-row">
+    <label>Array (comma-separated):</label>
+    <input type="text" id="ls-arr-input" value="84, 21, 47, 96, 15, 62, 33">
+    <label>Key:</label>
+    <input type="number" id="ls-key-input" value="96">
+    <button class="viz-btn primary" onclick="lsInit()">Set</button>
+  </div>
+
+  <div class="viz-controls">
+    <button class="viz-btn primary" id="ls-play-btn" onclick="lsPlayPause()">▶ Play</button>
+    <button class="viz-btn" id="ls-step-btn" onclick="lsStep()">→ Step</button>
+    <button class="viz-btn" onclick="lsReset()">↺ Reset</button>
+    <div class="viz-speed">
+      Speed: <input type="range" id="ls-speed" min="100" max="1500" value="700" step="100" style="width:80px;">
+    </div>
+  </div>
+
+  <div class="viz-status" id="ls-status">Press ▶ Play or → Step to start</div>
+
+  <div class="arr-display" id="ls-arr"></div>
+  <div class="arr-ptr-row" id="ls-ptrs"></div>
+
+  <div class="step-log" id="ls-log"></div>
+</div>
+
+<h3>Time Complexity</h3>
+<table>
+  <thead><tr><th>Case</th><th>When</th><th>Comparisons</th><th>Notation</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Best</strong></td><td>Key is first element</td><td>1</td><td>Ω(1)</td></tr>
+    <tr><td><strong>Average</strong></td><td>Key is somewhere in middle</td><td>n/2</td><td>Θ(n)</td></tr>
+    <tr><td><strong>Worst</strong></td><td>Key is last or not present</td><td>n</td><td>O(n)</td></tr>
+  </tbody>
+</table>
+
+<div class="callout rule">📌 Linear search works on <strong>unsorted arrays</strong>. Space complexity is O(1) — no extra memory needed. Its simplicity makes it ideal for small arrays or when the array cannot be sorted.</div>
+
+<hr class="section-divider">
+
+<!-- ─── S2: BINARY SEARCH (ITERATIVE) ─── -->
+<h2>⚡ Binary Search (Iterative) — Divide &amp; Conquer</h2>
+
+<div class="callout tip">💡 Binary search works on a <strong>sorted</strong> array. Instead of checking every element, it looks at the <em>middle</em> element and eliminates half the remaining search space each time. After k steps, only n / 2ᵏ elements remain.</div>
+
+<div class="callout warning">⚠️ <strong>Prerequisite:</strong> the array MUST be sorted in ascending order. Binary search on an unsorted array gives wrong results — no error, just incorrect output.</div>
+
+<h3>Algorithm Steps</h3>
+<ol>
+  <li>Set <code>L = 0</code>, <code>R = n-1</code></li>
+  <li>While <code>L ≤ R</code>:
+    <ul>
+      <li>Compute <code>M = ⌊(L + R) / 2⌋</code></li>
+      <li>If <code>arr[M] == key</code> → return M</li>
+      <li>If <code>key &lt; arr[M]</code> → <code>R = M - 1</code> (search left half)</li>
+      <li>If <code>key &gt; arr[M]</code> → <code>L = M + 1</code> (search right half)</li>
+    </ul>
+  </li>
+  <li>If loop ends without match → return <code>-1</code></li>
+</ol>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">public int BinarySearch(int[] arr, int key)
+{
+    int L = 0;
+    int R = arr.Length - 1;
+
+    while (L <= R)
+    {
+        int M = (L + R) / 2;   // middle index
+
+        if (arr[M] == key)
+            return M;           // ✅ found
+        else if (key < arr[M])
+            R = M - 1;          // search LEFT half
+        else
+            L = M + 1;          // search RIGHT half
+    }
+    return -1;                  // ❌ not found
+}</code></pre>
+</div>
+
+<!-- BINARY SEARCH ANIMATED VISUALISER -->
+<h3>🎬 Interactive Visualiser — Binary Search (Iterative)</h3>
+<div class="viz-container">
+  <div class="viz-title">Binary Search (Iterative) — Watch L, M, R move</div>
+
+  <div class="viz-input-row">
+    <label>Sorted array:</label>
+    <input type="text" id="bs-arr-input" value="10, 20, 30, 40, 50, 60, 70, 80, 90">
+    <label>Key:</label>
+    <input type="number" id="bs-key-input" value="70">
+    <button class="viz-btn primary" onclick="bsInit()">Set</button>
+  </div>
+
+  <div class="viz-controls">
+    <button class="viz-btn primary" id="bs-play-btn" onclick="bsPlayPause()">▶ Play</button>
+    <button class="viz-btn" id="bs-step-btn" onclick="bsStep()">→ Step</button>
+    <button class="viz-btn" onclick="bsReset()">↺ Reset</button>
+    <div class="viz-speed">
+      Speed: <input type="range" id="bs-speed" min="200" max="2000" value="900" step="100" style="width:80px;">
+    </div>
+  </div>
+
+  <div class="viz-status" id="bs-status">Press ▶ Play or → Step to start</div>
+
+  <div class="arr-display" id="bs-arr"></div>
+  <div class="arr-ptr-row" id="bs-ptrs"></div>
+
+  <div style="margin-top:.5rem;display:flex;gap:.5rem;font-family:'DM Mono',monospace;font-size:.72rem;align-items:center;flex-wrap:wrap;">
+    <span style="color:var(--accent3);">■ L (left)</span>
+    <span style="color:#f0c860;">■ R (right)</span>
+    <span style="color:var(--accent);">■ M (mid — comparing)</span>
+    <span style="color:var(--accent2);">■ Active range</span>
+    <span style="color:#3a3a48;">■ Eliminated</span>
+  </div>
+
+  <div class="step-log" id="bs-log"></div>
+</div>
+
+<h3>Why It's O(log n) — The Halving Principle</h3>
+
+<figure>
+  <div class="fig-wrap">
+  <svg viewBox="0 0 580 190" xmlns="http://www.w3.org/2000/svg" style="max-width:580px;width:100%;">
+    <!-- Bars showing search space halving -->
+    <text x="10" y="16" fill="#6b6878" font-family="Syne,sans-serif" font-size="11" font-weight="700">SEARCH SPACE SHRINKS EACH STEP (n = 64)</text>
+    <!-- Step 0: full -->
+    <text x="10" y="42" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Start :</text>
+    <rect x="72" y="30" width="480" height="20" rx="3" fill="rgba(200,240,96,.15)" stroke="rgba(200,240,96,.4)" stroke-width="1"/>
+    <text x="320" y="45" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="10">n = 64</text>
+    <!-- Step 1 -->
+    <text x="10" y="70" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Step 1 :</text>
+    <rect x="72" y="58" width="240" height="20" rx="3" fill="rgba(200,240,96,.12)" stroke="rgba(200,240,96,.3)" stroke-width="1"/>
+    <text x="192" y="73" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="10">n/2 = 32</text>
+    <rect x="316" y="58" width="236" height="20" rx="3" fill="rgba(42,42,50,.4)" stroke="#2a2a32" stroke-width="1"/>
+    <text x="434" y="73" text-anchor="middle" fill="#3a3a48" font-family="DM Mono,monospace" font-size="10">eliminated</text>
+    <!-- Step 2 -->
+    <text x="10" y="98" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Step 2 :</text>
+    <rect x="72" y="86" width="120" height="20" rx="3" fill="rgba(200,240,96,.1)" stroke="rgba(200,240,96,.25)" stroke-width="1"/>
+    <text x="132" y="101" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="10">n/4 = 16</text>
+    <rect x="196" y="86" width="356" height="20" rx="3" fill="rgba(42,42,50,.4)" stroke="#2a2a32" stroke-width="1"/>
+    <text x="374" y="101" text-anchor="middle" fill="#3a3a48" font-family="DM Mono,monospace" font-size="10">eliminated</text>
+    <!-- Step 3 -->
+    <text x="10" y="126" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Step 3 :</text>
+    <rect x="72" y="114" width="60" height="20" rx="3" fill="rgba(200,240,96,.08)" stroke="rgba(200,240,96,.2)" stroke-width="1"/>
+    <text x="102" y="129" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="10">n/8</text>
+    <rect x="136" y="114" width="416" height="20" rx="3" fill="rgba(42,42,50,.4)" stroke="#2a2a32" stroke-width="1"/>
+    <!-- Step k -->
+    <text x="10" y="152" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Step k :</text>
+    <rect x="72" y="140" width="15" height="20" rx="2" fill="rgba(200,240,96,.2)" stroke="var(--accent)" stroke-width="1.5"/>
+    <text x="100" y="155" fill="#c8f060" font-family="DM Mono,monospace" font-size="10">n / 2ᵏ = 1  →  found (or not)</text>
+    <!-- Arrow annotation -->
+    <text x="72" y="182" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Total steps = log₂(64) = 6 iterations maximum  →  O(log n)</text>
+  </svg>
+  </div>
+  <figcaption>Each iteration eliminates half the remaining elements. For n=64, at most 6 iterations needed.</figcaption>
+</figure>
+
+<hr class="section-divider">
+
+<!-- ─── S3: BINARY SEARCH (RECURSIVE) ─── -->
+<h2>🔄 Binary Search (Recursive)</h2>
+
+<div class="callout tip">💡 Same logic as iterative binary search — but instead of a while loop, each comparison triggers a recursive call with updated L or R bounds. The base case is when L &gt; R (nothing left to search).</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">public int BinarySearchRec(int[] arr, int key, int L, int R)
+{
+    if (L > R)
+        return -1;           // base case: not found
+
+    int M = (L + R) / 2;
+
+    if (arr[M] == key)
+        return M;            // ✅ found
+    else if (key < arr[M])
+        return BinarySearchRec(arr, key, L, M - 1);   // LEFT
+    else
+        return BinarySearchRec(arr, key, M + 1, R);   // RIGHT
+}
+
+// Call: BinarySearchRec(arr, key, 0, arr.Length - 1)</code></pre>
+</div>
+
+<!-- RECURSIVE BINARY SEARCH ANIMATED VISUALISER -->
+<h3>🎬 Interactive Visualiser — Binary Search (Recursive)</h3>
+<div class="viz-container">
+  <div class="viz-title">Binary Search (Recursive) — Watch call stack build &amp; unwind</div>
+
+  <div class="viz-input-row">
+    <label>Sorted array:</label>
+    <input type="text" id="bsr-arr-input" value="10, 20, 30, 40, 50, 60, 70">
+    <label>Key:</label>
+    <input type="number" id="bsr-key-input" value="50">
+    <button class="viz-btn primary" onclick="bsrInit()">Set</button>
+  </div>
+
+  <div class="viz-controls">
+    <button class="viz-btn primary" id="bsr-play-btn" onclick="bsrPlayPause()">▶ Play</button>
+    <button class="viz-btn" id="bsr-step-btn" onclick="bsrStep()">→ Step</button>
+    <button class="viz-btn" onclick="bsrReset()">↺ Reset</button>
+    <div class="viz-speed">
+      Speed: <input type="range" id="bsr-speed" min="200" max="2000" value="900" step="100" style="width:80px;">
+    </div>
+  </div>
+
+  <div class="viz-status" id="bsr-status">Press ▶ Play or → Step to start</div>
+
+  <!-- Array -->
+  <div class="arr-display" id="bsr-arr"></div>
+  <div class="arr-ptr-row" id="bsr-ptrs"></div>
+
+  <div style="margin-top:.5rem;display:flex;gap:.5rem;font-family:'DM Mono',monospace;font-size:.72rem;align-items:center;flex-wrap:wrap;margin-bottom:.8rem;">
+    <span style="color:var(--accent3);">■ L</span>
+    <span style="color:#f0c860;">■ R</span>
+    <span style="color:var(--accent);">■ M (mid)</span>
+    <span style="color:var(--accent2);">■ Active range</span>
+    <span style="color:#3a3a48;">■ Eliminated</span>
+  </div>
+
+  <!-- Call stack display -->
+  <div style="font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem;">Call Stack</div>
+  <div class="call-stack" id="bsr-stack"></div>
+
+  <div class="step-log" id="bsr-log" style="margin-top:.8rem;"></div>
+</div>
+
+<h3>Recurrence Relation</h3>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:7px;padding:1rem 1.25rem;margin:1rem 0;font-family:'DM Mono',monospace;font-size:.86rem;color:var(--accent2);line-height:2.1;">
+  <span style="font-family:'Syne',sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);display:block;margin-bottom:.3rem;">Time Complexity Recurrence</span>
+  <div>T(n) = T(n/2) + O(1)</div>
+  <div style="color:var(--muted);font-size:.78rem;">Each call does O(1) work + one recursive call on half the array</div>
+  <div style="margin-top:.4rem;color:var(--accent);font-size:1rem;font-weight:700;">→ T(n) = O(log n)</div>
+</div>
+
+<h3>Space Complexity — Key Difference</h3>
+<table>
+  <thead><tr><th>Approach</th><th>Time</th><th>Space</th><th>Reason</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Iterative</strong></td><td>O(log n)</td><td><strong>O(1)</strong></td><td>Only L, R, M variables — no stack frames</td></tr>
+    <tr><td><strong>Recursive</strong></td><td>O(log n)</td><td><strong>O(log n)</strong></td><td>Each recursive call pushes a stack frame; max depth = log n</td></tr>
+  </tbody>
+</table>
+
+<div class="callout warning">⚠️ For very large arrays, recursive binary search can cause stack overflow. Iterative is preferred in production. Recursive is cleaner to read and reason about.</div>
+
+<hr class="section-divider">
+
+<!-- ─── S4: COMPARISON ─── -->
+<h2>📊 Linear vs Binary Search — Full Comparison</h2>
+
+<div class="complexity-compare">
+  <div class="cx-card linear">
+    <h4>Linear Search</h4>
+    <div class="cx-row"><span class="cx-label">Best case</span><span class="cx-val">Ω(1)</span></div>
+    <div class="cx-row"><span class="cx-label">Worst case</span><span class="cx-val">O(n)</span></div>
+    <div class="cx-row"><span class="cx-label">Average case</span><span class="cx-val">Θ(n)</span></div>
+    <div class="cx-row"><span class="cx-label">Space</span><span class="cx-val">O(1)</span></div>
+    <div class="cx-row"><span class="cx-label">Requires sorted</span><span class="cx-val">No</span></div>
+    <div class="cx-row"><span class="cx-label">Works on</span><span class="cx-val">Any array</span></div>
+  </div>
+  <div class="cx-card binary">
+    <h4>Binary Search</h4>
+    <div class="cx-row"><span class="cx-label">Best case</span><span class="cx-val">Ω(1)</span></div>
+    <div class="cx-row"><span class="cx-label">Worst case</span><span class="cx-val">O(log n)</span></div>
+    <div class="cx-row"><span class="cx-label">Average case</span><span class="cx-val">Θ(log n)</span></div>
+    <div class="cx-row"><span class="cx-label">Space (iterative)</span><span class="cx-val">O(1)</span></div>
+    <div class="cx-row"><span class="cx-label">Space (recursive)</span><span class="cx-val">O(log n)</span></div>
+    <div class="cx-row"><span class="cx-label">Requires sorted</span><span class="cx-val">Yes ⚠️</span></div>
+  </div>
+</div>
+
+<h3>Practical Comparison — Searches on 1,000,000 elements</h3>
+<table>
+  <thead><tr><th>Algorithm</th><th>Max comparisons</th><th>At n = 1,000,000</th></tr></thead>
+  <tbody>
+    <tr><td>Linear Search</td><td>n</td><td>1,000,000 comparisons</td></tr>
+    <tr><td>Binary Search</td><td>log₂ n</td><td>~20 comparisons</td></tr>
+  </tbody>
+</table>
+
+<div class="callout rule">📌 Binary search is ~50,000× faster than linear search at n=1,000,000. The cost is that the array <strong>must be sorted first</strong>. If sorting is expensive (O(n log n)) and you only search once, linear search may be cheaper overall.</div>
+
+<hr class="section-divider">
+
+<!-- ─── S5: QUICK REFERENCE ─── -->
+<h2>⚡ Quick Reference</h2>
+
+<h3>Key Terms</h3>
+<table>
+  <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+  <tbody>
+    <tr><td>Linear / Sequential search</td><td>Check each element one by one from start to end</td></tr>
+    <tr><td>Binary search</td><td>Repeatedly split sorted array in half to narrow down search</td></tr>
+    <tr><td>L (left)</td><td>Start index of current active search range</td></tr>
+    <tr><td>R (right)</td><td>End index of current active search range</td></tr>
+    <tr><td>M (mid)</td><td>⌊(L + R) / 2⌋ — the element being compared</td></tr>
+    <tr><td>Base case (recursive)</td><td>L &gt; R — search space is empty, return −1</td></tr>
+    <tr><td>Search space</td><td>The portion of the array currently being considered</td></tr>
+    <tr><td>Elimination</td><td>Discarding the half of the array that cannot contain the key</td></tr>
+  </tbody>
+</table>
+
+<h3>Decision: Which Search to Use?</h3>
+<table>
+  <thead><tr><th>Situation</th><th>Use</th><th>Reason</th></tr></thead>
+  <tbody>
+    <tr><td>Array is unsorted</td><td>Linear</td><td>Binary search requires sorted data</td></tr>
+    <tr><td>Single search on small array</td><td>Linear</td><td>Overhead not worth sorting</td></tr>
+    <tr><td>Many searches on large sorted array</td><td>Binary</td><td>O(log n) per search — massive speedup</td></tr>
+    <tr><td>Memory is constrained</td><td>Binary iterative</td><td>O(1) space vs O(log n) recursive</td></tr>
+    <tr><td>Code clarity matters</td><td>Binary recursive</td><td>Cleaner, naturally expresses the logic</td></tr>
+  </tbody>
+</table>
+
+</div>
+</main>
+
+<!-- ═══════════════════════════ RECALL ═══════════════════════════ -->
+<main id="tab-recall" class="tab hidden">
+<div style="max-width:800px;margin:0 auto;padding:2.5rem 2rem;">
+
+  <div class="recall-topbar">
+    <div class="progress-counter"><span id="answered-count">0</span> of <span id="total-count">22</span> answered</div>
+    <div class="bulk-btns">
+      <button class="bulk-btn" onclick="revealAll()">Reveal All</button>
+      <button class="bulk-btn" onclick="hideAll()">Hide All</button>
+    </div>
+  </div>
+
+  <!-- Q01 -->
+  <div class="question-card" id="q1">
+    <div class="question-header">
+      <span class="q-number">Q01</span><span class="q-type def">DEF</span>
+      <span class="q-text">What is <strong>linear search</strong> and what does it return when the key is not found?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q1')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q1-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Linear search (also called sequential search) scans each element of the array from index 0 onwards, comparing each with the key. If a match is found, it returns the index. If the entire array is traversed with no match, it returns <strong>−1</strong>.</div>
+      <div class="answer-example"><span class="example-label">Example:</span> Searching for 100 in [84, 21, 47, 96, 15] → checks 84, 21, 47, 96, 15 → no match → returns −1.</div>
+    </div>
+  </div>
+
+  <!-- Q02 -->
+  <div class="question-card" id="q2">
+    <div class="question-header">
+      <span class="q-number">Q02</span><span class="q-type apply">APPLY</span>
+      <span class="q-text">Write the C# while-loop implementation of linear search. What are its three parameters?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q2')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q2-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <div class="code-block" style="margin:.5rem 0;">
+          <div class="code-header"><span class="code-lang">csharp</span></div>
+          <pre><code class="language-csharp">public int LinearSearch(int[] arr, int key)
+{
+    int i = 0;
+    while (i < arr.Length)
+    {
+        if (arr[i] == key) return i;
+        i++;
+    }
+    return -1;
+}</code></pre>
+        </div>
+        Parameters: <strong>arr</strong> (the array), <strong>key</strong> (element to find). arr.Length is the size.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q03 -->
+  <div class="question-card" id="q3">
+    <div class="question-header">
+      <span class="q-number">Q03</span><span class="q-type why">WHY</span>
+      <span class="q-text">Why is linear search's worst-case <strong>O(n)</strong>? Walk through the operation count.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q3')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q3-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ul>
+          <li>Init <code>i = 0</code>: O(1)</li>
+          <li>While condition <code>i &lt; n</code>: executed n+1 times</li>
+          <li>If comparison: executed n times (worst case — no match)</li>
+          <li>Increment <code>i++</code>: n times</li>
+          <li>Return −1: O(1)</li>
+        </ul>
+        Total ≈ 3n + 3 → <strong>O(n)</strong>. In the worst case (key not found or at the end), every element is visited.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q04 -->
+  <div class="question-card" id="q4">
+    <div class="question-header">
+      <span class="q-number">Q04</span><span class="q-type def">DEF</span>
+      <span class="q-text">What is the <strong>critical prerequisite</strong> for binary search? What happens if it's violated?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q4')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q4-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">The array must be <strong>sorted in ascending (or descending) order</strong>. If binary search is applied to an unsorted array, it will give wrong results — it won't crash, it will simply return an incorrect index or −1 even when the element exists.</div>
+      <div class="answer-example"><span class="example-label">Why:</span> Binary search eliminates half the array based on whether key is less or greater than mid. This logic only works if elements are ordered.</div>
+    </div>
+  </div>
+
+  <!-- Q05 -->
+  <div class="question-card" id="q5">
+    <div class="question-header">
+      <span class="q-number">Q05</span><span class="q-type sequence">SEQUENCE</span>
+      <span class="q-text">Trace binary search for <strong>key = 25</strong> in <code>[10, 20, 30, 40, 50]</code>. Show every value of L, M, R.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q5')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q5-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ul>
+          <li><strong>Step 1:</strong> L=0, R=4, M=2, arr[2]=30. 25 &lt; 30 → R = M-1 = 1</li>
+          <li><strong>Step 2:</strong> L=0, R=1, M=0, arr[0]=10. 25 &gt; 10 → L = M+1 = 1</li>
+          <li><strong>Step 3:</strong> L=1, R=1, M=1, arr[1]=20. 25 &gt; 20 → L = M+1 = 2</li>
+          <li><strong>Stop:</strong> L=2 &gt; R=1 → return <strong>−1</strong> (not found)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q06 -->
+  <div class="question-card" id="q6">
+    <div class="question-header">
+      <span class="q-number">Q06</span><span class="q-type apply">APPLY</span>
+      <span class="q-text">Write the iterative binary search in C#. What is the loop condition and how is M calculated?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q6')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q6-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <div class="code-block" style="margin:.5rem 0;">
+          <div class="code-header"><span class="code-lang">csharp</span></div>
+          <pre><code class="language-csharp">public int BinarySearch(int[] arr, int key)
+{
+    int L = 0, R = arr.Length - 1;
+    while (L <= R)
+    {
+        int M = (L + R) / 2;    // floor division
+        if (arr[M] == key) return M;
+        else if (key < arr[M]) R = M - 1;
+        else L = M + 1;
+    }
+    return -1;
+}</code></pre>
+        </div>
+        Loop condition: <strong>L ≤ R</strong>. M = <strong>(L + R) / 2</strong> (integer division = floor). The floor is automatic in C# integer arithmetic.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q07 -->
+  <div class="question-card" id="q7">
+    <div class="question-header">
+      <span class="q-number">Q07</span><span class="q-type why">WHY</span>
+      <span class="q-text">Why is binary search <strong>O(log n)</strong>? Explain using the halving principle.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q7')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q7-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">After each iteration, the search space is halved: n → n/2 → n/4 → … → 1. The number of times you can halve n before reaching 1 is log₂n. So the loop runs at most log₂n times. Each iteration does O(1) work → total is <strong>O(log n)</strong>.</div>
+      <div class="answer-example"><span class="example-label">Numbers:</span> n = 1,000,000 → log₂(1,000,000) ≈ 20 iterations. Linear search would take up to 1,000,000.</div>
+    </div>
+  </div>
+
+  <!-- Q08 -->
+  <div class="question-card" id="q8">
+    <div class="question-header">
+      <span class="q-number">Q08</span><span class="q-type gotcha">GOTCHA</span>
+      <span class="q-text">When does binary search update <code>R = M - 1</code> vs <code>L = M + 1</code>? What happens if you forget the ±1?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q8')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q8-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ul>
+          <li><code>R = M - 1</code>: when <code>key &lt; arr[M]</code> — key is in the LEFT half. Exclude M itself.</li>
+          <li><code>L = M + 1</code>: when <code>key &gt; arr[M]</code> — key is in the RIGHT half. Exclude M itself.</li>
+        </ul>
+        Forgetting the ±1 (writing <code>R = M</code> or <code>L = M</code>) causes an <strong>infinite loop</strong> — the search space never shrinks when L = R = M.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q09 -->
+  <div class="question-card" id="q9">
+    <div class="question-header">
+      <span class="q-number">Q09</span><span class="q-type apply">APPLY</span>
+      <span class="q-text">Write the recursive binary search in C#. What is the base case?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q9')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q9-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <div class="code-block" style="margin:.5rem 0;">
+          <div class="code-header"><span class="code-lang">csharp</span></div>
+          <pre><code class="language-csharp">public int BinarySearchRec(int[] arr, int key, int L, int R)
+{
+    if (L > R) return -1;       // base case: empty range
+    int M = (L + R) / 2;
+    if (arr[M] == key) return M;
+    else if (key < arr[M])
+        return BinarySearchRec(arr, key, L, M - 1);
+    else
+        return BinarySearchRec(arr, key, M + 1, R);
+}</code></pre>
+        </div>
+        Base case: <strong>L &gt; R</strong> — the search range is empty, so the key cannot exist → return −1.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="question-card" id="q10">
+    <div class="question-header">
+      <span class="q-number">Q10</span><span class="q-type compare">COMPARE</span>
+      <span class="q-text">Compare iterative vs recursive binary search on <strong>time and space complexity</strong>. Which is preferred in production?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q10')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q10-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ul>
+          <li>Both have <strong>O(log n) time complexity</strong></li>
+          <li><strong>Iterative space: O(1)</strong> — only L, R, M variables, no stack frames</li>
+          <li><strong>Recursive space: O(log n)</strong> — each call pushes a stack frame; max depth = log n</li>
+        </ul>
+        Iterative is preferred in production for large arrays because recursive can stack overflow and uses more memory. Recursive is cleaner to read and reason about.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q11 -->
+  <div class="question-card" id="q11">
+    <div class="question-header">
+      <span class="q-number">Q11</span><span class="q-type sequence">SEQUENCE</span>
+      <span class="q-text">Trace recursive binary search for <strong>key = 50</strong> in <code>[10, 20, 30, 40, 50, 60, 70]</code>. Show every recursive call.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q11')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q11-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ul>
+          <li><strong>Call 1:</strong> BS(0,6) → M=3, arr[3]=40. 50 &gt; 40 → call BS(4,6)</li>
+          <li><strong>Call 2:</strong> BS(4,6) → M=5, arr[5]=60. 50 &lt; 60 → call BS(4,4)</li>
+          <li><strong>Call 3:</strong> BS(4,4) → M=4, arr[4]=50. 50 == 50 → <strong>return 4 ✅</strong></li>
+        </ul>
+        Call stack unwinds: Call 3 returns 4 → Call 2 returns 4 → Call 1 returns 4.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="question-card" id="q12">
+    <div class="question-header">
+      <span class="q-number">Q12</span><span class="q-type gotcha">GOTCHA</span>
+      <span class="q-text">You run binary search on <code>[5, 2, 8, 1, 9]</code> looking for <code>8</code>. It returns −1. Why?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q12')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q12-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">The array is <strong>not sorted</strong>. Binary search requires sorted input. On [5,2,8,1,9]: L=0, R=4, M=2, arr[2]=8 — ironically it would find 8 here, but this is luck. Change the target to 1: L=0, R=4, M=2, arr[2]=8, 1&lt;8 → R=1. Then L=0, R=1, M=0, arr[0]=5, 1&lt;5 → R=-1. Stop → returns -1. Wrong! 1 is at index 3. <strong>Always sort before binary searching.</strong></div>
+    </div>
+  </div>
+
+  <!-- Q13 -->
+  <div class="question-card" id="q13">
+    <div class="question-header">
+      <span class="q-number">Q13</span><span class="q-type why">WHY</span>
+      <span class="q-text">Why does the recursive binary search have <strong>O(log n) space complexity</strong>?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q13')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q13-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Each recursive call adds a stack frame holding L, R, M and the return address. Because each call halves the search space, the maximum recursion depth is log₂n. Therefore at most log n frames exist simultaneously on the call stack → <strong>O(log n) space</strong>.</div>
+      <div class="answer-example"><span class="example-label">Example:</span> n = 1,000,000 → max stack depth ≈ 20 frames. Negligible in practice, but not O(1).</div>
+    </div>
+  </div>
+
+  <!-- Q14 -->
+  <div class="question-card" id="q14">
+    <div class="question-header">
+      <span class="q-number">Q14</span><span class="q-type compare">COMPARE</span>
+      <span class="q-text">Linear search vs binary search on a sorted array of 1 million elements. Which is better and why?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q14')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q14-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Binary search is vastly better. Linear search does up to 1,000,000 comparisons. Binary search does at most log₂(1,000,000) ≈ <strong>20 comparisons</strong>. That's ~50,000× faster. For large, already-sorted data, binary search is the clear choice.</div>
+    </div>
+  </div>
+
+  <!-- Q15 -->
+  <div class="question-card" id="q15">
+    <div class="question-header">
+      <span class="q-number">Q15</span><span class="q-type def">DEF</span>
+      <span class="q-text">What do L, R, and M represent in binary search, and what formula computes M?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q15')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q15-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ul>
+          <li><strong>L (Left)</strong> — the start index of the current active search range</li>
+          <li><strong>R (Right)</strong> — the end index of the current active search range</li>
+          <li><strong>M (Mid)</strong> — the middle index; element being compared against the key</li>
+        </ul>
+        Formula: <strong>M = ⌊(L + R) / 2⌋</strong>. Integer division in C# gives the floor automatically.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q16 -->
+  <div class="question-card" id="q16">
+    <div class="question-header">
+      <span class="q-number">Q16</span><span class="q-type gotcha">GOTCHA</span>
+      <span class="q-text">What is the termination condition for the iterative binary search loop, and why is it <code>L ≤ R</code> not <code>L &lt; R</code>?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q16')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q16-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">The condition is <code>L ≤ R</code> because when L = R, there is still <strong>one element left to check</strong>. Using <code>L &lt; R</code> would skip this case — if the key is at that final single-element position, the function would incorrectly return −1 even though the element exists.</div>
+      <div class="answer-example"><span class="example-label">Example:</span> Searching for 10 in [10]. L=0, R=0. L≤R → M=0, arr[0]=10 → found. If using L&lt;R: loop never runs → wrong return of −1.</div>
+    </div>
+  </div>
+
+  <!-- Q17 -->
+  <div class="question-card" id="q17">
+    <div class="question-header">
+      <span class="q-number">Q17</span><span class="q-type apply">APPLY</span>
+      <span class="q-text">For binary search on <code>[10, 20, 30, 40, 50, 60, 70]</code> searching for <strong>40</strong>: what does L, M, R equal in the very first iteration?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q17')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q17-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">L = 0, R = 6, M = ⌊(0+6)/2⌋ = <strong>3</strong>. arr[3] = 40 = key → <strong>found immediately, return 3</strong>. This is the best case: O(1) — the key is exactly at the midpoint on the first comparison.</div>
+    </div>
+  </div>
+
+  <!-- Q18 -->
+  <div class="question-card" id="q18">
+    <div class="question-header">
+      <span class="q-number">Q18</span><span class="q-type why">WHY</span>
+      <span class="q-text">When would you prefer <strong>linear search</strong> over binary search even if the array is sorted?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q18')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q18-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ul>
+          <li><strong>Very small arrays</strong> (n &lt; ~8–16): overhead of binary search setup isn't worth it; linear is simpler</li>
+          <li><strong>Single search on data that needs sorting first</strong>: sorting costs O(n log n) upfront; if you only search once, linear O(n) is cheaper overall</li>
+          <li><strong>Linked lists</strong>: can't do random access to compute mid efficiently — linear is natural</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q19 -->
+  <div class="question-card" id="q19">
+    <div class="question-header">
+      <span class="q-number">Q19</span><span class="q-type sequence">SEQUENCE</span>
+      <span class="q-text">List the three decision branches inside binary search and what each does to L and R.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q19')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q19-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ol>
+          <li><strong>arr[M] == key</strong> → return M (found!)</li>
+          <li><strong>key &lt; arr[M]</strong> → R = M − 1 (discard right half, search left)</li>
+          <li><strong>key &gt; arr[M]</strong> → L = M + 1 (discard left half, search right)</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q20 -->
+  <div class="question-card" id="q20">
+    <div class="question-header">
+      <span class="q-number">Q20</span><span class="q-type draw">DRAW</span>
+      <span class="q-text">Sketch the elimination diagram for binary search on <code>[10,20,30,40,50,60,70,80]</code> searching for <strong>80</strong>. Show L, M, R at each step.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q20')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q20-answer">
+      <div class="answer-label">Answer</div>
+      <svg viewBox="0 0 520 200" xmlns="http://www.w3.org/2000/svg" style="max-width:520px;width:100%;">
+        <!-- Row helper -->
+        <!-- Step 1 full array L=0 R=7 M=3 -->
+        <text x="0" y="16" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Step 1: L=0 R=7 M=3 arr[3]=40 → 80>40 → L=4</text>
+        <!-- cells -->
+        <rect x="0"   y="22" width="40" height="28" rx="3" fill="rgba(42,42,50,.4)" stroke="#1e1e24"/>
+        <text x="20"  y="41" text-anchor="middle" fill="#3a3a48" font-family="DM Mono,monospace" font-size="10">10</text>
+        <rect x="44"  y="22" width="40" height="28" rx="3" fill="rgba(42,42,50,.4)" stroke="#1e1e24"/>
+        <text x="64"  y="41" text-anchor="middle" fill="#3a3a48" font-family="DM Mono,monospace" font-size="10">20</text>
+        <rect x="88"  y="22" width="40" height="28" rx="3" fill="rgba(42,42,50,.4)" stroke="#1e1e24"/>
+        <text x="108" y="41" text-anchor="middle" fill="#3a3a48" font-family="DM Mono,monospace" font-size="10">30</text>
+        <rect x="132" y="22" width="40" height="28" rx="3" fill="rgba(200,240,96,.18)" stroke="var(--accent)"/>
+        <text x="152" y="41" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="10">40</text>
+        <text x="152" y="18" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="8">M</text>
+        <rect x="176" y="22" width="40" height="28" rx="3" fill="rgba(96,200,240,.12)" stroke="rgba(96,200,240,.4)"/>
+        <text x="196" y="41" text-anchor="middle" fill="var(--accent2)" font-family="DM Mono,monospace" font-size="10">50</text>
+        <rect x="220" y="22" width="40" height="28" rx="3" fill="rgba(96,200,240,.12)" stroke="rgba(96,200,240,.4)"/>
+        <text x="240" y="41" text-anchor="middle" fill="var(--accent2)" font-family="DM Mono,monospace" font-size="10">60</text>
+        <rect x="264" y="22" width="40" height="28" rx="3" fill="rgba(96,200,240,.12)" stroke="rgba(96,200,240,.4)"/>
+        <text x="284" y="41" text-anchor="middle" fill="var(--accent2)" font-family="DM Mono,monospace" font-size="10">70</text>
+        <rect x="308" y="22" width="40" height="28" rx="3" fill="rgba(96,200,240,.12)" stroke="rgba(96,200,240,.4)"/>
+        <text x="328" y="41" text-anchor="middle" fill="var(--accent2)" font-family="DM Mono,monospace" font-size="10">80</text>
+        <text x="400" y="38" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">→ search right</text>
+
+        <!-- Step 2 L=4 R=7 M=5 -->
+        <text x="0" y="75" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Step 2: L=4 R=7 M=5 arr[5]=60 → 80>60 → L=6</text>
+        <rect x="176" y="80" width="40" height="28" rx="3" fill="rgba(42,42,50,.4)" stroke="#1e1e24"/>
+        <text x="196" y="99" text-anchor="middle" fill="#3a3a48" font-family="DM Mono,monospace" font-size="10">50</text>
+        <rect x="220" y="80" width="40" height="28" rx="3" fill="rgba(200,240,96,.18)" stroke="var(--accent)"/>
+        <text x="240" y="99" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="10">60</text>
+        <text x="240" y="76" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="8">M</text>
+        <rect x="264" y="80" width="40" height="28" rx="3" fill="rgba(96,200,240,.12)" stroke="rgba(96,200,240,.4)"/>
+        <text x="284" y="99" text-anchor="middle" fill="var(--accent2)" font-family="DM Mono,monospace" font-size="10">70</text>
+        <rect x="308" y="80" width="40" height="28" rx="3" fill="rgba(96,200,240,.12)" stroke="rgba(96,200,240,.4)"/>
+        <text x="328" y="99" text-anchor="middle" fill="var(--accent2)" font-family="DM Mono,monospace" font-size="10">80</text>
+        <text x="400" y="96" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">→ search right</text>
+
+        <!-- Step 3 L=6 R=7 M=6 -->
+        <text x="0" y="135" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Step 3: L=6 R=7 M=6 arr[6]=70 → 80>70 → L=7</text>
+        <rect x="264" y="140" width="40" height="28" rx="3" fill="rgba(200,240,96,.18)" stroke="var(--accent)"/>
+        <text x="284" y="159" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="10">70</text>
+        <text x="284" y="136" text-anchor="middle" fill="#c8f060" font-family="DM Mono,monospace" font-size="8">M</text>
+        <rect x="308" y="140" width="40" height="28" rx="3" fill="rgba(96,200,240,.12)" stroke="rgba(96,200,240,.4)"/>
+        <text x="328" y="159" text-anchor="middle" fill="var(--accent2)" font-family="DM Mono,monospace" font-size="10">80</text>
+
+        <!-- Step 4 found -->
+        <text x="0" y="195" fill="#60f0a0" font-family="DM Mono,monospace" font-size="10">Step 4: L=7 R=7 M=7 arr[7]=80 == 80 → FOUND at index 7 ✅</text>
+        <rect x="308" y="176" width="40" height="22" rx="3" fill="rgba(96,240,160,.2)" stroke="var(--success)"/>
+        <text x="328" y="192" text-anchor="middle" fill="var(--success)" font-family="DM Mono,monospace" font-size="10">80</text>
+      </svg>
+      <div class="answer-content" style="margin-top:.5rem;">Total steps = 4 = log₂(8). Grey = eliminated, blue = active range, green = found.</div>
+    </div>
+  </div>
+
+  <!-- Q21 -->
+  <div class="question-card" id="q21">
+    <div class="question-header">
+      <span class="q-number">Q21</span><span class="q-type gotcha">GOTCHA</span>
+      <span class="q-text">What is the recurrence relation for recursive binary search and what is its solution?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q21')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q21-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <strong>Recurrence:</strong> T(n) = T(n/2) + O(1), T(1) = O(1)<br><br>
+        Each call does O(1) work (compute M, one comparison) and makes one recursive call on half the array.<br><br>
+        <strong>Solution:</strong> T(n) = T(n/2) + 1 = T(n/4) + 1 + 1 = … = T(1) + log₂n = <strong>O(log n)</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q22 -->
+  <div class="question-card" id="q22">
+    <div class="question-header">
+      <span class="q-number">Q22</span><span class="q-type compare">COMPARE</span>
+      <span class="q-text">Complete this table: Best/Worst/Space for Linear Search, Binary Search Iterative, Binary Search Recursive.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q22')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q22-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <table style="font-size:.8rem;margin-top:.5rem;">
+          <thead><tr><th>Algorithm</th><th>Best</th><th>Worst</th><th>Space</th></tr></thead>
+          <tbody>
+            <tr><td>Linear Search</td><td>Ω(1)</td><td>O(n)</td><td>O(1)</td></tr>
+            <tr><td>Binary Search (Iterative)</td><td>Ω(1)</td><td>O(log n)</td><td>O(1)</td></tr>
+            <tr><td>Binary Search (Recursive)</td><td>Ω(1)</td><td>O(log n)</td><td>O(log n)</td></tr>
+          </tbody>
+        </table>
+        Best case for all three is Ω(1): the key is at the first checked position (index 0 for linear; mid on first try for binary).
+      </div>
+    </div>
+  </div>
+
+</div>
+</main>
+
+<!-- ════════════════════════════ SCRIPTS ════════════════════════════ -->
+<script>
+/* ── TAB SWITCHING ─────────────────────────────────────────────── */
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.add('hidden'));
+  document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.classList.add('inactive'); });
+  document.getElementById('tab-' + tab).classList.remove('hidden');
+  btn.classList.add('active'); btn.classList.remove('inactive');
+}
+
+/* ── RECALL ────────────────────────────────────────────────────── */
+let answeredSet = new Set();
+function toggleAnswer(id) {
+  const card = document.getElementById(id);
+  const block = document.getElementById(id + '-answer');
+  const btn = card.querySelector('.show-answer-btn');
+  const isOpen = block.classList.contains('open');
+  if (isOpen) {
+    block.classList.remove('open'); card.classList.remove('revealed');
+    btn.textContent = 'Show Answer'; btn.classList.remove('revealed');
+    answeredSet.delete(id);
+  } else {
+    block.classList.add('open'); card.classList.add('revealed');
+    btn.textContent = 'Hide Answer'; btn.classList.add('revealed');
+    answeredSet.add(id);
+  }
+  document.getElementById('answered-count').textContent = answeredSet.size;
+}
+function revealAll() {
+  document.querySelectorAll('.question-card').forEach(card => {
+    const id = card.id;
+    document.getElementById(id + '-answer').classList.add('open');
+    card.classList.add('revealed');
+    const btn = card.querySelector('.show-answer-btn');
+    btn.textContent = 'Hide Answer'; btn.classList.add('revealed');
+    answeredSet.add(id);
+  });
+  document.getElementById('answered-count').textContent = answeredSet.size;
+}
+function hideAll() {
+  document.querySelectorAll('.question-card').forEach(card => {
+    const id = card.id;
+    document.getElementById(id + '-answer').classList.remove('open');
+    card.classList.remove('revealed');
+    const btn = card.querySelector('.show-answer-btn');
+    btn.textContent = 'Show Answer'; btn.classList.remove('revealed');
+  });
+  answeredSet.clear();
+  document.getElementById('answered-count').textContent = 0;
+}
+function copyCode(btn) {
+  const code = btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(() => {
+    btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LINEAR SEARCH VISUALISER
+═══════════════════════════════════════════════════════════════ */
+let lsArr = [], lsKey = 0, lsSteps = [], lsStepIdx = 0, lsPlaying = false, lsTimer = null;
+
+function lsParseInput() {
+  const raw = document.getElementById('ls-arr-input').value;
+  const arr = raw.split(',').map(x => parseInt(x.trim())).filter(n => !isNaN(n));
+  const key = parseInt(document.getElementById('ls-key-input').value);
+  return { arr, key };
+}
+
+function lsBuildSteps(arr, key) {
+  const steps = [];
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === key) {
+      steps.push({ i, match: true, msg: `Step ${i+1}: arr[${i}] = ${arr[i]} == ${key} ✅ Found at index ${i}!`, logClass: 'log-found' });
+      break;
+    } else {
+      steps.push({ i, match: false, msg: `Step ${i+1}: arr[${i}] = ${arr[i]} ≠ ${key} → move right`, logClass: 'log-active' });
+    }
+  }
+  if (steps.length === 0 || !steps[steps.length-1].match) {
+    steps.push({ i: -1, match: false, done: true, msg: `End of array — ${key} not found → return -1`, logClass: 'log-miss' });
+  }
+  return steps;
+}
+
+function lsRenderArray() {
+  const cont = document.getElementById('ls-arr');
+  const ptrRow = document.getElementById('ls-ptrs');
+  cont.innerHTML = ''; ptrRow.innerHTML = '';
+  lsArr.forEach((val, idx) => {
+    const cell = document.createElement('div');
+    cell.className = 'arr-cell';
+    cell.innerHTML = `<div class="arr-box" id="ls-box-${idx}">${val}</div><div class="arr-idx">${idx}</div>`;
+    cont.appendChild(cell);
+    const ptr = document.createElement('div');
+    ptr.className = 'arr-ptr'; ptr.id = `ls-ptr-${idx}`; ptr.style.opacity = 0;
+    ptrRow.appendChild(ptr);
+  });
+}
+
+function lsApplyStep(step) {
+  // Reset all
+  lsArr.forEach((_, idx) => {
+    const box = document.getElementById(`ls-box-${idx}`);
+    if (box) box.className = 'arr-box';
+    const ptr = document.getElementById(`ls-ptr-${idx}`);
+    if (ptr) { ptr.textContent = ''; ptr.style.opacity = 0; }
+  });
+
+  if (step.i >= 0) {
+    // Mark previous as eliminated
+    for (let j = 0; j < step.i; j++) {
+      const box = document.getElementById(`ls-box-${j}`);
+      if (box) box.className = 'arr-box state-elim';
+    }
+    const box = document.getElementById(`ls-box-${step.i}`);
+    const ptr = document.getElementById(`ls-ptr-${step.i}`);
+    if (box) box.className = step.match ? 'arr-box state-found' : 'arr-box state-active';
+    if (ptr) { ptr.textContent = '→'; ptr.style.color = step.match ? 'var(--success)' : 'var(--accent)'; ptr.style.opacity = 1; }
+  }
+
+  const status = document.getElementById('ls-status');
+  status.textContent = step.msg;
+  status.className = 'viz-status ' + (step.match ? 'found' : step.done ? 'notfound' : 'searching');
+
+  // Log
+  const log = document.getElementById('ls-log');
+  const entry = document.createElement('div');
+  entry.className = `log-entry ${step.logClass}`;
+  entry.textContent = step.msg;
+  log.appendChild(entry);
+  log.scrollTop = log.scrollHeight;
+}
+
+function lsInit() {
+  const { arr, key } = lsParseInput();
+  lsArr = arr; lsKey = key;
+  lsSteps = lsBuildSteps(arr, key);
+  lsStepIdx = 0;
+  lsPlaying = false;
+  clearTimeout(lsTimer);
+  document.getElementById('ls-play-btn').textContent = '▶ Play';
+  document.getElementById('ls-status').textContent = `Array set. Key = ${key}. Press ▶ Play or → Step.`;
+  document.getElementById('ls-status').className = 'viz-status';
+  document.getElementById('ls-log').innerHTML = '';
+  lsRenderArray();
+}
+
+function lsReset() { lsInit(); }
+
+function lsStep() {
+  if (lsStepIdx >= lsSteps.length) return;
+  lsApplyStep(lsSteps[lsStepIdx]);
+  lsStepIdx++;
+  if (lsStepIdx >= lsSteps.length) {
+    lsPlaying = false; clearTimeout(lsTimer);
+    document.getElementById('ls-play-btn').textContent = '▶ Play';
+    document.getElementById('ls-step-btn').disabled = true;
+  }
+}
+
+function lsPlayPause() {
+  if (lsStepIdx >= lsSteps.length) return;
+  if (lsPlaying) {
+    lsPlaying = false; clearTimeout(lsTimer);
+    document.getElementById('ls-play-btn').textContent = '▶ Play';
+  } else {
+    lsPlaying = true;
+    document.getElementById('ls-play-btn').textContent = '⏸ Pause';
+    const go = () => {
+      if (lsStepIdx < lsSteps.length && lsPlaying) {
+        lsStep();
+        lsTimer = setTimeout(go, parseInt(document.getElementById('ls-speed').value));
+      } else {
+        lsPlaying = false;
+        document.getElementById('ls-play-btn').textContent = '▶ Play';
+      }
+    };
+    lsTimer = setTimeout(go, parseInt(document.getElementById('ls-speed').value));
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BINARY SEARCH (ITERATIVE) VISUALISER
+═══════════════════════════════════════════════════════════════ */
+let bsArr = [], bsKey = 0, bsSteps = [], bsStepIdx = 0, bsPlaying = false, bsTimer = null;
+
+function bsParseInput() {
+  const raw = document.getElementById('bs-arr-input').value;
+  const arr = raw.split(',').map(x => parseInt(x.trim())).filter(n => !isNaN(n));
+  const key = parseInt(document.getElementById('bs-key-input').value);
+  return { arr, key };
+}
+
+function bsBuildSteps(arr, key) {
+  const steps = [];
+  let L = 0, R = arr.length - 1;
+  while (L <= R) {
+    const M = Math.floor((L + R) / 2);
+    if (arr[M] === key) {
+      steps.push({ L, R, M, match: true, dir: null, msg: `L=${L} R=${R} M=${M}  arr[${M}]=${arr[M]} == ${key} ✅ FOUND at index ${M}!`, logClass: 'log-found' });
+      break;
+    } else if (key < arr[M]) {
+      steps.push({ L, R, M, match: false, dir: 'left', msg: `L=${L} R=${R} M=${M}  arr[${M}]=${arr[M]}  ${key} < ${arr[M]} → search LEFT → R=${M-1}`, logClass: 'log-active' });
+      R = M - 1;
+    } else {
+      steps.push({ L, R, M, match: false, dir: 'right', msg: `L=${L} R=${R} M=${M}  arr[${M}]=${arr[M]}  ${key} > ${arr[M]} → search RIGHT → L=${M+1}`, logClass: 'log-active' });
+      L = M + 1;
+    }
+  }
+  if (!steps.length || !steps[steps.length-1].match) {
+    steps.push({ L, R, M: -1, match: false, done: true, msg: `L=${L} > R=${R} → search space empty → ${key} NOT FOUND → return -1`, logClass: 'log-miss' });
+  }
+  return steps;
+}
+
+function bsRenderArray() {
+  const cont = document.getElementById('bs-arr');
+  const ptrRow = document.getElementById('bs-ptrs');
+  cont.innerHTML = ''; ptrRow.innerHTML = '';
+  bsArr.forEach((val, idx) => {
+    const cell = document.createElement('div');
+    cell.className = 'arr-cell';
+    cell.innerHTML = `<div class="arr-box" id="bs-box-${idx}">${val}</div><div class="arr-idx">${idx}</div>`;
+    cont.appendChild(cell);
+    const ptr = document.createElement('div');
+    ptr.className = 'arr-ptr'; ptr.id = `bs-ptr-${idx}`; ptr.style.opacity = 0;
+    ptrRow.appendChild(ptr);
+  });
+}
+
+function bsApplyStep(step) {
+  bsArr.forEach((_, idx) => {
+    const box = document.getElementById(`bs-box-${idx}`);
+    const ptr = document.getElementById(`bs-ptr-${idx}`);
+    if (box) box.className = 'arr-box';
+    if (ptr) { ptr.textContent = ''; ptr.style.opacity = 0; ptr.className = 'arr-ptr'; }
+  });
+
+  if (step.M >= 0) {
+    const { L, R, M } = step;
+    // Eliminated zones
+    for (let j = 0; j < bsArr.length; j++) {
+      const box = document.getElementById(`bs-box-${j}`);
+      if (!box) continue;
+      if (j < L || j > R) {
+        box.className = 'arr-box state-elim';
+      } else if (j === M) {
+        box.className = step.match ? 'arr-box state-found' : 'arr-box state-active';
+      } else {
+        box.className = 'arr-box state-range';
+      }
+    }
+    // Pointers
+    const setPtr = (idx, label, cls) => {
+      const ptr = document.getElementById(`bs-ptr-${idx}`);
+      if (!ptr) return;
+      const existing = ptr.textContent;
+      ptr.textContent = existing ? existing + ' ' + label : label;
+      ptr.className = 'arr-ptr ' + cls;
+      ptr.style.opacity = 1;
+    };
+    // L and R may coincide with M
+    if (L !== M && L <= R) setPtr(L, 'L', 'ptr-l');
+    if (R !== M && R >= L) setPtr(R, 'R', 'ptr-r');
+    if (L === M && R !== M) setPtr(M, 'L M', 'ptr-l');
+    else if (R === M && L !== M) setPtr(M, 'M R', 'ptr-r');
+    else if (L === R && L === M) setPtr(M, 'L M R', 'ptr-m');
+    else setPtr(M, 'M', 'ptr-m');
+  } else {
+    bsArr.forEach((_, idx) => { const b = document.getElementById(`bs-box-${idx}`); if(b) b.className='arr-box state-elim'; });
+  }
+
+  const status = document.getElementById('bs-status');
+  status.textContent = step.msg;
+  status.className = 'viz-status ' + (step.match ? 'found' : step.done ? 'notfound' : 'searching');
+
+  const log = document.getElementById('bs-log');
+  const entry = document.createElement('div');
+  entry.className = `log-entry ${step.logClass}`;
+  entry.textContent = step.msg;
+  log.appendChild(entry);
+  log.scrollTop = log.scrollHeight;
+}
+
+function bsInit() {
+  const { arr, key } = bsParseInput();
+  bsArr = arr; bsKey = key;
+  bsSteps = bsBuildSteps(arr, key);
+  bsStepIdx = 0; bsPlaying = false; clearInterval(bsTimer);
+  document.getElementById('bs-play-btn').textContent = '▶ Play';
+  document.getElementById('bs-step-btn').disabled = false;
+  document.getElementById('bs-status').textContent = `Array set. Key = ${key}. Press ▶ Play or → Step.`;
+  document.getElementById('bs-status').className = 'viz-status';
+  document.getElementById('bs-log').innerHTML = '';
+  bsRenderArray();
+}
+function bsReset() { bsInit(); }
+function bsStep() {
+  if (bsStepIdx >= bsSteps.length) return;
+  bsApplyStep(bsSteps[bsStepIdx]);
+  bsStepIdx++;
+  if (bsStepIdx >= bsSteps.length) {
+    bsPlaying = false; clearInterval(bsTimer);
+    document.getElementById('bs-play-btn').textContent = '▶ Play';
+    document.getElementById('bs-step-btn').disabled = true;
+  }
+}
+function bsPlayPause() {
+  if (bsStepIdx >= bsSteps.length) return;
+  if (bsPlaying) {
+    bsPlaying = false; clearInterval(bsTimer);
+    document.getElementById('bs-play-btn').textContent = '▶ Play';
+  } else {
+    bsPlaying = true;
+    document.getElementById('bs-play-btn').textContent = '⏸ Pause';
+    const go = () => {
+      if (bsStepIdx < bsSteps.length && bsPlaying) {
+        bsStep();
+        bsTimer = setTimeout(go, parseInt(document.getElementById('bs-speed').value));
+      } else {
+        bsPlaying = false;
+        document.getElementById('bs-play-btn').textContent = '▶ Play';
+      }
+    };
+    bsTimer = setTimeout(go, parseInt(document.getElementById('bs-speed').value));
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BINARY SEARCH (RECURSIVE) VISUALISER
+═══════════════════════════════════════════════════════════════ */
+let bsrArr = [], bsrKey = 0, bsrSteps = [], bsrStepIdx = 0, bsrPlaying = false, bsrTimer = null;
+
+function bsrParseInput() {
+  const raw = document.getElementById('bsr-arr-input').value;
+  const arr = raw.split(',').map(x => parseInt(x.trim())).filter(n => !isNaN(n));
+  const key = parseInt(document.getElementById('bsr-key-input').value);
+  return { arr, key };
+}
+
+function bsrBuildSteps(arr, key) {
+  const steps = [];
+  const callStack = [];
+
+  function rec(L, R, depth) {
+    const frameId = `BS(${L},${R})`;
+    callStack.push(frameId);
+    if (L > R) {
+      steps.push({
+        L, R, M: -1, match: false, done: true,
+        stack: [...callStack],
+        msg: `${frameId}: L=${L} > R=${R} → empty range → return -1`,
+        logClass: 'log-miss'
+      });
+      callStack.pop();
+      return;
+    }
+    const M = Math.floor((L + R) / 2);
+    if (arr[M] === key) {
+      steps.push({
+        L, R, M, match: true, done: false,
+        stack: [...callStack],
+        msg: `${frameId}: M=${M}  arr[${M}]=${arr[M]} == ${key} ✅ FOUND at index ${M}!`,
+        logClass: 'log-found'
+      });
+      callStack.pop();
+      return;
+    } else if (key < arr[M]) {
+      steps.push({
+        L, R, M, match: false, done: false,
+        stack: [...callStack],
+        msg: `${frameId}: M=${M}  arr[${M}]=${arr[M]}  ${key} < ${arr[M]} → go LEFT → call BS(${L},${M-1})`,
+        logClass: 'log-active'
+      });
+      rec(L, M - 1, depth + 1);
+    } else {
+      steps.push({
+        L, R, M, match: false, done: false,
+        stack: [...callStack],
+        msg: `${frameId}: M=${M}  arr[${M}]=${arr[M]}  ${key} > ${arr[M]} → go RIGHT → call BS(${M+1},${R})`,
+        logClass: 'log-active'
+      });
+      rec(M + 1, R, depth + 1);
+    }
+    callStack.pop();
+  }
+
+  rec(0, arr.length - 1, 0);
+  return steps;
+}
+
+function bsrRenderArray() {
+  const cont = document.getElementById('bsr-arr');
+  const ptrRow = document.getElementById('bsr-ptrs');
+  cont.innerHTML = ''; ptrRow.innerHTML = '';
+  bsrArr.forEach((val, idx) => {
+    const cell = document.createElement('div');
+    cell.className = 'arr-cell';
+    cell.innerHTML = `<div class="arr-box" id="bsr-box-${idx}">${val}</div><div class="arr-idx">${idx}</div>`;
+    cont.appendChild(cell);
+    const ptr = document.createElement('div');
+    ptr.className = 'arr-ptr'; ptr.id = `bsr-ptr-${idx}`; ptr.style.opacity = 0;
+    ptrRow.appendChild(ptr);
+  });
+}
+
+function bsrApplyStep(step) {
+  // Reset array
+  bsrArr.forEach((_, idx) => {
+    const box = document.getElementById(`bsr-box-${idx}`);
+    const ptr = document.getElementById(`bsr-ptr-${idx}`);
+    if (box) box.className = 'arr-box';
+    if (ptr) { ptr.textContent = ''; ptr.style.opacity = 0; ptr.className = 'arr-ptr'; }
+  });
+
+  if (step.M >= 0) {
+    const { L, R, M } = step;
+    bsrArr.forEach((_, idx) => {
+      const box = document.getElementById(`bsr-box-${idx}`);
+      if (!box) return;
+      if (idx < L || idx > R) box.className = 'arr-box state-elim';
+      else if (idx === M) box.className = step.match ? 'arr-box state-found' : 'arr-box state-active';
+      else box.className = 'arr-box state-range';
+    });
+    const setPtr = (idx, label, cls) => {
+      const ptr = document.getElementById(`bsr-ptr-${idx}`);
+      if (!ptr) return;
+      const ex = ptr.textContent;
+      ptr.textContent = ex ? ex + ' ' + label : label;
+      ptr.className = 'arr-ptr ' + cls; ptr.style.opacity = 1;
+    };
+    if (L === R && L === M) setPtr(M, 'L M R', 'ptr-m');
+    else {
+      if (L !== M) setPtr(L, 'L', 'ptr-l');
+      if (R !== M) setPtr(R, 'R', 'ptr-r');
+      if (L === M) setPtr(M, 'L M', 'ptr-l');
+      else if (R === M) setPtr(M, 'M R', 'ptr-r');
+      else setPtr(M, 'M', 'ptr-m');
+    }
+  } else {
+    bsrArr.forEach((_, idx) => { const b = document.getElementById(`bsr-box-${idx}`); if(b) b.className='arr-box state-elim'; });
+  }
+
+  // Call stack
+  const stackEl = document.getElementById('bsr-stack');
+  stackEl.innerHTML = '';
+  step.stack.forEach((frame, i) => {
+    const div = document.createElement('div');
+    div.className = 'cs-frame ' + (i === step.stack.length - 1 ? (step.match ? 'cs-return' : 'cs-active') : '');
+    div.style.marginLeft = (i * 14) + 'px';
+    div.textContent = (i === step.stack.length - 1 ? '→ ' : '  ') + frame;
+    stackEl.appendChild(div);
+  });
+
+  // Status
+  const status = document.getElementById('bsr-status');
+  status.textContent = step.msg;
+  status.className = 'viz-status ' + (step.match ? 'found' : step.done ? 'notfound' : 'searching');
+
+  // Log
+  const log = document.getElementById('bsr-log');
+  const entry = document.createElement('div');
+  entry.className = `log-entry ${step.logClass}`;
+  entry.textContent = step.msg;
+  log.appendChild(entry);
+  log.scrollTop = log.scrollHeight;
+}
+
+function bsrInit() {
+  const { arr, key } = bsrParseInput();
+  bsrArr = arr; bsrKey = key;
+  bsrSteps = bsrBuildSteps(arr, key);
+  bsrStepIdx = 0; bsrPlaying = false; clearInterval(bsrTimer);
+  document.getElementById('bsr-play-btn').textContent = '▶ Play';
+  document.getElementById('bsr-step-btn').disabled = false;
+  document.getElementById('bsr-status').textContent = `Array set. Key = ${key}. Press ▶ Play or → Step.`;
+  document.getElementById('bsr-status').className = 'viz-status';
+  document.getElementById('bsr-log').innerHTML = '';
+  document.getElementById('bsr-stack').innerHTML = '';
+  bsrRenderArray();
+}
+function bsrReset() { bsrInit(); }
+function bsrStep() {
+  if (bsrStepIdx >= bsrSteps.length) return;
+  bsrApplyStep(bsrSteps[bsrStepIdx]);
+  bsrStepIdx++;
+  if (bsrStepIdx >= bsrSteps.length) {
+    bsrPlaying = false; clearInterval(bsrTimer);
+    document.getElementById('bsr-play-btn').textContent = '▶ Play';
+    document.getElementById('bsr-step-btn').disabled = true;
+  }
+}
+function bsrPlayPause() {
+  if (bsrStepIdx >= bsrSteps.length) return;
+  if (bsrPlaying) {
+    bsrPlaying = false; clearTimeout(bsrTimer);
+    document.getElementById('bsr-play-btn').textContent = '▶ Play';
+  } else {
+    bsrPlaying = true;
+    document.getElementById('bsr-play-btn').textContent = '⏸ Pause';
+    const go = () => {
+      if (bsrStepIdx < bsrSteps.length && bsrPlaying) {
+        bsrStep();
+        bsrTimer = setTimeout(go, parseInt(document.getElementById('bsr-speed').value));
+      } else {
+        bsrPlaying = false;
+        document.getElementById('bsr-play-btn').textContent = '▶ Play';
+      }
+    };
+    bsrTimer = setTimeout(go, parseInt(document.getElementById('bsr-speed').value));
+  }
+}
+
+/* ── INIT ──────────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  hljs.highlightAll();
+  document.getElementById('total-count').textContent = document.querySelectorAll('.question-card').length;
+  lsInit();
+  bsInit();
+  bsrInit();
+});
+</script>
+</body>
+</html>

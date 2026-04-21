@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algorithm Complexity — KnowledgeForge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/csharp.min.js"></script>
+<style>
+:root {
+  --bg: #0d0d0f;
+  --surface: #141417;
+  --card: #1a1a1f;
+  --border: #2a2a32;
+  --accent: #c8f060;
+  --accent2: #60c8f0;
+  --accent3: #f060c8;
+  --text: #f0ede8;
+  --muted: #6b6878;
+  --danger: #f06060;
+  --success: #60f0a0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(rgba(200,240,96,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,240,96,0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(13,13,15,0.96);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 2rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+.logo { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--text); white-space: nowrap; }
+.logo span { color: var(--accent); }
+.topic-title { font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 700; color: var(--muted); text-align: center; flex: 1; }
+.tab-switcher { display: flex; gap: 0.5rem; flex-shrink: 0; }
+.tab-btn { font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 700; padding: 0.4rem 0.9rem; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; white-space: nowrap; }
+.tab-btn.active { background: var(--accent); color: #0d0d0f; border: 1px solid var(--accent); }
+.tab-btn.inactive { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+.tab-btn.inactive:hover { color: var(--text); border-color: var(--muted); }
+.tab { transition: opacity 0.2s ease; }
+.tab.hidden { display: none; opacity: 0; }
+
+/* HANDBOOK */
+#tab-handbook { max-width: 920px; margin: 0 auto; padding: 2rem; }
+h1.page-title { font-family: 'Syne', sans-serif; font-size: 1.9rem; font-weight: 800; color: var(--text); margin-bottom: 2rem; }
+h2 { font-family: 'Syne', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--accent); border-bottom: 1px solid rgba(200,240,96,0.2); padding-bottom: 0.4rem; margin: 2.5rem 0 1rem; }
+h3 { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--accent2); margin: 1.5rem 0 0.5rem; }
+p { color: #ccc; font-size: 0.85rem; margin-bottom: 0.75rem; }
+ul, ol { padding-left: 1.4rem; color: #ccc; font-size: 0.85rem; }
+ul li, ol li { margin-bottom: 0.35rem; }
+strong { color: var(--text); }
+.section-divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+.callout { padding: 0.75rem 1rem; border-radius: 6px; font-size: 0.85rem; margin: 1rem 0; line-height: 1.6; }
+.callout.tip { border-left: 3px solid var(--accent); background: rgba(200,240,96,0.05); color: #ccc; }
+.callout.warning { border-left: 3px solid var(--accent3); background: rgba(240,96,200,0.05); color: #ccc; }
+.callout.rule { border-left: 3px solid var(--accent2); background: rgba(96,200,240,0.05); color: #ccc; }
+
+.code-block { background: var(--card); border: 1px solid var(--border); border-radius: 6px; margin: 1rem 0; overflow: hidden; }
+.code-header { display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0.75rem; border-bottom: 1px solid var(--border); }
+.code-lang { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--muted); text-transform: uppercase; }
+.copy-btn { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--muted); background: transparent; border: 1px solid var(--border); padding: 0.2rem 0.5rem; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
+.copy-btn:hover { color: var(--text); border-color: var(--muted); }
+.code-block pre { margin: 0; }
+.code-block pre code { font-family: 'DM Mono', monospace; font-size: 0.8rem; padding: 0.85rem 1rem !important; display: block; }
+
+.code-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+@media(max-width:600px) { .code-compare { grid-template-columns: 1fr; } }
+.code-panel { background: var(--card); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.code-panel.wrong { border-top: 3px solid var(--danger); }
+.code-panel.right { border-top: 3px solid var(--success); }
+.panel-header { padding: 0.4rem 0.75rem; font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 700; border-bottom: 1px solid var(--border); }
+.code-panel.wrong .panel-header { color: var(--danger); }
+.code-panel.right .panel-header { color: var(--success); }
+.code-panel pre { margin: 0; }
+.code-panel pre code { font-family: 'DM Mono', monospace; font-size: 0.78rem; padding: 0.75rem !important; display: block; }
+
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.82rem; }
+thead tr { background: var(--card); }
+thead th { font-family: 'Syne', sans-serif; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); padding: 0.6rem 1rem; text-align: left; border: 1px solid var(--border); }
+tbody tr:nth-child(odd) { background: var(--surface); }
+tbody tr:nth-child(even) { background: var(--bg); }
+tbody td { padding: 0.6rem 1rem; border: 1px solid var(--border); color: #ccc; vertical-align: top; }
+
+figure { margin: 1.5rem 0; }
+figcaption { font-size: 0.75rem; color: var(--muted); text-align: center; margin-top: 0.5rem; font-family: 'DM Mono', monospace; }
+
+/* Chart container */
+.chart-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin: 1rem 0; }
+.chart-wrap canvas { display: block; max-width: 100%; }
+
+/* Notation card grid */
+.notation-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin: 1.25rem 0; }
+.notation-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.1rem 1.25rem; }
+.notation-card h4 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; margin-bottom: 0.4rem; }
+.notation-card .math { font-family: 'DM Mono', monospace; font-size: 0.82rem; color: var(--accent2); background: rgba(96,200,240,0.07); border-radius: 4px; padding: 0.35rem 0.6rem; margin: 0.4rem 0; display: inline-block; }
+.notation-card p { font-size: 0.82rem; color: #bbb; margin-bottom: 0; }
+.nc-big-o h4 { color: var(--danger); }
+.nc-omega h4 { color: var(--success); }
+.nc-theta h4 { color: var(--accent); }
+
+/* RECALL */
+#tab-recall { max-width: 800px; margin: 0 auto; padding: 2rem; }
+.recall-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 0.75rem; }
+.progress-counter { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: var(--muted); }
+.progress-counter span { color: var(--accent); font-weight: 500; }
+.bulk-btns { display: flex; gap: 0.5rem; }
+.bulk-btn { font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--muted); transition: all 0.2s; }
+.bulk-btn:hover { color: var(--text); border-color: var(--muted); }
+.question-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 0.75rem; overflow: hidden; transition: border-color 0.2s ease; }
+.question-card.revealed { border-color: rgba(200,240,96,0.3); }
+.question-header { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.9rem 1rem; flex-wrap: wrap; }
+.q-number { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--muted); flex-shrink: 0; margin-top: 0.1rem; }
+.q-type { font-family: 'Syne', sans-serif; font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.45rem; border-radius: 4px; flex-shrink: 0; margin-top: 0.05rem; }
+.q-type.def     { background: rgba(96,200,240,0.1); color: var(--accent2); }
+.q-type.apply   { background: rgba(200,240,96,0.1); color: var(--accent); }
+.q-type.why     { background: rgba(240,96,200,0.1); color: var(--accent3); }
+.q-type.compare { background: rgba(200,240,96,0.1); color: var(--accent); }
+.q-type.sequence{ background: rgba(96,240,200,0.1); color: #60f0c8; }
+.q-type.gotcha  { background: rgba(240,96,96,0.1); color: var(--danger); }
+.q-type.draw    { background: rgba(240,200,96,0.1); color: #f0c860; }
+.q-text { font-size: 0.85rem; color: var(--text); flex: 1; line-height: 1.5; }
+.show-answer-btn { font-family: 'DM Mono', monospace; font-size: 0.72rem; padding: 0.3rem 0.65rem; border-radius: 5px; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--muted); transition: all 0.2s; flex-shrink: 0; white-space: nowrap; }
+.show-answer-btn.revealed { border-color: var(--accent); color: var(--accent); }
+.answer-block { border-top: 1px solid var(--border); padding: 1rem; background: var(--surface); overflow: hidden; max-height: 0; transition: max-height 0.35s ease; }
+.answer-block.open { max-height: 3000px; }
+.answer-label { font-family: 'Syne', sans-serif; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 0.5rem; }
+.answer-content { font-size: 0.84rem; color: #ccc; line-height: 1.6; }
+.answer-content strong { color: var(--text); }
+.answer-content ul { padding-left: 1.2rem; margin-top: 0.4rem; }
+.answer-content li { margin-bottom: 0.25rem; }
+.answer-content .code-block { margin: 0.5rem 0; }
+.answer-example { margin-top: 0.75rem; padding: 0.6rem 0.85rem; background: rgba(200,240,96,0.04); border-left: 2px solid rgba(200,240,96,0.3); border-radius: 0 4px 4px 0; font-size: 0.82rem; color: #ccc; }
+.example-label { font-family: 'Syne', sans-serif; font-size: 0.65rem; font-weight: 700; color: var(--accent); margin-right: 0.4rem; }
+.answer-block svg { max-width: 100%; height: auto; margin: 0.75rem 0; }
+
+@media(max-width:600px){
+  header { flex-wrap: wrap; padding: 0.75rem 1rem; }
+  .topic-title { order: 3; width: 100%; text-align: left; }
+  #tab-handbook, #tab-recall { padding: 1.25rem; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Knowledge<span>Forge</span></div>
+  <div class="topic-title">Algorithm Complexity · Asymptotic Notations · Space Complexity</div>
+  <div class="tab-switcher">
+    <button class="tab-btn active" onclick="switchTab('handbook', this)">📘 Handbook</button>
+    <button class="tab-btn inactive" onclick="switchTab('recall', this)">🧠 Active Recall</button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════ HANDBOOK ═══════════════════════════════════ -->
+<main id="tab-handbook" class="tab">
+<div style="max-width:920px;margin:0 auto;padding:2rem;">
+
+<h1 class="page-title">Algorithm Complexity &amp;<br>Asymptotic Notations</h1>
+
+<!-- ─── SECTION 1: TIME COMPLEXITY ─── -->
+<h2>⏱️ Time Complexity — How We Measure Algorithm Speed</h2>
+
+<div class="callout tip">💡 You can't use a stopwatch to compare algorithms fairly — different machines give different times. Instead, count the number of <strong>primitive operations</strong> as a function of input size <em>n</em>.</div>
+
+<h3>Two Ways to Analyse an Algorithm</h3>
+<table>
+  <thead><tr><th>Method</th><th>How It Works</th><th>Problem</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Experimental</strong></td><td>Run the code, measure actual time</td><td>Depends on hardware, OS, compiler — results aren't portable</td></tr>
+    <tr><td><strong>Theoretical</strong></td><td>Count primitive operations as a math function of n</td><td>Slightly abstract — but hardware-independent and universal</td></tr>
+  </tbody>
+</table>
+
+<div class="callout rule">📌 We always use <strong>theoretical analysis</strong>. It counts primitive operations and expresses the total as f(n), then strips away constants to get Big-O.</div>
+
+<h3>What is a Primitive Operation?</h3>
+<p>A single, indivisible step that takes <strong>constant time O(1)</strong> regardless of input:</p>
+<ul>
+  <li>Declaration: <code>int x</code></li>
+  <li>Assignment: <code>x = 5</code></li>
+  <li>Comparison: <code>i &lt; n</code></li>
+  <li>Arithmetic: <code>a + b</code>, <code>a * b</code></li>
+  <li>Array access: <code>A[i]</code></li>
+  <li>Function call/return</li>
+</ul>
+
+<h3>Example 1 — Sum of N Numbers → O(n)</h3>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">int Sum(int n)
+{
+    int total = 0;   // 1 decl + 1 assign
+    int i = 1;       // 1 decl + 1 assign
+
+    while (i <= n)   // comparison: runs N+1 times
+    {
+        total = total + i;  // arithmetic + assign: N times each
+        i = i + 1;          // arithmetic + assign: N times each
+    }
+    return total;
+}</code></pre>
+</div>
+
+<table>
+  <thead><tr><th>Operation</th><th>Count</th></tr></thead>
+  <tbody>
+    <tr><td>Declarations</td><td>2</td></tr>
+    <tr><td>Assignments</td><td>2</td></tr>
+    <tr><td>Comparison (i ≤ n)</td><td>N + 1</td></tr>
+    <tr><td>Arithmetic (total+i, i+1)</td><td>2N</td></tr>
+  </tbody>
+</table>
+<p><strong>Total:</strong> 2 + 2 + (N+1) + 2N = <strong>5 + 3N</strong> → <strong>O(n)</strong></p>
+
+<h3>Example 2 — Binary Search → O(log n)</h3>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">int BinarySearch(int[] A, int key)
+{
+    int i = 0;
+    int j = A.Length - 1;
+
+    while (i < j)
+    {
+        int mid = (i + j) / 2;    // each iteration halves the search space
+        if (A[mid] == key) return 1;
+        else if (key < A[mid]) j = mid - 1;
+        else i = mid + 1;
+    }
+    return -1;
+}</code></pre>
+</div>
+
+<div class="callout tip">💡 Each loop iteration halves the problem: N → N/2 → N/4 → … → 1. The number of halvings is <strong>log₂N</strong>. That's where O(log n) comes from.</div>
+
+<p><strong>Total:</strong> 2 + 2 + (log N + 1) + log N + log N + log N = <strong>5 + 5 log N</strong> → <strong>O(log n)</strong></p>
+
+<h3>Example 3 — Matrix Sum (Nested Loop) → O(n²)</h3>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">int MatrixSum(int[,] A, int n, int m)
+{
+    int total = 0;
+    for (int i = 0; i < n; i++)         // outer: runs N times
+    {
+        for (int j = 0; j < m; j++)     // inner: runs M times per outer
+        {
+            total = total + A[i, j];
+        }
+    }
+    return total;
+}</code></pre>
+</div>
+
+<p><strong>Total:</strong> ≈ 6 + 6N + 4NM. If M = N → <strong>6 + 6N + 4N²</strong> → <strong>O(n²)</strong></p>
+
+<h3>The Three Rules of Simplification</h3>
+<table>
+  <thead><tr><th>Rule</th><th>Example</th><th>Result</th></tr></thead>
+  <tbody>
+    <tr><td>Drop constants</td><td>5 + 3N</td><td>O(n)</td></tr>
+    <tr><td>Keep highest-growth term only</td><td>N² + N</td><td>O(n²)</td></tr>
+    <tr><td>Match loop pattern</td><td>Single loop / nested / halving</td><td>O(n) / O(n²) / O(log n)</td></tr>
+  </tbody>
+</table>
+
+<hr class="section-divider">
+
+<!-- ─── SECTION 2: ORDER OF GROWTH ─── -->
+<h2>📈 Order of Growth — The Performance Hierarchy</h2>
+
+<div class="callout tip">💡 "Order of growth" ranks algorithms by how their runtime scales as n gets huge. A O(1) algorithm is always faster than O(n) at large enough input — regardless of the constant factor.</div>
+
+<table>
+  <thead><tr><th>Class</th><th>Notation</th><th>Loop Pattern</th><th>n=10</th><th>n=100</th><th>n=1000</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Constant</strong></td><td>O(1)</td><td>No loop</td><td>1</td><td>1</td><td>1</td></tr>
+    <tr><td><strong>Logarithmic</strong></td><td>O(log n)</td><td>Halving loop</td><td>3</td><td>7</td><td>10</td></tr>
+    <tr><td><strong>Linear</strong></td><td>O(n)</td><td>Single loop</td><td>10</td><td>100</td><td>1,000</td></tr>
+    <tr><td><strong>Linearithmic</strong></td><td>O(n log n)</td><td>Divide &amp; conquer</td><td>33</td><td>664</td><td>9,966</td></tr>
+    <tr><td><strong>Quadratic</strong></td><td>O(n²)</td><td>2 nested loops</td><td>100</td><td>10,000</td><td>1,000,000</td></tr>
+    <tr><td><strong>Cubic</strong></td><td>O(n³)</td><td>3 nested loops</td><td>1,000</td><td>1,000,000</td><td>10⁹</td></tr>
+    <tr><td><strong>Exponential</strong></td><td>O(2ⁿ)</td><td>Avoid entirely</td><td>1,024</td><td>1.27 × 10³⁰</td><td>10³⁰¹ — unusable</td></tr>
+  </tbody>
+</table>
+
+<div class="callout warning">⚠️ Two separate (non-nested) loops = O(n) + O(n) = O(n). Only nested loops multiply to give O(n²). Don't confuse sequential with nested.</div>
+
+<!-- ORDER OF GROWTH INTERACTIVE CHART -->
+<figure>
+  <div class="chart-wrap">
+    <canvas id="growthChart" height="340"></canvas>
+  </div>
+  <figcaption>Order of growth: runtime vs input size n (logarithmic y-axis). Lower = faster.</figcaption>
+</figure>
+
+<hr class="section-divider">
+
+<!-- ─── SECTION 3: ASYMPTOTIC ANALYSIS ─── -->
+<h2>🔬 Asymptotic Analysis — Why Constants Don't Matter at Scale</h2>
+
+<div class="callout tip">💡 "Asymptotic" means: what happens as n → ∞? At large inputs, only the fastest-growing term matters. The rest are noise.</div>
+
+<h3>The Dominant Term Principle</h3>
+<p>Consider f(n) = n² + 6n + 5</p>
+<ul>
+  <li>At n = 10: n² = 100, 6n = 60, 5 = 5 — all comparable</li>
+  <li>At n = 1,000: n² = 1,000,000 · 6n = 6,000 · 5 = 5 — n² completely dominates</li>
+  <li>Asymptotically: f(n) ≈ n² → <strong>O(n²)</strong></li>
+</ul>
+
+<h3>Best, Worst, and Average Case — Linear Search Example</h3>
+<table>
+  <thead><tr><th>Case</th><th>When</th><th>Notation</th><th>Value</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Best Case</strong></td><td>Target is the first element</td><td>Ω(1)</td><td>1 comparison</td></tr>
+    <tr><td><strong>Average Case</strong></td><td>Target is somewhere in the middle</td><td>Θ(n/2) = Θ(n)</td><td>n/2 comparisons</td></tr>
+    <tr><td><strong>Worst Case</strong></td><td>Target is last or not present</td><td>O(n)</td><td>n comparisons</td></tr>
+  </tbody>
+</table>
+
+<div class="callout rule">📌 We almost always analyse <strong>worst case (Big-O)</strong>. It's a guarantee — your algorithm will never be slower than this. Best case is rarely relevant in production.</div>
+
+<hr class="section-divider">
+
+<!-- ─── SECTION 4: BIG-O ─── -->
+<h2>🔴 Big-O Notation — Upper Bound (Worst Case)</h2>
+
+<div class="notation-grid">
+  <div class="notation-card nc-big-o">
+    <h4>Big-O — O(g(n))</h4>
+    <div class="math">f(n) ≤ c · g(n) &nbsp; for all n ≥ n₀</div>
+    <p>f(n) grows <em>no faster than</em> g(n). The algorithm takes <strong>at most</strong> this long.</p>
+  </div>
+</div>
+
+<h3>Formal Definition</h3>
+<ul>
+  <li>f(n) = O(g(n)) if there exist constants <strong>c &gt; 0</strong> and <strong>n₀ ≥ 1</strong> such that f(n) ≤ c · g(n) for all n ≥ n₀</li>
+  <li>f(n) is your actual algorithm cost function</li>
+  <li>g(n) is the upper bound function (e.g. n, n², log n)</li>
+  <li>c is a constant multiplier that makes the inequality work</li>
+  <li>n₀ is the "threshold" — the inequality only needs to hold for large enough n</li>
+</ul>
+
+<h3>Proof: f(n) = 5n + 4 is O(n)</h3>
+<p>Need to show: 5n + 4 ≤ c · n for all n ≥ n₀</p>
+<ul>
+  <li>Choose c = 6, n₀ = 4: check 5(4) + 4 = 24 ≤ 6(4) = 24 ✓</li>
+  <li>For all n ≥ 4: 5n + 4 ≤ 6n (the +4 becomes insignificant) ✓</li>
+  <li>Many valid (c, n₀) pairs exist — always choose the <strong>tightest useful one</strong></li>
+</ul>
+
+<h3>More Examples</h3>
+<table>
+  <thead><tr><th>Function f(n)</th><th>Big-O</th><th>Reasoning</th></tr></thead>
+  <tbody>
+    <tr><td>5n⁴ + 3n³ + 2n² + 4n + 1</td><td>O(n⁴)</td><td>Highest degree term dominates</td></tr>
+    <tr><td>20n³ + 10n log n + 5</td><td>O(n³)</td><td>Cubic grows faster than linearithmic</td></tr>
+    <tr><td>2ⁿ + n²</td><td>O(2ⁿ)</td><td>Exponential dominates all polynomials</td></tr>
+  </tbody>
+</table>
+
+<!-- BIG-O GRAPH -->
+<figure>
+  <div class="chart-wrap">
+    <canvas id="bigOChart" height="300"></canvas>
+  </div>
+  <figcaption>Big-O: f(n) = 5n+4 is bounded above by c·g(n) = 6n for all n ≥ 4. The green line is the upper bound.</figcaption>
+</figure>
+
+<hr class="section-divider">
+
+<!-- ─── SECTION 5: BIG OMEGA ─── -->
+<h2>🟢 Big-Omega — Lower Bound (Best Case)</h2>
+
+<div class="notation-grid">
+  <div class="notation-card nc-omega">
+    <h4>Big-Ω — Ω(g(n))</h4>
+    <div class="math">f(n) ≥ c · g(n) &nbsp; for all n ≥ n₀</div>
+    <p>f(n) grows <em>at least as fast as</em> g(n). The algorithm takes <strong>at minimum</strong> this long — can't go faster.</p>
+  </div>
+</div>
+
+<h3>Formal Definition</h3>
+<ul>
+  <li>f(n) = Ω(g(n)) if there exist constants <strong>c &gt; 0</strong> and <strong>n₀ ≥ 1</strong> such that f(n) ≥ c · g(n) for all n ≥ n₀</li>
+  <li>The function g(n) is a <strong>lower bound</strong> — the algorithm cannot be faster than this</li>
+</ul>
+
+<h3>Proof: f(n) = 5n + 4 is Ω(n)</h3>
+<ul>
+  <li>Need: 5n + 4 ≥ c · n for all n ≥ n₀</li>
+  <li>Choose c = 1, n₀ = 1: 5(1) + 4 = 9 ≥ 1(1) = 1 ✓ (trivially satisfied)</li>
+  <li>Result: f(n) = <strong>Ω(n)</strong></li>
+</ul>
+
+<!-- BIG OMEGA GRAPH -->
+<figure>
+  <div class="chart-wrap">
+    <canvas id="bigOmegaChart" height="300"></canvas>
+  </div>
+  <figcaption>Big-Ω: f(n) = 5n+4 is bounded below by c·g(n) = 1·n for all n ≥ 1. The green line is the lower bound.</figcaption>
+</figure>
+
+<hr class="section-divider">
+
+<!-- ─── SECTION 6: BIG THETA ─── -->
+<h2>🟡 Big-Theta — Tight Bound (Average Case)</h2>
+
+<div class="notation-grid">
+  <div class="notation-card nc-theta">
+    <h4>Big-Θ — Θ(g(n))</h4>
+    <div class="math">c₁·g(n) ≤ f(n) ≤ c₂·g(n) &nbsp; for all n ≥ n₀</div>
+    <p>f(n) is <em>sandwiched</em> between two bounds. The algorithm is <strong>exactly this class</strong> — both upper and lower bound are the same growth rate.</p>
+  </div>
+</div>
+
+<h3>Formal Definition</h3>
+<ul>
+  <li>f(n) = Θ(g(n)) if there exist constants <strong>c₁, c₂ &gt; 0</strong> and <strong>n₀ ≥ 1</strong> such that c₁·g(n) ≤ f(n) ≤ c₂·g(n) for all n ≥ n₀</li>
+  <li>Θ = Big-O <em>and</em> Big-Ω at the same time</li>
+  <li>Used when best case = worst case (e.g., summing n numbers — you must visit all n)</li>
+</ul>
+
+<h3>Proof: f(n) = 5n + 4 is Θ(n)</h3>
+<table>
+  <thead><tr><th>Bound</th><th>Inequality</th><th>Constants</th><th>Valid from</th></tr></thead>
+  <tbody>
+    <tr><td>Upper (Big-O)</td><td>5n + 4 ≤ 6n</td><td>c₂ = 6</td><td>n₀ &gt; 4</td></tr>
+    <tr><td>Lower (Big-Ω)</td><td>5n + 4 ≥ 1·n</td><td>c₁ = 1</td><td>n₀ ≥ 1</td></tr>
+  </tbody>
+</table>
+<p>Both hold → f(n) = <strong>Θ(n)</strong></p>
+
+<!-- BIG THETA GRAPH -->
+<figure>
+  <div class="chart-wrap">
+    <canvas id="bigThetaChart" height="300"></canvas>
+  </div>
+  <figcaption>Big-Θ: f(n) = 5n+4 is sandwiched between c₁·n = 1·n (lower) and c₂·n = 6n (upper). f(n) is Θ(n).</figcaption>
+</figure>
+
+<hr class="section-divider">
+
+<!-- ─── SECTION 7: PERFORMANCE SUMMARY ─── -->
+<h2>📊 Notation Summary — All Three Together</h2>
+
+<div class="notation-grid">
+  <div class="notation-card nc-big-o">
+    <h4>Big-O (Worst Case)</h4>
+    <div class="math">f(n) ≤ c · g(n)</div>
+    <p>Upper bound. The algorithm is no worse than this. <strong>Primary tool for analysis.</strong></p>
+  </div>
+  <div class="notation-card nc-omega">
+    <h4>Big-Ω (Best Case)</h4>
+    <div class="math">f(n) ≥ c · g(n)</div>
+    <p>Lower bound. The algorithm is no better than this. Rarely the focus.</p>
+  </div>
+  <div class="notation-card nc-theta">
+    <h4>Big-Θ (Tight Bound)</h4>
+    <div class="math">c₁·g(n) ≤ f(n) ≤ c₂·g(n)</div>
+    <p>Both bounds are the same. Used when best = worst case.</p>
+  </div>
+</div>
+
+<h3>Linear Search — Applying All Three</h3>
+<table>
+  <thead><tr><th>Notation</th><th>Case</th><th>Value</th><th>When</th></tr></thead>
+  <tbody>
+    <tr><td>Ω(1)</td><td>Best</td><td>1 operation</td><td>Element is at index 0</td></tr>
+    <tr><td>Θ(n)</td><td>Average</td><td>n/2 ≈ n operations</td><td>Element is somewhere in the middle</td></tr>
+    <tr><td>O(n)</td><td>Worst</td><td>n operations</td><td>Element is at end or not present</td></tr>
+  </tbody>
+</table>
+
+<hr class="section-divider">
+
+<!-- ─── SECTION 8: SPACE COMPLEXITY ─── -->
+<h2>💾 Space Complexity — How Much Memory?</h2>
+
+<div class="callout tip">💡 Time complexity asks: how many steps? Space complexity asks: how many bytes? Both are measured as a function of input size n.</div>
+
+<h3>Primitive Type Memory (C#)</h3>
+<table>
+  <thead><tr><th>Type</th><th>Memory</th><th>Array of n</th></tr></thead>
+  <tbody>
+    <tr><td>bool</td><td>1 byte</td><td>n bytes</td></tr>
+    <tr><td>char</td><td>2 bytes</td><td>2n bytes</td></tr>
+    <tr><td>int</td><td>4 bytes</td><td>4n bytes</td></tr>
+    <tr><td>float</td><td>4 bytes</td><td>4n bytes</td></tr>
+    <tr><td>long / double</td><td>8 bytes</td><td>8n bytes</td></tr>
+  </tbody>
+</table>
+
+<h3>Example 1 — While Loop (Sum) → O(1) space</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">int total = 0;   // 4 bytes
+int i = 1;       // 4 bytes
+int n = ...;     // 4 bytes (parameter)
+// Total: 12 bytes — constant regardless of n</code></pre>
+</div>
+<p><strong>Space complexity: O(1)</strong> — memory doesn't grow with input size</p>
+
+<h3>Example 2 — Nested Loop (2D Array) → O(nm) space</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">int total = 0;               // 4 bytes
+int i, j;                    // 4 + 4 = 8 bytes
+int[,] A = new int[n, m];   // 4 × n × m bytes
+// Total: 12 + 4nm bytes</code></pre>
+</div>
+<p><strong>Space complexity: O(nm)</strong> — grows with the size of the 2D array</p>
+
+<table>
+  <thead><tr><th>Program</th><th>Memory Used</th><th>Space Complexity</th></tr></thead>
+  <tbody>
+    <tr><td>While loop (sum)</td><td>~12–16 bytes (constant)</td><td><strong>O(1)</strong></td></tr>
+    <tr><td>Nested loops (2D array)</td><td>12 + 4nm bytes</td><td><strong>O(nm)</strong></td></tr>
+  </tbody>
+</table>
+
+<div class="callout warning">⚠️ Space complexity depends on machine architecture and language implementation. These byte counts are typical for C# on 64-bit systems — treat them as approximate.</div>
+
+<hr class="section-divider">
+
+<!-- ─── QUICK REFERENCE ─── -->
+<h2>⚡ Quick Reference</h2>
+
+<h3>Key Terms</h3>
+<table>
+  <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+  <tbody>
+    <tr><td>Time Complexity</td><td>How execution time grows as a function of input size n</td></tr>
+    <tr><td>Space Complexity</td><td>How memory usage grows as a function of input size n</td></tr>
+    <tr><td>Primitive Operation</td><td>A single step (assign, compare, add) that takes O(1) time</td></tr>
+    <tr><td>Order of Growth</td><td>Classification of algorithms by how fast their runtime increases</td></tr>
+    <tr><td>Asymptotic Analysis</td><td>Studying algorithm behaviour as n → ∞, ignoring constants</td></tr>
+    <tr><td>Big-O O(g(n))</td><td>Upper bound — algorithm runs in at most this time (worst case)</td></tr>
+    <tr><td>Big-Ω Ω(g(n))</td><td>Lower bound — algorithm runs in at least this time (best case)</td></tr>
+    <tr><td>Big-Θ Θ(g(n))</td><td>Tight bound — both upper and lower bound are the same class</td></tr>
+    <tr><td>Dominant Term</td><td>The fastest-growing term in f(n); what Big-O reduces to</td></tr>
+    <tr><td>n₀</td><td>Threshold input size after which the asymptotic bound holds</td></tr>
+    <tr><td>c, c₁, c₂</td><td>Positive constants used to scale the bound function g(n)</td></tr>
+  </tbody>
+</table>
+
+<h3>Complexity Classes (fastest → slowest)</h3>
+<table>
+  <thead><tr><th>Notation</th><th>Name</th><th>Loop Pattern</th><th>Example Algorithm</th></tr></thead>
+  <tbody>
+    <tr><td>O(1)</td><td>Constant</td><td>No loop</td><td>Array index lookup</td></tr>
+    <tr><td>O(log n)</td><td>Logarithmic</td><td>Halving loop</td><td>Binary search</td></tr>
+    <tr><td>O(n)</td><td>Linear</td><td>Single loop</td><td>Linear search, sum of n</td></tr>
+    <tr><td>O(n log n)</td><td>Linearithmic</td><td>Divide &amp; conquer</td><td>Merge sort, quick sort (avg)</td></tr>
+    <tr><td>O(n²)</td><td>Quadratic</td><td>2 nested loops</td><td>Bubble sort, matrix multiply (naive)</td></tr>
+    <tr><td>O(n³)</td><td>Cubic</td><td>3 nested loops</td><td>Floyd-Warshall (all-pairs shortest path)</td></tr>
+    <tr><td>O(2ⁿ)</td><td>Exponential</td><td>Avoid</td><td>Brute-force subset search</td></tr>
+  </tbody>
+</table>
+
+<h3>Notation Proofs at a Glance — f(n) = 5n + 4</h3>
+<table>
+  <thead><tr><th>Notation</th><th>Condition</th><th>Constants</th><th>Result</th></tr></thead>
+  <tbody>
+    <tr><td>Big-O</td><td>5n + 4 ≤ c·n</td><td>c = 6, n₀ = 4</td><td>O(n)</td></tr>
+    <tr><td>Big-Ω</td><td>5n + 4 ≥ c·n</td><td>c = 1, n₀ = 1</td><td>Ω(n)</td></tr>
+    <tr><td>Big-Θ</td><td>1·n ≤ 5n+4 ≤ 6·n</td><td>c₁=1, c₂=6, n₀=4</td><td>Θ(n)</td></tr>
+  </tbody>
+</table>
+
+</div>
+</main>
+
+<!-- ═══════════════════════════════════ RECALL ═══════════════════════════════════ -->
+<main id="tab-recall" class="tab hidden">
+<div style="max-width:800px;margin:0 auto;padding:2rem;">
+
+  <div class="recall-topbar">
+    <div class="progress-counter"><span id="answered-count">0</span> of <span id="total-count">25</span> answered</div>
+    <div class="bulk-btns">
+      <button class="bulk-btn" onclick="revealAll()">Reveal All</button>
+      <button class="bulk-btn" onclick="hideAll()">Hide All</button>
+    </div>
+  </div>
+
+  <!-- Q01 -->
+  <div class="question-card" id="q1">
+    <div class="question-header">
+      <span class="q-number">Q01</span><span class="q-type def">DEF</span>
+      <span class="q-text">What is a <strong>primitive operation</strong> and why does it matter for time complexity analysis?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q1')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q1-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">A <strong>primitive operation</strong> is a single indivisible step that takes constant time O(1) — declaration, assignment, comparison, arithmetic, array access, function call. We count these instead of measuring wall-clock time because the count is hardware-independent. The total count expressed as f(n) is what we convert to Big-O.</div>
+      <div class="answer-example"><span class="example-label">Examples:</span> <code>int x = 0</code> = 1 decl + 1 assign. <code>i &lt; n</code> = 1 comparison.</div>
+    </div>
+  </div>
+
+  <!-- Q02 -->
+  <div class="question-card" id="q2">
+    <div class="question-header">
+      <span class="q-number">Q02</span><span class="q-type compare">COMPARE</span>
+      <span class="q-text">What is the difference between <strong>experimental analysis</strong> and <strong>theoretical analysis</strong> of algorithms? Which is preferred and why?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q2')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q2-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ul>
+          <li><strong>Experimental</strong>: run the code and time it. Problem: results depend on hardware, OS, compiler — not portable or comparable.</li>
+          <li><strong>Theoretical</strong>: count primitive operations, express as f(n). Hardware-independent, covers all inputs, mathematically comparable.</li>
+        </ul>
+        Theoretical is preferred because it gives a universal result you can compare across algorithms before writing any code.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q03 -->
+  <div class="question-card" id="q3">
+    <div class="question-header">
+      <span class="q-number">Q03</span><span class="q-type apply">APPLY</span>
+      <span class="q-text">Count the primitive operations in this loop and determine its Big-O:<br><code>for (int i = 0; i &lt; n; i++) { total += A[i]; }</code></span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q3')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q3-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ul>
+          <li>Declaration <code>int i</code>: 1</li>
+          <li>Assignment <code>i = 0</code>: 1</li>
+          <li>Comparison <code>i &lt; n</code>: N + 1 times</li>
+          <li>Array access <code>A[i]</code>: N times</li>
+          <li>Addition + assignment: N + N = 2N times</li>
+          <li>Increment <code>i++</code>: N times</li>
+        </ul>
+        Total ≈ 2 + (N+1) + 4N = <strong>3 + 5N</strong> → <strong>O(n)</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q04 -->
+  <div class="question-card" id="q4">
+    <div class="question-header">
+      <span class="q-number">Q04</span><span class="q-type why">WHY</span>
+      <span class="q-text">Why does binary search run in <strong>O(log n)</strong> and not O(n)?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q4')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q4-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Each iteration of binary search <strong>halves the remaining search space</strong>: N → N/2 → N/4 → … → 1. The number of times you can halve N before reaching 1 is log₂N. So the loop runs log N times, not N times.</div>
+      <div class="answer-example"><span class="example-label">Numbers:</span> N = 1024: binary search takes at most 10 steps. Linear search takes up to 1024 steps.</div>
+    </div>
+  </div>
+
+  <!-- Q05 -->
+  <div class="question-card" id="q5">
+    <div class="question-header">
+      <span class="q-number">Q05</span><span class="q-type sequence">SEQUENCE</span>
+      <span class="q-text">List the 7 complexity classes in order from <strong>fastest to slowest</strong> (best performance to worst).</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q5')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q5-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ol>
+          <li>O(1) — Constant</li>
+          <li>O(log n) — Logarithmic</li>
+          <li>O(n) — Linear</li>
+          <li>O(n log n) — Linearithmic</li>
+          <li>O(n²) — Quadratic</li>
+          <li>O(n³) — Cubic</li>
+          <li>O(2ⁿ) — Exponential (avoid entirely)</li>
+        </ol>
+      </div>
+      <div class="answer-example"><span class="example-label">Memory trick:</span> "Can Little Nerds Learn Quadratic Cubic Exponents?"</div>
+    </div>
+  </div>
+
+  <!-- Q06 -->
+  <div class="question-card" id="q6">
+    <div class="question-header">
+      <span class="q-number">Q06</span><span class="q-type gotcha">GOTCHA</span>
+      <span class="q-text">Two separate (non-nested) for-loops each running n times — what is the total Big-O?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q6')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q6-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content"><strong>O(n)</strong> — not O(n²). Two sequential loops add: O(n) + O(n) = O(2n) = O(n). Only nested loops multiply to give O(n²). The key is whether the loops are inside each other or one after the other.</div>
+      <div class="answer-example"><span class="example-label">Rule:</span> Sequential = add. Nested = multiply.</div>
+    </div>
+  </div>
+
+  <!-- Q07 -->
+  <div class="question-card" id="q7">
+    <div class="question-header">
+      <span class="q-number">Q07</span><span class="q-type def">DEF</span>
+      <span class="q-text">State the formal definition of <strong>Big-O notation</strong> using mathematical notation.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q7')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q7-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">f(n) = O(g(n)) if there exist positive constants <strong>c &gt; 0</strong> and <strong>n₀ ≥ 1</strong> such that:<br><br>
+      <code>f(n) ≤ c · g(n) &nbsp; for all n ≥ n₀</code><br><br>
+      g(n) is the upper bound function. n₀ is the threshold after which the inequality holds. f(n) represents actual algorithm cost.</div>
+    </div>
+  </div>
+
+  <!-- Q08 -->
+  <div class="question-card" id="q8">
+    <div class="question-header">
+      <span class="q-number">Q08</span><span class="q-type apply">APPLY</span>
+      <span class="q-text">Prove that f(n) = 5n + 4 is <strong>O(n)</strong> by finding valid constants c and n₀.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q8')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q8-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        Need: 5n + 4 ≤ c · n for all n ≥ n₀<br><br>
+        Choose <strong>c = 6</strong>, <strong>n₀ = 4</strong>:<br>
+        Check: 5(4) + 4 = 24 ≤ 6(4) = 24 ✓<br>
+        For all n ≥ 4: 5n + 4 ≤ 6n (since 4 ≤ n when n ≥ 4) ✓<br><br>
+        Result: <strong>f(n) = O(n)</strong>
+      </div>
+      <div class="answer-example"><span class="example-label">Note:</span> Many valid (c, n₀) pairs exist. c=7, n₀=2 also works. Always choose the tightest useful bound.</div>
+    </div>
+  </div>
+
+  <!-- Q09 -->
+  <div class="question-card" id="q9">
+    <div class="question-header">
+      <span class="q-number">Q09</span><span class="q-type def">DEF</span>
+      <span class="q-text">State the formal definition of <strong>Big-Omega (Ω)</strong> and what it represents.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q9')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q9-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">f(n) = Ω(g(n)) if there exist constants <strong>c &gt; 0</strong> and <strong>n₀ ≥ 1</strong> such that:<br><br>
+      <code>f(n) ≥ c · g(n) &nbsp; for all n ≥ n₀</code><br><br>
+      Big-Ω is the <strong>lower bound</strong> — the algorithm cannot perform faster than this in the best case. It's the mirror image of Big-O.</div>
+    </div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="question-card" id="q10">
+    <div class="question-header">
+      <span class="q-number">Q10</span><span class="q-type apply">APPLY</span>
+      <span class="q-text">Prove that f(n) = 5n + 4 is <strong>Ω(n)</strong>.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q10')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q10-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        Need: 5n + 4 ≥ c · n for all n ≥ n₀<br><br>
+        Choose <strong>c = 1</strong>, <strong>n₀ = 1</strong>:<br>
+        Check: 5(1) + 4 = 9 ≥ 1(1) = 1 ✓ (trivially satisfied)<br>
+        5n + 4 ≥ n for all n ≥ 1 since 4n + 4 ≥ 0 always ✓<br><br>
+        Result: <strong>f(n) = Ω(n)</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q11 -->
+  <div class="question-card" id="q11">
+    <div class="question-header">
+      <span class="q-number">Q11</span><span class="q-type def">DEF</span>
+      <span class="q-text">State the formal definition of <strong>Big-Theta (Θ)</strong> and what it means about an algorithm.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q11')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q11-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">f(n) = Θ(g(n)) if there exist constants <strong>c₁, c₂ &gt; 0</strong> and <strong>n₀ ≥ 1</strong> such that:<br><br>
+      <code>c₁ · g(n) ≤ f(n) ≤ c₂ · g(n) &nbsp; for all n ≥ n₀</code><br><br>
+      f(n) is sandwiched between two scaled versions of g(n). It means Big-O and Big-Ω are the same class — the <strong>tight bound</strong>. Used when best case = worst case.</div>
+      <div class="answer-example"><span class="example-label">Example use:</span> Summing n numbers always takes exactly n iterations — no best/worst variation. So it's Θ(n).</div>
+    </div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="question-card" id="q12">
+    <div class="question-header">
+      <span class="q-number">Q12</span><span class="q-type apply">APPLY</span>
+      <span class="q-text">What is the Big-O of: <code>5n⁴ + 3n³ + 2n² + 4n + 1</code>? Explain how you got there.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q12')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q12-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content"><strong>O(n⁴)</strong>. Steps:<ol style="margin-top:0.5rem;">
+        <li>Identify all terms: n⁴, n³, n², n, 1</li>
+        <li>As n → ∞, n⁴ grows faster than all others</li>
+        <li>Drop constants (5) and all lower-order terms</li>
+        <li>Result: O(n⁴)</li>
+      </ol></div>
+    </div>
+  </div>
+
+  <!-- Q13 -->
+  <div class="question-card" id="q13">
+    <div class="question-header">
+      <span class="q-number">Q13</span><span class="q-type compare">COMPARE</span>
+      <span class="q-text">Compare <strong>Big-O</strong>, <strong>Big-Ω</strong>, and <strong>Big-Θ</strong>: which case does each describe, and which is most useful in practice?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q13')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q13-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ul>
+          <li><strong>Big-O</strong> → worst case (upper bound). Most useful in practice — tells you the guarantee.</li>
+          <li><strong>Big-Ω</strong> → best case (lower bound). Rarely the focus — best case is often not representative.</li>
+          <li><strong>Big-Θ</strong> → tight bound (average case). Used only when best = worst = same class.</li>
+        </ul>
+        <strong>Big-O is the primary tool.</strong> When someone says "this algorithm is O(n²)", they mean worst-case.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q14 -->
+  <div class="question-card" id="q14">
+    <div class="question-header">
+      <span class="q-number">Q14</span><span class="q-type gotcha">GOTCHA</span>
+      <span class="q-text">f(n) = 100n vs g(n) = n². Which is "better" at n=5? Which is better at n=1000? What does this tell us about Big-O?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q14')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q14-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ul>
+          <li>At n = 5: f(5) = 500, g(5) = 25 → <strong>g(n) = n² is faster here</strong></li>
+          <li>At n = 1000: f(1000) = 100,000, g(1000) = 1,000,000 → <strong>f(n) = 100n is faster by 10×</strong></li>
+        </ul>
+        This shows that Big-O describes <strong>asymptotic behaviour</strong> (large n), not small inputs. An O(n) algorithm eventually beats O(n²) — even if O(n²) has a smaller constant at first. Constants don't matter at scale.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q15 -->
+  <div class="question-card" id="q15">
+    <div class="question-header">
+      <span class="q-number">Q15</span><span class="q-type why">WHY</span>
+      <span class="q-text">Why does asymptotic analysis <strong>ignore constant factors</strong>?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q15')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q15-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">As n → ∞, the constant multiplier becomes irrelevant compared to the growth rate. Whether an algorithm does 3n or 100n operations, both are O(n) and both are infinitely better than O(n²) for large enough n. Constants also depend on hardware — ignoring them makes analysis hardware-independent and universally comparable.</div>
+    </div>
+  </div>
+
+  <!-- Q16 -->
+  <div class="question-card" id="q16">
+    <div class="question-header">
+      <span class="q-number">Q16</span><span class="q-type sequence">SEQUENCE</span>
+      <span class="q-text">Walk through the steps to convert a raw operation count <strong>f(n) = 6 + 6n + 4n²</strong> to Big-O notation.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q16')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q16-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ol>
+          <li>Write out all terms: 6, 6n, 4n²</li>
+          <li>Identify the highest-growth term: <strong>4n²</strong></li>
+          <li>Drop constant multiplier (4): → n²</li>
+          <li>Drop all lower-order terms (6n and 6)</li>
+          <li>Result: <strong>O(n²)</strong></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q17 -->
+  <div class="question-card" id="q17">
+    <div class="question-header">
+      <span class="q-number">Q17</span><span class="q-type apply">APPLY</span>
+      <span class="q-text">A function has the total operation count: <code>5 + 5 log N</code>. What is its Big-O and what type of algorithm produces this pattern?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q17')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q17-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Big-O: <strong>O(log n)</strong>. Dominant term is 5 log N; drop the constant 5 and the additive constant 5. This pattern is produced by algorithms that <strong>halve the problem size each iteration</strong> — like binary search.</div>
+    </div>
+  </div>
+
+  <!-- Q18 -->
+  <div class="question-card" id="q18">
+    <div class="question-header">
+      <span class="q-number">Q18</span><span class="q-type draw">DRAW</span>
+      <span class="q-text">Sketch the Big-Theta graph for f(n) = 5n + 4. Label the three curves and the n₀ threshold.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q18')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q18-answer">
+      <div class="answer-label">Answer</div>
+      <svg viewBox="0 0 420 260" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrR" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#6b6878"/></marker>
+        </defs>
+        <!-- Axes -->
+        <line x1="40" y1="220" x2="390" y2="220" stroke="#2a2a32" stroke-width="1.5" marker-end="url(#arrR)"/>
+        <line x1="40" y1="220" x2="40" y2="20" stroke="#2a2a32" stroke-width="1.5" marker-end="url(#arrR)"/>
+        <text x="395" y="225" fill="#6b6878" font-family="DM Mono,monospace" font-size="11">n</text>
+        <text x="28" y="18" fill="#6b6878" font-family="DM Mono,monospace" font-size="11">T</text>
+        <!-- n0 marker -->
+        <line x1="110" y1="220" x2="110" y2="210" stroke="#6b6878" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="105" y="234" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">n₀</text>
+        <!-- c2·g(n) = 6n — upper bound (red) -->
+        <polyline points="40,220 110,178 200,124 300,60 370,18" stroke="#f06060" stroke-width="2" fill="none"/>
+        <text x="310" y="38" fill="#f06060" font-family="DM Mono,monospace" font-size="10">c₂·n = 6n (upper)</text>
+        <!-- f(n) = 5n+4 — actual (yellow) -->
+        <polyline points="40,196 110,172 200,120 300,58 370,18" stroke="#c8f060" stroke-width="2.5" fill="none"/>
+        <text x="310" y="52" fill="#c8f060" font-family="DM Mono,monospace" font-size="10">f(n) = 5n + 4</text>
+        <!-- c1·g(n) = 1·n — lower bound (green) -->
+        <polyline points="40,220 110,210 200,190 300,160 370,133" stroke="#60f0a0" stroke-width="2" fill="none"/>
+        <text x="280" y="178" fill="#60f0a0" font-family="DM Mono,monospace" font-size="10">c₁·n = 1·n (lower)</text>
+        <!-- shaded zone label -->
+        <text x="155" y="110" fill="#6b6878" font-family="DM Mono,monospace" font-size="9">f(n) stays between</text>
+        <text x="155" y="122" fill="#6b6878" font-family="DM Mono,monospace" font-size="9">the two bounds → Θ(n)</text>
+      </svg>
+      <div class="answer-content" style="margin-top:0.5rem;">f(n) must lie between c₁·g(n) and c₂·g(n) for all n ≥ n₀. With c₁=1, c₂=6, n₀=4, f(n)=5n+4 satisfies this → <strong>Θ(n)</strong>.</div>
+    </div>
+  </div>
+
+  <!-- Q19 -->
+  <div class="question-card" id="q19">
+    <div class="question-header">
+      <span class="q-number">Q19</span><span class="q-type why">WHY</span>
+      <span class="q-text">When is <strong>Big-Theta</strong> appropriate to use? Give a concrete algorithm example.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q19')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q19-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Big-Θ is appropriate when <strong>best case = worst case = same complexity class</strong>. This means no matter what input you give, the algorithm always runs in exactly g(n) time — there's no lucky shortcut possible.</div>
+      <div class="answer-example"><span class="example-label">Example:</span> Summing n numbers — you must visit all n values every time. There's no "early exit". Best case = worst case = Θ(n).</div>
+    </div>
+  </div>
+
+  <!-- Q20 -->
+  <div class="question-card" id="q20">
+    <div class="question-header">
+      <span class="q-number">Q20</span><span class="q-type apply">APPLY</span>
+      <span class="q-text">What is the <strong>space complexity</strong> of an algorithm that declares only a fixed number of integer variables (no arrays)? Explain.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q20')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q20-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content"><strong>O(1)</strong> — constant space. If memory usage doesn't depend on input size n (just a fixed number of int variables), the total bytes is a constant regardless of how large n gets. The memory doesn't grow with the problem.</div>
+      <div class="answer-example"><span class="example-label">Example:</span> <code>int total=0, i=1, n=...</code> → 12 bytes always → O(1).</div>
+    </div>
+  </div>
+
+  <!-- Q21 -->
+  <div class="question-card" id="q21">
+    <div class="question-header">
+      <span class="q-number">Q21</span><span class="q-type apply">APPLY</span>
+      <span class="q-text">An algorithm allocates a <strong>2D array A[n][m]</strong> of integers plus 3 int variables. What is its space complexity?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q21')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q21-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ul>
+          <li>3 int variables: 3 × 4 = 12 bytes (constant)</li>
+          <li>A[n][m] of int: 4 × n × m bytes</li>
+          <li>Total: 12 + 4nm bytes</li>
+        </ul>
+        <strong>Space complexity: O(nm)</strong>. The constant 12 bytes is dropped; only the input-dependent term remains.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q22 -->
+  <div class="question-card" id="q22">
+    <div class="question-header">
+      <span class="q-number">Q22</span><span class="q-type gotcha">GOTCHA</span>
+      <span class="q-text">Someone says: "O(log n) is barely better than O(1) — both are small." Is this correct?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q22')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q22-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Incorrect. O(1) is truly constant — it takes the same time regardless of n. O(log n) does grow with n, just very slowly. The difference matters: at n = 2³⁰ (~1 billion), O(1) still takes 1 step; O(log n) takes 30 steps. That's fine. But O(n) at the same input takes 1 billion steps. So O(log n) and O(1) are both excellent — but they're not the same.</div>
+    </div>
+  </div>
+
+  <!-- Q23 -->
+  <div class="question-card" id="q23">
+    <div class="question-header">
+      <span class="q-number">Q23</span><span class="q-type compare">COMPARE</span>
+      <span class="q-text">For linear search: state its <strong>Ω</strong>, <strong>Θ</strong>, and <strong>O</strong> — and explain each.</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q23')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q23-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ul>
+          <li><strong>Ω(1)</strong>: Best case — the target is the first element. Done in 1 comparison.</li>
+          <li><strong>Θ(n)</strong>: Average case — target is somewhere in the middle; ~n/2 comparisons, which is Θ(n).</li>
+          <li><strong>O(n)</strong>: Worst case — target is the last element or not present; n comparisons.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q24 -->
+  <div class="question-card" id="q24">
+    <div class="question-header">
+      <span class="q-number">Q24</span><span class="q-type why">WHY</span>
+      <span class="q-text">Why should <strong>exponential O(2ⁿ)</strong> algorithms be avoided in practice?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q24')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q24-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">At n=100, 2¹⁰⁰ ≈ 10³⁰ operations. Even at 10¹⁰ operations/second, that's 10²⁰ seconds — far longer than the age of the universe (~4×10¹⁷ seconds). Exponential algorithms are only feasible for very small inputs (n &lt; 20–25 typically). For any real-world input size, they're completely unusable.</div>
+    </div>
+  </div>
+
+  <!-- Q25 -->
+  <div class="question-card" id="q25">
+    <div class="question-header">
+      <span class="q-number">Q25</span><span class="q-type sequence">SEQUENCE</span>
+      <span class="q-text">What are the steps to prove that a function f(n) is <strong>Big-Theta Θ(g(n))</strong>?</span>
+      <button class="show-answer-btn" onclick="toggleAnswer('q25')">Show Answer</button>
+    </div>
+    <div class="answer-block" id="q25-answer">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <ol>
+          <li>Choose a candidate g(n) (usually the dominant term of f(n))</li>
+          <li>Prove <strong>upper bound</strong>: find c₂ and n₀ such that f(n) ≤ c₂·g(n) for all n ≥ n₀ (Big-O proof)</li>
+          <li>Prove <strong>lower bound</strong>: find c₁ and n₀ such that f(n) ≥ c₁·g(n) for all n ≥ n₀ (Big-Ω proof)</li>
+          <li>Both must hold with valid positive constants</li>
+          <li>Conclude: <strong>f(n) = Θ(g(n))</strong></li>
+        </ol>
+      </div>
+      <div class="answer-example"><span class="example-label">For f(n) = 5n+4:</span> Upper: c₂=6, n₀=4. Lower: c₁=1, n₀=1. Both hold → Θ(n). ✓</div>
+    </div>
+  </div>
+
+</div>
+</main>
+
+<!-- ════════════════════════ SCRIPTS ════════════════════════ -->
+<script>
+// Tab switching
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.add('hidden'));
+  document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.classList.add('inactive'); });
+  document.getElementById('tab-' + tab).classList.remove('hidden');
+  btn.classList.add('active'); btn.classList.remove('inactive');
+}
+
+// Answer toggling
+let answeredSet = new Set();
+function toggleAnswer(id) {
+  const card = document.getElementById(id);
+  const block = document.getElementById(id + '-answer');
+  const btn = card.querySelector('.show-answer-btn');
+  const isOpen = block.classList.contains('open');
+  if (isOpen) {
+    block.classList.remove('open'); card.classList.remove('revealed');
+    btn.textContent = 'Show Answer'; btn.classList.remove('revealed');
+    answeredSet.delete(id);
+  } else {
+    block.classList.add('open'); card.classList.add('revealed');
+    btn.textContent = 'Hide Answer'; btn.classList.add('revealed');
+    answeredSet.add(id);
+  }
+  updateCounter();
+}
+function updateCounter() { document.getElementById('answered-count').textContent = answeredSet.size; }
+function revealAll() {
+  document.querySelectorAll('.question-card').forEach(card => {
+    const id = card.id;
+    document.getElementById(id + '-answer').classList.add('open');
+    card.classList.add('revealed');
+    const btn = card.querySelector('.show-answer-btn');
+    btn.textContent = 'Hide Answer'; btn.classList.add('revealed');
+    answeredSet.add(id);
+  });
+  updateCounter();
+}
+function hideAll() {
+  document.querySelectorAll('.question-card').forEach(card => {
+    const id = card.id;
+    document.getElementById(id + '-answer').classList.remove('open');
+    card.classList.remove('revealed');
+    const btn = card.querySelector('.show-answer-btn');
+    btn.textContent = 'Show Answer'; btn.classList.remove('revealed');
+  });
+  answeredSet.clear(); updateCounter();
+}
+function copyCode(btn) {
+  const code = btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(() => {
+    btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+
+// ─── CHARTS (drawn with Canvas API — no external lib needed) ───────────────
+
+function drawAxes(ctx, w, h, pad, xLabel, yLabel, yMax, xMax, logY) {
+  ctx.clearRect(0, 0, w, h);
+  ctx.strokeStyle = '#2a2a32'; ctx.lineWidth = 1.5;
+  // y axis
+  ctx.beginPath(); ctx.moveTo(pad, pad * 0.6); ctx.lineTo(pad, h - pad); ctx.stroke();
+  // x axis
+  ctx.beginPath(); ctx.moveTo(pad, h - pad); ctx.lineTo(w - pad * 0.5, h - pad); ctx.stroke();
+  // labels
+  ctx.fillStyle = '#6b6878'; ctx.font = '11px DM Mono, monospace';
+  ctx.fillText(xLabel, w - pad * 0.3, h - pad + 4);
+  ctx.fillText(yLabel, pad - 10, pad * 0.5);
+}
+
+function toCanvas(n, val, w, h, pad, xMax, yMax) {
+  const x = pad + (n / xMax) * (w - pad * 1.5);
+  const y = h - pad - (val / yMax) * (h - pad * 1.6);
+  return [x, Math.max(pad * 0.4, y)];
+}
+
+// ─── ORDER OF GROWTH CHART ──────────────────────────────────────────────────
+function drawGrowthChart() {
+  const canvas = document.getElementById('growthChart');
+  if (!canvas) return;
+  const w = canvas.width = canvas.parentElement.clientWidth || 700;
+  const h = canvas.height = 340;
+  const ctx = canvas.getContext('2d');
+  const pad = 55;
+  const xMax = 20;
+
+  ctx.fillStyle = '#1a1a1f'; ctx.fillRect(0, 0, w, h);
+  drawAxes(ctx, w, h, pad, 'n →', 'ops', null, xMax, false);
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(42,42,50,0.6)'; ctx.lineWidth = 1;
+  [4,8,12,16,20].forEach(n => {
+    const x = pad + (n / xMax) * (w - pad * 1.5);
+    ctx.beginPath(); ctx.moveTo(x, pad * 0.6); ctx.lineTo(x, h - pad); ctx.stroke();
+    ctx.fillStyle = '#6b6878'; ctx.font = '10px DM Mono, monospace'; ctx.fillText(n, x - 5, h - pad + 14);
+  });
+
+  // Curves — use log scale on y: y_canvas = pad + (log(val+1)/log(yRef)) * plotH
+  const plotH = h - pad * 1.6;
+  const yRef = Math.log(Math.pow(2, 20) + 1);
+
+  function toY(val) {
+    return h - pad - (Math.log(val + 1) / yRef) * plotH;
+  }
+  function toX(n) {
+    return pad + (n / xMax) * (w - pad * 1.5);
+  }
+
+  const curves = [
+    { fn: n => 1,              color: '#60f0a0', label: 'O(1)' },
+    { fn: n => Math.log2(n+1), color: '#60c8f0', label: 'O(log n)' },
+    { fn: n => n,              color: '#c8f060', label: 'O(n)' },
+    { fn: n => n * Math.log2(n+1), color: '#f0c860', label: 'O(n log n)' },
+    { fn: n => n * n,          color: '#f060c8', label: 'O(n²)' },
+    { fn: n => n * n * n,      color: '#f08060', label: 'O(n³)' },
+    { fn: n => Math.pow(2, n), color: '#f06060', label: 'O(2ⁿ)' },
+  ];
+
+  curves.forEach(({ fn, color, label }) => {
+    ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = 2;
+    let first = true;
+    for (let n = 0.5; n <= xMax; n += 0.25) {
+      const val = fn(n);
+      const x = toX(n);
+      const y = toY(val);
+      if (first) { ctx.moveTo(x, y); first = false; } else { ctx.lineTo(x, y); }
+    }
+    ctx.stroke();
+
+    // Label at n=xMax
+    const lx = toX(xMax) + 4;
+    const ly = Math.max(pad * 0.5, Math.min(h - pad - 5, toY(fn(xMax))));
+    ctx.fillStyle = color; ctx.font = 'bold 11px DM Mono, monospace';
+    ctx.fillText(label, lx, ly + 4);
+  });
+
+  // Y axis label
+  ctx.fillStyle = '#6b6878'; ctx.font = '10px DM Mono, monospace';
+  ctx.fillText('(log scale)', pad + 2, pad * 0.85);
+}
+
+// ─── NOTATION CHARTS (Big-O, Omega, Theta) ──────────────────────────────────
+
+function drawNotationChart(canvasId, fn_actual, fn_upper, fn_lower, colorUpper, colorLower, colorActual, n0, legendLines) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const w = canvas.width = canvas.parentElement.clientWidth || 600;
+  const h = canvas.height = 300;
+  const ctx = canvas.getContext('2d');
+  const pad = 50;
+  const xMax = 20;
+
+  ctx.fillStyle = '#1a1a1f'; ctx.fillRect(0, 0, w, h);
+
+  const yMax = fn_upper ? fn_upper(xMax) * 1.1 : fn_actual(xMax) * 1.1;
+  const plotH = h - pad * 1.6;
+  const plotW = w - pad * 1.5;
+
+  function toX(n) { return pad + (n / xMax) * plotW; }
+  function toY(val) { return h - pad - (val / yMax) * plotH; }
+
+  // Grid
+  ctx.strokeStyle = 'rgba(42,42,50,0.7)'; ctx.lineWidth = 1;
+  [4,8,12,16,20].forEach(n => {
+    const x = toX(n);
+    ctx.beginPath(); ctx.moveTo(x, pad * 0.6); ctx.lineTo(x, h - pad); ctx.stroke();
+    ctx.fillStyle = '#6b6878'; ctx.font = '10px DM Mono, monospace'; ctx.fillText(n, x - 5, h - pad + 14);
+  });
+
+  // Axes
+  ctx.strokeStyle = '#2a2a32'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(pad, pad * 0.6); ctx.lineTo(pad, h - pad); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad, h - pad); ctx.lineTo(w - pad * 0.3, h - pad); ctx.stroke();
+  ctx.fillStyle = '#6b6878'; ctx.font = '11px DM Mono, monospace';
+  ctx.fillText('n →', w - pad * 0.2, h - pad + 4);
+
+  // n0 marker
+  if (n0) {
+    const x0 = toX(n0);
+    ctx.strokeStyle = '#6b6878'; ctx.lineWidth = 1; ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.moveTo(x0, pad * 0.6); ctx.lineTo(x0, h - pad); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#6b6878'; ctx.font = '10px DM Mono, monospace'; ctx.fillText('n₀=' + n0, x0 - 14, pad * 0.5);
+  }
+
+  function drawCurve(fn, color, dashed) {
+    if (!fn) return;
+    ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = 2.5;
+    if (dashed) ctx.setLineDash([5,4]); else ctx.setLineDash([]);
+    let first = true;
+    for (let n = 0.2; n <= xMax; n += 0.2) {
+      const val = fn(n); if (!isFinite(val)) continue;
+      const x = toX(n); const y = toY(val);
+      if (y < pad * 0.4 || y > h - pad + 5) { first = true; continue; }
+      if (first) { ctx.moveTo(x, y); first = false; } else { ctx.lineTo(x, y); }
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  // Shaded region between lower and upper (if both exist)
+  if (fn_upper && fn_lower) {
+    ctx.fillStyle = 'rgba(200,240,96,0.05)';
+    ctx.beginPath();
+    const n0x = n0 || 0;
+    let firstPt = true;
+    for (let n = n0x; n <= xMax; n += 0.3) {
+      const y = toY(fn_upper(n));
+      if (y < pad * 0.4) break;
+      if (firstPt) { ctx.moveTo(toX(n), y); firstPt = false; } else { ctx.lineTo(toX(n), y); }
+    }
+    for (let n = xMax; n >= n0x; n -= 0.3) {
+      const y = toY(fn_lower(n));
+      ctx.lineTo(toX(n), y);
+    }
+    ctx.closePath(); ctx.fill();
+  }
+
+  drawCurve(fn_upper, colorUpper, true);
+  drawCurve(fn_lower, colorLower, true);
+  drawCurve(fn_actual, colorActual, false);
+
+  // Legend
+  const lx = pad + 8;
+  legendLines.forEach((item, i) => {
+    const ly = pad + 20 + i * 20;
+    ctx.fillStyle = item.color; ctx.fillRect(lx, ly - 10, 22, 3);
+    ctx.fillStyle = '#ccc'; ctx.font = '11px DM Mono, monospace'; ctx.fillText(item.label, lx + 28, ly);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  hljs.highlightAll();
+  const total = document.querySelectorAll('.question-card').length;
+  document.getElementById('total-count').textContent = total;
+
+  drawGrowthChart();
+
+  // Big-O: f(n)=5n+4, upper c·g(n)=6n
+  drawNotationChart('bigOChart',
+    n => 5*n+4,
+    n => 6*n,
+    null,
+    '#f06060', null, '#c8f060',
+    4,
+    [{color:'#f06060', label:'c·g(n) = 6n  (upper bound)'}, {color:'#c8f060', label:'f(n) = 5n + 4  (actual)'}]
+  );
+
+  // Big-Omega: f(n)=5n+4, lower c·g(n)=1·n
+  drawNotationChart('bigOmegaChart',
+    n => 5*n+4,
+    null,
+    n => 1*n,
+    null, '#60f0a0', '#c8f060',
+    1,
+    [{color:'#60f0a0', label:'c·g(n) = 1·n  (lower bound)'}, {color:'#c8f060', label:'f(n) = 5n + 4  (actual)'}]
+  );
+
+  // Big-Theta: sandwiched
+  drawNotationChart('bigThetaChart',
+    n => 5*n+4,
+    n => 6*n,
+    n => 1*n,
+    '#f06060', '#60f0a0', '#c8f060',
+    4,
+    [{color:'#f06060', label:'c₂·g(n) = 6n  (upper)'}, {color:'#c8f060', label:'f(n) = 5n + 4  (actual)'}, {color:'#60f0a0', label:'c₁·g(n) = 1·n  (lower)'}]
+  );
+
+  // Redraw on resize
+  let resizeT;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeT);
+    resizeT = setTimeout(() => {
+      drawGrowthChart();
+      drawNotationChart('bigOChart', n=>5*n+4, n=>6*n, null, '#f06060', null, '#c8f060', 4, [{color:'#f06060',label:'c·g(n) = 6n  (upper bound)'},{color:'#c8f060',label:'f(n) = 5n + 4  (actual)'}]);
+      drawNotationChart('bigOmegaChart', n=>5*n+4, null, n=>1*n, null, '#60f0a0', '#c8f060', 1, [{color:'#60f0a0',label:'c·g(n) = 1·n  (lower bound)'},{color:'#c8f060',label:'f(n) = 5n + 4  (actual)'}]);
+      drawNotationChart('bigThetaChart', n=>5*n+4, n=>6*n, n=>1*n, '#f06060','#60f0a0','#c8f060', 4, [{color:'#f06060',label:'c₂·g(n) = 6n  (upper)'},{color:'#c8f060',label:'f(n) = 5n + 4  (actual)'},{color:'#60f0a0',label:'c₁·g(n) = 1·n  (lower)'}]);
+    }, 150);
+  });
+});
+</script>
+</body>
+</html>
