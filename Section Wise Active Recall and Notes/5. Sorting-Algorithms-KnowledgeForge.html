@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorting Algorithms — KnowledgeForge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/csharp.min.js"></script>
+<style>
+:root{
+  --bg:#0d0d0f;--surface:#141417;--card:#1a1a1f;--border:#2a2a32;
+  --accent:#c8f060;--accent2:#60c8f0;--accent3:#f060c8;
+  --text:#f0ede8;--muted:#6b6878;--danger:#f06060;--success:#60f0a0;
+  --warn:#f0c860;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background-color:var(--bg);background-image:linear-gradient(rgba(200,240,96,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(200,240,96,.018) 1px,transparent 1px);background-size:40px 40px;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:.9rem;line-height:1.7;min-height:100vh;}
+
+/* ── TOP HEADER ── */
+header{position:sticky;top:0;z-index:300;background:rgba(13,13,15,.97);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:.7rem 2rem;display:flex;align-items:center;gap:1rem;}
+.logo{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;white-space:nowrap;}
+.logo span{color:var(--accent);}
+.header-title{font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;color:var(--muted);flex:1;}
+
+/* ── ALGORITHM NAV TABS ── */
+.algo-nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+.algo-nav::-webkit-scrollbar{display:none;}
+.algo-tab{font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;padding:.38rem .85rem;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;white-space:nowrap;}
+.algo-tab:hover{color:var(--text);border-color:var(--muted);}
+.algo-tab.active{background:var(--accent);color:#0d0d0f;border-color:var(--accent);}
+
+/* ── PAGE SECTIONS ── */
+.page{display:none;max-width:960px;margin:0 auto;padding:2.5rem 2rem;}
+.page.active{display:block;}
+h1.page-title{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:var(--text);margin-bottom:.4rem;line-height:1.2;}
+.page-subtitle{font-family:'DM Mono',monospace;font-size:.8rem;color:var(--muted);margin-bottom:2rem;}
+h2{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:var(--accent);border-bottom:1px solid rgba(200,240,96,.18);padding-bottom:.4rem;margin:2.4rem 0 1rem;}
+h3{font-family:'Syne',sans-serif;font-size:.93rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .5rem;}
+p{color:#ccc;font-size:.85rem;margin-bottom:.7rem;}
+ul,ol{padding-left:1.4rem;color:#ccc;font-size:.85rem;}
+li{margin-bottom:.3rem;}
+strong{color:var(--text);}
+.divider{border:none;border-top:1px solid var(--border);margin:2.4rem 0;}
+
+/* ── CALLOUTS ── */
+.callout{padding:.78rem 1.1rem;border-radius:7px;font-size:.84rem;margin:1rem 0;line-height:1.65;}
+.tip{border-left:3px solid var(--accent);background:rgba(200,240,96,.05);color:#ccc;}
+.warning{border-left:3px solid var(--accent3);background:rgba(240,96,200,.05);color:#ccc;}
+.rule{border-left:3px solid var(--accent2);background:rgba(96,200,240,.05);color:#ccc;}
+.info{border-left:3px solid var(--warn);background:rgba(240,200,96,.05);color:#ccc;}
+
+/* ── CODE ── */
+.code-block{background:var(--card);border:1px solid var(--border);border-radius:7px;margin:1rem 0;overflow:hidden;}
+.code-header{display:flex;justify-content:space-between;align-items:center;padding:.4rem .8rem;border-bottom:1px solid var(--border);}
+.code-lang{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);text-transform:uppercase;}
+.copy-btn{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);background:transparent;border:1px solid var(--border);padding:.18rem .48rem;border-radius:4px;cursor:pointer;transition:all .2s;}
+.copy-btn:hover{color:var(--text);border-color:var(--muted);}
+.code-block pre{margin:0;}
+.code-block pre code{font-family:'DM Mono',monospace;font-size:.78rem;padding:.88rem 1rem !important;display:block;}
+
+/* ── TABLES ── */
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.81rem;}
+thead th{font-family:'Syne',sans-serif;font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);background:var(--card);padding:.6rem 1rem;text-align:left;border:1px solid var(--border);}
+tbody tr:nth-child(odd){background:var(--surface);}
+tbody tr:nth-child(even){background:var(--bg);}
+tbody td{padding:.58rem 1rem;border:1px solid var(--border);color:#ccc;vertical-align:top;}
+.badge{display:inline-block;font-family:'DM Mono',monospace;font-size:.68rem;padding:.1rem .38rem;border-radius:3px;font-weight:500;}
+.b-green{background:rgba(96,240,160,.12);color:var(--success);}
+.b-red{background:rgba(240,96,96,.12);color:var(--danger);}
+.b-yellow{background:rgba(240,200,96,.12);color:var(--warn);}
+.b-blue{background:rgba(96,200,240,.12);color:var(--accent2);}
+
+/* ── ALGO VISUALISER ── */
+.viz-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem 1.75rem;margin:1.25rem 0;}
+.viz-label{font-family:'Syne',sans-serif;font-size:.73rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem;}
+.viz-controls{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.9rem;}
+.vbtn{font-family:'DM Mono',monospace;font-size:.74rem;padding:.33rem .78rem;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;}
+.vbtn:hover{color:var(--text);border-color:var(--muted);}
+.vbtn.primary{background:var(--accent);color:#0d0d0f;border-color:var(--accent);font-weight:700;}
+.vbtn.primary:hover{opacity:.88;}
+.vbtn:disabled{opacity:.3;cursor:not-allowed;}
+.v-speed{display:flex;align-items:center;gap:.4rem;font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);}
+.v-speed input{width:75px;accent-color:var(--accent);}
+.v-status{font-family:'DM Mono',monospace;font-size:.78rem;min-height:1.3rem;margin-bottom:.8rem;transition:color .3s;}
+.v-status.ok{color:var(--success);}
+.v-status.go{color:var(--accent);}
+.v-status.ko{color:var(--danger);}
+
+/* Array cells */
+.arr-row{display:flex;gap:5px;justify-content:center;align-items:flex-end;flex-wrap:nowrap;overflow-x:auto;padding:.8rem 0 .4rem;}
+.acell{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:46px;}
+.abox{width:46px;height:46px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.86rem;font-weight:500;border:2px solid var(--border);border-radius:6px;background:var(--surface);color:#ccc;transition:background .25s,border-color .25s,transform .25s,box-shadow .25s;}
+.aidx{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);}
+.ptr-row{display:flex;gap:5px;justify-content:center;min-height:1.2rem;}
+.aptr{width:46px;text-align:center;font-family:'DM Mono',monospace;font-size:.62rem;font-weight:700;transition:opacity .2s;}
+
+/* Cell states */
+.s-active{background:rgba(200,240,96,.18)!important;border-color:var(--accent)!important;color:var(--accent)!important;transform:scale(1.1);box-shadow:0 0 14px rgba(200,240,96,.28);}
+.s-found{background:rgba(96,240,160,.2)!important;border-color:var(--success)!important;color:var(--success)!important;transform:scale(1.14);box-shadow:0 0 18px rgba(96,240,160,.35);}
+.s-elim{background:rgba(42,42,50,.4)!important;border-color:#1e1e24!important;color:#3a3a48!important;}
+.s-range{background:rgba(96,200,240,.1)!important;border-color:rgba(96,200,240,.35)!important;color:var(--accent2)!important;}
+.s-pivot{background:rgba(240,200,96,.2)!important;border-color:var(--warn)!important;color:var(--warn)!important;transform:scale(1.1);box-shadow:0 0 14px rgba(240,200,96,.28);}
+.s-compare{background:rgba(240,96,200,.15)!important;border-color:var(--accent3)!important;color:var(--accent3)!important;transform:scale(1.06);}
+.s-sorted{background:rgba(96,240,160,.1)!important;border-color:rgba(96,240,160,.35)!important;color:var(--success)!important;}
+.s-merge-l{background:rgba(96,200,240,.15)!important;border-color:var(--accent2)!important;color:var(--accent2)!important;}
+.s-merge-r{background:rgba(240,96,200,.15)!important;border-color:var(--accent3)!important;color:var(--accent3)!important;}
+
+/* Step log */
+.step-log{margin-top:.75rem;max-height:120px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;background:var(--bg);}
+.step-log::-webkit-scrollbar{width:4px;}
+.step-log::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.log-e{font-family:'DM Mono',monospace;font-size:.71rem;color:var(--muted);padding:.28rem .65rem;border-bottom:1px solid rgba(42,42,50,.5);line-height:1.5;}
+.log-e:last-child{border:none;}
+.log-e.lf{color:var(--success);}
+.log-e.la{color:var(--accent);}
+.log-e.lm{color:var(--danger);}
+
+/* Stable badge */
+.stability-card{display:inline-flex;align-items:center;gap:.75rem;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.75rem 1.1rem;margin:.5rem 0;}
+.stab-icon{font-size:1.3rem;}
+.stab-text{font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;}
+
+/* Complexity pills */
+.cx-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.75rem;margin:1rem 0;}
+.cx-pill{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.85rem 1rem;}
+.cx-pill .cx-case{font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem;}
+.cx-pill .cx-val{font-family:'DM Mono',monospace;font-size:1.05rem;font-weight:500;}
+.cx-pill.cx-best .cx-val{color:var(--success);}
+.cx-pill.cx-avg .cx-val{color:var(--accent);}
+.cx-pill.cx-worst .cx-val{color:var(--danger);}
+.cx-pill.cx-space .cx-val{color:var(--accent2);}
+
+/* Overview grid cards */
+.overview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin:1.2rem 0;}
+.ov-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.1rem;cursor:pointer;transition:border-color .2s;}
+.ov-card:hover{border-color:var(--accent);}
+.ov-card h4{font-family:'Syne',sans-serif;font-size:.88rem;font-weight:800;color:var(--accent);margin-bottom:.4rem;}
+.ov-card .ov-cmp{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);}
+
+/* Real-world use section */
+.rw-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;}
+@media(max-width:600px){.rw-grid{grid-template-columns:1fr;}}
+.rw-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.1rem;}
+.rw-card h4{font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;color:var(--accent2);margin-bottom:.5rem;}
+.rw-card ul{padding-left:1.1rem;}
+.rw-card li{font-size:.8rem;color:#ccc;}
+
+/* Final comparison table highlight */
+.best-cell{color:var(--success);font-weight:700;}
+.worst-cell{color:var(--danger);}
+
+@media(max-width:640px){
+  header{flex-wrap:wrap;padding:.65rem 1rem;}
+  .header-title{display:none;}
+  .page{padding:1.5rem 1rem;}
+  .abox,.acell{min-width:36px;width:36px;height:36px;font-size:.76rem;}
+  .aptr{width:36px;}
+}
+
+/* ── SUB-TAB SWITCHER (Handbook / Recall) ── */
+.sub-tabs{display:flex;gap:6px;margin-bottom:1.8rem;border-bottom:1px solid var(--border);padding-bottom:.6rem;}
+.sub-tab{font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;padding:.35rem .9rem;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;}
+.sub-tab.active{background:var(--accent);color:#0d0d0f;border-color:var(--accent);}
+.sub-tab.inactive:hover{color:var(--text);border-color:var(--muted);}
+.sub-panel{display:none;}
+.sub-panel.active{display:block;}
+
+/* ── RECALL SYSTEM ── */
+.recall-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem;padding-bottom:.9rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:.6rem;}
+.rc-counter{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--muted);}
+.rc-counter span{color:var(--accent);font-weight:600;}
+.rc-bulk{display:flex;gap:.45rem;}
+.rc-bulk-btn{font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;padding:.3rem .7rem;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;}
+.rc-bulk-btn:hover{color:var(--text);border-color:var(--muted);}
+.qcard{background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:.65rem;overflow:hidden;transition:border-color .2s;}
+.qcard.revealed{border-color:rgba(200,240,96,.3);}
+.qcard-head{display:flex;align-items:flex-start;gap:.65rem;padding:.85rem 1rem;flex-wrap:wrap;}
+.qnum{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);flex-shrink:0;margin-top:.1rem;}
+.qtag{font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;padding:.12rem .4rem;border-radius:4px;flex-shrink:0;margin-top:.06rem;}
+.qtag.def    {background:rgba(96,200,240,.12);color:var(--accent2);}
+.qtag.apply  {background:rgba(200,240,96,.12);color:var(--accent);}
+.qtag.why    {background:rgba(240,96,200,.12);color:var(--accent3);}
+.qtag.compare{background:rgba(200,240,96,.12);color:var(--accent);}
+.qtag.seq    {background:rgba(96,240,200,.12);color:#60f0c8;}
+.qtag.gotcha {background:rgba(240,96,96,.12);color:var(--danger);}
+.qtag.trace  {background:rgba(240,200,96,.12);color:var(--warn);}
+.qtext{font-size:.84rem;color:var(--text);flex:1;line-height:1.5;}
+.qbtn{font-family:'DM Mono',monospace;font-size:.68rem;padding:.26rem .6rem;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;flex-shrink:0;white-space:nowrap;}
+.qbtn.revealed{border-color:var(--accent);color:var(--accent);}
+.qanswer{border-top:1px solid var(--border);padding:.9rem 1rem;background:var(--surface);overflow:hidden;max-height:0;transition:max-height .35s ease;}
+.qanswer.open{max-height:3000px;}
+.qa-label{font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:.45rem;}
+.qa-body{font-size:.82rem;color:#ccc;line-height:1.65;}
+.qa-body strong{color:var(--text);}
+.qa-body ul,.qa-body ol{padding-left:1.2rem;margin-top:.35rem;}
+.qa-body li{margin-bottom:.22rem;}
+.qa-body code{font-family:'DM Mono',monospace;font-size:.77rem;background:rgba(42,42,50,.7);padding:.05rem .3rem;border-radius:3px;color:var(--accent2);}
+.qa-eg{margin-top:.65rem;padding:.55rem .8rem;background:rgba(200,240,96,.04);border-left:2px solid rgba(200,240,96,.3);border-radius:0 4px 4px 0;font-size:.8rem;color:#ccc;}
+.qa-eg-label{font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;color:var(--accent);margin-right:.35rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Knowledge<span>Forge</span></div>
+  <div class="header-title">Sorting Algorithms · Complete Reference</div>
+  <nav class="algo-nav" id="algo-nav">
+    <button class="algo-tab active" onclick="showPage('overview',this)">🏠 Overview</button>
+    <button class="algo-tab" onclick="showPage('selection',this)">Selection</button>
+    <button class="algo-tab" onclick="showPage('insertion',this)">Insertion</button>
+    <button class="algo-tab" onclick="showPage('bubble',this)">Bubble</button>
+    <button class="algo-tab" onclick="showPage('shell',this)">Shell</button>
+    <button class="algo-tab" onclick="showPage('merge',this)">Merge</button>
+    <button class="algo-tab" onclick="showPage('quick',this)">Quick</button>
+    <button class="algo-tab" onclick="showPage('compare',this)">📊 Compare</button>
+  </nav>
+</header>
+
+<!-- ═══════════════════════ OVERVIEW ═══════════════════════ -->
+<div class="page active" id="page-overview">
+  <h1 class="page-title">Sorting Algorithms</h1>
+  <p class="page-subtitle">Complete guide · 6 algorithms · Animations · Complexity · Real-world usage</p>
+  <div class="sub-tabs">
+    <button class="sub-tab active" onclick="switchSub('overview','hb',this)">📘 Handbook</button>
+    <button class="sub-tab inactive" onclick="switchSub('overview','rc',this)">🧠 Active Recall</button>
+  </div>
+
+  <!-- OVERVIEW HANDBOOK -->
+  <div class="sub-panel active" id="overview-hb">
+
+  <div class="callout tip">💡 <strong>Sorting</strong> = rearranging elements in ascending (or descending) order. It is a prerequisite for binary search and underpins most data processing pipelines.</div>
+
+  <h2>What is Sorting?</h2>
+  <ul>
+    <li><strong>Input:</strong> An unsorted collection of elements</li>
+    <li><strong>Output:</strong> A sequence where each element ≤ the next</li>
+    <li>Binary search requires sorted data to function correctly</li>
+    <li>Sorting algorithms differ in <strong>strategy, speed, memory use, and stability</strong></li>
+  </ul>
+
+  <h2>🟢 Stable vs 🔴 Unstable Sorting</h2>
+  <div class="callout rule">📌 A sort is <strong>stable</strong> if elements with equal keys keep their original relative order. A sort is <strong>unstable</strong> if equal elements may appear in any order.</div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;">
+    <div class="callout tip" style="margin:0;">
+      <strong>✅ Stable Example</strong><br>
+      Input: [🟡5, 3, 🟢5, 1]<br>
+      After sort: [1, 3, <strong>🟡5, 🟢5</strong>]<br>
+      <span style="font-size:.78rem;color:var(--muted);">Yellow 5 stays before green 5 — original order preserved</span>
+    </div>
+    <div class="callout warning" style="margin:0;">
+      <strong>⚠️ Unstable Example</strong><br>
+      Input: [🟡5, 3, 🟢5, 1]<br>
+      After sort: [1, 3, <strong>🟢5, 🟡5</strong>]<br>
+      <span style="font-size:.78rem;color:var(--muted);">Green 5 before yellow 5 — relative order changed</span>
+    </div>
+  </div>
+
+  <h3>Why Does Stability Matter?</h3>
+  <p>When sorting objects with multiple fields (e.g. employees by salary), a stable sort preserves any previously applied ordering (e.g. by name). Unstable sorts can destroy prior ordering.</p>
+
+  <h2>Algorithm Categories</h2>
+  <table>
+    <thead><tr><th>Category</th><th>Algorithms</th><th>When to Use</th></tr></thead>
+    <tbody>
+      <tr><td>Simple O(n²)</td><td>Selection, Insertion, Bubble</td><td>Small data, educational, nearly-sorted arrays</td></tr>
+      <tr><td>Improved O(n log n)</td><td>Shell, Merge, Quick</td><td>Large datasets, production systems</td></tr>
+      <tr><td>Index-based</td><td>Count, Radix, Bucket</td><td>Known integer range, non-comparison sorting</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Quick Navigation</h2>
+  <div class="overview-grid">
+    <div class="ov-card" onclick="showPageById('selection')"><h4>Selection Sort</h4><div class="ov-cmp">Time: O(n²) · Space: O(1) · Unstable</div></div>
+    <div class="ov-card" onclick="showPageById('insertion')"><h4>Insertion Sort</h4><div class="ov-cmp">Time: O(n²)/O(n) · Space: O(1) · Stable</div></div>
+    <div class="ov-card" onclick="showPageById('bubble')"><h4>Bubble Sort</h4><div class="ov-cmp">Time: O(n²)/O(n) · Space: O(1) · Stable</div></div>
+    <div class="ov-card" onclick="showPageById('shell')"><h4>Shell Sort</h4><div class="ov-cmp">Time: O(n log n)–O(n²) · Space: O(1) · Unstable</div></div>
+    <div class="ov-card" onclick="showPageById('merge')"><h4>Merge Sort</h4><div class="ov-cmp">Time: O(n log n) · Space: O(n) · Stable</div></div>
+    <div class="ov-card" onclick="showPageById('quick')"><h4>Quick Sort</h4><div class="ov-cmp">Time: O(n log n)/O(n²) · Space: O(log n) · Unstable</div></div>
+  </div>
+  </div><!-- end overview-hb -->
+
+  <!-- OVERVIEW RECALL -->
+  <div class="sub-panel" id="overview-rc">
+    <div class="recall-topbar">
+      <div class="rc-counter"><span id="ov-ans">0</span> of <span id="ov-tot">5</span> answered</div>
+      <div class="rc-bulk"><button class="rc-bulk-btn" onclick="rcRevealAll('ov')">Reveal All</button><button class="rc-bulk-btn" onclick="rcHideAll('ov')">Hide All</button></div>
+    </div>
+    <!-- Q1 -->
+    <div class="qcard" id="ov-q1"><div class="qcard-head"><span class="qnum">Q01</span><span class="qtag def">DEF</span><span class="qtext">What is a <strong>stable sort</strong>? Why does it matter when sorting objects?</span><button class="qbtn" onclick="rcToggle('ov','ov-q1')">Show Answer</button></div><div class="qanswer" id="ov-q1-a"><div class="qa-label">Answer</div><div class="qa-body">A <strong>stable sort</strong> preserves the original relative order of elements with equal keys. If two elements compare as equal, the one that appeared first in the input still appears first in the output.<div class="qa-eg"><span class="qa-eg-label">Why it matters:</span> Sorting employee records by salary — a stable sort keeps the existing alphabetical ordering within the same salary band. An unstable sort may scramble them.</div></div></div></div>
+    <!-- Q2 -->
+    <div class="qcard" id="ov-q2"><div class="qcard-head"><span class="qnum">Q02</span><span class="qtag compare">COMPARE</span><span class="qtext">Which of the 6 algorithms covered are <strong>stable</strong> and which are <strong>unstable</strong>? List all.</span><button class="qbtn" onclick="rcToggle('ov','ov-q2')">Show Answer</button></div><div class="qanswer" id="ov-q2-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>Stable:</strong> Insertion Sort, Bubble Sort, Merge Sort<br><strong>Unstable:</strong> Selection Sort, Shell Sort, Quick Sort<div class="qa-eg"><span class="qa-eg-label">Memory trick:</span> "IBM stable" — Insertion, Bubble, Merge are all stable.</div></div></div></div>
+    <!-- Q3 -->
+    <div class="qcard" id="ov-q3"><div class="qcard-head"><span class="qnum">Q03</span><span class="qtag why">WHY</span><span class="qtext">Why is sorting a prerequisite for binary search?</span><button class="qbtn" onclick="rcToggle('ov','ov-q3')">Show Answer</button></div><div class="qanswer" id="ov-q3-a"><div class="qa-label">Answer</div><div class="qa-body">Binary search works by comparing the key to the middle element and eliminating half the search space. This elimination logic only works if the data is ordered — if elements are unsorted, eliminating a half might discard the target. Binary search on unsorted data gives incorrect results silently.</div></div></div>
+    <!-- Q4 -->
+    <div class="qcard" id="ov-q4"><div class="qcard-head"><span class="qnum">Q04</span><span class="qtag compare">COMPARE</span><span class="qtext">What separates the simple O(n²) sorts from the O(n log n) sorts? Name the key structural difference.</span><button class="qbtn" onclick="rcToggle('ov','ov-q4')">Show Answer</button></div><div class="qanswer" id="ov-q4-a"><div class="qa-label">Answer</div><div class="qa-body">O(n²) sorts (Selection, Insertion, Bubble) process elements <strong>one at a time against a linear scan</strong> — the inner work is proportional to n per element. O(n log n) sorts (Shell, Merge, Quick) use <strong>divide-and-conquer or gap-based strategies</strong> that reduce the number of comparisons logarithmically per element.</div></div></div>
+    <!-- Q5 -->
+    <div class="qcard" id="ov-q5"><div class="qcard-head"><span class="qnum">Q05</span><span class="qtag gotcha">GOTCHA</span><span class="qtext">Can two sorting algorithms have the same Big-O complexity but very different real-world performance? Give an example.</span><button class="qbtn" onclick="rcToggle('ov','ov-q5')">Show Answer</button></div><div class="qanswer" id="ov-q5-a"><div class="qa-label">Answer</div><div class="qa-body">Yes. Merge Sort and Quick Sort are both O(n log n) average case, but Quick Sort is typically 2–3× faster in practice due to better <strong>cache locality</strong> (accesses memory sequentially during partitioning) and smaller constant factors. Big-O hides constants — real performance depends on memory access patterns, recursion overhead, and hardware.</div></div></div>
+  </div><!-- end overview-rc -->
+</div>
+
+<!-- ═══════════════════════ SELECTION SORT ═══════════════════════ -->
+<div class="page" id="page-selection">
+  <h1 class="page-title">Selection Sort</h1>
+  <p class="page-subtitle">Find minimum → place → repeat</p>
+  <div class="sub-tabs">
+    <button class="sub-tab active" onclick="switchSub('selection','hb',this)">📘 Handbook</button>
+    <button class="sub-tab inactive" onclick="switchSub('selection','rc',this)">🧠 Active Recall</button>
+  </div>
+  <div class="sub-panel active" id="selection-hb">
+
+  <div class="callout tip">💡 In each pass, scan the unsorted portion, find the smallest element, and swap it into its correct position. Builds the sorted region left to right, one element per pass.</div>
+
+  <div class="stability-card">
+    <span class="stab-icon">⚠️</span>
+    <div><div class="stab-text" style="color:var(--danger);">Unstable Sort</div><div style="font-size:.76rem;color:var(--muted);">Equal elements may change relative order after sorting</div></div>
+  </div>
+
+  <h2>🎬 Animation</h2>
+  <div class="viz-box">
+    <div class="viz-label">Selection Sort Visualiser</div>
+    <div class="viz-controls">
+      <button class="vbtn primary" id="sel-play" onclick="selPlayPause()">▶ Play</button>
+      <button class="vbtn" id="sel-step" onclick="selStep()">→ Step</button>
+      <button class="vbtn" onclick="selReset()">↺ Reset</button>
+      <div class="v-speed">Speed: <input type="range" id="sel-speed" min="200" max="2000" value="900" style="width:70px;"></div>
+    </div>
+    <div class="v-status" id="sel-status">Press ▶ Play or → Step</div>
+    <div class="arr-row" id="sel-arr"></div>
+    <div class="ptr-row" id="sel-ptrs"></div>
+    <div style="margin-top:.4rem;font-family:'DM Mono',monospace;font-size:.7rem;display:flex;gap:.8rem;flex-wrap:wrap;">
+      <span style="color:var(--accent);">■ Scanning</span>
+      <span style="color:var(--accent3);">■ Current min</span>
+      <span style="color:var(--success);">■ Sorted</span>
+      <span style="color:#3a3a48;">■ Comparing</span>
+    </div>
+    <div class="step-log" id="sel-log"></div>
+  </div>
+
+  <h2>📋 Algorithm — Step by Step</h2>
+  <ol>
+    <li>For each position <code>i</code> from 0 to n−2:</li>
+    <li>Assume <code>minIndex = i</code></li>
+    <li>Scan <code>j = i+1</code> to <code>n−1</code>: if <code>arr[j] &lt; arr[minIndex]</code> → update <code>minIndex = j</code></li>
+    <li>Swap <code>arr[i]</code> with <code>arr[minIndex]</code></li>
+    <li>Position <code>i</code> is now permanently sorted</li>
+  </ol>
+
+  <h2>💻 C# Code</h2>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><code class="language-csharp">static void SelectionSort(int[] arr)
+{
+    int n = arr.Length;
+    for (int i = 0; i < n - 1; i++)         // i = position to fill
+    {
+        int minIndex = i;                     // assume current is minimum
+        for (int j = i + 1; j < n; j++)      // scan remaining
+        {
+            if (arr[j] < arr[minIndex])
+                minIndex = j;                 // found new minimum
+        }
+        // swap minimum into position i
+        int temp = arr[minIndex];
+        arr[minIndex] = arr[i];
+        arr[i] = temp;
+    }
+}</code></pre>
+  </div>
+
+  <h3>Line-by-Line Explanation</h3>
+  <table>
+    <thead><tr><th>Line</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><code>for i = 0 to n-2</code></td><td>Each iteration fills one more sorted position on the left</td></tr>
+      <tr><td><code>minIndex = i</code></td><td>Assume the current position holds the minimum — a starting guess</td></tr>
+      <tr><td><code>for j = i+1 to n-1</code></td><td>Scan everything to the right of the sorted zone</td></tr>
+      <tr><td><code>if arr[j] &lt; arr[minIndex]</code></td><td>Found a smaller element — update our "best so far" index</td></tr>
+      <tr><td><code>swap(arr[i], arr[minIndex])</code></td><td>Place the true minimum at position i — one swap per pass</td></tr>
+    </tbody>
+  </table>
+
+  <h2>⏱ Complexity</h2>
+  <div class="cx-grid">
+    <div class="cx-pill cx-best"><div class="cx-case">Best Case</div><div class="cx-val">O(n²)</div></div>
+    <div class="cx-pill cx-avg"><div class="cx-case">Average Case</div><div class="cx-val">O(n²)</div></div>
+    <div class="cx-pill cx-worst"><div class="cx-case">Worst Case</div><div class="cx-val">O(n²)</div></div>
+    <div class="cx-pill cx-space"><div class="cx-case">Space</div><div class="cx-val">O(1)</div></div>
+  </div>
+  <div class="callout warning">⚠️ Selection sort is always O(n²) — even on a sorted array it must scan everything to confirm the minimum. It makes only <strong>O(n) swaps</strong> (one per pass), making it useful when swap cost is very high.</div>
+
+  <h3>Why O(n²)? The Math</h3>
+  <p>Pass 1: n−1 comparisons, Pass 2: n−2, … Pass n−1: 1 comparison. Total = (n−1)+(n−2)+…+1 = <strong>n(n−1)/2 = O(n²)</strong></p>
+
+  <h2>🌍 Real-World Usage</h2>
+  <div class="rw-grid">
+    <div class="rw-card"><h4>When to Use</h4><ul><li>Very small arrays (n &lt; 20)</li><li>When swap cost is extremely high (e.g. flash memory writes)</li><li>Teaching / learning foundational sorting</li></ul></div>
+    <div class="rw-card"><h4>When NOT to Use</h4><ul><li>Large datasets — O(n²) is too slow</li><li>When stability is required (use Insertion instead)</li><li>Any production system with n &gt; 1000</li></ul></div>
+  </div>
+  </div><!-- end selection-hb -->
+
+  <!-- SELECTION RECALL -->
+  <div class="sub-panel" id="selection-rc">
+    <div class="recall-topbar">
+      <div class="rc-counter"><span id="sel-ans">0</span> of <span id="sel-tot">5</span> answered</div>
+      <div class="rc-bulk"><button class="rc-bulk-btn" onclick="rcRevealAll('sel')">Reveal All</button><button class="rc-bulk-btn" onclick="rcHideAll('sel')">Hide All</button></div>
+    </div>
+    <div class="qcard" id="sel-q1"><div class="qcard-head"><span class="qnum">Q01</span><span class="qtag def">DEF</span><span class="qtext">In Selection Sort, what does <code>minIndex</code> represent and when is it updated?</span><button class="qbtn" onclick="rcToggle('sel','sel-q1')">Show Answer</button></div><div class="qanswer" id="sel-q1-a"><div class="qa-label">Answer</div><div class="qa-body"><code>minIndex</code> stores the index of the <strong>smallest element found so far</strong> in the unsorted portion. It is initialised to <code>i</code> at the start of each pass, then updated to <code>j</code> whenever <code>arr[j] &lt; arr[minIndex]</code> during the inner scan.<div class="qa-eg"><span class="qa-eg-label">Example:</span> On pass 0 of [64,25,12,22,11] — minIndex starts at 0 (64), updated to 1 (25), then 2 (12), then 4 (11). Final swap: arr[0] ↔ arr[4].</div></div></div></div>
+    <div class="qcard" id="sel-q2"><div class="qcard-head"><span class="qnum">Q02</span><span class="qtag trace">TRACE</span><span class="qtext">Trace Selection Sort on <code>[29, 10, 14, 37, 13]</code>. Show the array state after each pass.</span><button class="qbtn" onclick="rcToggle('sel','sel-q2')">Show Answer</button></div><div class="qanswer" id="sel-q2-a"><div class="qa-label">Answer</div><div class="qa-body"><ul><li>Pass 1: min=10 at idx 1 → swap with idx 0 → <strong>[10, 29, 14, 37, 13]</strong></li><li>Pass 2: min=13 at idx 4 → swap with idx 1 → <strong>[10, 13, 14, 37, 29]</strong></li><li>Pass 3: min=14 at idx 2 → no swap → <strong>[10, 13, 14, 37, 29]</strong></li><li>Pass 4: min=29 at idx 4 → swap with idx 3 → <strong>[10, 13, 14, 29, 37]</strong></li></ul></div></div></div>
+    <div class="qcard" id="sel-q3"><div class="qcard-head"><span class="qnum">Q03</span><span class="qtag why">WHY</span><span class="qtext">Selection Sort is always O(n²) even on a sorted array. Why can't it detect early completion?</span><button class="qbtn" onclick="rcToggle('sel','sel-q3')">Show Answer</button></div><div class="qanswer" id="sel-q3-a"><div class="qa-label">Answer</div><div class="qa-body">Selection sort has no mechanism to detect that the array is already sorted. It must always scan the entire unsorted portion to <em>confirm</em> the minimum — even if the minimum is already in the correct position. There is no "did anything change?" flag, unlike Bubble Sort's <code>swapped</code> optimisation.</div></div></div>
+    <div class="qcard" id="sel-q4"><div class="qcard-head"><span class="qnum">Q04</span><span class="qtag gotcha">GOTCHA</span><span class="qtext">Why is Selection Sort called <strong>unstable</strong>? Give a concrete array example showing equal elements swapping order.</span><button class="qbtn" onclick="rcToggle('sel','sel-q4')">Show Answer</button></div><div class="qanswer" id="sel-q4-a"><div class="qa-label">Answer</div><div class="qa-body">Consider <code>[5a, 3, 5b, 1]</code> (5a and 5b are equal but distinguishable). Pass 1: minIndex finds 1 at index 3, swaps with index 0 → <code>[1, 3, 5b, 5a]</code>. Now 5b appears before 5a — their original order is reversed. Selection sort's long-range swaps are the cause of instability.</div></div></div>
+    <div class="qcard" id="sel-q5"><div class="qcard-head"><span class="qnum">Q05</span><span class="qtag compare">COMPARE</span><span class="qtext">Selection Sort makes only O(n) swaps. How does this compare to Bubble Sort and when is fewer swaps important?</span><button class="qbtn" onclick="rcToggle('sel','sel-q5')">Show Answer</button></div><div class="qanswer" id="sel-q5-a"><div class="qa-label">Answer</div><div class="qa-body">Selection Sort makes exactly <strong>n−1 swaps</strong> (one per pass). Bubble Sort can make up to O(n²) swaps in the worst case. Fewer swaps matter when the write cost is high — such as writing to <strong>flash memory</strong> (limited write cycles) or <strong>network writes</strong> where each swap is a remote operation.</div></div></div>
+  </div><!-- end selection-rc -->
+</div>
+
+<!-- ═══════════════════════ INSERTION SORT ═══════════════════════ -->
+<div class="page" id="page-insertion">
+  <h1 class="page-title">Insertion Sort</h1>
+  <p class="page-subtitle">Pick → shift larger left neighbors right → insert</p>
+  <div class="sub-tabs">
+    <button class="sub-tab active" onclick="switchSub('insertion','hb',this)">📘 Handbook</button>
+    <button class="sub-tab inactive" onclick="switchSub('insertion','rc',this)">🧠 Active Recall</button>
+  </div>
+  <div class="sub-panel active" id="insertion-hb">
+
+  <div class="callout tip">💡 Like sorting playing cards in your hand. Pick the next card and slide it left past every card that is larger, until it's in the right spot.</div>
+
+  <div class="stability-card">
+    <span class="stab-icon">✅</span>
+    <div><div class="stab-text" style="color:var(--success);">Stable Sort</div><div style="font-size:.76rem;color:var(--muted);">Equal elements keep their original relative order (uses &gt;, not ≥)</div></div>
+  </div>
+
+  <h2>🎬 Animation</h2>
+  <div class="viz-box">
+    <div class="viz-label">Insertion Sort Visualiser</div>
+    <div class="viz-controls">
+      <button class="vbtn primary" id="ins-play" onclick="insPlayPause()">▶ Play</button>
+      <button class="vbtn" id="ins-step" onclick="insStep()">→ Step</button>
+      <button class="vbtn" onclick="insReset()">↺ Reset</button>
+      <div class="v-speed">Speed: <input type="range" id="ins-speed" min="200" max="2000" value="900" style="width:70px;"></div>
+    </div>
+    <div class="v-status" id="ins-status">Press ▶ Play or → Step</div>
+    <div class="arr-row" id="ins-arr"></div>
+    <div class="ptr-row" id="ins-ptrs"></div>
+    <div style="margin-top:.4rem;font-family:'DM Mono',monospace;font-size:.7rem;display:flex;gap:.8rem;flex-wrap:wrap;">
+      <span style="color:var(--warn);">■ Picked (temp)</span>
+      <span style="color:var(--accent3);">■ Shifting right</span>
+      <span style="color:var(--success);">■ Sorted zone</span>
+    </div>
+    <div class="step-log" id="ins-log"></div>
+  </div>
+
+  <h2>📋 Algorithm</h2>
+  <ol>
+    <li>Element at index 0 is trivially sorted</li>
+    <li>For <code>i = 1</code> to <code>n−1</code>: pick <code>temp = arr[i]</code>, set <code>pos = i</code></li>
+    <li>While <code>pos &gt; 0</code> AND <code>arr[pos−1] &gt; temp</code>: shift <code>arr[pos] = arr[pos−1]</code>, decrement <code>pos</code></li>
+    <li>Insert: <code>arr[pos] = temp</code></li>
+  </ol>
+
+  <h2>💻 C# Code</h2>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><code class="language-csharp">static void InsertionSort(int[] A, int n)
+{
+    for (int i = 1; i < n; i++)             // start from 2nd element
+    {
+        int temp = A[i];                     // pick element to insert
+        int pos = i;
+
+        while (pos > 0 && A[pos - 1] > temp) // shift larger elements right
+        {
+            A[pos] = A[pos - 1];
+            pos--;
+        }
+        A[pos] = temp;                       // insert in correct position
+    }
+}</code></pre>
+  </div>
+
+  <h3>Key Insight: Shifting vs Swapping</h3>
+  <div class="callout rule">📌 Insertion sort <strong>shifts</strong> (not swaps). Each shift moves one element one position right. This is ~3× more efficient than swapping (which needs a temp variable and 3 assignments).</div>
+
+  <h2>⏱ Complexity</h2>
+  <div class="cx-grid">
+    <div class="cx-pill cx-best"><div class="cx-case">Best Case</div><div class="cx-val">O(n)</div></div>
+    <div class="cx-pill cx-avg"><div class="cx-case">Average Case</div><div class="cx-val">O(n²)</div></div>
+    <div class="cx-pill cx-worst"><div class="cx-case">Worst Case</div><div class="cx-val">O(n²)</div></div>
+    <div class="cx-pill cx-space"><div class="cx-case">Space</div><div class="cx-val">O(1)</div></div>
+  </div>
+  <div class="callout tip">💡 Best case O(n) occurs on an already-sorted array — the while loop condition fails immediately each time, so only n−1 comparisons are made with no shifts.</div>
+
+  <h2>🌍 Real-World Usage</h2>
+  <div class="rw-grid">
+    <div class="rw-card"><h4>Used In</h4><ul><li>Python's Timsort uses insertion sort for small runs (n ≤ 64)</li><li>Nearly-sorted data — performs extremely well</li><li>Online sorting — can sort as new data arrives</li><li>Small sub-arrays inside Merge / Quick sort hybrids</li></ul></div>
+    <div class="rw-card"><h4>Real Systems</h4><ul><li>Card game engines — literally like sorting a hand</li><li>Database row buffering with small datasets</li><li>Embedded systems with tiny memory footprint</li><li>Most common "last mile" sort in hybrid algorithms</li></ul></div>
+  </div>
+  </div><!-- end insertion-hb -->
+
+  <!-- INSERTION RECALL -->
+  <div class="sub-panel" id="insertion-rc">
+    <div class="recall-topbar">
+      <div class="rc-counter"><span id="ins-ans">0</span> of <span id="ins-tot">5</span> answered</div>
+      <div class="rc-bulk"><button class="rc-bulk-btn" onclick="rcRevealAll('ins')">Reveal All</button><button class="rc-bulk-btn" onclick="rcHideAll('ins')">Hide All</button></div>
+    </div>
+    <div class="qcard" id="ins-q1"><div class="qcard-head"><span class="qnum">Q01</span><span class="qtag def">DEF</span><span class="qtext">What role does <code>temp</code> play in Insertion Sort, and why is <strong>shifting</strong> used instead of swapping?</span><button class="qbtn" onclick="rcToggle('ins','ins-q1')">Show Answer</button></div><div class="qanswer" id="ins-q1-a"><div class="qa-label">Answer</div><div class="qa-body"><code>temp</code> holds the element to be inserted. Shifting is used because it only requires one assignment per move (<code>arr[pos] = arr[pos-1]</code>), while a swap would require three assignments (via a temporary variable) per comparison. Shifting is more efficient and is the reason Insertion Sort is called "optimal" for this approach.</div></div></div>
+    <div class="qcard" id="ins-q2"><div class="qcard-head"><span class="qnum">Q02</span><span class="qtag trace">TRACE</span><span class="qtext">Trace Insertion Sort on <code>[12, 11, 13, 5, 6]</code>. Show array after each outer loop iteration.</span><button class="qbtn" onclick="rcToggle('ins','ins-q2')">Show Answer</button></div><div class="qanswer" id="ins-q2-a"><div class="qa-label">Answer</div><div class="qa-body"><ul><li>i=1, temp=11: shift 12 right → insert 11 → <strong>[11, 12, 13, 5, 6]</strong></li><li>i=2, temp=13: 13 &gt; 12? no → no shift → <strong>[11, 12, 13, 5, 6]</strong></li><li>i=3, temp=5: shift 13,12,11 → insert 5 → <strong>[5, 11, 12, 13, 6]</strong></li><li>i=4, temp=6: shift 13,12,11 → insert 6 → <strong>[5, 6, 11, 12, 13]</strong></li></ul></div></div></div>
+    <div class="qcard" id="ins-q3"><div class="qcard-head"><span class="qnum">Q03</span><span class="qtag why">WHY</span><span class="qtext">Why is Insertion Sort O(n) on a nearly-sorted or already-sorted array?</span><button class="qbtn" onclick="rcToggle('ins','ins-q3')">Show Answer</button></div><div class="qanswer" id="ins-q3-a"><div class="qa-label">Answer</div><div class="qa-body">On a sorted array, the while loop condition <code>arr[pos-1] &gt; temp</code> is false on every iteration — no shifting is needed. The outer loop runs n−1 times doing only a comparison each time → total work is O(n). This makes it <strong>adaptive</strong>: performance improves automatically with input quality.</div></div></div>
+    <div class="qcard" id="ins-q4"><div class="qcard-head"><span class="qnum">Q04</span><span class="qtag why">WHY</span><span class="qtext">Insertion Sort is <strong>stable</strong>. Which specific line of code enforces this, and why?</span><button class="qbtn" onclick="rcToggle('ins','ins-q4')">Show Answer</button></div><div class="qanswer" id="ins-q4-a"><div class="qa-label">Answer</div><div class="qa-body">The condition <code>arr[pos-1] &gt; temp</code> (strict greater-than). When two elements are equal, this condition is false — equal elements are never shifted past each other. If it were <code>>=</code> instead, equal elements would be shifted, breaking stability.</div></div></div>
+    <div class="qcard" id="ins-q5"><div class="qcard-head"><span class="qnum">Q05</span><span class="qtag compare">COMPARE</span><span class="qtext">Why does Python's Timsort use Insertion Sort for small sub-arrays (n ≤ 64) rather than Merge Sort?</span><button class="qbtn" onclick="rcToggle('ins','ins-q5')">Show Answer</button></div><div class="qanswer" id="ins-q5-a"><div class="qa-label">Answer</div><div class="qa-body">For small n, Insertion Sort's O(n²) is fast in absolute terms because its constant factor is tiny — no recursion overhead, no extra array allocation, excellent cache locality (sequential memory access). Merge Sort's O(n log n) advantage only materialises at larger n. The crossover point is typically around n=32–64.</div></div></div>
+  </div><!-- end insertion-rc -->
+</div>
+
+<!-- ═══════════════════════ BUBBLE SORT ═══════════════════════ -->
+<div class="page" id="page-bubble">
+  <h1 class="page-title">Bubble Sort</h1>
+  <p class="page-subtitle">Repeatedly swap adjacent out-of-order pairs — largest bubbles to end</p>
+  <div class="sub-tabs">
+    <button class="sub-tab active" onclick="switchSub('bubble','hb',this)">📘 Handbook</button>
+    <button class="sub-tab inactive" onclick="switchSub('bubble','rc',this)">🧠 Active Recall</button>
+  </div>
+  <div class="sub-panel active" id="bubble-hb">
+
+  <div class="callout tip">💡 Like bubbles rising to the surface — the heaviest element "floats" to its correct position at the end of the array with each pass.</div>
+
+  <div class="stability-card">
+    <span class="stab-icon">✅</span>
+    <div><div class="stab-text" style="color:var(--success);">Stable Sort</div><div style="font-size:.76rem;color:var(--muted);">Uses strict &gt; comparison — equal elements are never swapped</div></div>
+  </div>
+
+  <h2>🎬 Animation</h2>
+  <div class="viz-box">
+    <div class="viz-label">Bubble Sort Visualiser</div>
+    <div class="viz-controls">
+      <button class="vbtn primary" id="bub-play" onclick="bubPlayPause()">▶ Play</button>
+      <button class="vbtn" id="bub-step" onclick="bubStep()">→ Step</button>
+      <button class="vbtn" onclick="bubReset()">↺ Reset</button>
+      <div class="v-speed">Speed: <input type="range" id="bub-speed" min="200" max="2000" value="900" style="width:70px;"></div>
+    </div>
+    <div class="v-status" id="bub-status">Press ▶ Play or → Step</div>
+    <div class="arr-row" id="bub-arr"></div>
+    <div class="ptr-row" id="bub-ptrs"></div>
+    <div style="margin-top:.4rem;font-family:'DM Mono',monospace;font-size:.7rem;display:flex;gap:.8rem;flex-wrap:wrap;">
+      <span style="color:var(--accent3);">■ Comparing pair</span>
+      <span style="color:var(--accent);">■ Swapping</span>
+      <span style="color:var(--success);">■ Sorted (end)</span>
+    </div>
+    <div class="step-log" id="bub-log"></div>
+  </div>
+
+  <h2>📋 Algorithm</h2>
+  <ol>
+    <li>For each pass from <code>pass = n−1</code> down to <code>1</code></li>
+    <li>Compare each adjacent pair <code>arr[i]</code> and <code>arr[i+1]</code> for <code>i = 0</code> to <code>pass−1</code></li>
+    <li>If <code>arr[i] &gt; arr[i+1]</code> → swap</li>
+    <li>After each pass, the largest unsorted element is at position <code>pass</code></li>
+  </ol>
+
+  <h2>💻 C# Code</h2>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><code class="language-csharp">static void BubbleSort(int[] A, int n)
+{
+    for (int pass = n - 1; pass >= 0; pass--)  // each pass fixes one element
+    {
+        for (int i = 0; i < pass; i++)          // only scan unsorted portion
+        {
+            if (A[i] > A[i + 1])               // wrong order?
+            {
+                int temp = A[i];
+                A[i] = A[i + 1];
+                A[i + 1] = temp;               // swap adjacent pair
+            }
+        }
+    }
+}
+
+// Optimised version — O(n) best case
+static void BubbleSortOptimised(int[] A, int n)
+{
+    for (int pass = n - 1; pass >= 0; pass--)
+    {
+        bool swapped = false;
+        for (int i = 0; i < pass; i++)
+        {
+            if (A[i] > A[i + 1]) { int t=A[i]; A[i]=A[i+1]; A[i+1]=t; swapped=true; }
+        }
+        if (!swapped) break;  // array already sorted — early exit
+    }
+}</code></pre>
+  </div>
+
+  <h2>⏱ Complexity</h2>
+  <div class="cx-grid">
+    <div class="cx-pill cx-best"><div class="cx-case">Best (optimised)</div><div class="cx-val">O(n)</div></div>
+    <div class="cx-pill cx-avg"><div class="cx-case">Average Case</div><div class="cx-val">O(n²)</div></div>
+    <div class="cx-pill cx-worst"><div class="cx-case">Worst Case</div><div class="cx-val">O(n²)</div></div>
+    <div class="cx-pill cx-space"><div class="cx-case">Space</div><div class="cx-val">O(1)</div></div>
+  </div>
+  <div class="callout warning">⚠️ Without the early-exit flag, bubble sort is O(n²) even on sorted arrays. The optimised version with a <code>swapped</code> flag achieves O(n) best case. Always use the optimised version.</div>
+
+  <h2>🌍 Real-World Usage</h2>
+  <div class="rw-grid">
+    <div class="rw-card"><h4>Used When</h4><ul><li>Detecting if an array is already sorted (optimised version)</li><li>Educational purposes — visually intuitive</li><li>Very tiny datasets where simplicity wins</li></ul></div>
+    <div class="rw-card"><h4>In Practice</h4><ul><li>Rarely used in production systems</li><li>Outperformed by insertion sort in almost every scenario</li><li>Used in competitive programming for its simplicity</li></ul></div>
+  </div>
+  </div><!-- end bubble-hb -->
+
+  <!-- BUBBLE RECALL -->
+  <div class="sub-panel" id="bubble-rc">
+    <div class="recall-topbar">
+      <div class="rc-counter"><span id="bub-ans">0</span> of <span id="bub-tot">5</span> answered</div>
+      <div class="rc-bulk"><button class="rc-bulk-btn" onclick="rcRevealAll('bub')">Reveal All</button><button class="rc-bulk-btn" onclick="rcHideAll('bub')">Hide All</button></div>
+    </div>
+    <div class="qcard" id="bub-q1"><div class="qcard-head"><span class="qnum">Q01</span><span class="qtag def">DEF</span><span class="qtext">Why is it called "Bubble" sort? What "bubbles" and in which direction?</span><button class="qbtn" onclick="rcToggle('bub','bub-q1')">Show Answer</button></div><div class="qanswer" id="bub-q1-a"><div class="qa-label">Answer</div><div class="qa-body">The <strong>largest unsorted element</strong> "bubbles" to the <strong>right</strong> (end) of the array after each pass. Like a bubble rising through water, the heaviest value floats to its correct position via a series of adjacent swaps.</div></div></div>
+    <div class="qcard" id="bub-q2"><div class="qcard-head"><span class="qnum">Q02</span><span class="qtag trace">TRACE</span><span class="qtext">Trace Pass 1 of Bubble Sort on <code>[5, 1, 4, 2, 8]</code>. Show each comparison and the array state after each swap.</span><button class="qbtn" onclick="rcToggle('bub','bub-q2')">Show Answer</button></div><div class="qanswer" id="bub-q2-a"><div class="qa-label">Answer</div><div class="qa-body"><ul><li>Compare 5,1: 5&gt;1 → swap → <code>[1,5,4,2,8]</code></li><li>Compare 5,4: 5&gt;4 → swap → <code>[1,4,5,2,8]</code></li><li>Compare 5,2: 5&gt;2 → swap → <code>[1,4,2,5,8]</code></li><li>Compare 5,8: 5&lt;8 → no swap → <code>[1,4,2,5,8]</code></li></ul>After pass 1: <strong>8</strong> is in its final position.</div></div></div>
+    <div class="qcard" id="bub-q3"><div class="qcard-head"><span class="qnum">Q03</span><span class="qtag apply">APPLY</span><span class="qtext">Add the early-exit optimisation to Bubble Sort. What complexity does it achieve and when?</span><button class="qbtn" onclick="rcToggle('bub','bub-q3')">Show Answer</button></div><div class="qanswer" id="bub-q3-a"><div class="qa-label">Answer</div><div class="qa-body">Add a <code>bool swapped = false</code> flag at the start of each pass. If no swap occurs during a full pass, break out of the outer loop early.<div class="qa-eg"><span class="qa-eg-label">Complexity:</span> O(n) best case — on an already-sorted array, pass 1 finds no swaps and exits immediately. Worst case remains O(n²).</div></div></div></div>
+    <div class="qcard" id="bub-q4"><div class="qcard-head"><span class="qnum">Q04</span><span class="qtag gotcha">GOTCHA</span><span class="qtext">The inner loop runs <code>i &lt; pass</code> not <code>i &lt; n</code>. Why? What would happen if it ran to <code>n</code>?</span><button class="qbtn" onclick="rcToggle('bub','bub-q4')">Show Answer</button></div><div class="qanswer" id="bub-q4-a"><div class="qa-label">Answer</div><div class="qa-body">Elements after index <code>pass</code> are already sorted from previous passes. Running to <code>n</code> would redundantly compare already-sorted elements, wasting time. Using <code>i &lt; pass</code> skips the sorted portion, reducing comparisons each pass: (n-1) + (n-2) + … + 1 instead of n + n + … + n.</div></div></div>
+    <div class="qcard" id="bub-q5"><div class="qcard-head"><span class="qnum">Q05</span><span class="qtag compare">COMPARE</span><span class="qtext">Bubble Sort and Insertion Sort are both O(n²) worst case and O(1) space. Which is generally faster in practice and why?</span><button class="qbtn" onclick="rcToggle('bub','bub-q5')">Show Answer</button></div><div class="qanswer" id="bub-q5-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>Insertion Sort</strong> is faster in practice. It uses <em>shifting</em> (1 assignment per move) while Bubble Sort uses <em>swapping</em> (3 assignments per move). Bubble sort performs more writes overall. Additionally, Insertion Sort is naturally adaptive — fewer operations on partially-sorted data — while Bubble Sort does the same work regardless.</div></div></div>
+  </div><!-- end bubble-rc -->
+</div>
+
+<!-- ═══════════════════════ SHELL SORT ═══════════════════════ -->
+<div class="page" id="page-shell">
+  <h1 class="page-title">Shell Sort</h1>
+  <p class="page-subtitle">Insertion sort with shrinking gaps — move elements long distances early</p>
+  <div class="sub-tabs">
+    <button class="sub-tab active" onclick="switchSub('shell','hb',this)">📘 Handbook</button>
+    <button class="sub-tab inactive" onclick="switchSub('shell','rc',this)">🧠 Active Recall</button>
+  </div>
+  <div class="sub-panel active" id="shell-hb">
+
+  <div class="callout tip">💡 Instead of comparing only adjacent elements, Shell sort compares elements that are <em>gap</em> positions apart. Reducing the gap each pass eventually converges to normal insertion sort — but by then, the array is nearly sorted.</div>
+
+  <div class="stability-card">
+    <span class="stab-icon">⚠️</span>
+    <div><div class="stab-text" style="color:var(--danger);">Unstable Sort</div><div style="font-size:.76rem;color:var(--muted);">Long-distance swaps can change relative order of equal elements</div></div>
+  </div>
+
+  <h2>🎬 Animation</h2>
+  <div class="viz-box">
+    <div class="viz-label">Shell Sort Visualiser</div>
+    <div class="viz-controls">
+      <button class="vbtn primary" id="sh-play" onclick="shPlayPause()">▶ Play</button>
+      <button class="vbtn" id="sh-step" onclick="shStep()">→ Step</button>
+      <button class="vbtn" onclick="shReset()">↺ Reset</button>
+      <div class="v-speed">Speed: <input type="range" id="sh-speed" min="200" max="2000" value="900" style="width:70px;"></div>
+    </div>
+    <div class="v-status" id="sh-status">Press ▶ Play or → Step</div>
+    <div class="arr-row" id="sh-arr"></div>
+    <div class="ptr-row" id="sh-ptrs"></div>
+    <div style="margin-top:.4rem;font-family:'DM Mono',monospace;font-size:.7rem;display:flex;gap:.8rem;flex-wrap:wrap;">
+      <span style="color:var(--accent);">■ Comparing (gap)</span>
+      <span style="color:var(--accent3);">■ Shifting</span>
+      <span style="color:var(--success);">■ Placed</span>
+    </div>
+    <div class="step-log" id="sh-log"></div>
+  </div>
+
+  <h2>📋 Algorithm</h2>
+  <ol>
+    <li>Start with <code>gap = n/2</code></li>
+    <li>For each gap: perform insertion sort on elements <code>gap</code> apart</li>
+    <li>Halve gap: <code>gap = gap/2</code></li>
+    <li>Repeat until <code>gap = 0</code></li>
+  </ol>
+
+  <h2>💻 C# Code</h2>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><code class="language-csharp">static void ShellSort(int[] A, int n)
+{
+    int gap = n / 2;                          // initial gap
+    while (gap > 0)
+    {
+        int i = gap;
+        while (i < n)
+        {
+            int temp = A[i];                  // element to insert
+            int j = i - gap;                  // look back by gap
+
+            while (j >= 0 && A[j] > temp)    // shift elements by gap distance
+            {
+                A[j + gap] = A[j];
+                j -= gap;
+            }
+            A[j + gap] = temp;               // place in correct gap-position
+            i++;
+        }
+        gap /= 2;                            // reduce gap (n/2 → n/4 → ... → 1 → 0)
+    }
+}</code></pre>
+  </div>
+
+  <h3>Gap Sequence Insight</h3>
+  <div class="callout info">💡 Using <code>gap = gap/2</code> (Shell's original sequence) gives O(n²) worst case. Better sequences exist: <strong>Knuth's sequence</strong> (1, 4, 13, 40, 121...) gives O(n^1.5), and <strong>Ciura's sequence</strong> (1,4,10,23,57,132,301,701) gives near O(n log²n).</div>
+
+  <h2>⏱ Complexity</h2>
+  <div class="cx-grid">
+    <div class="cx-pill cx-best"><div class="cx-case">Best Case</div><div class="cx-val">O(n log n)</div></div>
+    <div class="cx-pill cx-avg"><div class="cx-case">Average Case</div><div class="cx-val">O(n^1.3–1.5)</div></div>
+    <div class="cx-pill cx-worst"><div class="cx-case">Worst Case</div><div class="cx-val">O(n²)</div></div>
+    <div class="cx-pill cx-space"><div class="cx-case">Space</div><div class="cx-val">O(1)</div></div>
+  </div>
+
+  <h2>🌍 Real-World Usage</h2>
+  <div class="rw-grid">
+    <div class="rw-card"><h4>Used In</h4><ul><li>uClibc library (embedded Linux) — low memory systems</li><li>bzip2 compression algorithm</li><li>When O(n log n) sorts aren't available (no recursion stack)</li><li>Embedded systems with no heap for merge sort's extra array</li></ul></div>
+    <div class="rw-card"><h4>Compared to Others</h4><ul><li>Faster than Insertion/Bubble for medium data</li><li>O(1) space unlike Merge Sort</li><li>No worst-case guarantee unlike Merge Sort</li><li>Good middle ground: simple code, decent speed</li></ul></div>
+  </div>
+  </div><!-- end shell-hb -->
+
+  <!-- SHELL RECALL -->
+  <div class="sub-panel" id="shell-rc">
+    <div class="recall-topbar">
+      <div class="rc-counter"><span id="sh-ans">0</span> of <span id="sh-tot">5</span> answered</div>
+      <div class="rc-bulk"><button class="rc-bulk-btn" onclick="rcRevealAll('sh')">Reveal All</button><button class="rc-bulk-btn" onclick="rcHideAll('sh')">Hide All</button></div>
+    </div>
+    <div class="qcard" id="sh-q1"><div class="qcard-head"><span class="qnum">Q01</span><span class="qtag def">DEF</span><span class="qtext">What is the <strong>gap</strong> in Shell Sort and how does it change over time?</span><button class="qbtn" onclick="rcToggle('sh','sh-q1')">Show Answer</button></div><div class="qanswer" id="sh-q1-a"><div class="qa-label">Answer</div><div class="qa-body">The <strong>gap</strong> is the distance between elements being compared. It starts at <code>n/2</code> and is halved each outer loop iteration. Elements <code>gap</code> positions apart are sorted using insertion sort logic. When gap finally becomes 1, it behaves exactly like insertion sort on a nearly-sorted array.<div class="qa-eg"><span class="qa-eg-label">Example (n=8):</span> gap = 4 → 2 → 1 → 0 (stop). Each reduction does a pass of gap-insertion sort.</div></div></div></div>
+    <div class="qcard" id="sh-q2"><div class="qcard-head"><span class="qnum">Q02</span><span class="qtag why">WHY</span><span class="qtext">Why is Shell Sort faster than regular Insertion Sort on large arrays?</span><button class="qbtn" onclick="rcToggle('sh','sh-q2')">Show Answer</button></div><div class="qanswer" id="sh-q2-a"><div class="qa-label">Answer</div><div class="qa-body">In Insertion Sort, an element can only move one position per comparison. An element at the wrong end of a large array needs n moves. Shell Sort moves elements <em>gap</em> positions at once, so a misplaced element can travel across the array in far fewer steps. By the time gap reaches 1, the array is nearly sorted and insertion sort's final pass is fast.</div></div></div>
+    <div class="qcard" id="sh-q3"><div class="qcard-head"><span class="qnum">Q03</span><span class="qtag apply">APPLY</span><span class="qtext">For array <code>[8, 1, 4, 7, 2]</code> (n=5), what is the initial gap and which pairs of elements are compared first?</span><button class="qbtn" onclick="rcToggle('sh','sh-q3')">Show Answer</button></div><div class="qanswer" id="sh-q3-a"><div class="qa-label">Answer</div><div class="qa-body">Initial gap = ⌊5/2⌋ = <strong>2</strong>. First comparisons: <ul><li>arr[0] vs arr[2]: 8 vs 4 → swap → [4,1,8,7,2]</li><li>arr[1] vs arr[3]: 1 vs 7 → no swap</li><li>arr[2] vs arr[4]: 8 vs 2 → swap → [4,1,2,7,8]</li></ul>Then gap reduces to 1 (normal insertion sort).</div></div></div>
+    <div class="qcard" id="sh-q4"><div class="qcard-head"><span class="qnum">Q04</span><span class="qtag gotcha">GOTCHA</span><span class="qtext">Shell Sort's complexity is "depends on gap sequence" — what does this mean concretely?</span><button class="qbtn" onclick="rcToggle('sh','sh-q4')">Show Answer</button></div><div class="qanswer" id="sh-q4-a"><div class="qa-label">Answer</div><div class="qa-body">Different gap sequences produce different performance: <ul><li><strong>Shell's original (n/2)</strong>: O(n²) worst case</li><li><strong>Knuth's (3k+1: 1,4,13,40…)</strong>: O(n^1.5)</li><li><strong>Ciura's empirical (1,4,10,23,57,132,301,701)</strong>: best in practice</li></ul>The gap sequence is the only tunable parameter — a bad sequence can eliminate the benefit entirely.</div></div></div>
+    <div class="qcard" id="sh-q5"><div class="qcard-head"><span class="qnum">Q05</span><span class="qtag compare">COMPARE</span><span class="qtext">Shell Sort is O(1) space. How is this an advantage over Merge Sort in embedded systems?</span><button class="qbtn" onclick="rcToggle('sh','sh-q5')">Show Answer</button></div><div class="qanswer" id="sh-q5-a"><div class="qa-label">Answer</div><div class="qa-body">Merge Sort requires an auxiliary array of size O(n) — for n=10,000 integers that's ~40KB extra memory. In embedded systems with kilobytes of RAM (like microcontrollers), this is often unavailable. Shell Sort sorts in-place with only a few integer variables, making it viable where Merge Sort is impossible.</div></div></div>
+  </div><!-- end shell-rc -->
+</div>
+
+<!-- ═══════════════════════ MERGE SORT ═══════════════════════ -->
+<div class="page" id="page-merge">
+  <h1 class="page-title">Merge Sort</h1>
+  <p class="page-subtitle">Divide all the way down → merge back in sorted order</p>
+  <div class="sub-tabs">
+    <button class="sub-tab active" onclick="switchSub('merge','hb',this)">📘 Handbook</button>
+    <button class="sub-tab inactive" onclick="switchSub('merge','rc',this)">🧠 Active Recall</button>
+  </div>
+  <div class="sub-panel active" id="merge-hb">
+
+  <div class="callout tip">💡 Divide and Conquer: split the array in half recursively until each piece has 1 element (trivially sorted), then merge pairs of sorted pieces back together in order.</div>
+
+  <div class="stability-card">
+    <span class="stab-icon">✅</span>
+    <div><div class="stab-text" style="color:var(--success);">Stable Sort</div><div style="font-size:.76rem;color:var(--muted);">Merge uses &lt; (strict), so equal left-half elements always come first</div></div>
+  </div>
+
+  <h2>🎬 Animation</h2>
+  <div class="viz-box">
+    <div class="viz-label">Merge Sort Visualiser</div>
+    <div class="viz-controls">
+      <button class="vbtn primary" id="mg-play" onclick="mgPlayPause()">▶ Play</button>
+      <button class="vbtn" id="mg-step" onclick="mgStep()">→ Step</button>
+      <button class="vbtn" onclick="mgReset()">↺ Reset</button>
+      <div class="v-speed">Speed: <input type="range" id="mg-speed" min="300" max="2500" value="1100" style="width:70px;"></div>
+    </div>
+    <div class="v-status" id="mg-status">Press ▶ Play or → Step</div>
+    <div class="arr-row" id="mg-arr"></div>
+    <div class="ptr-row" id="mg-ptrs"></div>
+    <div style="margin-top:.4rem;font-family:'DM Mono',monospace;font-size:.7rem;display:flex;gap:.8rem;flex-wrap:wrap;">
+      <span style="color:var(--accent2);">■ Left half</span>
+      <span style="color:var(--accent3);">■ Right half</span>
+      <span style="color:var(--accent);">■ Being placed</span>
+      <span style="color:var(--success);">■ Merged</span>
+    </div>
+    <div class="step-log" id="mg-log"></div>
+  </div>
+
+  <h2>📋 Algorithm — Two Functions</h2>
+  <h3>mergeSort() — Divide</h3>
+  <ol>
+    <li>If <code>left &lt; right</code>: compute <code>mid = (left+right)/2</code></li>
+    <li>Recursively sort left half: <code>mergeSort(arr, left, mid)</code></li>
+    <li>Recursively sort right half: <code>mergeSort(arr, mid+1, right)</code></li>
+    <li>Merge the two sorted halves: <code>merge(arr, left, mid, right)</code></li>
+  </ol>
+
+  <h3>merge() — Combine</h3>
+  <ol>
+    <li>Pointer <code>i</code> → left half start, <code>j</code> → right half start</li>
+    <li>Compare <code>arr[i]</code> vs <code>arr[j]</code>: copy the smaller into temp array <code>B</code></li>
+    <li>Copy any remaining left or right elements into <code>B</code></li>
+    <li>Copy <code>B</code> back to <code>arr</code></li>
+  </ol>
+
+  <h2>💻 C# Code</h2>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><code class="language-csharp">static void MergeSort(int[] A, int left, int right)
+{
+    if (left < right)
+    {
+        int mid = (left + right) / 2;
+        MergeSort(A, left, mid);            // sort left half
+        MergeSort(A, mid + 1, right);       // sort right half
+        Merge(A, left, mid, right);         // merge both
+    }
+}
+
+static void Merge(int[] A, int left, int mid, int right)
+{
+    int i = left, j = mid + 1, k = left;
+    int[] B = new int[A.Length];
+
+    while (i <= mid && j <= right)          // compare both halves
+    {
+        if (A[i] < A[j]) B[k++] = A[i++];  // left element smaller
+        else              B[k++] = A[j++];  // right element smaller
+    }
+    while (i <= mid)   B[k++] = A[i++];    // remaining left
+    while (j <= right) B[k++] = A[j++];    // remaining right
+    for (int x = left; x <= right; x++)
+        A[x] = B[x];                        // copy back
+}</code></pre>
+  </div>
+
+  <h2>⏱ Complexity</h2>
+  <div class="cx-grid">
+    <div class="cx-pill cx-best"><div class="cx-case">Best Case</div><div class="cx-val">O(n log n)</div></div>
+    <div class="cx-pill cx-avg"><div class="cx-case">Average Case</div><div class="cx-val">O(n log n)</div></div>
+    <div class="cx-pill cx-worst"><div class="cx-case">Worst Case</div><div class="cx-val">O(n log n)</div></div>
+    <div class="cx-pill cx-space"><div class="cx-case">Space</div><div class="cx-val">O(n)</div></div>
+  </div>
+  <div class="callout rule">📌 Merge Sort guarantees O(n log n) in <strong>all</strong> cases — no bad inputs. The cost is O(n) extra space for the temporary array. This is the go-to sort when worst-case time matters.</div>
+
+  <h3>Recurrence: T(n) = 2T(n/2) + O(n) → O(n log n)</h3>
+  <p>log n levels of recursion × O(n) merge work per level = O(n log n) total.</p>
+
+  <h2>🌍 Real-World Usage</h2>
+  <div class="rw-grid">
+    <div class="rw-card"><h4>Used In</h4><ul><li><strong>Java's Arrays.sort()</strong> for objects (stable required)</li><li><strong>Python's sorted()</strong> / Timsort — Merge + Insertion hybrid</li><li>External sorting: files too large to fit in RAM</li><li>Linked list sorting — merge is natural for linked lists</li></ul></div>
+    <div class="rw-card"><h4>When It Wins</h4><ul><li>Guaranteed O(n log n) worst case needed</li><li>Stability is required (e.g. database multi-key sort)</li><li>Sorting linked lists (no random access needed)</li><li>Parallel / distributed sorting (divide naturally maps to threads)</li></ul></div>
+  </div>
+  </div><!-- end merge-hb -->
+
+  <!-- MERGE RECALL -->
+  <div class="sub-panel" id="merge-rc">
+    <div class="recall-topbar">
+      <div class="rc-counter"><span id="mg-ans">0</span> of <span id="mg-tot">6</span> answered</div>
+      <div class="rc-bulk"><button class="rc-bulk-btn" onclick="rcRevealAll('mg')">Reveal All</button><button class="rc-bulk-btn" onclick="rcHideAll('mg')">Hide All</button></div>
+    </div>
+    <div class="qcard" id="mg-q1"><div class="qcard-head"><span class="qnum">Q01</span><span class="qtag def">DEF</span><span class="qtext">What does "Divide and Conquer" mean in the context of Merge Sort? Name the three phases.</span><button class="qbtn" onclick="rcToggle('mg','mg-q1')">Show Answer</button></div><div class="qanswer" id="mg-q1-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>Divide:</strong> Recursively split the array in half until each sub-array has one element (a single element is trivially sorted).<br><strong>Conquer:</strong> The single-element sub-arrays are the "conquered" base cases.<br><strong>Combine:</strong> Merge pairs of sorted sub-arrays back together in sorted order, working bottom-up until the full array is merged.<div class="qa-eg"><span class="qa-eg-label">Analogy:</span> Like splitting a shuffled deck in half repeatedly, then carefully merging pairs in order.</div></div></div></div>
+    <div class="qcard" id="mg-q2"><div class="qcard-head"><span class="qnum">Q02</span><span class="qtag trace">TRACE</span><span class="qtext">Trace Merge Sort on <code>[38, 27, 43, 3]</code>. Show every divide step and every merge step.</span><button class="qbtn" onclick="rcToggle('mg','mg-q2')">Show Answer</button></div><div class="qanswer" id="mg-q2-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>Divide:</strong><ul><li>[38,27,43,3] → [38,27] and [43,3]</li><li>[38,27] → [38] and [27]</li><li>[43,3] → [43] and [3]</li></ul><strong>Merge:</strong><ul><li>Merge [38],[27] → compare 38 vs 27 → <strong>[27,38]</strong></li><li>Merge [43],[3] → compare 43 vs 3 → <strong>[3,43]</strong></li><li>Merge [27,38],[3,43] → 27 vs 3→3, 27 vs 43→27, 38 vs 43→38, leftover 43 → <strong>[3,27,38,43]</strong></li></ul></div></div></div>
+    <div class="qcard" id="mg-q3"><div class="qcard-head"><span class="qnum">Q03</span><span class="qtag why">WHY</span><span class="qtext">Why is Merge Sort always O(n log n) in every case — best, average, and worst?</span><button class="qbtn" onclick="rcToggle('mg','mg-q3')">Show Answer</button></div><div class="qanswer" id="mg-q3-a"><div class="qa-label">Answer</div><div class="qa-body">Merge Sort always divides in exactly half, creating exactly <strong>log₂n levels</strong> of recursion regardless of the input order. At every level, the total merge work across all sub-arrays is O(n). There are no shortcuts or bad inputs — every array requires the same structure. This gives T(n) = 2T(n/2) + O(n) = <strong>O(n log n)</strong> always.</div></div></div>
+    <div class="qcard" id="mg-q4"><div class="qcard-head"><span class="qnum">Q04</span><span class="qtag apply">APPLY</span><span class="qtext">In the <code>merge()</code> function, what do pointers <code>i</code>, <code>j</code>, and <code>k</code> each represent? What happens when one half is exhausted first?</span><button class="qbtn" onclick="rcToggle('mg','mg-q4')">Show Answer</button></div><div class="qanswer" id="mg-q4-a"><div class="qa-label">Answer</div><div class="qa-body"><ul><li><strong>i</strong>: current position in the left half (starts at <code>left</code>)</li><li><strong>j</strong>: current position in the right half (starts at <code>mid+1</code>)</li><li><strong>k</strong>: write position in the temp array B</li></ul>When one half is exhausted, the remaining elements of the other half are copied directly into B — they are already sorted and larger than everything already placed.</div></div></div>
+    <div class="qcard" id="mg-q5"><div class="qcard-head"><span class="qnum">Q05</span><span class="qtag why">WHY</span><span class="qtext">Why is Merge Sort <strong>stable</strong>? Which specific line enforces stability?</span><button class="qbtn" onclick="rcToggle('mg','mg-q5')">Show Answer</button></div><div class="qanswer" id="mg-q5-a"><div class="qa-label">Answer</div><div class="qa-body">The merge condition <code>if (A[i] &lt; A[j])</code> (strict less-than). When two elements are equal (<code>A[i] == A[j]</code>), this condition is false, so <code>A[j]</code> is chosen — meaning the <strong>left half element waits</strong> and the right half element is placed first? No — actually the else branch runs, taking A[j]. But A[i] from the left came earlier in the original array. To be truly stable, the condition should be <code>A[i] &lt;= A[j]</code> to prefer the left half.<div class="qa-eg"><span class="qa-eg-label">Correct implementation:</span> Use <code>&lt;=</code> in the merge condition to always prefer the left-half element on ties — this preserves original ordering.</div></div></div></div>
+    <div class="qcard" id="mg-q6"><div class="qcard-head"><span class="qnum">Q06</span><span class="qtag gotcha">GOTCHA</span><span class="qtext">Merge Sort uses O(n) extra space. Why can't it sort in-place like Insertion or Selection Sort?</span><button class="qbtn" onclick="rcToggle('mg','mg-q6')">Show Answer</button></div><div class="qanswer" id="mg-q6-a"><div class="qa-label">Answer</div><div class="qa-body">The merge step needs a temporary buffer because it must read from both halves simultaneously while writing the merged result. If you tried to merge in-place, you'd overwrite elements from one half before you've finished reading them. In-place merge is theoretically possible but requires complex algorithms and has worse practical constants than using a temp array.</div></div></div>
+  </div><!-- end merge-rc -->
+</div>
+
+<!-- ═══════════════════════ QUICK SORT ═══════════════════════ -->
+<div class="page" id="page-quick">
+  <h1 class="page-title">Quick Sort</h1>
+  <p class="page-subtitle">Pick pivot → partition around it → recurse on both sides</p>
+  <div class="sub-tabs">
+    <button class="sub-tab active" onclick="switchSub('quick','hb',this)">📘 Handbook</button>
+    <button class="sub-tab inactive" onclick="switchSub('quick','rc',this)">🧠 Active Recall</button>
+  </div>
+  <div class="sub-panel active" id="quick-hb">
+
+  <div class="callout tip">💡 The fastest sorting algorithm in practice for random data. Pick a pivot, rearrange so all smaller elements are left and all larger are right, then recursively sort both sides.</div>
+
+  <div class="stability-card">
+    <span class="stab-icon">⚠️</span>
+    <div><div class="stab-text" style="color:var(--danger);">Unstable Sort</div><div style="font-size:.76rem;color:var(--muted);">Long-range swaps during partition can displace equal elements</div></div>
+  </div>
+
+  <h2>🎬 Animation</h2>
+  <div class="viz-box">
+    <div class="viz-label">Quick Sort Visualiser</div>
+    <div class="viz-controls">
+      <button class="vbtn primary" id="qs-play" onclick="qsPlayPause()">▶ Play</button>
+      <button class="vbtn" id="qs-step" onclick="qsStep()">→ Step</button>
+      <button class="vbtn" onclick="qsReset()">↺ Reset</button>
+      <div class="v-speed">Speed: <input type="range" id="qs-speed" min="300" max="2500" value="1100" style="width:70px;"></div>
+    </div>
+    <div class="v-status" id="qs-status">Press ▶ Play or → Step</div>
+    <div class="arr-row" id="qs-arr"></div>
+    <div class="ptr-row" id="qs-ptrs"></div>
+    <div style="margin-top:.4rem;font-family:'DM Mono',monospace;font-size:.7rem;display:flex;gap:.8rem;flex-wrap:wrap;">
+      <span style="color:var(--warn);">■ Pivot</span>
+      <span style="color:var(--accent2);">■ i pointer</span>
+      <span style="color:var(--accent3);">■ j pointer</span>
+      <span style="color:var(--success);">■ Sorted</span>
+    </div>
+    <div class="step-log" id="qs-log"></div>
+  </div>
+
+  <h2>📋 Algorithm — Two Functions</h2>
+  <h3>quickSort() — Driver</h3>
+  <ol>
+    <li>If <code>low &lt; high</code>: call <code>partition()</code> to get pivot index <code>pi</code></li>
+    <li>Recursively sort <code>arr[low..pi-1]</code> and <code>arr[pi+1..high]</code></li>
+  </ol>
+  <h3>partition() — Core</h3>
+  <ol>
+    <li>Set <code>pivot = arr[low]</code>, <code>i = low+1</code>, <code>j = high</code></li>
+    <li>Advance <code>i</code> while <code>arr[i] ≤ pivot</code></li>
+    <li>Retreat <code>j</code> while <code>arr[j] &gt; pivot</code></li>
+    <li>If <code>i &lt; j</code>: swap <code>arr[i]</code> and <code>arr[j]</code></li>
+    <li>Repeat until <code>i ≥ j</code>; then swap pivot (<code>arr[low]</code>) with <code>arr[j]</code></li>
+    <li>Return <code>j</code> — pivot is now in its final sorted position</li>
+  </ol>
+
+  <h2>💻 C# Code</h2>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><code class="language-csharp">static void QuickSort(int[] A, int low, int high)
+{
+    if (low < high)
+    {
+        int pi = Partition(A, low, high);
+        QuickSort(A, low, pi - 1);          // sort left of pivot
+        QuickSort(A, pi + 1, high);         // sort right of pivot
+    }
+}
+
+static int Partition(int[] A, int low, int high)
+{
+    int pivot = A[low];                     // choose first element as pivot
+    int i = low + 1;
+    int j = high;
+
+    do {
+        while (i <= j && A[i] <= pivot) i++;  // find element > pivot
+        while (i <= j && A[j] > pivot)  j--;  // find element <= pivot
+        if (i < j) Swap(A, i, j);             // fix misplaced pair
+    } while (i < j);
+
+    Swap(A, low, j);                        // place pivot in correct position
+    return j;
+}
+
+static void Swap(int[] A, int i, int j)
+{
+    int temp = A[i]; A[i] = A[j]; A[j] = temp;
+}</code></pre>
+  </div>
+
+  <h2>⏱ Complexity</h2>
+  <div class="cx-grid">
+    <div class="cx-pill cx-best"><div class="cx-case">Best Case</div><div class="cx-val">O(n log n)</div></div>
+    <div class="cx-pill cx-avg"><div class="cx-case">Average Case</div><div class="cx-val">O(n log n)</div></div>
+    <div class="cx-pill cx-worst"><div class="cx-case">Worst Case</div><div class="cx-val">O(n²)</div></div>
+    <div class="cx-pill cx-space"><div class="cx-case">Space</div><div class="cx-val">O(log n)</div></div>
+  </div>
+  <div class="callout warning">⚠️ Worst case O(n²) occurs when the pivot is always the smallest or largest (e.g. already sorted array with first-element pivot). Fix: use <strong>random pivot</strong> or <strong>median-of-three</strong>.</div>
+
+  <h2>🌍 Real-World Usage</h2>
+  <div class="rw-grid">
+    <div class="rw-card"><h4>Used In</h4><ul><li><strong>C's qsort()</strong> and <strong>C++ std::sort()</strong> (introsort variant)</li><li><strong>.NET Array.Sort()</strong> uses introsort (Quick + Heap + Insertion)</li><li>Database engines for in-memory table sorting</li><li>Most "sort" implementations you use daily</li></ul></div>
+    <div class="rw-card"><h4>When It Wins</h4><ul><li>Random or uniformly distributed data</li><li>In-place sorting (no extra array)</li><li>Cache-friendly: accesses memory sequentially</li><li>Average case faster than Merge Sort in practice (smaller constants)</li></ul></div>
+  </div>
+  </div><!-- end quick-hb -->
+
+  <!-- QUICK RECALL -->
+  <div class="sub-panel" id="quick-rc">
+    <div class="recall-topbar">
+      <div class="rc-counter"><span id="qs-ans">0</span> of <span id="qs-tot">6</span> answered</div>
+      <div class="rc-bulk"><button class="rc-bulk-btn" onclick="rcRevealAll('qs')">Reveal All</button><button class="rc-bulk-btn" onclick="rcHideAll('qs')">Hide All</button></div>
+    </div>
+    <div class="qcard" id="qs-q1"><div class="qcard-head"><span class="qnum">Q01</span><span class="qtag def">DEF</span><span class="qtext">What is a <strong>pivot</strong> in Quick Sort and what is its final position after partitioning?</span><button class="qbtn" onclick="rcToggle('qs','qs-q1')">Show Answer</button></div><div class="qanswer" id="qs-q1-a"><div class="qa-label">Answer</div><div class="qa-body">The <strong>pivot</strong> is the element chosen as the reference for partitioning. After one partition step, the pivot is placed in its <strong>final sorted position</strong> — all elements to its left are ≤ pivot, and all to its right are &gt; pivot. The pivot never moves again.</div></div></div>
+    <div class="qcard" id="qs-q2"><div class="qcard-head"><span class="qnum">Q02</span><span class="qtag trace">TRACE</span><span class="qtext">Trace one partition step on <code>[10, 80, 30, 90, 40, 50, 70]</code> with <code>pivot = arr[0] = 10</code>. Show i, j movements and final state.</span><button class="qbtn" onclick="rcToggle('qs','qs-q2')">Show Answer</button></div><div class="qanswer" id="qs-q2-a"><div class="qa-label">Answer</div><div class="qa-body">pivot=10, i=1, j=6.<ul><li>Move i right while arr[i]≤10: arr[1]=80 &gt; 10 → stop. i=1</li><li>Move j left while arr[j]&gt;10: arr[6]=70,arr[5]=50,arr[4]=40,arr[3]=90,arr[2]=30,arr[1]=80 → all &gt; 10 → j moves to 0. j=0</li><li>i(1) &gt; j(0) → no swap. Loop ends.</li><li>Swap pivot arr[0] with arr[j=0] → no change (same position).</li></ul>Result: <strong>[10, 80, 30, 90, 40, 50, 70]</strong> — pivot 10 at index 0 (already minimum).</div></div></div>
+    <div class="qcard" id="qs-q3"><div class="qcard-head"><span class="qnum">Q03</span><span class="qtag why">WHY</span><span class="qtext">What causes Quick Sort's <strong>O(n²) worst case</strong> and when does it happen?</span><button class="qbtn" onclick="rcToggle('qs','qs-q3')">Show Answer</button></div><div class="qanswer" id="qs-q3-a"><div class="qa-label">Answer</div><div class="qa-body">Worst case occurs when the pivot is always the smallest or largest element — creating <strong>maximally unbalanced partitions</strong>: one sub-array of size n-1 and one of size 0. This happens with a sorted or reverse-sorted array and first-element pivot selection.<div class="qa-eg"><span class="qa-eg-label">Fix:</span> Use a random pivot or median-of-three (choose median of first, middle, last element). This makes the worst case astronomically unlikely.</div></div></div></div>
+    <div class="qcard" id="qs-q4"><div class="qcard-head"><span class="qnum">Q04</span><span class="qtag compare">COMPARE</span><span class="qtext">Quick Sort and Merge Sort are both O(n log n) average. Why is Quick Sort faster in practice?</span><button class="qbtn" onclick="rcToggle('qs','qs-q4')">Show Answer</button></div><div class="qanswer" id="qs-q4-a"><div class="qa-label">Answer</div><div class="qa-body"><ul><li><strong>Cache locality:</strong> Quick Sort accesses memory sequentially during partitioning — CPU cache hits are high. Merge Sort jumps between two halves, causing more cache misses.</li><li><strong>No extra memory:</strong> Quick Sort is in-place. Merge Sort allocates O(n) extra — memory allocation is slow.</li><li><strong>Smaller constants:</strong> The partition step is simpler than merge. Quick Sort's hidden constant is about 2× smaller.</li></ul></div></div></div>
+    <div class="qcard" id="qs-q5"><div class="qcard-head"><span class="qnum">Q05</span><span class="qtag gotcha">GOTCHA</span><span class="qtext">Why is Quick Sort <strong>unstable</strong>? Give a concrete example with equal elements.</span><button class="qbtn" onclick="rcToggle('qs','qs-q5')">Show Answer</button></div><div class="qanswer" id="qs-q5-a"><div class="qa-label">Answer</div><div class="qa-body">During partitioning, <strong>long-range swaps</strong> reposition elements across the array regardless of their original order. Example: <code>[3a, 3b, 1]</code> with pivot=3a. After partition, 1 is swapped into position 0, 3a goes to position 2 — 3b stays at 1. Relative order 3a,3b is preserved here, but with other inputs and pivot choices, equal elements can swap. The long-range nature of partition swaps makes order preservation impossible to guarantee.</div></div></div>
+    <div class="qcard" id="qs-q6"><div class="qcard-head"><span class="qnum">Q06</span><span class="qtag apply">APPLY</span><span class="qtext">Quick Sort's space complexity is O(log n), not O(1). Why, even though it sorts in-place?</span><button class="qbtn" onclick="rcToggle('qs','qs-q6')">Show Answer</button></div><div class="qanswer" id="qs-q6-a"><div class="qa-label">Answer</div><div class="qa-body">Quick Sort uses <strong>recursion</strong>. Each recursive call pushes a stack frame (holding low, high, pi). In the average case, recursion depth is O(log n) — so O(log n) stack frames exist simultaneously. In the worst case (O(n²)), stack depth is O(n), which can cause a stack overflow on very large inputs. Iterative implementations using an explicit stack achieve O(log n) space guaranteed.</div></div></div>
+  </div><!-- end quick-rc -->
+</div>
+
+<!-- ═══════════════════════ COMPARISON PAGE ═══════════════════════ -->
+<div class="page" id="page-compare">
+  <h1 class="page-title">Sorting Algorithms — Full Comparison</h1>
+  <p class="page-subtitle">Complexity, stability, and real-world guidance</p>
+  <div class="sub-tabs">
+    <button class="sub-tab active" onclick="switchSub('compare','hb',this)">📘 Handbook</button>
+    <button class="sub-tab inactive" onclick="switchSub('compare','rc',this)">🧠 Active Recall</button>
+  </div>
+  <div class="sub-panel active" id="compare-hb">
+
+  <h2>📊 Complete Complexity Table</h2>
+  <table>
+    <thead><tr><th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Space</th><th>Stable</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Selection Sort</strong></td><td class="worst-cell">O(n²)</td><td class="worst-cell">O(n²)</td><td class="worst-cell">O(n²)</td><td class="best-cell">O(1)</td><td><span class="badge b-red">No</span></td></tr>
+      <tr><td><strong>Insertion Sort</strong></td><td class="best-cell">O(n)</td><td class="worst-cell">O(n²)</td><td class="worst-cell">O(n²)</td><td class="best-cell">O(1)</td><td><span class="badge b-green">Yes</span></td></tr>
+      <tr><td><strong>Bubble Sort</strong></td><td class="best-cell">O(n)*</td><td class="worst-cell">O(n²)</td><td class="worst-cell">O(n²)</td><td class="best-cell">O(1)</td><td><span class="badge b-green">Yes</span></td></tr>
+      <tr><td><strong>Shell Sort</strong></td><td class="best-cell">O(n log n)</td><td><span style="color:var(--warn);">O(n^1.3)</span></td><td class="worst-cell">O(n²)</td><td class="best-cell">O(1)</td><td><span class="badge b-red">No</span></td></tr>
+      <tr><td><strong>Merge Sort</strong></td><td class="best-cell">O(n log n)</td><td class="best-cell">O(n log n)</td><td class="best-cell">O(n log n)</td><td><span style="color:var(--warn);">O(n)</span></td><td><span class="badge b-green">Yes</span></td></tr>
+      <tr><td><strong>Quick Sort</strong></td><td class="best-cell">O(n log n)</td><td class="best-cell">O(n log n)</td><td class="worst-cell">O(n²)</td><td class="best-cell">O(log n)</td><td><span class="badge b-red">No</span></td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:.75rem;color:var(--muted);">* Bubble O(n) best case only with early-exit optimisation</p>
+
+  <h2>🏆 Which is Most Used?</h2>
+  <div class="callout rule">📌 <strong>Quick Sort</strong> is the most widely used in practice. C, C++, Java (primitives), .NET, and most language standard libraries use Quick Sort or an introsort (Quick + Heap hybrid). <strong>Timsort</strong> (Merge + Insertion) is used for Python and Java objects.</div>
+
+  <table>
+    <thead><tr><th>Language / System</th><th>Algorithm Used</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>C stdlib qsort()</td><td>Quick Sort</td><td>Fast in-place, no extra memory</td></tr>
+      <tr><td>C++ std::sort()</td><td>Introsort (Quick+Heap+Insertion)</td><td>Worst-case O(n log n) guaranteed</td></tr>
+      <tr><td>.NET Array.Sort()</td><td>Introsort</td><td>Balanced performance, no O(n²) worst</td></tr>
+      <tr><td>Java Arrays.sort() (primitives)</td><td>Dual-pivot Quick Sort</td><td>Faster than single-pivot in practice</td></tr>
+      <tr><td>Java / Python (objects)</td><td>Timsort (Merge+Insertion)</td><td>Stable required for object arrays</td></tr>
+      <tr><td>Database engines</td><td>External Merge Sort</td><td>Files larger than RAM — disk-based sorting</td></tr>
+      <tr><td>Embedded systems</td><td>Shell or Insertion Sort</td><td>No heap, tiny footprint, O(1) space</td></tr>
+    </tbody>
+  </table>
+
+  <h2>🎯 Decision Guide — Which to Choose?</h2>
+  <table>
+    <thead><tr><th>Situation</th><th>Best Choice</th><th>Reason</th></tr></thead>
+    <tbody>
+      <tr><td>General purpose, large data</td><td><strong>Quick Sort</strong></td><td>Fastest average case, in-place</td></tr>
+      <tr><td>Worst-case guarantee needed</td><td><strong>Merge Sort</strong></td><td>Always O(n log n), no bad inputs</td></tr>
+      <tr><td>Stability required</td><td><strong>Merge Sort / Insertion</strong></td><td>Preserves relative order of equals</td></tr>
+      <tr><td>Nearly-sorted data</td><td><strong>Insertion Sort</strong></td><td>O(n) best case, adaptive</td></tr>
+      <tr><td>Very small n (&lt;16)</td><td><strong>Insertion Sort</strong></td><td>Low overhead, no recursion</td></tr>
+      <tr><td>Memory constrained</td><td><strong>Quick Sort / Shell</strong></td><td>O(1) extra space (iterative Shell)</td></tr>
+      <tr><td>Stable + large data</td><td><strong>Timsort (Merge+Insertion)</strong></td><td>Python/Java standard — best of both</td></tr>
+      <tr><td>Learning / interview</td><td><strong>Bubble / Selection</strong></td><td>Simplest to explain step-by-step</td></tr>
+    </tbody>
+  </table>
+
+  <h2>📈 Performance at Scale</h2>
+  <table>
+    <thead><tr><th>n</th><th>O(n²) ops</th><th>O(n log n) ops</th><th>Speedup</th></tr></thead>
+    <tbody>
+      <tr><td>100</td><td>10,000</td><td>664</td><td>~15×</td></tr>
+      <tr><td>1,000</td><td>1,000,000</td><td>9,966</td><td>~100×</td></tr>
+      <tr><td>10,000</td><td>100,000,000</td><td>132,877</td><td>~750×</td></tr>
+      <tr><td>1,000,000</td><td>10¹²</td><td>19,931,568</td><td>~50,000×</td></tr>
+    </tbody>
+  </table>
+  <div class="callout warning">⚠️ At n = 1 million, an O(n²) algorithm would take hours on modern hardware. An O(n log n) algorithm takes milliseconds. This is why algorithm choice matters enormously.</div>
+
+  <h2>🔑 Key Takeaways</h2>
+  <ul>
+    <li><strong>Fastest (average):</strong> Quick Sort, Merge Sort, Shell Sort — all O(n log n)</li>
+    <li><strong>Safest worst-case:</strong> Merge Sort — always O(n log n), no pathological inputs</li>
+    <li><strong>Most memory-efficient:</strong> Selection, Insertion, Bubble, Shell — all O(1) space</li>
+    <li><strong>Stable algorithms:</strong> Insertion Sort, Bubble Sort, Merge Sort</li>
+    <li><strong>Most used in real systems:</strong> Quick Sort / Introsort / Timsort</li>
+    <li><strong>Best for nearly-sorted:</strong> Insertion Sort (O(n) best case)</li>
+    <li><strong>Avoid in production:</strong> Bubble Sort and Selection Sort for large n</li>
+  </ul>
+  </div><!-- end compare-hb -->
+
+  <!-- COMPARE RECALL -->
+  <div class="sub-panel" id="compare-rc">
+    <div class="recall-topbar">
+      <div class="rc-counter"><span id="cmp-ans">0</span> of <span id="cmp-tot">8</span> answered</div>
+      <div class="rc-bulk"><button class="rc-bulk-btn" onclick="rcRevealAll('cmp')">Reveal All</button><button class="rc-bulk-btn" onclick="rcHideAll('cmp')">Hide All</button></div>
+    </div>
+    <div class="qcard" id="cmp-q1"><div class="qcard-head"><span class="qnum">Q01</span><span class="qtag seq">SEQUENCE</span><span class="qtext">Rank all 6 sorting algorithms from fastest to slowest average-case. Include their Big-O.</span><button class="qbtn" onclick="rcToggle('cmp','cmp-q1')">Show Answer</button></div><div class="qanswer" id="cmp-q1-a"><div class="qa-label">Answer</div><div class="qa-body"><ol><li>Quick Sort — O(n log n) avg, smallest constants</li><li>Merge Sort — O(n log n), predictable</li><li>Shell Sort — O(n^1.3–1.5), depends on gap sequence</li><li>Insertion Sort — O(n²) but O(n) on nearly-sorted</li><li>Bubble Sort — O(n²), slowest of the three simple sorts</li><li>Selection Sort — O(n²), same time always regardless of input</li></ol></div></div></div>
+    <div class="qcard" id="cmp-q2"><div class="qcard-head"><span class="qnum">Q02</span><span class="qtag compare">COMPARE</span><span class="qtext">Which two algorithms are the only ones with guaranteed O(n log n) in <em>all</em> cases including worst case?</span><button class="qbtn" onclick="rcToggle('cmp','cmp-q2')">Show Answer</button></div><div class="qanswer" id="cmp-q2-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>Merge Sort</strong> — T(n) = 2T(n/2) + O(n), always O(n log n).<br><strong>Heap Sort</strong> (not in this module) — also always O(n log n).<br>Quick Sort, Shell Sort, Insertion Sort, and Bubble Sort can all degrade to O(n²) on certain inputs.</div></div></div>
+    <div class="qcard" id="cmp-q3"><div class="qcard-head"><span class="qnum">Q03</span><span class="qtag apply">APPLY</span><span class="qtext">You must sort 50 million user records by last name, then re-sort by country while keeping the name order within each country. Which sort and why?</span><button class="qbtn" onclick="rcToggle('cmp','cmp-q3')">Show Answer</button></div><div class="qanswer" id="cmp-q3-a"><div class="qa-label">Answer</div><div class="qa-body">Use a <strong>stable sort</strong> — specifically <strong>Merge Sort or Timsort</strong>. Sort by name first, then sort by country with a stable algorithm. Because the sort is stable, all records within the same country keep their name-sorted order from step 1. An unstable sort would scramble the name ordering within each country group.</div></div></div>
+    <div class="qcard" id="cmp-q4"><div class="qcard-head"><span class="qnum">Q04</span><span class="qtag gotcha">GOTCHA</span><span class="qtext">A developer says "I'll use Merge Sort because it's always O(n log n)." What is the hidden cost they're ignoring?</span><button class="qbtn" onclick="rcToggle('cmp','cmp-q4')">Show Answer</button></div><div class="qanswer" id="cmp-q4-a"><div class="qa-label">Answer</div><div class="qa-body">Merge Sort requires <strong>O(n) extra memory</strong> for the temporary array. Sorting 100 million integers (400MB) requires another 400MB buffer — doubling memory usage. For memory-constrained systems or when the data is already nearly-sorted (where Quick Sort or Insertion Sort shine), Merge Sort's constant time and memory cost can be a deal-breaker.</div></div></div>
+    <div class="qcard" id="cmp-q5"><div class="qcard-head"><span class="qnum">Q05</span><span class="qtag why">WHY</span><span class="qtext">Why do Java and Python use different sort algorithms for primitives vs objects?</span><button class="qbtn" onclick="rcToggle('cmp','cmp-q5')">Show Answer</button></div><div class="qanswer" id="cmp-q5-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>Primitives:</strong> Stability doesn't matter (e.g. two int values of 5 are indistinguishable), so Dual-pivot Quick Sort is used — it's faster in practice. <strong>Objects:</strong> Objects can have identity — two "equal" objects may differ in other fields. A stable sort preserves the original ordering of equal objects, which users expect. So Timsort (stable Merge + Insertion hybrid) is used for object arrays.</div></div></div>
+    <div class="qcard" id="cmp-q6"><div class="qcard-head"><span class="qnum">Q06</span><span class="qtag compare">COMPARE</span><span class="qtext">Fill in the blank: "Selection Sort makes O(___) swaps. Bubble Sort makes O(___) swaps worst case." Which is better when swap is expensive?</span><button class="qbtn" onclick="rcToggle('cmp','cmp-q6')">Show Answer</button></div><div class="qanswer" id="cmp-q6-a"><div class="qa-label">Answer</div><div class="qa-body">Selection Sort: <strong>O(n)</strong> swaps (exactly n-1, one per pass).<br>Bubble Sort: <strong>O(n²)</strong> swaps worst case.<br>When swap is expensive (e.g. writing to flash memory, moving large objects), <strong>Selection Sort</strong> is preferred despite having the same O(n²) time complexity, because it minimises the number of writes.</div></div></div>
+    <div class="qcard" id="cmp-q7"><div class="qcard-head"><span class="qnum">Q07</span><span class="qtag apply">APPLY</span><span class="qtext">An array of 10 elements arrives nearly-sorted (2 elements out of place). Which algorithm handles this best and what is its actual complexity on this input?</span><button class="qbtn" onclick="rcToggle('cmp','cmp-q7')">Show Answer</button></div><div class="qanswer" id="cmp-q7-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>Insertion Sort</strong> handles this best. With k inversions (pairs out of order), Insertion Sort runs in O(n + k). For 2 displaced elements the number of inversions is at most ~2n, giving O(n) actual runtime. Merge and Quick Sort would still take O(n log n) since they don't adapt to existing order.</div></div></div>
+    <div class="qcard" id="cmp-q8"><div class="qcard-head"><span class="qnum">Q08</span><span class="qtag gotcha">GOTCHA</span><span class="qtext">Quick Sort is "in-place" but has O(log n) space. Merge Sort uses O(n) extra space. Which would you choose for a system with only 4KB RAM sorting 1000 integers?</span><button class="qbtn" onclick="rcToggle('cmp','cmp-q8')">Show Answer</button></div><div class="qanswer" id="cmp-q8-a"><div class="qa-label">Answer</div><div class="qa-body">1000 integers × 4 bytes = 4KB for the data itself — filling all RAM. Merge Sort needs another 4KB for its temp array — impossible. Quick Sort needs only O(log n) ≈ 10 stack frames × ~20 bytes each ≈ 200 bytes. <strong>Quick Sort wins</strong> here, or better yet, <strong>Shell Sort</strong> (iterative, O(1) space, no recursion stack at all) to eliminate even the stack risk.</div></div></div>
+  </div><!-- end compare-rc -->
+</div>
+
+<!-- ═══════════════════════════ SCRIPTS ═══════════════════════════ -->
+<script>
+/* ── NAVIGATION ── */
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.algo-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+function showPageById(id) {
+  const tabs = document.querySelectorAll('.algo-tab');
+  const pages = ['overview','selection','insertion','bubble','shell','merge','quick','compare'];
+  const idx = pages.indexOf(id);
+  if (idx >= 0) showPage(id, tabs[idx]);
+}
+function copyCode(btn) {
+  const c = btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(c.innerText).then(() => { btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy',1500); });
+}
+
+/* ── SUB-TAB SWITCHING ── */
+function switchSub(pageId, panel, btn) {
+  const page = document.getElementById('page-' + pageId);
+  page.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
+  page.querySelectorAll('.sub-tab').forEach(t => { t.classList.remove('active'); t.classList.add('inactive'); });
+  document.getElementById(pageId + '-' + panel).classList.add('active');
+  btn.classList.add('active'); btn.classList.remove('inactive');
+}
+
+/* ── RECALL ENGINE ── */
+const _rcAnswered = {};  // namespace -> Set of answered qcard ids
+
+function _rcNs(ns) {
+  if (!_rcAnswered[ns]) _rcAnswered[ns] = new Set();
+  return _rcAnswered[ns];
+}
+function _rcUpdateCounter(ns) {
+  const el = document.getElementById(ns + '-ans');
+  if (el) el.textContent = _rcNs(ns).size;
+}
+
+function rcToggle(ns, cardId) {
+  const card = document.getElementById(cardId);
+  const answer = document.getElementById(cardId + '-a');
+  const btn = card.querySelector('.qbtn');
+  const isOpen = answer.classList.contains('open');
+  if (isOpen) {
+    answer.classList.remove('open');
+    card.classList.remove('revealed');
+    btn.textContent = 'Show Answer';
+    btn.classList.remove('revealed');
+    _rcNs(ns).delete(cardId);
+  } else {
+    answer.classList.add('open');
+    card.classList.add('revealed');
+    btn.textContent = 'Hide Answer';
+    btn.classList.add('revealed');
+    _rcNs(ns).add(cardId);
+  }
+  _rcUpdateCounter(ns);
+}
+
+function rcRevealAll(ns) {
+  const prefix = ns === 'cmp' ? 'cmp' : ns;
+  document.querySelectorAll(`[id^="${prefix}-q"]`).forEach(card => {
+    // Only process .qcard elements (not answer divs)
+    if (!card.classList.contains('qcard')) return;
+    const cardId = card.id;
+    const answer = document.getElementById(cardId + '-a');
+    const btn = card.querySelector('.qbtn');
+    if (!answer || !btn) return;
+    answer.classList.add('open');
+    card.classList.add('revealed');
+    btn.textContent = 'Hide Answer';
+    btn.classList.add('revealed');
+    _rcNs(ns).add(cardId);
+  });
+  _rcUpdateCounter(ns);
+}
+
+function rcHideAll(ns) {
+  const prefix = ns === 'cmp' ? 'cmp' : ns;
+  document.querySelectorAll(`[id^="${prefix}-q"]`).forEach(card => {
+    if (!card.classList.contains('qcard')) return;
+    const cardId = card.id;
+    const answer = document.getElementById(cardId + '-a');
+    const btn = card.querySelector('.qbtn');
+    if (!answer || !btn) return;
+    answer.classList.remove('open');
+    card.classList.remove('revealed');
+    btn.textContent = 'Show Answer';
+    btn.classList.remove('revealed');
+  });
+  _rcNs(ns).clear();
+  _rcUpdateCounter(ns);
+}
+
+// Set question totals on load
+function _initRecallCounters() {
+  const map = {
+    'ov': ['ov'],
+    'sel': ['sel'],
+    'ins': ['ins'],
+    'bub': ['bub'],
+    'sh': ['sh'],
+    'mg': ['mg'],
+    'qs': ['qs'],
+    'cmp': ['cmp']
+  };
+  Object.keys(map).forEach(ns => {
+    const prefix = ns;
+    const count = document.querySelectorAll(`[id^="${prefix}-q"].qcard`).length;
+    const el = document.getElementById(ns + '-tot');
+    if (el) el.textContent = count;
+    const ansEl = document.getElementById(ns + '-ans');
+    if (ansEl) ansEl.textContent = 0;
+  });
+}
+
+/* ── VISUALISER ENGINE ── */
+// Each visualiser builds a steps array then plays them
+
+function makeCell(val, idx) {
+  return `<div class="acell"><div class="abox" id="cell-${idx}">${val}</div><div class="aidx">${idx}</div></div>`;
+}
+function renderArr(containerId, arr) {
+  document.getElementById(containerId).innerHTML = arr.map((v,i) => makeCell(v,i)).join('');
+}
+function renderPtrs(containerId, arr, ptrs) {
+  // ptrs: { index: [{label, color}] }
+  const row = document.getElementById(containerId);
+  if (!row) return;
+  row.innerHTML = arr.map((_,i) => {
+    const p = ptrs[i];
+    if (!p || !p.length) return `<div class="aptr"></div>`;
+    return `<div class="aptr" style="color:${p.map(x=>x.color).join(';color:')};">${p.map(x=>x.label).join(' ')}</div>`;
+  }).join('');
+}
+function setStates(arr, states, sortedSet) {
+  arr.forEach((_,i) => {
+    const box = document.getElementById('cell-' + i);
+    if (!box) return;
+    if (sortedSet && sortedSet.has(i)) { box.className = 'abox s-sorted'; return; }
+    box.className = 'abox ' + (states[i] || '');
+  });
+}
+function addLog(logId, msg, cls) {
+  const log = document.getElementById(logId);
+  const e = document.createElement('div');
+  e.className = 'log-e ' + (cls||'');
+  e.textContent = msg;
+  log.appendChild(e);
+  log.scrollTop = log.scrollHeight;
+}
+function setStatus(id, msg, cls) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.className = 'v-status ' + (cls||'');
+}
+
+/* Generic player factory */
+function makePlayer(cfg) {
+  let steps = [], idx = 0, playing = false, timer = null;
+  const { arrId, logId, statusId, playBtnId, stepBtnId, speedId, buildSteps, renderArr: render } = cfg;
+
+  function applyStep(s) {
+    s.render();
+    if (s.log) addLog(logId, s.log, s.logCls);
+    setStatus(statusId, s.msg, s.statusCls);
+  }
+  function step() {
+    if (idx >= steps.length) return;
+    applyStep(steps[idx++]);
+    if (idx >= steps.length) {
+      playing = false; clearTimeout(timer);
+      document.getElementById(playBtnId).textContent = '▶ Play';
+      document.getElementById(stepBtnId).disabled = true;
+    }
+  }
+  function playPause() {
+    if (idx >= steps.length) return;
+    if (playing) {
+      playing = false; clearTimeout(timer);
+      document.getElementById(playBtnId).textContent = '▶ Play';
+    } else {
+      playing = true;
+      document.getElementById(playBtnId).textContent = '⏸ Pause';
+      const go = () => { if (idx < steps.length && playing) { step(); timer = setTimeout(go, +document.getElementById(speedId).value); } else { playing = false; document.getElementById(playBtnId).textContent = '▶ Play'; } };
+      timer = setTimeout(go, +document.getElementById(speedId).value);
+    }
+  }
+  function reset() {
+    playing = false; clearTimeout(timer); idx = 0;
+    document.getElementById(playBtnId).textContent = '▶ Play';
+    document.getElementById(stepBtnId).disabled = false;
+    document.getElementById(logId).innerHTML = '';
+    setStatus(statusId, 'Press ▶ Play or → Step', '');
+    steps = buildSteps(); render();
+    document.getElementById(arrId).querySelectorAll('.abox').forEach(b => b.className = 'abox');
+    document.querySelectorAll('#' + arrId + ' + .ptr-row .aptr').forEach(p => { p.textContent=''; p.style.opacity=0; });
+  }
+  return { step, playPause, reset, init: reset };
+}
+
+/* ── SELECTION SORT VISUALISER ── */
+const SEL_ARR = [64,25,12,22,11];
+let selArr, selPlayer;
+function buildSelSteps() {
+  const arr = [...SEL_ARR], n = arr.length, sorted = new Set();
+  const steps = [];
+  const snap = (states, ptrs, msg, log, lc, sc) => {
+    const a2 = [...arr]; const so2 = new Set(sorted);
+    steps.push({ render(){ setStates(a2, states, so2); renderPtrs('sel-ptrs', a2, ptrs); }, msg, log, logCls:lc, statusCls:sc });
+  };
+  snap({}, {}, 'Array ready. Selection sort will find minimum each pass.', null, null, 'go');
+  for (let i = 0; i < n - 1; i++) {
+    let minIdx = i;
+    snap({ [i]: 's-active' }, { [i]: [{label:'i',color:'var(--accent)'}] }, `Pass ${i+1}: assume arr[${i}]=${arr[i]} is minimum`, `Pass ${i+1} starts. minIndex=${i} (value=${arr[i]})`, 'la', 'go');
+    for (let j = i + 1; j < n; j++) {
+      const st = {}; sorted.forEach(s => st[s]='s-sorted');
+      st[i] = 's-active'; st[minIdx] = 's-compare'; st[j] = 's-compare';
+      const cmp = arr[j] < arr[minIdx];
+      const log2 = `  Compare arr[${j}]=${arr[j]} vs arr[${minIdx}]=${arr[minIdx]} → ${cmp?'new min!':'no change'}`;
+      if (cmp) { minIdx = j; }
+      snap(st, { [i]:[{label:'i',color:'var(--accent)'}], [minIdx]:[{label:'min',color:'var(--accent3)'}] }, `Compare arr[${j}] with current min (${arr[minIdx]})`, log2, cmp?'la':null, 'go');
+    }
+    // swap
+    const tmp = arr[minIdx]; arr[minIdx] = arr[i]; arr[i] = tmp;
+    sorted.add(i);
+    const st2 = {}; sorted.forEach(s => st2[s]='s-sorted');
+    snap(st2, {}, `Swapped arr[${i}] and arr[minIdx] → ${arr[i]} placed at position ${i}`, `✓ Swap: position ${i} = ${arr[i]}`, 'lf', 'ok');
+  }
+  sorted.add(n-1);
+  snap({}, {}, '✅ Array fully sorted!', '✅ Done!', 'lf', 'ok');
+  return steps;
+}
+function initSel() {
+  renderArr('sel-arr', SEL_ARR);
+  selPlayer = makePlayer({ arrId:'sel-arr', logId:'sel-log', statusId:'sel-status', playBtnId:'sel-play', stepBtnId:'sel-step', speedId:'sel-speed', buildSteps: buildSelSteps, renderArr: ()=>renderArr('sel-arr', SEL_ARR) });
+  selPlayer.init();
+}
+function selPlayPause() { selPlayer.playPause(); }
+function selStep() { selPlayer.step(); }
+function selReset() { selPlayer.reset(); }
+
+/* ── INSERTION SORT VISUALISER ── */
+const INS_ARR = [64,25,12,22,11];
+let insPlayer;
+function buildInsSteps() {
+  const arr = [...INS_ARR], n = arr.length, sorted = new Set([0]);
+  const steps = [];
+  const snap = (states, ptrs, msg, log, lc, sc) => {
+    const a2=[...arr]; const so2=new Set(sorted);
+    steps.push({ render(){ setStates(a2,states,so2); renderPtrs('ins-ptrs',a2,ptrs); }, msg, log, logCls:lc, statusCls:sc });
+  };
+  snap({[0]:'s-sorted'},{}, 'arr[0] is trivially sorted.', null, null, 'go');
+  for (let i = 1; i < n; i++) {
+    let temp = arr[i], pos = i;
+    const st = {}; sorted.forEach(s=>st[s]='s-sorted'); st[i]='s-pivot';
+    snap(st,{[i]:[{label:'temp='+temp,color:'var(--warn)'}]}, `Pick arr[${i}]=${temp} as temp to insert`, `Pick temp=${temp}`, 'la', 'go');
+    while (pos > 0 && arr[pos-1] > temp) {
+      arr[pos] = arr[pos-1];
+      const st2={}; sorted.forEach(s=>st2[s]='s-sorted'); st2[pos]='s-compare'; st2[pos-1]='s-compare';
+      snap(st2,{[pos]:[{label:'←shift',color:'var(--accent3)'}]}, `Shift arr[${pos-1}]=${arr[pos]} right to pos ${pos}`, `Shift ${arr[pos]} → index ${pos}`, 'la','go');
+      pos--;
+    }
+    arr[pos] = temp;
+    sorted.add(i);
+    const st3={}; sorted.forEach(s=>st3[s]='s-sorted');
+    snap(st3,{[pos]:[{label:'insert',color:'var(--success)'}]}, `Insert temp=${temp} at position ${pos}`, `✓ Inserted ${temp} at index ${pos}`, 'lf','ok');
+  }
+  snap({},{}, '✅ Array fully sorted!', '✅ Done!', 'lf','ok');
+  return steps;
+}
+function initIns() {
+  renderArr('ins-arr', INS_ARR);
+  insPlayer = makePlayer({ arrId:'ins-arr', logId:'ins-log', statusId:'ins-status', playBtnId:'ins-play', stepBtnId:'ins-step', speedId:'ins-speed', buildSteps: buildInsSteps, renderArr: ()=>renderArr('ins-arr', INS_ARR) });
+  insPlayer.init();
+}
+function insPlayPause() { insPlayer.playPause(); }
+function insStep() { insPlayer.step(); }
+function insReset() { insPlayer.reset(); }
+
+/* ── BUBBLE SORT VISUALISER ── */
+const BUB_ARR = [64,25,12,22,11];
+let bubPlayer;
+function buildBubSteps() {
+  const arr=[...BUB_ARR], n=arr.length, sorted=new Set();
+  const steps=[];
+  const snap=(states,ptrs,msg,log,lc,sc)=>{const a2=[...arr];const so2=new Set(sorted);steps.push({render(){setStates(a2,states,so2);renderPtrs('bub-ptrs',a2,ptrs);},msg,log,logCls:lc,statusCls:sc});};
+  snap({},{},'Bubble sort: compare adjacent pairs, largest bubbles to end.',null,null,'go');
+  for (let pass = n-1; pass >= 1; pass--) {
+    for (let i = 0; i < pass; i++) {
+      const st={}; sorted.forEach(s=>st[s]='s-sorted'); st[i]='s-compare'; st[i+1]='s-compare';
+      const sw = arr[i] > arr[i+1];
+      snap(st,{[i]:[{label:'i',color:'var(--accent3)'}],[i+1]:[{label:'i+1',color:'var(--accent3)'}]}, `Compare arr[${i}]=${arr[i]} vs arr[${i+1}]=${arr[i+1]} → ${sw?'SWAP':'no swap'}`, `Compare ${arr[i]} & ${arr[i+1]} → ${sw?'swap':'ok'}`, sw?'la':null,'go');
+      if (sw) { const tmp=arr[i]; arr[i]=arr[i+1]; arr[i+1]=tmp; const st2={}; sorted.forEach(s=>st2[s]='s-sorted'); st2[i]='s-active'; st2[i+1]='s-active'; snap(st2,{[i]:[{label:'↔',color:'var(--accent)'}],[i+1]:[{label:'↔',color:'var(--accent)'}]},`Swapped → [${arr[i]},${arr[i+1]}]`,null,'la','go'); }
+    }
+    sorted.add(pass);
+    const st3={}; sorted.forEach(s=>st3[s]='s-sorted');
+    snap(st3,{}, `Pass done: arr[${pass}]=${arr[pass]} is in final position`, `✓ Position ${pass} sorted`, 'lf','ok');
+  }
+  sorted.add(0);
+  snap({},{}, '✅ Array fully sorted!', '✅ Done!', 'lf','ok');
+  return steps;
+}
+function initBub() {
+  renderArr('bub-arr', BUB_ARR);
+  bubPlayer = makePlayer({ arrId:'bub-arr', logId:'bub-log', statusId:'bub-status', playBtnId:'bub-play', stepBtnId:'bub-step', speedId:'bub-speed', buildSteps: buildBubSteps, renderArr:()=>renderArr('bub-arr',BUB_ARR) });
+  bubPlayer.init();
+}
+function bubPlayPause(){bubPlayer.playPause();}
+function bubStep(){bubPlayer.step();}
+function bubReset(){bubPlayer.reset();}
+
+/* ── SHELL SORT VISUALISER ── */
+const SH_ARR = [64,25,12,22,11,8];
+let shPlayer;
+function buildShSteps() {
+  const arr=[...SH_ARR], n=arr.length;
+  const steps=[];
+  const snap=(states,ptrs,msg,log,lc,sc)=>{const a2=[...arr];steps.push({render(){setStates(a2,states,null);renderPtrs('sh-ptrs',a2,ptrs);},msg,log,logCls:lc,statusCls:sc});};
+  snap({},{},'Shell sort: gap starts at n/2, reduces each pass.',null,null,'go');
+  let gap=Math.floor(n/2);
+  while(gap>0){
+    snap({},{}, `New gap = ${gap}`, `--- Gap = ${gap} ---`, 'la','go');
+    let i=gap;
+    while(i<n){
+      let temp=arr[i], j=i-gap;
+      const st1={[i]:'s-pivot'}; snap(st1,{[i]:[{label:'temp='+temp,color:'var(--accent)'}]}, `Pick arr[${i}]=${temp}, compare ${gap} back`, `Pick temp=${temp} at i=${i}`, 'la','go');
+      while(j>=0 && arr[j]>temp){
+        arr[j+gap]=arr[j];
+        const st2={[j]:'s-compare',[j+gap]:'s-compare'};
+        snap(st2,{[j+gap]:[{label:'←',color:'var(--accent3)'}]}, `Shift arr[${j}]=${arr[j+gap]} to pos ${j+gap}`, `Shift ${arr[j+gap]} → ${j+gap}`, 'la','go');
+        j-=gap;
+      }
+      arr[j+gap]=temp;
+      const st3={[j+gap]:'s-found'};
+      snap(st3,{[j+gap]:[{label:'✓',color:'var(--success)'}]}, `Placed ${temp} at index ${j+gap}`, `✓ Placed ${temp}`, 'lf','go');
+      i++;
+    }
+    gap=Math.floor(gap/2);
+  }
+  const st={}; for(let k=0;k<n;k++) st[k]='s-sorted';
+  snap(st,{},'✅ Sorted!','✅ Done!','lf','ok');
+  return steps;
+}
+function initSh(){
+  renderArr('sh-arr',SH_ARR);
+  shPlayer=makePlayer({arrId:'sh-arr',logId:'sh-log',statusId:'sh-status',playBtnId:'sh-play',stepBtnId:'sh-step',speedId:'sh-speed',buildSteps:buildShSteps,renderArr:()=>renderArr('sh-arr',SH_ARR)});
+  shPlayer.init();
+}
+function shPlayPause(){shPlayer.playPause();}
+function shStep(){shPlayer.step();}
+function shReset(){shPlayer.reset();}
+
+/* ── MERGE SORT VISUALISER ── */
+const MG_ARR = [38,27,43,3,9,82,10];
+let mgPlayer;
+function buildMgSteps() {
+  const arr=[...MG_ARR], n=arr.length;
+  const steps=[];
+  const sorted=new Set();
+  const snap=(states,ptrs,msg,log,lc,sc)=>{const a2=[...arr];const so2=new Set(sorted);steps.push({render(){setStates(a2,states,so2);renderPtrs('mg-ptrs',a2,ptrs);},msg,log,logCls:lc,statusCls:sc});};
+  snap({},{}, 'Merge sort: divide all the way down, then merge back sorted.',null,null,'go');
+
+  function mergeSortSim(left,right){
+    if(left>=right){sorted.add(left);return;}
+    const mid=Math.floor((left+right)/2);
+    // show divide
+    const st={}; for(let k=left;k<=right;k++) st[k]='s-range';
+    snap(st,{[left]:[{label:'L',color:'var(--accent2)'}],[right]:[{label:'R',color:'var(--accent3)'}],[mid]:[{label:'mid',color:'var(--accent)'}]}, `Divide [${left}..${right}] at mid=${mid}`,`Divide [${left}..${right}] → [${left}..${mid}] and [${mid+1}..${right}]`,'la','go');
+    mergeSortSim(left,mid);
+    mergeSortSim(mid+1,right);
+    // merge
+    let i=left,j=mid+1,k=left;
+    const B=[];
+    while(i<=mid&&j<=right){
+      const st2={}; for(let x=left;x<=right;x++) st2[x]='s-range'; st2[i]='s-merge-l'; st2[j]='s-merge-r';
+      if(arr[i]<=arr[j]){B.push(arr[i]);snap(st2,{[i]:[{label:'←take',color:'var(--accent2)'}]},`Merge: take arr[${i}]=${arr[i]} (left smaller)`,`Take ${arr[i]} from left`,'la','go');i++;}
+      else{B.push(arr[j]);snap(st2,{[j]:[{label:'←take',color:'var(--accent3)'}]},`Merge: take arr[${j}]=${arr[j]} (right smaller)`,`Take ${arr[j]} from right`,'la','go');j++;}
+    }
+    while(i<=mid){B.push(arr[i]);i++;}
+    while(j<=right){B.push(arr[j]);j++;}
+    for(let x=0;x<B.length;x++){arr[left+x]=B[x];}
+    for(let x=left;x<=right;x++) sorted.add(x);
+    const st3={}; sorted.forEach(s=>st3[s]='s-sorted');
+    snap(st3,{}, `Merged [${left}..${right}] → ${arr.slice(left,right+1).join(',')}`,`✓ Merged [${left}..${right}]`,'lf','go');
+  }
+  mergeSortSim(0,n-1);
+  snap({},{}, '✅ Array fully sorted!','✅ Done!','lf','ok');
+  return steps;
+}
+function initMg(){
+  renderArr('mg-arr',MG_ARR);
+  mgPlayer=makePlayer({arrId:'mg-arr',logId:'mg-log',statusId:'mg-status',playBtnId:'mg-play',stepBtnId:'mg-step',speedId:'mg-speed',buildSteps:buildMgSteps,renderArr:()=>renderArr('mg-arr',MG_ARR)});
+  mgPlayer.init();
+}
+function mgPlayPause(){mgPlayer.playPause();}
+function mgStep(){mgPlayer.step();}
+function mgReset(){mgPlayer.reset();}
+
+/* ── QUICK SORT VISUALISER ── */
+const QS_ARR = [64,25,12,22,11,43];
+let qsPlayer;
+function buildQsSteps(){
+  const arr=[...QS_ARR],n=arr.length,sorted=new Set();
+  const steps=[];
+  const snap=(states,ptrs,msg,log,lc,sc)=>{const a2=[...arr];const so2=new Set(sorted);steps.push({render(){setStates(a2,states,so2);renderPtrs('qs-ptrs',a2,ptrs);},msg,log,logCls:lc,statusCls:sc});};
+  snap({},{}, 'Quick sort: choose pivot, partition, recurse.',null,null,'go');
+
+  function partition(low,high){
+    const pivot=arr[low];
+    let i=low+1,j=high;
+    const st={[low]:'s-pivot'}; for(let k=low+1;k<=high;k++) st[k]='s-range';
+    snap(st,{[low]:[{label:'pivot='+pivot,color:'var(--warn)'}],[i]:[{label:'i',color:'var(--accent2)'}],[j]:[{label:'j',color:'var(--accent3)'}]}, `Partition [${low}..${high}], pivot=${pivot}`,`Pivot=${pivot}, i=${i}, j=${j}`,'la','go');
+    do{
+      while(i<=j&&arr[i]<=pivot) i++;
+      while(i<=j&&arr[j]>pivot) j--;
+      if(i<j){
+        const tmp=arr[i];arr[i]=arr[j];arr[j]=tmp;
+        const st2={[low]:'s-pivot'}; for(let k=low+1;k<=high;k++) st2[k]='s-range'; st2[i]='s-active'; st2[j]='s-active';
+        snap(st2,{[i]:[{label:'i↔',color:'var(--accent2)'}],[j]:[{label:'↔j',color:'var(--accent3)'}]},`Swap arr[${i}]=${arr[i]} ↔ arr[${j}]=${arr[j]}`,`Swap ${arr[i]} ↔ ${arr[j]}`,'la','go');
+      }
+    } while(i<j);
+    const tmp=arr[low];arr[low]=arr[j];arr[j]=tmp;
+    sorted.add(j);
+    const st3={}; sorted.forEach(s=>st3[s]='s-sorted');
+    snap(st3,{[j]:[{label:'✓pivot',color:'var(--success)'}]},`Pivot ${arr[j]} placed at final position ${j}`,`✓ Pivot ${arr[j]} at index ${j}`,'lf','go');
+    return j;
+  }
+  function qsort(low,high){
+    if(low>=high){sorted.add(low);return;}
+    const pi=partition(low,high);
+    qsort(low,pi-1);
+    qsort(pi+1,high);
+  }
+  qsort(0,n-1);
+  snap({},{}, '✅ Array fully sorted!','✅ Done!','lf','ok');
+  return steps;
+}
+function initQs(){
+  renderArr('qs-arr',QS_ARR);
+  qsPlayer=makePlayer({arrId:'qs-arr',logId:'qs-log',statusId:'qs-status',playBtnId:'qs-play',stepBtnId:'qs-step',speedId:'qs-speed',buildSteps:buildQsSteps,renderArr:()=>renderArr('qs-arr',QS_ARR)});
+  qsPlayer.init();
+}
+function qsPlayPause(){qsPlayer.playPause();}
+function qsStep(){qsPlayer.step();}
+function qsReset(){qsPlayer.reset();}
+
+/* ── BOOT ── */
+document.addEventListener('DOMContentLoaded',()=>{
+  hljs.highlightAll();
+  initSel(); initIns(); initBub(); initSh(); initMg(); initQs();
+  _initRecallCounters();
+});
+</script>
+</body>
+</html>
