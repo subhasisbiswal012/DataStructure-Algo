@@ -242,6 +242,77 @@ tbody td{padding:.58rem 1rem;border:1px solid var(--border);color:#ccc;vertical-
     <li>Sorting algorithms differ in <strong>strategy, speed, memory use, and stability</strong></li>
   </ul>
 
+  <h2>📂 Complete Taxonomy of Sorting Algorithms</h2>
+  <div class="callout rule">📌 Sorting algorithms split into two fundamental families: <strong>Comparison-based</strong> (compare pairs of elements) and <strong>Index/Distribution-based</strong> (use the values themselves as addresses). They have different theoretical limits.</div>
+
+  <h3>Category 1 — Comparison-Based Sorts</h3>
+  <p>These work by comparing elements against each other. The theoretical lower bound for comparison sorts is <strong>Ω(n log n)</strong> — no comparison sort can be faster than this in the worst case.</p>
+
+  <table>
+    <thead><tr><th>#</th><th>Algorithm</th><th>Best</th><th>Worst</th><th>Space</th><th>Stable</th><th>Covered</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><strong>Selection Sort</strong></td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td><span class="badge b-red">No</span></td><td><span class="badge b-green">✓ This course</span></td></tr>
+      <tr><td>2</td><td><strong>Insertion Sort</strong></td><td>O(n)</td><td>O(n²)</td><td>O(1)</td><td><span class="badge b-green">Yes</span></td><td><span class="badge b-green">✓ This course</span></td></tr>
+      <tr><td>3</td><td><strong>Bubble Sort</strong></td><td>O(n)</td><td>O(n²)</td><td>O(1)</td><td><span class="badge b-green">Yes</span></td><td><span class="badge b-green">✓ This course</span></td></tr>
+      <tr><td>4</td><td><strong>Shell Sort</strong></td><td>O(n log n)</td><td>O(n²)</td><td>O(1)</td><td><span class="badge b-red">No</span></td><td><span class="badge b-green">✓ This course</span></td></tr>
+      <tr><td>5</td><td><strong>Merge Sort</strong></td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td><span class="badge b-green">Yes</span></td><td><span class="badge b-green">✓ This course</span></td></tr>
+      <tr><td>6</td><td><strong>Quick Sort</strong></td><td>O(n log n)</td><td>O(n²)</td><td>O(log n)</td><td><span class="badge b-red">No</span></td><td><span class="badge b-green">✓ This course</span></td></tr>
+      <tr><td>7</td><td><strong>Heap Sort</strong></td><td>O(n log n)</td><td>O(n log n)</td><td>O(1)</td><td><span class="badge b-red">No</span></td><td><span class="badge b-yellow">⚡ Heaps section</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout info">💡 <strong>Heap Sort</strong> is a comparison sort covered separately — it requires understanding the <strong>heap data structure</strong> (priority queues section) before it can be taught. It is the only comparison sort that is simultaneously O(n log n) worst-case AND O(1) space.</div>
+
+  <h3>Category 2 — Index-Based (Distribution) Sorts</h3>
+  <p>These do <strong>not</strong> compare elements against each other. Instead, they use the actual numeric values to place elements directly into their correct positions. They can beat the Ω(n log n) barrier — but only under specific constraints.</p>
+
+  <table>
+    <thead><tr><th>#</th><th>Algorithm</th><th>Time</th><th>Space</th><th>Stable</th><th>Constraint</th><th>Covered</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>Count Sort</strong></td>
+        <td>O(n + k)</td>
+        <td>O(k)</td>
+        <td><span class="badge b-green">Yes</span></td>
+        <td>Elements must be non-negative integers in range [0, k]</td>
+        <td><span class="badge b-yellow">⚡ Later section</span></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>Radix Sort</strong></td>
+        <td>O(d · (n + k))</td>
+        <td>O(n + k)</td>
+        <td><span class="badge b-green">Yes</span></td>
+        <td>Integer or fixed-length string keys; d = number of digits</td>
+        <td><span class="badge b-yellow">⚡ Later section</span></td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>Bucket Sort</strong></td>
+        <td>O(n + k)</td>
+        <td>O(n + k)</td>
+        <td><span class="badge b-green">Yes</span></td>
+        <td>Uniformly distributed values; covered with hashing</td>
+        <td><span class="badge b-yellow">⚡ Hashing section</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout warning">⚠️ Index-based sorts are <strong>not universal</strong>. They only work when input values satisfy strict conditions (integer range, uniform distribution). For general-purpose sorting of arbitrary data, comparison sorts are required.</div>
+
+  <h3>Key Difference: Comparison vs Index-Based</h3>
+  <table>
+    <thead><tr><th>Property</th><th>Comparison-Based</th><th>Index-Based</th></tr></thead>
+    <tbody>
+      <tr><td>Works on any data type</td><td>✅ Yes (anything comparable)</td><td>❌ No — integers or fixed keys only</td></tr>
+      <tr><td>Theoretical minimum</td><td>Ω(n log n) — proven lower bound</td><td>Can be O(n) — no comparison lower bound applies</td></tr>
+      <tr><td>Extra memory</td><td>O(1) to O(n) depending on algorithm</td><td>Always needs O(k) or O(n+k) extra space</td></tr>
+      <tr><td>General purpose</td><td>✅ Yes</td><td>❌ Only for specific input types</td></tr>
+      <tr><td>Used in practice for</td><td>Everything — objects, strings, records</td><td>Integer IDs, digit-based keys, fixed ranges</td></tr>
+    </tbody>
+  </table>
+
   <h2>🟢 Stable vs 🔴 Unstable Sorting</h2>
   <div class="callout rule">📌 A sort is <strong>stable</strong> if elements with equal keys keep their original relative order. A sort is <strong>unstable</strong> if equal elements may appear in any order.</div>
 
@@ -263,17 +334,7 @@ tbody td{padding:.58rem 1rem;border:1px solid var(--border);color:#ccc;vertical-
   <h3>Why Does Stability Matter?</h3>
   <p>When sorting objects with multiple fields (e.g. employees by salary), a stable sort preserves any previously applied ordering (e.g. by name). Unstable sorts can destroy prior ordering.</p>
 
-  <h2>Algorithm Categories</h2>
-  <table>
-    <thead><tr><th>Category</th><th>Algorithms</th><th>When to Use</th></tr></thead>
-    <tbody>
-      <tr><td>Simple O(n²)</td><td>Selection, Insertion, Bubble</td><td>Small data, educational, nearly-sorted arrays</td></tr>
-      <tr><td>Improved O(n log n)</td><td>Shell, Merge, Quick</td><td>Large datasets, production systems</td></tr>
-      <tr><td>Index-based</td><td>Count, Radix, Bucket</td><td>Known integer range, non-comparison sorting</td></tr>
-    </tbody>
-  </table>
-
-  <h2>Quick Navigation</h2>
+  <h2>🗺️ Quick Navigation — Algorithms Covered in This Module</h2>
   <div class="overview-grid">
     <div class="ov-card" onclick="showPageById('selection')"><h4>Selection Sort</h4><div class="ov-cmp">Time: O(n²) · Space: O(1) · Unstable</div></div>
     <div class="ov-card" onclick="showPageById('insertion')"><h4>Insertion Sort</h4><div class="ov-cmp">Time: O(n²)/O(n) · Space: O(1) · Stable</div></div>
@@ -282,24 +343,38 @@ tbody td{padding:.58rem 1rem;border:1px solid var(--border);color:#ccc;vertical-
     <div class="ov-card" onclick="showPageById('merge')"><h4>Merge Sort</h4><div class="ov-cmp">Time: O(n log n) · Space: O(n) · Stable</div></div>
     <div class="ov-card" onclick="showPageById('quick')"><h4>Quick Sort</h4><div class="ov-cmp">Time: O(n log n)/O(n²) · Space: O(log n) · Unstable</div></div>
   </div>
+
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1rem 0;">
+    <div style="font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem;">Not covered in this module (taught separately)</div>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+      <span class="badge b-yellow" style="font-size:.75rem;padding:.2rem .6rem;">Heap Sort — Heaps section</span>
+      <span class="badge b-yellow" style="font-size:.75rem;padding:.2rem .6rem;">Count Sort — Later section</span>
+      <span class="badge b-yellow" style="font-size:.75rem;padding:.2rem .6rem;">Radix Sort — Later section</span>
+      <span class="badge b-yellow" style="font-size:.75rem;padding:.2rem .6rem;">Bucket Sort — Hashing section</span>
+    </div>
+  </div>
   </div><!-- end overview-hb -->
 
   <!-- OVERVIEW RECALL -->
   <div class="sub-panel" id="overview-rc">
     <div class="recall-topbar">
-      <div class="rc-counter"><span id="ov-ans">0</span> of <span id="ov-tot">5</span> answered</div>
+      <div class="rc-counter"><span id="ov-ans">0</span> of <span id="ov-tot">7</span> answered</div>
       <div class="rc-bulk"><button class="rc-bulk-btn" onclick="rcRevealAll('ov')">Reveal All</button><button class="rc-bulk-btn" onclick="rcHideAll('ov')">Hide All</button></div>
     </div>
     <!-- Q1 -->
-    <div class="qcard" id="ov-q1"><div class="qcard-head"><span class="qnum">Q01</span><span class="qtag def">DEF</span><span class="qtext">What is a <strong>stable sort</strong>? Why does it matter when sorting objects?</span><button class="qbtn" onclick="rcToggle('ov','ov-q1')">Show Answer</button></div><div class="qanswer" id="ov-q1-a"><div class="qa-label">Answer</div><div class="qa-body">A <strong>stable sort</strong> preserves the original relative order of elements with equal keys. If two elements compare as equal, the one that appeared first in the input still appears first in the output.<div class="qa-eg"><span class="qa-eg-label">Why it matters:</span> Sorting employee records by salary — a stable sort keeps the existing alphabetical ordering within the same salary band. An unstable sort may scramble them.</div></div></div></div>
+    <div class="qcard" id="ov-q1"><div class="qcard-head"><span class="qnum">Q01</span><span class="qtag def">DEF</span><span class="qtext">What are the <strong>two fundamental categories</strong> of sorting algorithms? What is the key difference between them?</span><button class="qbtn" onclick="rcToggle('ov','ov-q1')">Show Answer</button></div><div class="qanswer" id="ov-q1-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>Comparison-based:</strong> Sort by comparing pairs of elements (Selection, Insertion, Bubble, Shell, Merge, Quick, Heap). The theoretical worst-case lower bound is Ω(n log n) — proven to be unbeatable for any comparison sort.<br><br><strong>Index/Distribution-based:</strong> Use element values as addresses to place elements directly (Count, Radix, Bucket). Can achieve O(n) — but only work under strict constraints (integers, known range, uniform distribution).</div></div></div>
     <!-- Q2 -->
-    <div class="qcard" id="ov-q2"><div class="qcard-head"><span class="qnum">Q02</span><span class="qtag compare">COMPARE</span><span class="qtext">Which of the 6 algorithms covered are <strong>stable</strong> and which are <strong>unstable</strong>? List all.</span><button class="qbtn" onclick="rcToggle('ov','ov-q2')">Show Answer</button></div><div class="qanswer" id="ov-q2-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>Stable:</strong> Insertion Sort, Bubble Sort, Merge Sort<br><strong>Unstable:</strong> Selection Sort, Shell Sort, Quick Sort<div class="qa-eg"><span class="qa-eg-label">Memory trick:</span> "IBM stable" — Insertion, Bubble, Merge are all stable.</div></div></div></div>
+    <div class="qcard" id="ov-q2"><div class="qcard-head"><span class="qnum">Q02</span><span class="qtag def">DEF</span><span class="qtext">Name all 7 <strong>comparison-based</strong> sorting algorithms from the course. Which one is taught in a separate section and why?</span><button class="qbtn" onclick="rcToggle('ov','ov-q2')">Show Answer</button></div><div class="qanswer" id="ov-q2-a"><div class="qa-label">Answer</div><div class="qa-body">Selection, Insertion, Bubble, Shell, Merge, Quick, <strong>Heap Sort</strong>.<br><br>Heap Sort is taught separately in the <strong>Heaps / Priority Queue section</strong> because it requires understanding the heap data structure first — you cannot explain Heap Sort without first understanding how a binary heap works and how it maintains the heap property.<div class="qa-eg"><span class="qa-eg-label">Why it matters:</span> Heap Sort is the only comparison sort that is simultaneously O(n log n) worst-case AND O(1) space — no extra array like Merge Sort, no O(n²) worst like Quick Sort.</div></div></div></div>
     <!-- Q3 -->
-    <div class="qcard" id="ov-q3"><div class="qcard-head"><span class="qnum">Q03</span><span class="qtag why">WHY</span><span class="qtext">Why is sorting a prerequisite for binary search?</span><button class="qbtn" onclick="rcToggle('ov','ov-q3')">Show Answer</button></div><div class="qanswer" id="ov-q3-a"><div class="qa-label">Answer</div><div class="qa-body">Binary search works by comparing the key to the middle element and eliminating half the search space. This elimination logic only works if the data is ordered — if elements are unsorted, eliminating a half might discard the target. Binary search on unsorted data gives incorrect results silently.</div></div></div>
+    <div class="qcard" id="ov-q3"><div class="qcard-head"><span class="qnum">Q03</span><span class="qtag def">DEF</span><span class="qtext">Name the 3 <strong>index-based</strong> sorting algorithms. What constraint does each require?</span><button class="qbtn" onclick="rcToggle('ov','ov-q3')">Show Answer</button></div><div class="qanswer" id="ov-q3-a"><div class="qa-label">Answer</div><div class="qa-body"><ul><li><strong>Count Sort</strong>: Elements must be non-negative integers in range [0, k]. Uses a frequency count array of size k. Time: O(n+k).</li><li><strong>Radix Sort</strong>: Integer or fixed-length string keys. Sorts digit-by-digit using a stable sub-sort. Time: O(d·(n+k)) where d = number of digits.</li><li><strong>Bucket Sort</strong>: Values must be uniformly distributed (e.g. floats in [0,1)). Distributes into buckets and sorts each. Covered in the Hashing section. Time: O(n+k) average.</li></ul></div></div></div>
     <!-- Q4 -->
-    <div class="qcard" id="ov-q4"><div class="qcard-head"><span class="qnum">Q04</span><span class="qtag compare">COMPARE</span><span class="qtext">What separates the simple O(n²) sorts from the O(n log n) sorts? Name the key structural difference.</span><button class="qbtn" onclick="rcToggle('ov','ov-q4')">Show Answer</button></div><div class="qanswer" id="ov-q4-a"><div class="qa-label">Answer</div><div class="qa-body">O(n²) sorts (Selection, Insertion, Bubble) process elements <strong>one at a time against a linear scan</strong> — the inner work is proportional to n per element. O(n log n) sorts (Shell, Merge, Quick) use <strong>divide-and-conquer or gap-based strategies</strong> that reduce the number of comparisons logarithmically per element.</div></div></div>
+    <div class="qcard" id="ov-q4"><div class="qcard-head"><span class="qnum">Q04</span><span class="qtag why">WHY</span><span class="qtext">Index-based sorts can be O(n) — faster than any comparison sort. Why don't we always use them?</span><button class="qbtn" onclick="rcToggle('ov','ov-q4')">Show Answer</button></div><div class="qanswer" id="ov-q4-a"><div class="qa-label">Answer</div><div class="qa-body">They only work under <strong>strict constraints</strong>:<ul><li>Elements must be integers (or reducible to integers) — can't sort arbitrary objects, strings, or floats directly</li><li>Require knowledge of the value range — sorting phone numbers (10-digit) with Count Sort would need a count array of size 10¹⁰</li><li>Require extra O(k) or O(n+k) memory — may exceed RAM for large k</li></ul>For general-purpose sorting of arbitrary comparable data, comparison sorts are the only option.</div></div></div>
     <!-- Q5 -->
-    <div class="qcard" id="ov-q5"><div class="qcard-head"><span class="qnum">Q05</span><span class="qtag gotcha">GOTCHA</span><span class="qtext">Can two sorting algorithms have the same Big-O complexity but very different real-world performance? Give an example.</span><button class="qbtn" onclick="rcToggle('ov','ov-q5')">Show Answer</button></div><div class="qanswer" id="ov-q5-a"><div class="qa-label">Answer</div><div class="qa-body">Yes. Merge Sort and Quick Sort are both O(n log n) average case, but Quick Sort is typically 2–3× faster in practice due to better <strong>cache locality</strong> (accesses memory sequentially during partitioning) and smaller constant factors. Big-O hides constants — real performance depends on memory access patterns, recursion overhead, and hardware.</div></div></div>
+    <div class="qcard" id="ov-q5"><div class="qcard-head"><span class="qnum">Q05</span><span class="qtag def">DEF</span><span class="qtext">What is a <strong>stable sort</strong>? Which of the 7 comparison sorts are stable and which are unstable?</span><button class="qbtn" onclick="rcToggle('ov','ov-q5')">Show Answer</button></div><div class="qanswer" id="ov-q5-a"><div class="qa-label">Answer</div><div class="qa-body">A <strong>stable sort</strong> preserves the original relative order of elements with equal keys.<br><br><strong>Stable:</strong> Insertion Sort, Bubble Sort, Merge Sort<br><strong>Unstable:</strong> Selection Sort, Shell Sort, Quick Sort, Heap Sort<div class="qa-eg"><span class="qa-eg-label">Memory trick:</span> "IBM stable" — Insertion, Bubble, Merge are stable. The 4 unstable ones are the remaining 4.</div></div></div></div>
+    <!-- Q6 -->
+    <div class="qcard" id="ov-q6"><div class="qcard-head"><span class="qnum">Q06</span><span class="qtag compare">COMPARE</span><span class="qtext">What separates the simple O(n²) sorts from the O(n log n) sorts structurally?</span><button class="qbtn" onclick="rcToggle('ov','ov-q6')">Show Answer</button></div><div class="qanswer" id="ov-q6-a"><div class="qa-label">Answer</div><div class="qa-body">O(n²) sorts (Selection, Insertion, Bubble) process elements <strong>one at a time against a linear scan</strong> — the inner work is proportional to n per element. O(n log n) sorts (Shell, Merge, Quick, Heap) use <strong>divide-and-conquer, gap strategies, or heap structures</strong> that reduce the number of comparisons logarithmically per element.</div></div></div>
+    <!-- Q7 -->
+    <div class="qcard" id="ov-q7"><div class="qcard-head"><span class="qnum">Q07</span><span class="qtag gotcha">GOTCHA</span><span class="qtext">Why is Ω(n log n) the proven lower bound for comparison-based sorting? Can any comparison sort ever be O(n)?</span><button class="qbtn" onclick="rcToggle('ov','ov-q7')">Show Answer</button></div><div class="qanswer" id="ov-q7-a"><div class="qa-label">Answer</div><div class="qa-body">No comparison sort can be O(n) in the worst case. The proof uses a <strong>decision tree</strong> argument: sorting n elements requires distinguishing between n! possible orderings. A binary decision tree (each comparison has 2 outcomes) needs at least log₂(n!) leaves ≈ n log n levels. Any algorithm must make at least this many comparisons — so Ω(n log n) is unavoidable for comparison sorts.<div class="qa-eg"><span class="qa-eg-label">Index-based sorts bypass this</span> because they don't compare elements — they use values directly as indices, so the decision tree argument doesn't apply.</div></div></div></div>
   </div><!-- end overview-rc -->
 </div>
 
