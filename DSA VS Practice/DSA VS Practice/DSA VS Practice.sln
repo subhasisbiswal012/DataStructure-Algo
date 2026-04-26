@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2. Searching Algorithms", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3. Sorting Algoritms", "..\3. Sorting Algoritms\3. Sorting Algoritms.csproj", "{9204A021-A2DA-4AF2-8929-CEA7D05572C4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "4. Linked List", "..\4. Linked List\4. Linked List.csproj", "{6A2156BA-BC9D-40F0-A592-169EB699D45D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{9204A021-A2DA-4AF2-8929-CEA7D05572C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9204A021-A2DA-4AF2-8929-CEA7D05572C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9204A021-A2DA-4AF2-8929-CEA7D05572C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A2156BA-BC9D-40F0-A592-169EB699D45D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A2156BA-BC9D-40F0-A592-169EB699D45D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A2156BA-BC9D-40F0-A592-169EB699D45D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A2156BA-BC9D-40F0-A592-169EB699D45D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

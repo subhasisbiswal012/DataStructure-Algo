@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linked List — KnowledgeForge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/csharp.min.js"></script>
+<style>
+:root{
+  --bg:#0d0d0f;--surface:#141417;--card:#1a1a1f;--border:#2a2a32;
+  --accent:#c8f060;--accent2:#60c8f0;--accent3:#f060c8;
+  --text:#f0ede8;--muted:#6b6878;--danger:#f06060;--success:#60f0a0;
+  --warn:#f0c860;--node-data:#1e2a3a;--node-ptr:#1a2a1a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background-color:var(--bg);background-image:linear-gradient(rgba(200,240,96,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(200,240,96,.018) 1px,transparent 1px);background-size:40px 40px;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:.9rem;line-height:1.7;min-height:100vh;}
+
+/* ── HEADER ── */
+header{position:sticky;top:0;z-index:200;background:rgba(13,13,15,.97);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:.75rem 2rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+.logo{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;white-space:nowrap;}
+.logo span{color:var(--accent);}
+.header-nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1;}
+.header-nav::-webkit-scrollbar{display:none;}
+.nav-btn{font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;padding:.35rem .85rem;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;white-space:nowrap;}
+.nav-btn:hover{color:var(--text);border-color:var(--muted);}
+.nav-btn.active{background:var(--accent);color:#0d0d0f;border-color:var(--accent);}
+
+/* ── PAGES ── */
+.page{display:none;visibility:hidden;position:absolute;left:-9999px;}
+.page.active{display:block;visibility:visible;position:static;left:auto;}
+.inner{max-width:940px;margin:0 auto;padding:2.5rem 2rem;}
+
+/* ── SUB-TABS ── */
+.sub-tabs{display:flex;gap:6px;margin-bottom:1.8rem;border-bottom:1px solid var(--border);padding-bottom:.6rem;}
+.stab{font-family:'Syne',sans-serif;font-size:.74rem;font-weight:700;padding:.33rem .88rem;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;}
+.stab.active{background:var(--accent);color:#0d0d0f;border-color:var(--accent);}
+.stab:hover:not(.active){color:var(--text);border-color:var(--muted);}
+.spanel{display:none;}
+.spanel.active{display:block;}
+
+/* ── TYPOGRAPHY ── */
+h1.ptitle{font-family:'Syne',sans-serif;font-size:1.85rem;font-weight:800;color:var(--text);margin-bottom:.3rem;line-height:1.2;}
+.psub{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--muted);margin-bottom:2rem;}
+h2{font-family:'Syne',sans-serif;font-size:1.18rem;font-weight:800;color:var(--accent);border-bottom:1px solid rgba(200,240,96,.18);padding-bottom:.38rem;margin:2.4rem 0 1rem;}
+h3{font-family:'Syne',sans-serif;font-size:.92rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .45rem;}
+p{color:#ccc;font-size:.85rem;margin-bottom:.7rem;}
+ul,ol{padding-left:1.4rem;color:#ccc;font-size:.85rem;}
+li{margin-bottom:.3rem;}
+strong{color:var(--text);}
+.divider{border:none;border-top:1px solid var(--border);margin:2.2rem 0;}
+code{font-family:'DM Mono',monospace;font-size:.78rem;background:rgba(42,42,50,.8);padding:.06rem .32rem;border-radius:3px;color:var(--accent2);}
+
+/* ── CALLOUTS ── */
+.callout{padding:.78rem 1.1rem;border-radius:7px;font-size:.84rem;margin:.9rem 0;line-height:1.65;}
+.tip{border-left:3px solid var(--accent);background:rgba(200,240,96,.05);color:#ccc;}
+.warning{border-left:3px solid var(--accent3);background:rgba(240,96,200,.05);color:#ccc;}
+.rule{border-left:3px solid var(--accent2);background:rgba(96,200,240,.05);color:#ccc;}
+.info{border-left:3px solid var(--warn);background:rgba(240,200,96,.05);color:#ccc;}
+
+/* ── CODE BLOCKS ── */
+.cb{background:var(--card);border:1px solid var(--border);border-radius:7px;margin:1rem 0;overflow:hidden;}
+.cb-head{display:flex;justify-content:space-between;align-items:center;padding:.38rem .78rem;border-bottom:1px solid var(--border);}
+.cb-lang{font-family:'DM Mono',monospace;font-size:.67rem;color:var(--muted);text-transform:uppercase;}
+.cp{font-family:'DM Mono',monospace;font-size:.67rem;color:var(--muted);background:transparent;border:1px solid var(--border);padding:.16rem .46rem;border-radius:4px;cursor:pointer;transition:all .2s;}
+.cp:hover{color:var(--text);border-color:var(--muted);}
+.cb pre{margin:0;}
+.cb pre code{font-family:'DM Mono',monospace;font-size:.78rem;padding:.85rem 1rem !important;display:block;background:transparent!important;}
+
+/* ── TABLES ── */
+table{width:100%;border-collapse:collapse;margin:.9rem 0;font-size:.81rem;}
+thead th{font-family:'Syne',sans-serif;font-size:.67rem;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);background:var(--card);padding:.58rem .95rem;text-align:left;border:1px solid var(--border);}
+tbody tr:nth-child(odd){background:var(--surface);}
+tbody tr:nth-child(even){background:var(--bg);}
+tbody td{padding:.55rem .95rem;border:1px solid var(--border);color:#ccc;vertical-align:top;}
+.badge{display:inline-block;font-family:'DM Mono',monospace;font-size:.67rem;padding:.1rem .36rem;border-radius:3px;font-weight:500;}
+.b-green{background:rgba(96,240,160,.12);color:var(--success);}
+.b-red{background:rgba(240,96,96,.12);color:var(--danger);}
+.b-blue{background:rgba(96,200,240,.12);color:var(--accent2);}
+.b-yellow{background:rgba(240,200,96,.12);color:var(--warn);}
+
+/* ── LINKED LIST GRAPHICAL VIEW ── */
+.ll-viz{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem 1.6rem;margin:1.2rem 0;overflow-x:auto;}
+.ll-title{font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem;}
+.ll-row{display:flex;align-items:center;gap:0;flex-wrap:nowrap;min-width:max-content;}
+.ll-head-ptr{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--accent3);margin-right:.5rem;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.ll-head-ptr .ptr-label{font-size:.65rem;color:var(--accent3);}
+.ll-arrow{color:var(--accent);font-size:1.1rem;margin:0 2px;padding-bottom:8px;}
+.ll-null{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--muted);padding:0 .4rem;padding-bottom:8px;}
+.ll-node{display:flex;flex-direction:column;align-items:stretch;border:2px solid var(--border);border-radius:6px;overflow:hidden;min-width:72px;}
+.ll-node.head-node{border-color:var(--accent3);}
+.ll-node.tail-node{border-color:var(--accent2);}
+.ll-node .nd{background:var(--node-data);padding:.28rem .5rem;font-family:'DM Mono',monospace;font-size:.82rem;font-weight:500;color:var(--accent2);text-align:center;border-bottom:1px solid var(--border);}
+.ll-node .np{background:var(--node-ptr);padding:.22rem .5rem;font-family:'DM Mono',monospace;font-size:.65rem;color:var(--success);text-align:center;}
+.ll-node .np.null-ptr{color:var(--danger);}
+.ll-legend{display:flex;gap:1rem;flex-wrap:wrap;margin-top:.85rem;}
+.ll-legend-item{display:flex;align-items:center;gap:.35rem;font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);}
+.ll-legend-box{width:12px;height:12px;border-radius:2px;}
+
+/* ── MEMORY VIEW ── */
+.mem-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.6rem;margin:1rem 0;}
+.mem-cell{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:.6rem .8rem;font-family:'DM Mono',monospace;font-size:.72rem;}
+.mem-addr{color:var(--warn);font-size:.65rem;margin-bottom:.2rem;}
+.mem-data{color:var(--accent2);font-size:.85rem;font-weight:500;}
+.mem-ptr{color:var(--success);font-size:.65rem;margin-top:.15rem;}
+
+/* ── METHOD CARDS ── */
+.method-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.75rem;margin:1.2rem 0;}
+.mcard{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.1rem;cursor:pointer;transition:border-color .2s,background .2s;text-decoration:none;display:block;}
+.mcard:hover{border-color:var(--accent);background:rgba(200,240,96,.04);}
+.mcard-sig{font-family:'DM Mono',monospace;font-size:.8rem;color:var(--accent2);margin-bottom:.35rem;}
+.mcard-desc{font-size:.8rem;color:#bbb;margin-bottom:.5rem;}
+.mcard-foot{display:flex;gap:.4rem;flex-wrap:wrap;}
+.mcard-go{font-family:'Syne',sans-serif;font-size:.65rem;font-weight:700;color:var(--accent);background:rgba(200,240,96,.1);border:1px solid rgba(200,240,96,.25);padding:.12rem .45rem;border-radius:3px;margin-top:.2rem;display:inline-block;}
+.mcard-extra{border-color:rgba(240,200,96,.3);background:rgba(240,200,96,.03);}
+.mcard-extra .mcard-sig{color:var(--warn);}
+
+/* ── COMPLEXITY PILLS ── */
+.cx-row{display:flex;gap:.6rem;flex-wrap:wrap;margin:.6rem 0;}
+.cx-pill{font-family:'DM Mono',monospace;font-size:.72rem;padding:.2rem .55rem;border-radius:4px;border:1px solid var(--border);}
+.cx-best .cx-pill{color:var(--success);border-color:rgba(96,240,160,.3);background:rgba(96,240,160,.08);}
+.cx-avg .cx-pill{color:var(--accent);border-color:rgba(200,240,96,.3);background:rgba(200,240,96,.08);}
+.cx-worst .cx-pill{color:var(--danger);border-color:rgba(240,96,96,.3);background:rgba(240,96,96,.08);}
+.cx-space .cx-pill{color:var(--accent2);border-color:rgba(96,200,240,.3);background:rgba(96,200,240,.08);}
+.cx-label{font-family:'Syne',sans-serif;font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-right:.3rem;}
+
+/* ── METHOD DETAIL SECTION ── */
+.method-detail{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;margin:1.4rem 0;overflow:hidden;}
+.md-head{padding:.85rem 1.2rem;background:rgba(200,240,96,.04);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;}
+.md-num{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);background:var(--surface);padding:.1rem .4rem;border-radius:3px;}
+.md-sig{font-family:'DM Mono',monospace;font-size:.9rem;color:var(--accent2);}
+.md-tag{font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;padding:.1rem .38rem;border-radius:3px;}
+.md-body{padding:1rem 1.2rem;}
+.step-list{list-style:none;padding:0;margin:.5rem 0;}
+.step-list li{display:flex;gap:.75rem;margin-bottom:.4rem;font-size:.83rem;color:#ccc;align-items:flex-start;}
+.step-num{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--accent);background:rgba(200,240,96,.1);border-radius:3px;padding:.05rem .32rem;flex-shrink:0;margin-top:.1rem;}
+
+/* ── ELI5 EXPLANATION BOXES ── */
+.eli5-box{background:linear-gradient(135deg,rgba(200,240,96,.06),rgba(96,200,240,.04));border:1px solid rgba(200,240,96,.25);border-radius:10px;padding:1.1rem 1.3rem;margin:.9rem 0;}
+.eli5-title{font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem;}
+.eli5-text{font-size:.88rem;color:var(--text);line-height:1.75;}
+.eli5-analogy{font-size:.84rem;color:#ccc;margin-top:.5rem;padding:.5rem .8rem;background:rgba(200,240,96,.04);border-left:2px solid var(--accent);border-radius:0 4px 4px 0;}
+
+/* ── POINTER FLOW DIAGRAM ── */
+.ptr-flow{display:flex;flex-direction:column;gap:.45rem;margin:.7rem 0;font-family:'DM Mono',monospace;font-size:.8rem;}
+.ptr-step{display:flex;align-items:flex-start;gap:.6rem;}
+.ptr-step-n{background:var(--accent);color:#0d0d0f;font-size:.65rem;font-weight:700;border-radius:3px;padding:.08rem .38rem;flex-shrink:0;margin-top:.12rem;}
+.ptr-step-code{color:var(--accent2);}
+.ptr-step-why{color:var(--muted);font-size:.76rem;margin-top:.12rem;}
+
+/* ── ELI5 BOX ── */
+.eli5{background:rgba(200,240,96,.06);border:1px solid rgba(200,240,96,.22);border-radius:9px;padding:1rem 1.2rem;margin:.8rem 0;}
+.eli5-lbl{font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem;}
+.eli5-txt{font-size:.88rem;color:var(--text);line-height:1.75;}
+.analogy{margin-top:.55rem;padding:.5rem .85rem;background:rgba(200,240,96,.04);border-left:2px solid rgba(200,240,96,.35);border-radius:0 5px 5px 0;font-size:.83rem;color:#ccc;font-style:italic;}
+/* ── POINTER FLOW ── */
+.pflow{margin:.75rem 0;display:flex;flex-direction:column;gap:.4rem;}
+.pstep{display:flex;gap:.65rem;align-items:flex-start;}
+.psn{font-family:'DM Mono',monospace;font-size:.66rem;font-weight:700;color:#0d0d0f;background:var(--accent);padding:.08rem .35rem;border-radius:3px;flex-shrink:0;margin-top:.15rem;}
+.psn.red{background:var(--danger);color:#fff;}
+.pscode{font-family:'DM Mono',monospace;font-size:.8rem;color:var(--accent2);}
+.pswhy{font-size:.78rem;color:var(--muted);margin-top:.08rem;}
+/* ── MINI NODE DIAGRAM ── */
+.node-chain{display:flex;align-items:center;gap:0;overflow-x:auto;padding:.6rem 0;flex-wrap:nowrap;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.8rem 1rem;margin:.7rem 0;}
+.nd-box{border-radius:5px;overflow:hidden;border:1px solid var(--border);display:inline-flex;flex-direction:column;flex-shrink:0;min-width:52px;}
+.nd-box.hl{border:2px solid var(--accent);}
+.nd-box.hl-red{border:2px solid var(--danger);}
+.nd-box.hl-green{border:2px solid var(--success);}
+.nd-val{font-family:'DM Mono',monospace;font-size:.82rem;font-weight:500;padding:.25rem .5rem;text-align:center;background:#1e2a3a;color:var(--accent2);}
+.nd-ptr{font-family:'DM Mono',monospace;font-size:.6rem;padding:.15rem .4rem;text-align:center;background:#1a2a1a;color:var(--success);}
+.nd-ptr.null-p{color:var(--danger);}
+.nd-arr{color:var(--accent);font-size:1.1rem;padding:0 3px;margin-bottom:6px;flex-shrink:0;align-self:center;}
+.nd-null{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--muted);padding:0 4px;align-self:center;}
+.nd-lbl{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--accent3);text-align:center;margin-top:2px;}
+/* ── RECALL ── */
+.rc-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem;padding-bottom:.9rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:.6rem;}
+.rc-ctr{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--muted);}
+.rc-ctr span{color:var(--accent);font-weight:600;}
+.rc-bulk{display:flex;gap:.45rem;}
+.rcbtn{font-family:'Syne',sans-serif;font-size:.71rem;font-weight:700;padding:.28rem .65rem;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;}
+.rcbtn:hover{color:var(--text);border-color:var(--muted);}
+.qcard{background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:.6rem;overflow:hidden;transition:border-color .2s;}
+.qcard.revealed{border-color:rgba(200,240,96,.3);}
+.qhead{display:flex;align-items:flex-start;gap:.6rem;padding:.82rem .95rem;flex-wrap:wrap;}
+.qnum{font-family:'DM Mono',monospace;font-size:.67rem;color:var(--muted);flex-shrink:0;margin-top:.1rem;}
+.qtag{font-family:'Syne',sans-serif;font-size:.61rem;font-weight:700;padding:.11rem .38rem;border-radius:4px;flex-shrink:0;margin-top:.06rem;}
+.qtag.def    {background:rgba(96,200,240,.12);color:var(--accent2);}
+.qtag.apply  {background:rgba(200,240,96,.12);color:var(--accent);}
+.qtag.why    {background:rgba(240,96,200,.12);color:var(--accent3);}
+.qtag.compare{background:rgba(200,240,96,.12);color:var(--accent);}
+.qtag.gotcha {background:rgba(240,96,96,.12);color:var(--danger);}
+.qtag.trace  {background:rgba(240,200,96,.12);color:var(--warn);}
+.qtag.interview{background:rgba(96,240,160,.12);color:var(--success);}
+.qtext{font-size:.84rem;color:var(--text);flex:1;line-height:1.5;}
+.qbtn{font-family:'DM Mono',monospace;font-size:.68rem;padding:.25rem .58rem;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;flex-shrink:0;white-space:nowrap;}
+.qbtn.open{border-color:var(--accent);color:var(--accent);}
+.qans{border-top:1px solid var(--border);padding:.85rem .95rem;background:var(--surface);overflow:hidden;max-height:0;transition:max-height .35s ease;}
+.qans.open{max-height:4000px;}
+.qa-label{font-family:'Syne',sans-serif;font-size:.61rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:.42rem;}
+.qa-body{font-size:.82rem;color:#ccc;line-height:1.65;}
+.qa-body strong{color:var(--text);}
+.qa-body ul,.qa-body ol{padding-left:1.2rem;margin-top:.35rem;}
+.qa-body li{margin-bottom:.22rem;}
+.qa-body code{font-family:'DM Mono',monospace;font-size:.76rem;background:rgba(42,42,50,.7);padding:.04rem .3rem;border-radius:3px;color:var(--accent2);}
+.qa-eg{margin-top:.6rem;padding:.52rem .78rem;background:rgba(200,240,96,.04);border-left:2px solid rgba(200,240,96,.3);border-radius:0 4px 4px 0;font-size:.8rem;color:#ccc;}
+.qa-eg-lbl{font-family:'Syne',sans-serif;font-size:.61rem;font-weight:700;color:var(--accent);margin-right:.35rem;}
+
+@media(max-width:640px){
+  header{padding:.65rem 1rem;}
+  .inner{padding:1.5rem 1rem;}
+  .method-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Knowledge<span>Forge</span></div>
+  <nav class="header-nav">
+    <button class="nav-btn active" onclick="showPage('overview',this)">🏠 Overview</button>
+    <button class="nav-btn" onclick="showPage('csharp',this)">🔷 C# LinkedList&lt;T&gt;</button>
+    <button class="nav-btn" onclick="showPage('methods',this)">⚙️ Method Details</button>
+    <button class="nav-btn" onclick="showPage('custom',this)">🛠️ Custom Implementation</button>
+    <button class="nav-btn" onclick="showPage('complexity',this)">⏱️ Complexity</button>
+    <button class="nav-btn" onclick="showPage('recall',this)">🧠 Active Recall</button>
+  </nav>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 1 — OVERVIEW
+══════════════════════════════════════════════════════════════ -->
+<div class="page active" id="page-overview">
+<div class="inner">
+  <h1 class="ptitle">Linked List</h1>
+  <p class="psub">Dynamic node-chain · Non-contiguous memory · O(1) insert/delete at ends</p>
+
+  <div class="callout tip">💡 A linked list is a chain of <strong>nodes</strong>. Each node holds a <strong>data value</strong> and a <strong>pointer</strong> to the next node. Nodes live at random memory addresses — connected by references, not physical proximity.</div>
+
+  <h2>📐 Why Linked List?</h2>
+  <table>
+    <thead><tr><th>Problem with Arrays</th><th>How Linked List Solves It</th></tr></thead>
+    <tbody>
+      <tr><td>Fixed size — must know size at creation</td><td>Dynamic — nodes created on demand</td></tr>
+      <tr><td>Needs contiguous memory block</td><td>Nodes scattered anywhere in RAM</td></tr>
+      <tr><td>Inserting/deleting in middle requires shifting all elements → O(n)</td><td>Change two pointers → O(1) once position is found</td></tr>
+      <tr><td>Resizing creates an entirely new array</td><td>Just add or remove a node</td></tr>
+    </tbody>
+  </table>
+
+  <h2>🔗 Anatomy of a Node</h2>
+  <div class="ll-viz">
+    <div class="ll-title">Single Node Structure</div>
+    <div style="display:flex;align-items:center;gap:2rem;flex-wrap:wrap;">
+      <div class="ll-node" style="min-width:110px;">
+        <div class="nd" style="font-size:.9rem;padding:.4rem .7rem;">42</div>
+        <div class="np">0xB8F0012</div>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:.78rem;color:#ccc;line-height:2;">
+        <div><span style="color:var(--accent2);">Data field</span> — stores the actual value (int, string, object…)</div>
+        <div><span style="color:var(--success);">Pointer field</span> — holds the memory address of the <em>next</em> node</div>
+        <div style="color:var(--muted);margin-top:.4rem;">The pointer is NOT a physical arrow — it is a reference (address)</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>🔭 Graphical View — Linked List in Memory</h2>
+  <div class="ll-viz">
+    <div class="ll-title">LinkedList: 7 → 4 → 12 → 8 → 3</div>
+    <div class="ll-row">
+      <!-- HEAD pointer -->
+      <div class="ll-head-ptr">
+        <div class="ptr-label">HEAD</div>
+        <div style="color:var(--accent3);font-size:1rem;">↓</div>
+      </div>
+      <!-- Node 7 -->
+      <div class="ll-node head-node">
+        <div class="nd">7</div>
+        <div class="np">0x4120</div>
+      </div>
+      <div class="ll-arrow">→</div>
+      <!-- Node 4 -->
+      <div class="ll-node">
+        <div class="nd">4</div>
+        <div class="np">0x4125</div>
+      </div>
+      <div class="ll-arrow">→</div>
+      <!-- Node 12 -->
+      <div class="ll-node">
+        <div class="nd">12</div>
+        <div class="np">0x4132</div>
+      </div>
+      <div class="ll-arrow">→</div>
+      <!-- Node 8 -->
+      <div class="ll-node">
+        <div class="nd">8</div>
+        <div class="np">0x4140</div>
+      </div>
+      <div class="ll-arrow">→</div>
+      <!-- Node 3 (tail) -->
+      <div class="ll-node tail-node">
+        <div class="nd">3</div>
+        <div class="np null-ptr">null</div>
+      </div>
+      <!-- TAIL pointer -->
+      <div class="ll-head-ptr" style="margin-left:.5rem;">
+        <div style="color:var(--accent2);font-size:1rem;">↑</div>
+        <div class="ptr-label" style="color:var(--accent2);">TAIL</div>
+      </div>
+    </div>
+    <div class="ll-legend">
+      <div class="ll-legend-item"><div class="ll-legend-box" style="border:2px solid var(--accent3);"></div>Head node — first entry point</div>
+      <div class="ll-legend-item"><div class="ll-legend-box" style="border:2px solid var(--accent2);"></div>Tail node — last node, next=null</div>
+      <div class="ll-legend-item"><div class="ll-legend-box" style="background:var(--node-data);border:1px solid var(--border);"></div>Data field (value)</div>
+      <div class="ll-legend-item"><div class="ll-legend-box" style="background:var(--node-ptr);border:1px solid var(--border);"></div>Pointer field (next address)</div>
+    </div>
+  </div>
+
+  <h2>🗺️ Memory Reality — Nodes Are Scattered</h2>
+  <div class="callout rule">📌 Unlike arrays, linked list nodes do NOT need to be adjacent in memory. Each node can live at a completely random address. The pointer field stores the address of the next node, creating a logical chain across scattered locations.</div>
+
+  <div class="mem-grid">
+    <div class="mem-cell"><div class="mem-addr">Address: 0x4120</div><div class="mem-data">data = 7</div><div class="mem-ptr">next → 0x4125</div></div>
+    <div class="mem-cell"><div class="mem-addr">Address: 0x4125</div><div class="mem-data">data = 4</div><div class="mem-ptr">next → 0x4132</div></div>
+    <div class="mem-cell"><div class="mem-addr">Address: 0x4132</div><div class="mem-data">data = 12</div><div class="mem-ptr">next → 0x4140</div></div>
+    <div class="mem-cell"><div class="mem-addr">Address: 0x4140</div><div class="mem-data">data = 8</div><div class="mem-ptr">next → 0x4155</div></div>
+    <div class="mem-cell"><div class="mem-addr">Address: 0x4155</div><div class="mem-data">data = 3</div><div class="mem-ptr">next → null</div></div>
+  </div>
+
+  <h2>🔑 Core Rules</h2>
+  <ul>
+    <li><strong>Never lose the HEAD reference</strong> — losing head means losing access to the entire list. Always use a temporary pointer for traversal.</li>
+    <li><strong>TAIL reference is optional</strong> — having it makes <code>addLast()</code> O(1) instead of O(n). Without it, you must traverse to find the end.</li>
+    <li><strong>Traversal only goes forward</strong> — in a singly linked list you cannot go backward. To delete the last node you must traverse to the second-to-last.</li>
+    <li><strong>Last node always points to null</strong> — this is the termination condition for all traversal loops.</li>
+  </ul>
+
+  <h2>📚 Two Ways to Use Linked Lists in C#</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;">
+    <div class="callout tip" style="margin:0;cursor:pointer;" onclick="document.querySelector('[onclick*=csharp]').click()">
+      <strong>🔷 C# Built-in: LinkedList&lt;T&gt;</strong><br>
+      <code>System.Collections.Generic</code><br>
+      <span style="font-size:.78rem;color:var(--muted);">Doubly-linked, full-featured, production-ready. Use this in real code. → Click to explore</span>
+    </div>
+    <div class="callout info" style="margin:0;cursor:pointer;" onclick="document.querySelector('[onclick*=custom]').click()">
+      <strong>🛠️ Custom Implementation</strong><br>
+      Hand-built Node + LinkedList class<br>
+      <span style="font-size:.78rem;color:var(--muted);">From the course — singly-linked, educational. Understand the internals. → Click to explore</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 2 — C# BUILT-IN LinkedList<T>
+══════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-csharp">
+<div class="inner">
+  <h1 class="ptitle">C# Built-in <code>LinkedList&lt;T&gt;</code></h1>
+  <p class="psub">System.Collections.Generic · Doubly-linked · Generic · Production-ready</p>
+
+  <div class="callout rule">📌 C# provides a built-in <strong>doubly-linked list</strong> via <code>System.Collections.Generic.LinkedList&lt;T&gt;</code>. Every node is a <code>LinkedListNode&lt;T&gt;</code> with references to both <code>Next</code> and <code>Previous</code>. The list itself exposes <code>First</code> and <code>Last</code> sentinels. Click any method card below to jump to its detailed explanation.</div>
+
+  <div class="cb">
+    <div class="cb-head"><span class="cb-lang">csharp — setup</span><button class="cp" onclick="copyCode(this)">Copy</button></div>
+    <pre><code class="language-csharp">using System.Collections.Generic;
+
+LinkedList&lt;int&gt; list = new LinkedList&lt;int&gt;();
+// Or initialise with values:
+LinkedList&lt;string&gt; names = new LinkedList&lt;string&gt;(new[] { "Alice", "Bob", "Carol" });</code></pre>
+  </div>
+
+  <h2>🔷 Properties</h2>
+  <table>
+    <thead><tr><th>Property</th><th>Type</th><th>Description</th><th>Time</th></tr></thead>
+    <tbody>
+      <tr><td><code>Count</code></td><td><code>int</code></td><td>Number of nodes currently in the list</td><td><span class="badge b-green">O(1)</span></td></tr>
+      <tr><td><code>First</code></td><td><code>LinkedListNode&lt;T&gt;</code></td><td>First node (head) — null if empty</td><td><span class="badge b-green">O(1)</span></td></tr>
+      <tr><td><code>Last</code></td><td><code>LinkedListNode&lt;T&gt;</code></td><td>Last node (tail) — null if empty</td><td><span class="badge b-green">O(1)</span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>⚙️ All Methods — Quick Reference</h2>
+  <p>Click any card to jump to its full step-by-step explanation on the <strong>Method Details</strong> page.</p>
+
+  <h3>➕ Add Methods</h3>
+  <div class="method-grid">
+    <a class="mcard" onclick="goMethod('addFirst')">
+      <div class="mcard-sig">AddFirst(T value)</div>
+      <div class="mcard-desc">Inserts a new node containing <em>value</em> at the start of the list. Returns the new node.</div>
+      <div class="mcard-foot"><span class="badge b-green">O(1)</span> <span class="mcard-go">→ See details</span></div>
+    </a>
+    <a class="mcard" onclick="goMethod('addFirst2')">
+      <div class="mcard-sig">AddFirst(LinkedListNode&lt;T&gt; node)</div>
+      <div class="mcard-desc">Inserts an existing (detached) node at the start. Throws if node already belongs to a list.</div>
+      <div class="mcard-foot"><span class="badge b-green">O(1)</span> <span class="mcard-go">→ See details</span></div>
+    </a>
+    <a class="mcard" onclick="goMethod('addLast')">
+      <div class="mcard-sig">AddLast(T value)</div>
+      <div class="mcard-desc">Inserts a new node at the end of the list. Returns the new node.</div>
+      <div class="mcard-foot"><span class="badge b-green">O(1)</span> <span class="mcard-go">→ See details</span></div>
+    </a>
+    <a class="mcard" onclick="goMethod('addLast2')">
+      <div class="mcard-sig">AddLast(LinkedListNode&lt;T&gt; node)</div>
+      <div class="mcard-desc">Inserts an existing detached node at the end.</div>
+      <div class="mcard-foot"><span class="badge b-green">O(1)</span> <span class="mcard-go">→ See details</span></div>
+    </a>
+    <a class="mcard" onclick="goMethod('addBefore')">
+      <div class="mcard-sig">AddBefore(LinkedListNode&lt;T&gt; node, T value)</div>
+      <div class="mcard-desc">Inserts a new value immediately before the specified node.</div>
+      <div class="mcard-foot"><span class="badge b-green">O(1)</span> <span class="mcard-go">→ See details</span></div>
+    </a>
+    <a class="mcard" onclick="goMethod('addAfter')">
+      <div class="mcard-sig">AddAfter(LinkedListNode&lt;T&gt; node, T value)</div>
+      <div class="mcard-desc">Inserts a new value immediately after the specified node.</div>
+      <div class="mcard-foot"><span class="badge b-green">O(1)</span> <span class="mcard-go">→ See details</span></div>
+    </a>
+  </div>
+
+  <h3>➖ Remove Methods</h3>
+  <div class="method-grid">
+    <a class="mcard" onclick="goMethod('removeFirst')">
+      <div class="mcard-sig">RemoveFirst()</div>
+      <div class="mcard-desc">Removes the first node. Throws InvalidOperationException if list is empty.</div>
+      <div class="mcard-foot"><span class="badge b-green">O(1)</span> <span class="mcard-go">→ See details</span></div>
+    </a>
+    <a class="mcard" onclick="goMethod('removeLast')">
+      <div class="mcard-sig">RemoveLast()</div>
+      <div class="mcard-desc">Removes the last node. O(1) because the list is doubly-linked (has direct tail reference).</div>
+      <div class="mcard-foot"><span class="badge b-green">O(1)</span> <span class="mcard-go">→ See details</span></div>
+    </a>
+    <a class="mcard" onclick="goMethod('removeVal')">
+      <div class="mcard-sig">Remove(T value)</div>
+      <div class="mcard-desc">Finds the first node with matching value and removes it. Returns true if found.</div>
+      <div class="mcard-foot"><span class="badge b-red">O(n)</span> <span class="mcard-go">→ See details</span></div>
+    </a>
+    <a class="mcard" onclick="goMethod('removeNode')">
+      <div class="mcard-sig">Remove(LinkedListNode&lt;T&gt; node)</div>
+      <div class="mcard-desc">Removes the specified node directly. O(1) because no search needed.</div>
+      <div class="mcard-foot"><span class="badge b-green">O(1)</span> <span class="mcard-go">→ See details</span></div>
+    </a>
+    <a class="mcard" onclick="goMethod('clear')">
+      <div class="mcard-sig">Clear()</div>
+      <div class="mcard-desc">Removes all nodes and sets Count to zero. Invalidates all existing node references.</div>
+      <div class="mcard-foot"><span class="badge b-red">O(n)</span> <span class="mcard-go">→ See details</span></div>
+    </a>
+  </div>
+
+  <h3>🔍 Search / Query Methods</h3>
+  <div class="method-grid">
+    <a class="mcard" onclick="goMethod('find')">
+      <div class="mcard-sig">Find(T value)</div>
+      <div class="mcard-desc">Returns the first LinkedListNode&lt;T&gt; whose value matches. Returns null if not found. Searches from head.</div>
+      <div class="mcard-foot"><span class="badge b-red">O(n)</span> <span class="mcard-go">→ See details</span></div>
+    </a>
+    <a class="mcard" onclick="goMethod('findLast')">
+      <div class="mcard-sig">FindLast(T value)</div>
+      <div class="mcard-desc">Returns the last node whose value matches. Searches from tail backwards (doubly-linked advantage).</div>
+      <div class="mcard-foot"><span class="badge b-red">O(n)</span> <span class="mcard-go">→ See details</span></div>
+    </a>
+    <a class="mcard" onclick="goMethod('contains')">
+      <div class="mcard-sig">Contains(T value)</div>
+      <div class="mcard-desc">Returns true if any node holds the given value. Internally calls Find().</div>
+      <div class="mcard-foot"><span class="badge b-red">O(n)</span> <span class="mcard-go">→ See details</span></div>
+    </a>
+  </div>
+
+  <h3>📋 Copy / Enumeration</h3>
+  <div class="method-grid">
+    <a class="mcard" onclick="goMethod('copyTo')">
+      <div class="mcard-sig">CopyTo(T[] array, int index)</div>
+      <div class="mcard-desc">Copies all node values into an existing array starting at index. Array must be pre-allocated with enough space.</div>
+      <div class="mcard-foot"><span class="badge b-red">O(n)</span> <span class="mcard-go">→ See details</span></div>
+    </a>
+    <a class="mcard" onclick="goMethod('getenumerator')">
+      <div class="mcard-sig">GetEnumerator()</div>
+      <div class="mcard-desc">Returns an enumerator for use in foreach loops. Iterates from First to Last.</div>
+      <div class="mcard-foot"><span class="badge b-red">O(n) per full pass</span> <span class="mcard-go">→ See details</span></div>
+    </a>
+  </div>
+
+  <h3>🟡 Extra Methods (Not in Built-in — From Course Custom Implementation)</h3>
+  <div class="callout info">💡 The following methods are from the <strong>custom linked list implementation</strong> in the course. They are <em>not</em> part of C#'s built-in <code>LinkedList&lt;T&gt;</code>.</div>
+  <div class="method-grid">
+    <a class="mcard mcard-extra" onclick="goMethod('addAny')">
+      <div class="mcard-sig">addAny(int element, int position)</div>
+      <div class="mcard-desc">Insert at an arbitrary 1-based position. Validates range, traverses to position-1, rewires pointers.</div>
+      <div class="mcard-foot"><span class="badge b-red">O(n)</span> <span class="mcard-go">→ See details</span></div>
+    </a>
+    <a class="mcard mcard-extra" onclick="goMethod('removeAny')">
+      <div class="mcard-sig">removeAny(int position)</div>
+      <div class="mcard-desc">Delete node at arbitrary 1-based position. Traverses to position-1, bypasses target node.</div>
+      <div class="mcard-foot"><span class="badge b-red">O(n)</span> <span class="mcard-go">→ See details</span></div>
+    </a>
+    <a class="mcard mcard-extra" onclick="goMethod('insertSorted')">
+      <div class="mcard-sig">insertSorted(int element)</div>
+      <div class="mcard-desc">Inserts into a sorted list maintaining ascending order. Uses two pointers (p, q) to find correct position.</div>
+      <div class="mcard-foot"><span class="badge b-red">O(n)</span> <span class="mcard-go">→ See details</span></div>
+    </a>
+    <a class="mcard mcard-extra" onclick="goMethod('display')">
+      <div class="mcard-sig">display()</div>
+      <div class="mcard-desc">Traverses from head to null printing each element with "→" separator. Equivalent to ToString().</div>
+      <div class="mcard-foot"><span class="badge b-red">O(n)</span> <span class="mcard-go">→ See details</span></div>
+    </a>
+    <a class="mcard mcard-extra" onclick="goMethod('search')">
+      <div class="mcard-sig">search(int key)</div>
+      <div class="mcard-desc">Returns the 0-based index of first occurrence of key, or -1 if not found.</div>
+      <div class="mcard-foot"><span class="badge b-red">O(n)</span> <span class="mcard-go">→ See details</span></div>
+    </a>
+  </div>
+
+  <h2>🔷 LinkedListNode&lt;T&gt; — The Node Object</h2>
+  <p>Every element in <code>LinkedList&lt;T&gt;</code> is wrapped in a <code>LinkedListNode&lt;T&gt;</code> which exposes:</p>
+  <table>
+    <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>Value</code></td><td><code>T</code></td><td>The data stored in this node</td></tr>
+      <tr><td><code>Next</code></td><td><code>LinkedListNode&lt;T&gt;</code></td><td>Reference to next node (null if last)</td></tr>
+      <tr><td><code>Previous</code></td><td><code>LinkedListNode&lt;T&gt;</code></td><td>Reference to previous node (null if first) — doubly-linked advantage</td></tr>
+      <tr><td><code>List</code></td><td><code>LinkedList&lt;T&gt;</code></td><td>The list this node belongs to (null if detached)</td></tr>
+    </tbody>
+  </table>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 3 — METHOD DETAILS
+══════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-methods">
+<div class="inner">
+  <h1 class="ptitle">Method Details — Step by Step</h1>
+  <p class="psub">Every method explained like you're 5 · Analogies · Pointer diagrams · Full C# code</p>
+
+  <div class="callout tip">🚂 <strong>The Train Analogy</strong> — Think of a linked list as a train. Each <strong>carriage = node</strong>. Each carriage knows its own value AND which carriage comes next. HEAD = the engine (first car). TAIL = the last car. null = end of track — no more carriages.</div>
+
+  <!-- M01 ──────────────────────────────────────────── -->
+  <div class="method-detail" id="md-addFirst">
+    <div class="md-head">
+      <span class="md-num">M01</span>
+      <span class="md-sig">AddFirst(T value)</span>
+      <span class="badge b-green">O(1)</span>
+      <span class="md-tag badge b-blue">Built-in</span>
+    </div>
+    <div class="md-body">
+      <div class="eli5">
+        <div class="eli5-lbl">🧒 ELI5 — What does it do?</div>
+        <div class="eli5-txt">Adds a new value at the <strong>very beginning</strong> of the list. Whatever was first before is now second.</div>
+        <div class="analogy">🚂 You attach a new engine car to the <em>front</em> of the train. The old front car becomes car #2. No other car moves — just the "who is first?" label changes to the new car.</div>
+      </div>
+
+      <h3>How it works — pointer by pointer</h3>
+      <div class="pflow">
+        <div class="pstep"><span class="psn">1</span><div><div class="pscode">Node newest = new Node(7, null);</div><div class="pswhy">Create a brand-new node. Data = 7. Next pointer = null (pointing nowhere yet).</div></div></div>
+        <div class="pstep"><span class="psn">2</span><div><div class="pscode">if (list is empty) → First = Last = newest</div><div class="pswhy">Special case: the very first item ever added is both head AND tail simultaneously.</div></div></div>
+        <div class="pstep"><span class="psn">3</span><div><div class="pscode">newest.Next = First; (new node → old first)</div><div class="pswhy">Point the new node's Next arrow at whatever used to be first. The chain is preserved.</div></div></div>
+        <div class="pstep"><span class="psn">4</span><div><div class="pscode">First.Previous = newest; (doubly-linked backward link)</div><div class="pswhy">C#'s built-in is doubly-linked, so the old first node also gets a "look-back" arrow to the new node.</div></div></div>
+        <div class="pstep"><span class="psn">5</span><div><div class="pscode">First = newest; Count++;</div><div class="pswhy">Move the HEAD label to the new node. Increment counter. Done.</div></div></div>
+      </div>
+
+      <h3>Before → After diagram</h3>
+      <div class="node-chain">
+        <span style="font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);margin-right:.4rem;">BEFORE:</span>
+        <div class="nd-box hl-red"><div class="nd-val">4</div><div class="nd-ptr">→12</div></div>
+        <span class="nd-arr">→</span>
+        <div class="nd-box"><div class="nd-val">12</div><div class="nd-ptr null-p">null</div></div>
+      </div>
+      <div class="node-chain">
+        <span style="font-family:'DM Mono',monospace;font-size:.68rem;color:var(--accent);margin-right:.4rem;">AFTER AddFirst(7):</span>
+        <div class="nd-box hl"><div class="nd-val" style="color:var(--accent);">7</div><div class="nd-ptr">→4</div></div>
+        <span class="nd-arr">→</span>
+        <div class="nd-box"><div class="nd-val">4</div><div class="nd-ptr">→12</div></div>
+        <span class="nd-arr">→</span>
+        <div class="nd-box"><div class="nd-val">12</div><div class="nd-ptr null-p">null</div></div>
+        <span class="nd-null" style="margin-left:.5rem;color:var(--accent);font-style:italic;font-size:.7rem;">← 7 is new HEAD</span>
+      </div>
+
+      <div class="cb"><div class="cb-head"><span class="cb-lang">csharp</span><button class="cp" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-csharp">var list = new LinkedList&lt;int&gt;();
+list.AddLast(4);
+list.AddLast(12);
+// list is now: 4 → 12
+
+LinkedListNode&lt;int&gt; newNode = list.AddFirst(7);
+// list is now: 7 → 4 → 12
+
+Console.WriteLine(list.First.Value);  // 7  ← new front
+Console.WriteLine(list.Count);        // 3
+Console.WriteLine(newNode.Value);     // 7  ← method returns the new node</code></pre></div>
+
+      <div class="callout tip">💡 <strong>Why always O(1)?</strong> No matter if the list has 5 or 5 million items — you only ever touch 3 pointer assignments. The work never grows. That's what O(1) means.</div>
+      <div class="cx-row"><span class="cx-label">Time</span><span class="cx-best cx-pill">O(1) always</span><span class="cx-label" style="margin-left:.6rem;">Space</span><span class="cx-space cx-pill">O(1) — 1 new node only</span></div>
+    </div>
+  </div>
+
+  <!-- M02 ──────────────────────────────────────────── -->
+  <div class="method-detail" id="md-addLast" style="border-left-color:var(--accent2);">
+    <div class="md-head">
+      <span class="md-num">M02</span>
+      <span class="md-sig">AddLast(T value)</span>
+      <span class="badge b-green">O(1)</span>
+      <span class="md-tag badge b-blue">Built-in</span>
+    </div>
+    <div class="md-body">
+      <div class="eli5">
+        <div class="eli5-lbl">🧒 ELI5 — What does it do?</div>
+        <div class="eli5-txt">Adds a new value at the <strong>very end</strong> of the list. Everything else stays in place.</div>
+        <div class="analogy">🚂 You hook a new cargo car onto the <em>back</em> of the train. The old last car now links forward to the new one. The TAIL label moves to the new car.</div>
+      </div>
+
+      <h3>How it works — pointer by pointer</h3>
+      <div class="pflow">
+        <div class="pstep"><span class="psn">1</span><div><div class="pscode">Node newest = new Node(value, null);</div><div class="pswhy">New node, Next=null — it will be the last, so nothing comes after it yet.</div></div></div>
+        <div class="pstep"><span class="psn">2</span><div><div class="pscode">if (empty) → First = Last = newest</div><div class="pswhy">First item — it is simultaneously head and tail.</div></div></div>
+        <div class="pstep"><span class="psn">3</span><div><div class="pscode">Last.Next = newest; (old tail → new node)</div><div class="pswhy">The old last node's forward arrow points to the new node.</div></div></div>
+        <div class="pstep"><span class="psn">4</span><div><div class="pscode">newest.Previous = Last; (doubly-linked backward link)</div><div class="pswhy">New node looks back at the old tail.</div></div></div>
+        <div class="pstep"><span class="psn">5</span><div><div class="pscode">Last = newest; Count++;</div><div class="pswhy">Move the TAIL label to the new node.</div></div></div>
+      </div>
+
+      <div class="callout rule">📌 <strong>Why O(1) and not O(n)?</strong> Because we keep a direct <code>Last</code> pointer. Without it, we'd walk every single node to reach the end — O(n). The TAIL pointer is the secret that makes append fast.</div>
+
+      <div class="cb"><div class="cb-head"><span class="cb-lang">csharp</span><button class="cp" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-csharp">var list = new LinkedList&lt;int&gt;();
+list.AddLast(7);    // list: 7             First=Last=node(7)
+list.AddLast(4);    // list: 7 → 4         Last moves to node(4)
+list.AddLast(12);   // list: 7 → 4 → 12   Last moves to node(12)
+
+Console.WriteLine(list.Last.Value);  // 12  ← tail
+Console.WriteLine(list.Count);       // 3</code></pre></div>
+      <div class="cx-row"><span class="cx-label">Time</span><span class="cx-best cx-pill">O(1) always</span><span class="cx-label" style="margin-left:.6rem;">Space</span><span class="cx-space cx-pill">O(1)</span></div>
+    </div>
+  </div>
+
+  <!-- M03 ──────────────────────────────────────────── -->
+  <div class="method-detail" id="md-addBefore" style="border-left-color:var(--warn);">
+    <div class="md-head">
+      <span class="md-num">M03</span>
+      <span class="md-sig">AddBefore(node, value) / AddAfter(node, value)</span>
+      <span class="badge b-green">O(1)</span>
+      <span class="md-tag badge b-blue">Built-in</span>
+    </div>
+    <div class="md-body">
+      <div class="eli5">
+        <div class="eli5-lbl">🧒 ELI5 — What does it do?</div>
+        <div class="eli5-txt">You already have your hand on a specific carriage. <strong>AddBefore</strong> squeezes a new car in front of it. <strong>AddAfter</strong> squeezes one in behind it. Only 4 pointer wires are changed — nothing else moves.</div>
+        <div class="analogy">🔗 Like cutting a chain at one link and inserting a new link in the gap. You need to hold the exact spot (node reference) — if you only knew "it's the 3rd one," you'd need to walk there first (O(n)), but once you're holding it, the insert is instant (O(1)).</div>
+      </div>
+
+      <h3>AddBefore — pointer steps</h3>
+      <div class="pflow">
+        <div class="pstep"><span class="psn">1</span><div><div class="pscode">Create newest node</div><div class="pswhy">Fresh node, both pointers null for now.</div></div></div>
+        <div class="pstep"><span class="psn">2</span><div><div class="pscode">newest.Next = node;  newest.Previous = node.Previous;</div><div class="pswhy">New node's forward arrow → target. New node's backward arrow → predecessor.</div></div></div>
+        <div class="pstep"><span class="psn">3</span><div><div class="pscode">node.Previous.Next = newest;</div><div class="pswhy">Predecessor's forward arrow → new node (was pointing at target before).</div></div></div>
+        <div class="pstep"><span class="psn">4</span><div><div class="pscode">node.Previous = newest;</div><div class="pswhy">Target's backward arrow → new node.</div></div></div>
+        <div class="pstep"><span class="psn">5</span><div><div class="pscode">if (node was First) → First = newest; Count++;</div><div class="pswhy">If we inserted before the head, update HEAD.</div></div></div>
+      </div>
+
+      <h3>Before → After diagram (AddBefore node30, 20)</h3>
+      <div class="node-chain">
+        <span style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted);margin-right:.3rem;">BEFORE:</span>
+        <div class="nd-box"><div class="nd-val">10</div><div class="nd-ptr">→30</div></div>
+        <span class="nd-arr">↔</span>
+        <div class="nd-box hl-red"><div class="nd-val" style="color:var(--danger);">30</div><div class="nd-ptr">→40</div></div>
+        <span class="nd-arr">↔</span>
+        <div class="nd-box"><div class="nd-val">40</div><div class="nd-ptr null-p">null</div></div>
+        <span class="nd-null" style="font-size:.65rem;color:var(--danger);">← target</span>
+      </div>
+      <div class="node-chain">
+        <span style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--accent);margin-right:.3rem;">AFTER:</span>
+        <div class="nd-box"><div class="nd-val">10</div><div class="nd-ptr">→20</div></div>
+        <span class="nd-arr">↔</span>
+        <div class="nd-box hl"><div class="nd-val" style="color:var(--accent);">20</div><div class="nd-ptr">→30</div></div>
+        <span class="nd-arr">↔</span>
+        <div class="nd-box"><div class="nd-val">30</div><div class="nd-ptr">→40</div></div>
+        <span class="nd-arr">↔</span>
+        <div class="nd-box"><div class="nd-val">40</div><div class="nd-ptr null-p">null</div></div>
+      </div>
+
+      <div class="callout warning">⚠️ <strong>You MUST have the node object, not just the value.</strong> Call <code>Find(30)</code> first to get the node, then pass that into AddBefore. Also: passing a node from a DIFFERENT list throws <code>InvalidOperationException</code>.</div>
+
+      <div class="cb"><div class="cb-head"><span class="cb-lang">csharp</span><button class="cp" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-csharp">var list = new LinkedList&lt;int&gt;(new[] { 10, 30, 40 });
+// list: 10 ↔ 30 ↔ 40
+
+// Step 1 — find the node reference (O(n), done once)
+LinkedListNode&lt;int&gt; node30 = list.Find(30);
+
+// Step 2 — insert around it (O(1), just pointer changes)
+list.AddBefore(node30, 20);  // 10 ↔ 20 ↔ 30 ↔ 40
+list.AddAfter(node30, 25);   // 10 ↔ 20 ↔ 30 ↔ 25 ↔ 40
+
+// Pro tip: Find once, do many O(1) operations around that spot
+foreach (int v in list) Console.Write(v + " ");
+// Output: 10 20 30 25 40</code></pre></div>
+      <div class="cx-row"><span class="cx-label">AddBefore/After</span><span class="cx-best cx-pill">O(1) given the node</span><span class="cx-label" style="margin-left:.6rem;">Finding the node</span><span class="cx-worst cx-pill">O(n) one-time cost</span></div>
+    </div>
+  </div>
+
+  <!-- M04 ──────────────────────────────────────────── -->
+  <div class="method-detail" id="md-removeFirst" style="border-left-color:var(--danger);">
+    <div class="md-head">
+      <span class="md-num">M04</span>
+      <span class="md-sig">RemoveFirst() / RemoveLast()</span>
+      <span class="badge b-green">O(1) built-in</span>
+      <span class="md-tag badge b-blue">Built-in</span>
+    </div>
+    <div class="md-body">
+      <div class="eli5">
+        <div class="eli5-lbl">🧒 ELI5 — What does it do?</div>
+        <div class="eli5-txt"><strong>RemoveFirst()</strong> — detach the front car. The 2nd car becomes the new front.<br><strong>RemoveLast()</strong> — detach the last car. The 2nd-to-last becomes the new tail.</div>
+        <div class="analogy">⚠️ Critical edge case: if the list has only ONE item and you remove it, both HEAD and TAIL must become null. Forgetting to null the tail when the list empties is a classic bug — the tail keeps pointing at a deleted node (dangling reference).</div>
+      </div>
+
+      <h3>RemoveFirst — pointer steps</h3>
+      <div class="pflow">
+        <div class="pstep"><span class="psn red">!</span><div><div class="pscode">if (Count == 0) throw InvalidOperationException</div><div class="pswhy">Can't remove from nothing. The built-in throws — always check Count &gt; 0 first!</div></div></div>
+        <div class="pstep"><span class="psn">1</span><div><div class="pscode">First = First.Next;</div><div class="pswhy">HEAD label jumps forward to the 2nd node. Old first node is now unreachable → garbage collected.</div></div></div>
+        <div class="pstep"><span class="psn">2</span><div><div class="pscode">if (First != null) First.Previous = null;</div><div class="pswhy">Clear the new head's backward arrow — nothing is before it now.</div></div></div>
+        <div class="pstep"><span class="psn">3</span><div><div class="pscode">if (First == null) Last = null;</div><div class="pswhy">⚡ CRITICAL: list is now empty — TAIL must also be null. Both HEAD and TAIL must be null together.</div></div></div>
+        <div class="pstep"><span class="psn">4</span><div><div class="pscode">Count--;</div><div class="pswhy">Decrement the counter.</div></div></div>
+      </div>
+
+      <h3>Why RemoveLast is O(1) in built-in but O(n) in custom singly-linked</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:.7rem 0;">
+        <div class="callout rule" style="margin:0;">
+          <strong>✅ C# Built-in (doubly-linked)</strong><br>
+          <code>Last.Previous</code> directly holds the 2nd-to-last node.<br>
+          Just do: <code>Last = Last.Previous; Last.Next = null;</code><br>
+          → <strong>O(1)</strong>
+        </div>
+        <div class="callout warning" style="margin:0;">
+          <strong>⚠️ Custom singly-linked</strong><br>
+          No backward pointer exists. Must walk from HEAD all the way to position (size-1) counting steps.<br>
+          → <strong>O(n)</strong>
+        </div>
+      </div>
+
+      <div class="cb"><div class="cb-head"><span class="cb-lang">csharp</span><button class="cp" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-csharp">var list = new LinkedList&lt;int&gt;(new[] { 7, 4, 12, 8, 3 });
+
+list.RemoveFirst();  // removes 7  → list: 4 → 12 → 8 → 3
+list.RemoveLast();   // removes 3  → list: 4 → 12 → 8
+
+Console.WriteLine(list.First.Value); // 4
+Console.WriteLine(list.Last.Value);  // 8
+Console.WriteLine(list.Count);       // 3
+
+// ⚠️ Always guard — built-in THROWS on empty list:
+if (list.Count > 0) list.RemoveFirst();  // safe
+// list.RemoveFirst() on empty → InvalidOperationException!</code></pre></div>
+      <div class="cx-row"><span class="cx-label">Built-in both ops</span><span class="cx-best cx-pill">O(1)</span><span class="cx-label" style="margin-left:.6rem;">Custom RemoveLast</span><span class="cx-worst cx-pill">O(n)</span></div>
+    </div>
+  </div>
+
+  <!-- M05 ──────────────────────────────────────────── -->
+  <div class="method-detail" id="md-removeVal" style="border-left-color:var(--accent3);">
+    <div class="md-head">
+      <span class="md-num">M05</span>
+      <span class="md-sig">Remove(T value) / Remove(LinkedListNode&lt;T&gt; node)</span>
+      <span class="badge b-red">O(n) / O(1)</span>
+      <span class="md-tag badge b-blue">Built-in</span>
+    </div>
+    <div class="md-body">
+      <div class="eli5">
+        <div class="eli5-lbl">🧒 ELI5 — Two versions, very different speeds</div>
+        <div class="eli5-txt">
+          <strong>Remove(value)</strong>: "Find the car labelled '30' somewhere in this 1000-car train and remove it." → Must walk every car from the front → <strong>O(n)</strong>.<br><br>
+          <strong>Remove(node)</strong>: "I'm already standing next to car 30, holding it. Remove it." → Just unhook 4 wires → <strong>O(1)</strong>.
+        </div>
+        <div class="analogy">🔍 Difference: "find my friend in this crowd" (O(n)) vs "my friend is right here" (O(1)). The node reference IS the "my friend is right here" part.</div>
+      </div>
+
+      <h3>Remove(node) — what changes (O(1) path)</h3>
+      <div class="pflow">
+        <div class="pstep"><span class="psn">1</span><div><div class="pscode">node.Previous.Next = node.Next;</div><div class="pswhy">The car BEFORE our target now skips over it and links to the car AFTER it.</div></div></div>
+        <div class="pstep"><span class="psn">2</span><div><div class="pscode">node.Next.Previous = node.Previous;</div><div class="pswhy">The car AFTER our target now looks back to the car BEFORE it (skipping target).</div></div></div>
+        <div class="pstep"><span class="psn">3</span><div><div class="pscode">if (node == First) First = node.Next;</div><div class="pswhy">If we removed the head, move HEAD forward.</div></div></div>
+        <div class="pstep"><span class="psn">4</span><div><div class="pscode">if (node == Last) Last = node.Previous;</div><div class="pswhy">If we removed the tail, move TAIL backward.</div></div></div>
+        <div class="pstep"><span class="psn">5</span><div><div class="pscode">node.List = null; Count--;</div><div class="pswhy">Detach node from this list (marks it as "free"). Decrement counter.</div></div></div>
+      </div>
+
+      <h3>Before → After diagram (removing node 12)</h3>
+      <div class="node-chain">
+        <span style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted);margin-right:.3rem;">BEFORE:</span>
+        <div class="nd-box"><div class="nd-val">7</div><div class="nd-ptr">→12</div></div>
+        <span class="nd-arr">↔</span>
+        <div class="nd-box hl-red"><div class="nd-val" style="color:var(--danger);">12</div><div class="nd-ptr">→8</div></div>
+        <span class="nd-arr">↔</span>
+        <div class="nd-box"><div class="nd-val">8</div><div class="nd-ptr null-p">null</div></div>
+        <span class="nd-null" style="font-size:.65rem;color:var(--danger);">← REMOVE</span>
+      </div>
+      <div class="node-chain">
+        <span style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--accent);margin-right:.3rem;">AFTER:</span>
+        <div class="nd-box hl-green"><div class="nd-val" style="color:var(--success);">7</div><div class="nd-ptr">→8</div></div>
+        <span class="nd-arr">↔</span>
+        <div class="nd-box hl-green"><div class="nd-val" style="color:var(--success);">8</div><div class="nd-ptr null-p">null</div></div>
+        <span class="nd-null" style="font-size:.65rem;color:var(--success);">12 is gone</span>
+      </div>
+
+      <div class="cb"><div class="cb-head"><span class="cb-lang">csharp</span><button class="cp" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-csharp">var list = new LinkedList&lt;int&gt;(new[] { 7, 4, 12, 8, 3 });
+
+// ── Remove by VALUE → O(n) (searches for it first) ──────
+bool found = list.Remove(12);   // scans, finds 12, removes
+Console.WriteLine(found);        // true
+// list: 7 → 4 → 8 → 3
+
+bool notFound = list.Remove(99); // scans whole list, not found
+Console.WriteLine(notFound);     // false (list unchanged)
+
+// ── Remove by NODE → O(1) (no searching needed) ─────────
+LinkedListNode&lt;int&gt; node8 = list.Find(8); // O(n) search, once
+list.Remove(node8);                         // O(1) removal
+// list: 7 → 4 → 3
+
+// Power pattern: Find once O(n), then do O(1) operations repeatedly</code></pre></div>
+      <div class="cx-row"><span class="cx-label">Remove(value)</span><span class="cx-worst cx-pill">O(n) — search + remove</span><span class="cx-label" style="margin-left:.6rem;">Remove(node)</span><span class="cx-best cx-pill">O(1) — direct</span></div>
+    </div>
+  </div>
+
+  <!-- M06 ──────────────────────────────────────────── -->
+  <div class="method-detail" id="md-find">
+    <div class="md-head">
+      <span class="md-num">M06</span>
+      <span class="md-sig">Find(T) / FindLast(T) / Contains(T)</span>
+      <span class="badge b-red">O(n)</span>
+      <span class="md-tag badge b-blue">Built-in</span>
+    </div>
+    <div class="md-body">
+      <div class="eli5">
+        <div class="eli5-lbl">🧒 ELI5 — What do they do?</div>
+        <div class="eli5-txt">
+          <strong>Find(30)</strong>: Walk through every car from the front. At each car, look at its label. If label = 30, hand me that car (the node object itself — not just the label).<br><br>
+          <strong>FindLast(30)</strong>: Same but starts from the BACK — useful when duplicates exist and you want the last occurrence.<br><br>
+          <strong>Contains(30)</strong>: Just yes/no — is there any car labelled 30? (Internally just calls Find and checks if null.)
+        </div>
+      </div>
+
+      <h3>How Find() walks the list</h3>
+      <div class="pflow">
+        <div class="pstep"><span class="psn">1</span><div><div class="pscode">Node current = First;</div><div class="pswhy">Start at the front of the list.</div></div></div>
+        <div class="pstep"><span class="psn">2</span><div><div class="pscode">while (current != null)</div><div class="pswhy">Keep going until we fall off the end (null = no more nodes).</div></div></div>
+        <div class="pstep"><span class="psn">3</span><div><div class="pscode">if (current.Value equals target) → return current;</div><div class="pswhy">Match found! Return the WHOLE NODE — not just the value. This is key: the node is usable for further O(1) ops.</div></div></div>
+        <div class="pstep"><span class="psn">4</span><div><div class="pscode">current = current.Next; (move forward)</div><div class="pswhy">Check next node.</div></div></div>
+        <div class="pstep"><span class="psn">5</span><div><div class="pscode">return null; (fell off end — not found)</div><div class="pswhy">Value is not in the list. ALWAYS null-check the result!</div></div></div>
+      </div>
+
+      <div class="callout tip">💡 <strong>The superpower of Find():</strong> It returns a <code>LinkedListNode&lt;T&gt;</code>. Use that node with <code>AddBefore()</code>, <code>AddAfter()</code>, or <code>Remove(node)</code> to do more work in O(1) — without searching again. Classic pattern: Find once, operate many times.</div>
+
+      <div class="cb"><div class="cb-head"><span class="cb-lang">csharp</span><button class="cp" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-csharp">var list = new LinkedList&lt;string&gt;(new[] { "Alice", "Bob", "Bob", "Carol" });
+
+// Find() — returns node object or null
+LinkedListNode&lt;string&gt; first = list.Find("Bob");
+Console.WriteLine(first?.Value);       // "Bob" (first occurrence)
+Console.WriteLine(first?.Next?.Value); // "Bob" (can navigate from it!)
+
+// FindLast() — starts from tail (doubly-linked advantage)
+LinkedListNode&lt;string&gt; last = list.FindLast("Bob");
+// last points to the SECOND "Bob"
+
+// Contains() — just true/false
+bool hasBob = list.Contains("Bob");   // true
+bool hasZoe = list.Contains("Zoe");   // false
+
+// ⚠️ Not found = null! Always check:
+LinkedListNode&lt;string&gt; miss = list.Find("Zoe");
+if (miss != null) list.AddAfter(miss, "After");  // safe pattern</code></pre></div>
+      <div class="cx-row"><span class="cx-label">All three</span><span class="cx-worst cx-pill">O(n) — full scan worst case</span><span class="cx-label" style="margin-left:.6rem;">Space</span><span class="cx-space cx-pill">O(1)</span></div>
+    </div>
+  </div>
+
+  <!-- M07 ──────────────────────────────────────────── -->
+  <div class="method-detail" id="md-clear" style="border-left-color:var(--accent3);">
+    <div class="md-head">
+      <span class="md-num">M07</span>
+      <span class="md-sig">Clear() · CopyTo(array, index) · foreach / GetEnumerator()</span>
+      <span class="badge b-red">O(n)</span>
+      <span class="md-tag badge b-blue">Built-in</span>
+    </div>
+    <div class="md-body">
+      <div class="eli5">
+        <div class="eli5-lbl">🧒 ELI5 — What do they do?</div>
+        <div class="eli5-txt">
+          <strong>Clear()</strong>: Wipe the entire train. Every car, gone. Count = 0.<br><br>
+          <strong>CopyTo(array, i)</strong>: Pour all the values from the linked list into a regular array starting at position i. Like unloading all cargo into a warehouse row.<br><br>
+          <strong>foreach</strong>: Walk every car one by one from front to back — the normal way to visit all values.
+        </div>
+      </div>
+
+      <h3>Why is Clear() O(n) and not O(1)?</h3>
+      <p>You might think "just set First=null and Last=null and it's done in O(1)." But C# must visit every node to <strong>detach each node's List reference</strong> — so the garbage collector knows each object is truly freed. Without this detachment, the GC can't collect them properly. That visit = O(n).</p>
+
+      <div class="cb"><div class="cb-head"><span class="cb-lang">csharp</span><button class="cp" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-csharp">var list = new LinkedList&lt;int&gt;(new[] { 7, 4, 12, 8, 3 });
+
+// ── foreach — easiest way to visit all values ─────────────
+foreach (int val in list)
+    Console.Write(val + " ");
+// Output: 7 4 12 8 3
+
+// ── Node traversal — gives you the node objects ────────────
+// Use this when you need .Next / .Previous / the node itself
+for (var n = list.First; n != null; n = n.Next)
+    Console.Write(n.Value + " ");
+// Output: 7 4 12 8 3
+
+// ── CopyTo — dump into a regular array ────────────────────
+int[] arr = new int[list.Count]; // pre-allocate exact size!
+list.CopyTo(arr, 0);             // fills from index 0
+// arr = [7, 4, 12, 8, 3] — now you can binary search etc.
+
+// ── Clear ─────────────────────────────────────────────────
+list.Clear();
+Console.WriteLine(list.Count);  // 0
+Console.WriteLine(list.First);  // null</code></pre></div>
+      <div class="cx-row"><span class="cx-label">Clear</span><span class="cx-worst cx-pill">O(n)</span><span class="cx-label" style="margin-left:.6rem;">CopyTo</span><span class="cx-worst cx-pill">O(n)</span><span class="cx-label" style="margin-left:.6rem;">foreach</span><span class="cx-worst cx-pill">O(n) per pass</span></div>
+    </div>
+  </div>
+
+  <!-- C01 ──────────────────────────────────────────── -->
+  <div class="method-detail" id="md-addAny" style="border-left-color:var(--warn);">
+    <div class="md-head">
+      <span class="md-num">C01</span>
+      <span class="md-sig">addAny(int element, int position) — Custom</span>
+      <span class="badge b-red">O(n)</span>
+      <span class="md-tag badge b-yellow">Course Custom</span>
+    </div>
+    <div class="md-body">
+      <div class="eli5">
+        <div class="eli5-lbl">🧒 ELI5 — What does it do?</div>
+        <div class="eli5-txt">Insert a new value at position number N (1-based). The computer walks from the front counting steps, stops at position N-1, then carefully squeezes the new node in between N-1 and N.</div>
+        <div class="analogy">🚂 "Insert a new car at position 3." Walk from the engine, count 2 cars, stop. Unhook car 2 from car 3. Hook car 2 → new car → car 3. The rest of the train is untouched.</div>
+      </div>
+
+      <h3>Step by step — the two-pointer write order is CRITICAL</h3>
+      <div class="pflow">
+        <div class="pstep"><span class="psn red">!</span><div><div class="pscode">if (position ≤ 0 || position ≥ size) → print "Invalid", return</div><div class="pswhy">Position must be a valid middle slot. Ends are handled by addFirst/addLast.</div></div></div>
+        <div class="pstep"><span class="psn">1</span><div><div class="pscode">Node newest = new Node(element, null);</div><div class="pswhy">Create the new node. Next = null for now.</div></div></div>
+        <div class="pstep"><span class="psn">2</span><div><div class="pscode">Node p = head; int i = 1;</div><div class="pswhy">Start at head, counter = 1.</div></div></div>
+        <div class="pstep"><span class="psn">3</span><div><div class="pscode">while (i &lt; position - 1): p = p.next; i++;</div><div class="pswhy">Walk to the node BEFORE the insertion point. Stop one early — we need to rewire FROM that predecessor.</div></div></div>
+        <div class="pstep"><span class="psn">4</span><div><div class="pscode">newest.next = p.next;  ← DO THIS FIRST ✅</div><div class="pswhy">Point new node forward to whatever comes after p. This SAVES the rest of the chain before we overwrite anything.</div></div></div>
+        <div class="pstep"><span class="psn">5</span><div><div class="pscode">p.next = newest;  ← DO THIS SECOND ✅</div><div class="pswhy">Now p points to the new node. Chain is: p → newest → (rest of list).</div></div></div>
+        <div class="pstep"><span class="psn">6</span><div><div class="pscode">size++;</div><div class="pswhy">One more item.</div></div></div>
+      </div>
+
+      <div class="callout warning">⚠️ <strong>If you swap steps 4 and 5 — catastrophe.</strong> Doing <code>p.next = newest</code> FIRST overwrites your only reference to the rest of the list. Then <code>newest.next = p.next</code> just points newest back to itself. The entire tail is gone forever — unreachable, leaked memory.</div>
+
+      <div class="cb"><div class="cb-head"><span class="cb-lang">csharp</span><button class="cp" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-csharp">// List: 7 → 4 → 12 → 8 → 3  (size=5)
+// addAny(99, 2) — insert 99 at position 2 (between 7 and 4)
+
+// Walk trace:
+//   p=head(7), i=1
+//   Loop condition: i &lt; position-1 = 1 → loop doesn't run
+//   p is at node(7)
+//   newest.next = p.next = node(4)   ← new → 4
+//   p.next = newest                  ← 7 → 99
+//   Result: 7 → 99 → 4 → 12 → 8 → 3
+
+public void addAny(int e, int position)
+{
+    if (position &lt;= 0 || position &gt;= size)
+    { Console.WriteLine("Invalid Position"); return; }
+
+    Node newest = new Node(e, null);
+    Node p = head;
+    int i = 1;
+    while (i &lt; position - 1)  // walk to node BEFORE target
+    { p = p.next; i++; }
+
+    newest.next = p.next;  // ✅ FIRST: save rest of chain
+    p.next = newest;        // ✅ SECOND: link predecessor to new node
+    size++;
+}</code></pre></div>
+      <div class="cx-row"><span class="cx-label">Time</span><span class="cx-worst cx-pill">O(n) worst case</span><span class="cx-label" style="margin-left:.6rem;">Space</span><span class="cx-space cx-pill">O(1)</span></div>
+    </div>
+  </div>
+
+  <!-- C02 ──────────────────────────────────────────── -->
+  <div class="method-detail" id="md-removeAny" style="border-left-color:var(--danger);">
+    <div class="md-head">
+      <span class="md-num">C02</span>
+      <span class="md-sig">removeAny(int position) — Custom</span>
+      <span class="badge b-red">O(n)</span>
+      <span class="md-tag badge b-yellow">Course Custom</span>
+    </div>
+    <div class="md-body">
+      <div class="eli5">
+        <div class="eli5-lbl">🧒 ELI5 — What does it do?</div>
+        <div class="eli5-txt">Remove the car at position N from the train. Walk to car N-1 (one before it), save car N's value, then make car N-1 skip directly to car N+1. Car N is disconnected and disappears.</div>
+      </div>
+
+      <h3>Step by step</h3>
+      <div class="pflow">
+        <div class="pstep"><span class="psn red">!</span><div><div class="pscode">Validate position</div><div class="pswhy">Must be a valid middle position.</div></div></div>
+        <div class="pstep"><span class="psn">1</span><div><div class="pscode">Walk to node at (position - 1)</div><div class="pswhy">Stop at the predecessor — we need to rewire FROM it, not from the target itself.</div></div></div>
+        <div class="pstep"><span class="psn">2</span><div><div class="pscode">int e = p.next.element;</div><div class="pswhy">Save the target's value BEFORE we lose the reference.</div></div></div>
+        <div class="pstep"><span class="psn">3</span><div><div class="pscode">p.next = p.next.next;</div><div class="pswhy">Predecessor now skips over the target → points directly to what was after target. Target is now unreachable → GC collects it.</div></div></div>
+        <div class="pstep"><span class="psn">4</span><div><div class="pscode">size--; return e;</div><div class="pswhy">Counter down. Return the removed value.</div></div></div>
+      </div>
+
+      <div class="cb"><div class="cb-head"><span class="cb-lang">csharp</span><button class="cp" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-csharp">// List: 7 → 4 → 12 → 8 → 3  (size=5)
+// removeAny(3) — remove node at position 3 (value=12)
+
+// Walk trace:
+//   p walks to position 2 (node with value=4)
+//   e = p.next.element = 12        ← save it
+//   p.next = p.next.next = node(8) ← 4 now points to 8
+//   Result: 7 → 4 → 8 → 3
+
+public int removeAny(int position)
+{
+    if (position &lt;= 0 || position &gt;= size - 1)
+    { Console.WriteLine("Invalid Position"); return -1; }
+
+    Node p = head;
+    int i = 1;
+    while (i &lt; position - 1)  // walk to node BEFORE target
+    { p = p.next; i++; }
+
+    int e = p.next.element;    // save target's value
+    p.next = p.next.next;      // bypass the target node
+    size--;
+    return e;
+}</code></pre></div>
+      <div class="cx-row"><span class="cx-label">Time</span><span class="cx-worst cx-pill">O(n)</span><span class="cx-label" style="margin-left:.6rem;">Space</span><span class="cx-space cx-pill">O(1)</span></div>
+    </div>
+  </div>
+
+  <!-- C03 ──────────────────────────────────────────── -->
+  <div class="method-detail" id="md-insertSorted" style="border-left-color:var(--warn);">
+    <div class="md-head">
+      <span class="md-num">C03</span>
+      <span class="md-sig">insertSorted(int element) — Custom</span>
+      <span class="badge b-red">O(n)</span>
+      <span class="md-tag badge b-yellow">Course Custom</span>
+    </div>
+    <div class="md-body">
+      <div class="eli5">
+        <div class="eli5-lbl">🧒 ELI5 — What does it do?</div>
+        <div class="eli5-txt">The list is already in sorted order (e.g. 3 → 7 → 12). You want to add 8 and keep it sorted. Walk through until you find the right gap (after 7, before 12), and insert there.</div>
+        <div class="analogy">🃏 Like holding a sorted hand of cards and sliding a new card into its correct position — you scan left to right until you find where it fits, then squeeze it in.</div>
+      </div>
+
+      <h3>Why two pointers (p and q)?</h3>
+      <p>In a singly-linked list you can only move <strong>forward</strong>. Once p overshoots the target position (lands on 12 when inserting 8), you can't go back. So you keep <code>q</code> trailing one step behind p — when p overshoots, q is at the correct predecessor.</p>
+
+      <div class="pflow">
+        <div class="pstep"><span class="psn">1</span><div><div class="pscode">p = head; q = head;</div><div class="pswhy">Both pointers start at the front.</div></div></div>
+        <div class="pstep"><span class="psn">2</span><div><div class="pscode">while (p != null AND p.element &lt; e): q = p; p = p.next;</div><div class="pswhy">Advance while p's value is smaller than e. q trails one behind. Stop when p lands on a value ≥ e — that's where e goes BEFORE p.</div></div></div>
+        <div class="pstep"><span class="psn">3</span><div><div class="pscode">if (p == head) → insert before head, update HEAD</div><div class="pswhy">Special case: new value is smaller than everything — it goes at the very front.</div></div></div>
+        <div class="pstep"><span class="psn">4</span><div><div class="pscode">else: newest.next = q.next; q.next = newest;</div><div class="pswhy">Insert between q and p. Same two-step rule: forward link first, then backward link.</div></div></div>
+      </div>
+
+      <h3>Trace: insertSorted(8) into [3 → 7 → 12]</h3>
+      <div class="node-chain" style="flex-direction:column;align-items:flex-start;gap:.3rem;font-family:'DM Mono',monospace;font-size:.75rem;">
+        <div style="color:var(--muted);">Init: p=3, q=3</div>
+        <div style="color:var(--accent2);">p.elem(3) &lt; 8 → q=3, p=7</div>
+        <div style="color:var(--accent2);">p.elem(7) &lt; 8 → q=7, p=12</div>
+        <div style="color:var(--accent);">p.elem(12) ≥ 8 → STOP. q=7, p=12</div>
+        <div style="color:var(--success);">p ≠ head → insert between q(7) and p(12)</div>
+        <div style="color:var(--success);">newest.next = q.next(=12) → newest.next = 12</div>
+        <div style="color:var(--success);">q.next = newest → 7 → newest(8)</div>
+        <div style="color:var(--success);font-weight:700;">Result: 3 → 7 → 8 → 12 ✓</div>
+      </div>
+
+      <div class="cb"><div class="cb-head"><span class="cb-lang">csharp</span><button class="cp" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-csharp">LinkedList l = new LinkedList();
+l.insertsorted(7);   // list: 7
+l.insertsorted(4);   // list: 4 → 7       (4 &lt; 7, goes front)
+l.insertsorted(12);  // list: 4 → 7 → 12
+l.insertsorted(8);   // list: 4 → 7 → 8 → 12
+l.insertsorted(3);   // list: 3 → 4 → 7 → 8 → 12  (smallest!)
+l.display();
+// Output: 3 --> 4 --> 7 --> 8 --> 12 --></code></pre></div>
+      <div class="cx-row"><span class="cx-label">Time</span><span class="cx-worst cx-pill">O(n) worst (insert at end)</span><span class="cx-label" style="margin-left:.6rem;">Space</span><span class="cx-space cx-pill">O(1)</span></div>
+    </div>
+  </div>
+
+  <!-- C04 ──────────────────────────────────────────── -->
+  <div class="method-detail" id="md-search" style="border-left-color:var(--accent2);">
+    <div class="md-head">
+      <span class="md-num">C04</span>
+      <span class="md-sig">search(int key) / display() — Custom</span>
+      <span class="badge b-red">O(n)</span>
+      <span class="md-tag badge b-yellow">Course Custom</span>
+    </div>
+    <div class="md-body">
+      <div class="eli5">
+        <div class="eli5-lbl">🧒 ELI5 — What do they do?</div>
+        <div class="eli5-txt">
+          <strong>search(key)</strong>: Walk every car from the front. At each one, compare its label to key. If they match, shout the car number (0-based index) and stop. If you reach the end without finding it, return -1.<br><br>
+          <strong>display()</strong>: Walk every car and print each label separated by " --&gt; ". When you reach null (end of list), print a newline.
+        </div>
+      </div>
+
+      <h3>search() — step by step</h3>
+      <div class="pflow">
+        <div class="pstep"><span class="psn">1</span><div><div class="pscode">Node p = head; int index = 0;</div><div class="pswhy">Start at front. Index 0 = head.</div></div></div>
+        <div class="pstep"><span class="psn">2</span><div><div class="pscode">while (p != null)</div><div class="pswhy">Keep going until we fall off the end.</div></div></div>
+        <div class="pstep"><span class="psn">3</span><div><div class="pscode">if (p.element == key) return index;</div><div class="pswhy">Match! Return the 0-based position.</div></div></div>
+        <div class="pstep"><span class="psn">4</span><div><div class="pscode">p = p.next; index++;</div><div class="pswhy">Move to next node, increment position.</div></div></div>
+        <div class="pstep"><span class="psn">5</span><div><div class="pscode">return -1;</div><div class="pswhy">Fell off the end — value not found.</div></div></div>
+      </div>
+
+      <div class="cb"><div class="cb-head"><span class="cb-lang">csharp</span><button class="cp" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-csharp">LinkedList l = new LinkedList();
+l.addLast(7); l.addLast(4); l.addLast(12); l.addLast(8); l.addLast(3);
+
+// display()
+l.display();
+// Output: 7 --> 4 --> 12 --> 8 --> 3 -->
+
+// search() — returns 0-based index
+Console.WriteLine(l.search(12)); // 2  (head=index0, 4=index1, 12=index2)
+Console.WriteLine(l.search(4));  // 1
+Console.WriteLine(l.search(99)); // -1 (not found)</code></pre></div>
+      <div class="cx-row"><span class="cx-label">Time (both)</span><span class="cx-worst cx-pill">O(n)</span><span class="cx-label" style="margin-left:.6rem;">Space</span><span class="cx-space cx-pill">O(1)</span></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 4 — CUSTOM IMPLEMENTATION
+══════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-custom">
+<div class="inner">
+  <h1 class="ptitle">Custom Linked List Implementation</h1>
+  <p class="psub">Hand-built Node + LinkedList class · Singly-linked · From the course</p>
+
+  <div class="callout info">💡 The course builds a linked list from scratch to understand the internals. This is a <strong>singly-linked</strong> list (each node has only a <code>next</code> pointer, no <code>previous</code>). The C# built-in is doubly-linked.</div>
+
+  <h2>🔷 Node Class</h2>
+  <div class="cb"><div class="cb-head"><span class="cb-lang">csharp</span><button class="cp" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">public class Node
+{
+    public int element;   // data field
+    public Node next;     // pointer to next node (null if last)
+
+    public Node(int e, Node n)
+    {
+        element = e;
+        next = n;
+    }
+}</code></pre></div>
+
+  <h2>🔷 LinkedList Class — Full Implementation</h2>
+  <div class="cb"><div class="cb-head"><span class="cb-lang">csharp</span><button class="cp" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">class LinkedList
+{
+    private Node head;   // first node
+    private Node tail;   // last node (for O(1) addLast)
+    private int size;    // number of elements
+
+    public LinkedList() { head = null; tail = null; size = 0; }
+
+    public int  length()  => size;
+    public bool isEmpty() => size == 0;
+
+    // ── Add ──────────────────────────────────────────────────
+    public void addLast(int e)
+    {
+        Node newest = new Node(e, null);
+        if (isEmpty()) head = newest;
+        else           tail.next = newest;
+        tail = newest;
+        size++;
+    }
+
+    public void addFirst(int e)
+    {
+        Node newest = new Node(e, null);
+        if (isEmpty()) { head = newest; tail = newest; }
+        else           { newest.next = head; head = newest; }
+        size++;
+    }
+
+    public void addAny(int e, int position)
+    {
+        if (position <= 0 || position >= size) { Console.WriteLine("Invalid Position"); return; }
+        Node newest = new Node(e, null);
+        Node p = head; int i = 1;
+        while (i < position - 1) { p = p.next; i++; }
+        newest.next = p.next;
+        p.next = newest;
+        size++;
+    }
+
+    public void insertsorted(int e)
+    {
+        Node newest = new Node(e, null);
+        if (isEmpty()) { head = newest; size++; return; }
+        Node p = head, q = head;
+        while (p != null && p.element < e) { q = p; p = p.next; }
+        if (p == head) { newest.next = head; head = newest; }
+        else           { newest.next = q.next; q.next = newest; }
+        size++;
+    }
+
+    // ── Remove ───────────────────────────────────────────────
+    public int removeFirst()
+    {
+        if (isEmpty()) { Console.WriteLine("List is Empty"); return -1; }
+        int e = head.element;
+        head = head.next;
+        size--;
+        if (isEmpty()) tail = null;
+        return e;
+    }
+
+    public int removeLast()
+    {
+        if (isEmpty()) { Console.WriteLine("List is Empty"); return -1; }
+        Node p = head; int i = 1;
+        while (i < size - 1) { p = p.next; i++; }
+        tail = p;
+        p = p.next;
+        int e = p.element;
+        tail.next = null;
+        size--;
+        return e;
+    }
+
+    public int removeAny(int position)
+    {
+        if (position <= 0 || position >= size - 1) { Console.WriteLine("Invalid"); return -1; }
+        Node p = head; int i = 1;
+        while (i < position - 1) { p = p.next; i++; }
+        int e = p.next.element;
+        p.next = p.next.next;
+        size--;
+        return e;
+    }
+
+    // ── Search / Display ─────────────────────────────────────
+    public int search(int key)
+    {
+        Node p = head; int index = 0;
+        while (p != null)
+        {
+            if (p.element == key) return index;
+            p = p.next; index++;
+        }
+        return -1;
+    }
+
+    public void display()
+    {
+        Node p = head;
+        while (p != null) { Console.Write(p.element + " --> "); p = p.next; }
+        Console.WriteLine();
+    }
+}</code></pre></div>
+
+  <h2>🔷 Key Design Decisions Explained</h2>
+  <table>
+    <thead><tr><th>Decision</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Maintain a <code>tail</code> pointer</td><td>Makes <code>addLast()</code> O(1) instead of O(n). Without it you'd traverse every time.</td></tr>
+      <tr><td>Maintain a <code>size</code> counter</td><td>Makes <code>length()</code> O(1). Without it you'd need to traverse to count nodes.</td></tr>
+      <tr><td>Check <code>isEmpty()</code> before remove</td><td>Prevents null pointer exceptions on an empty list.</td></tr>
+      <tr><td>Two-step pointer update in addAny</td><td><code>newest.next = p.next</code> BEFORE <code>p.next = newest</code> — reversal loses the chain.</td></tr>
+      <tr><td>Two pointers (p, q) in insertSorted</td><td><code>q</code> trails one behind <code>p</code> so we know where to insert when <code>p</code> overshoots.</td></tr>
+    </tbody>
+  </table>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 5 — COMPLEXITY
+══════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-complexity">
+<div class="inner">
+  <h1 class="ptitle">Time &amp; Space Complexity</h1>
+  <p class="psub">Custom singly-linked vs C# built-in doubly-linked</p>
+
+  <h2>⏱️ Time Complexity — All Operations</h2>
+  <table>
+    <thead><tr><th>Operation</th><th>Custom (Singly)</th><th>C# Built-in (Doubly)</th><th>Reason</th></tr></thead>
+    <tbody>
+      <tr><td>addFirst / AddFirst</td><td><span class="badge b-green">O(1)</span></td><td><span class="badge b-green">O(1)</span></td><td>Rewire head — no traversal</td></tr>
+      <tr><td>addLast / AddLast</td><td><span class="badge b-green">O(1)</span></td><td><span class="badge b-green">O(1)</span></td><td>Direct tail pointer — no traversal</td></tr>
+      <tr><td>addAny (position)</td><td><span class="badge b-red">O(n)</span></td><td><span class="badge b-red">O(n) for find; O(1) if have node</span></td><td>Must traverse to position</td></tr>
+      <tr><td>insertSorted</td><td><span class="badge b-red">O(n)</span></td><td>N/A (not built-in)</td><td>Scan to find insertion point</td></tr>
+      <tr><td>removeFirst / RemoveFirst</td><td><span class="badge b-green">O(1)</span></td><td><span class="badge b-green">O(1)</span></td><td>Advance head — no traversal</td></tr>
+      <tr><td>removeLast / RemoveLast</td><td><span class="badge b-red">O(n)</span></td><td><span class="badge b-green">O(1)</span></td><td>Singly: must find 2nd-to-last. Doubly: use tail.Previous</td></tr>
+      <tr><td>removeAny (position)</td><td><span class="badge b-red">O(n)</span></td><td><span class="badge b-red">O(n) for find; O(1) if have node</span></td><td>Must traverse to position</td></tr>
+      <tr><td>Remove(node) — built-in</td><td>N/A</td><td><span class="badge b-green">O(1)</span></td><td>Direct pointer rewire — doubly-linked</td></tr>
+      <tr><td>search / Find</td><td><span class="badge b-red">O(n)</span></td><td><span class="badge b-red">O(n)</span></td><td>Linear scan — no random access</td></tr>
+      <tr><td>display / traverse</td><td><span class="badge b-red">O(n)</span></td><td><span class="badge b-red">O(n)</span></td><td>Must visit every node</td></tr>
+      <tr><td>length / Count</td><td><span class="badge b-green">O(1)</span></td><td><span class="badge b-green">O(1)</span></td><td>Stored counter</td></tr>
+      <tr><td>Clear</td><td><span class="badge b-green">O(1)*</span></td><td><span class="badge b-red">O(n)</span></td><td>Custom: just null head/tail. Built-in: must detach each node for GC</td></tr>
+    </tbody>
+  </table>
+
+  <h2>💾 Space Complexity</h2>
+  <table>
+    <thead><tr><th>Category</th><th>Custom (Singly)</th><th>Built-in (Doubly)</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td>Storage per node</td><td>data + 1 pointer = ~12 bytes (int)</td><td>data + 2 pointers + list ref = ~32 bytes</td><td>Doubly needs prev + list ref</td></tr>
+      <tr><td>List overhead</td><td>head + tail + size = 3 fields</td><td>first + last + count + version = 4 fields</td><td>Tiny fixed overhead</td></tr>
+      <tr><td>Total for n nodes</td><td><span class="badge b-blue">O(n)</span></td><td><span class="badge b-blue">O(n)</span></td><td>Linear in number of nodes</td></tr>
+      <tr><td>All methods (extra space)</td><td><span class="badge b-green">O(1)</span></td><td><span class="badge b-green">O(1)</span></td><td>Only use a few pointer variables</td></tr>
+    </tbody>
+  </table>
+
+  <h2>🆚 Linked List vs Array</h2>
+  <table>
+    <thead><tr><th>Operation</th><th>Array</th><th>Linked List</th><th>Winner</th></tr></thead>
+    <tbody>
+      <tr><td>Access by index (arr[i])</td><td><span class="badge b-green">O(1)</span></td><td><span class="badge b-red">O(n)</span></td><td>Array</td></tr>
+      <tr><td>Insert at beginning</td><td><span class="badge b-red">O(n) — shift all</span></td><td><span class="badge b-green">O(1)</span></td><td>Linked List</td></tr>
+      <tr><td>Insert at end</td><td><span class="badge b-green">O(1) amortized</span></td><td><span class="badge b-green">O(1)</span></td><td>Tie</td></tr>
+      <tr><td>Insert in middle</td><td><span class="badge b-red">O(n) — shift</span></td><td><span class="badge b-red">O(n) search + O(1) insert</span></td><td>Slight LL edge (fewer writes)</td></tr>
+      <tr><td>Delete at beginning</td><td><span class="badge b-red">O(n) — shift all</span></td><td><span class="badge b-green">O(1)</span></td><td>Linked List</td></tr>
+      <tr><td>Memory layout</td><td>Contiguous — cache-friendly</td><td>Scattered — cache misses</td><td>Array (cache performance)</td></tr>
+      <tr><td>Dynamic resize</td><td><span class="badge b-red">O(n) — new array</span></td><td><span class="badge b-green">O(1) — add node</span></td><td>Linked List</td></tr>
+    </tbody>
+  </table>
+
+  <h2>🔑 The Big Insight</h2>
+  <div class="callout rule">📌 The critical difference between singly and doubly linked lists is <strong>RemoveLast</strong>: O(n) in singly (must find second-to-last), O(1) in doubly (use <code>tail.Previous</code>). This single operation drives the choice between them in production code. C#'s built-in uses doubly-linked for exactly this reason.</div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 6 — ACTIVE RECALL
+══════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-recall">
+<div class="inner">
+  <h1 class="ptitle">Active Recall &amp; Interview Questions</h1>
+  <p class="psub">31 questions · DEF · APPLY · TRACE · WHY · GOTCHA · INTERVIEW</p>
+
+  <div class="rc-topbar">
+    <div class="rc-ctr"><span id="rc-ans">0</span> of <span id="rc-tot">31</span> answered</div>
+    <div class="rc-bulk">
+      <button class="rcbtn" onclick="rcAll(true)">Reveal All</button>
+      <button class="rcbtn" onclick="rcAll(false)">Hide All</button>
+    </div>
+  </div>
+
+  <!-- === SECTION: Fundamentals === -->
+  <h3 style="margin-bottom:.6rem;">📚 Fundamentals</h3>
+
+  <div class="qcard" id="q1"><div class="qhead"><span class="qnum">Q01</span><span class="qtag def">DEF</span><span class="qtext">What are the two fields every linked list node contains? What does each store?</span><button class="qbtn" onclick="rcToggle('q1')">Show</button></div><div class="qans" id="q1-a"><div class="qa-label">Answer</div><div class="qa-body">Every node contains: <strong>Data field</strong> — stores the actual value (int, string, object, etc.). <strong>Pointer field (Next)</strong> — stores the memory address (reference) of the next node in the chain. In a doubly-linked list, a third field <strong>Previous</strong> stores the address of the preceding node.<div class="qa-eg"><span class="qa-eg-lbl">C#:</span> <code>public int element; public Node next;</code></div></div></div></div>
+
+  <div class="qcard" id="q2"><div class="qhead"><span class="qnum">Q02</span><span class="qtag def">DEF</span><span class="qtext">What is the HEAD pointer and why must you never lose it?</span><button class="qbtn" onclick="rcToggle('q2')">Show</button></div><div class="qans" id="q2-a"><div class="qa-label">Answer</div><div class="qa-body">HEAD is a reference to the <strong>first node</strong> of the linked list. It is the only entry point — there is no index-based access. If you overwrite or lose HEAD without saving it, you have no way to reach any node in the list. The entire list becomes unreachable and gets garbage-collected. Always use a <strong>temporary pointer</strong> for traversal: <code>Node p = head;</code> never <code>head = head.next</code> while iterating.</div></div></div>
+
+  <div class="qcard" id="q3"><div class="qhead"><span class="qnum">Q03</span><span class="qtag why">WHY</span><span class="qtext">Why do we maintain a TAIL pointer in the custom implementation? What is the cost of not having it?</span><button class="qbtn" onclick="rcToggle('q3')">Show</button></div><div class="qans" id="q3-a"><div class="qa-label">Answer</div><div class="qa-body">Without a TAIL pointer, every <code>addLast()</code> would require traversing the entire list from HEAD to find the end → O(n) per insertion. Maintaining a direct TAIL pointer makes <code>addLast()</code> O(1): simply wire the current tail's next to the new node and update tail. This is a classic space-time tradeoff — one extra pointer saves O(n) time per append.</div></div></div>
+
+  <div class="qcard" id="q4"><div class="qhead"><span class="qnum">Q04</span><span class="qtag why">WHY</span><span class="qtext">Linked lists do NOT need contiguous memory. Why does this matter?</span><button class="qbtn" onclick="rcToggle('q4')">Show</button></div><div class="qans" id="q4-a"><div class="qa-label">Answer</div><div class="qa-body">Arrays require a single contiguous block of memory equal to the full array size. If your system has 1GB RAM but it's fragmented into 100MB chunks, you cannot create a 200MB array — even though there's enough total RAM. A linked list can use any available memory fragments because each node is independently allocated. This makes linked lists better suited for <strong>dynamic, unbounded data</strong> in memory-constrained environments.</div></div></div>
+
+  <div class="qcard" id="q5"><div class="qhead"><span class="qnum">Q05</span><span class="qtag compare">COMPARE</span><span class="qtext">What is the key structural difference between a singly-linked list (course custom) and C#'s built-in <code>LinkedList&lt;T&gt;</code>?</span><button class="qbtn" onclick="rcToggle('q5')">Show</button></div><div class="qans" id="q5-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>Custom (singly):</strong> Each node has only a <code>next</code> pointer. Can only traverse forward. <code>RemoveLast()</code> is O(n) because you must find the second-to-last node.<br><br><strong>C# built-in (doubly):</strong> Each <code>LinkedListNode&lt;T&gt;</code> has <code>Next</code> AND <code>Previous</code>. Can traverse both directions. <code>RemoveLast()</code> is O(1) via <code>Last.Previous</code>. Every operation that only requires node rewiring becomes O(1) once you have the node reference.</div></div></div>
+
+  <!-- === SECTION: Method Behaviour === -->
+  <h3 style="margin-bottom:.6rem;margin-top:1.5rem;">⚙️ Method Behaviour</h3>
+
+  <div class="qcard" id="q6"><div class="qhead"><span class="qnum">Q06</span><span class="qtag apply">APPLY</span><span class="qtext">Write the code to add values 7, 4, 12 to the end of a <code>LinkedList&lt;int&gt;</code> and then print the first and last values.</span><button class="qbtn" onclick="rcToggle('q6')">Show</button></div><div class="qans" id="q6-a"><div class="qa-label">Answer</div><div class="qa-body"><div class="qa-eg"><span class="qa-eg-lbl">Code:</span></div><code>var list = new LinkedList&lt;int&gt;();<br>list.AddLast(7); list.AddLast(4); list.AddLast(12);<br>Console.WriteLine(list.First.Value); // 7<br>Console.WriteLine(list.Last.Value);  // 12</code></div></div></div>
+
+  <div class="qcard" id="q7"><div class="qhead"><span class="qnum">Q07</span><span class="qtag gotcha">GOTCHA</span><span class="qtext">In <code>addAny()</code>, what is the critical order for the two pointer assignment statements? What happens if you reverse them?</span><button class="qbtn" onclick="rcToggle('q7')">Show</button></div><div class="qans" id="q7-a"><div class="qa-label">Answer</div><div class="qa-body">The correct order is: <strong>first</strong> <code>newest.next = p.next</code>, <strong>then</strong> <code>p.next = newest</code>.<br><br>If reversed: <code>p.next = newest</code> overwrites the only reference to the rest of the list. <code>newest.next = p.next</code> would then point newest back to itself (since p.next is now newest). The entire tail of the list is lost — unreachable, leaked memory.</div></div></div>
+
+  <div class="qcard" id="q8"><div class="qhead"><span class="qnum">Q08</span><span class="qtag gotcha">GOTCHA</span><span class="qtext"><code>RemoveLast()</code> is O(1) in C#'s built-in but O(n) in the custom singly-linked implementation. Why?</span><button class="qbtn" onclick="rcToggle('q8')">Show</button></div><div class="qans" id="q8-a"><div class="qa-label">Answer</div><div class="qa-body">In the custom singly-linked list, nodes only have a <code>next</code> pointer. To remove the last node, you need to set <code>tail = second-to-last node</code> — but there's no backward pointer to find it. You must traverse from HEAD counting n-1 steps → O(n).<br><br>In C#'s doubly-linked built-in: <code>Last.Previous</code> directly points to the second-to-last node. Removal is just: <code>Last = Last.Previous; Last.Next = null</code> → O(1).</div></div></div>
+
+  <div class="qcard" id="q9"><div class="qhead"><span class="qnum">Q09</span><span class="qtag apply">APPLY</span><span class="qtext">Using the C# built-in, insert value 25 between nodes 20 and 30 without traversing the list again after finding 30.</span><button class="qbtn" onclick="rcToggle('q9')">Show</button></div><div class="qans" id="q9-a"><div class="qa-label">Answer</div><div class="qa-body"><code>var list = new LinkedList&lt;int&gt;(new[]{10,20,30,40});<br>LinkedListNode&lt;int&gt; node30 = list.Find(30); // O(n) once<br>list.AddBefore(node30, 25); // O(1) — no extra traversal<br>// Result: 10 → 20 → 25 → 30 → 40</code><div class="qa-eg"><span class="qa-eg-lbl">Pattern:</span> Find once O(n), then all local operations (AddBefore, AddAfter, Remove(node)) are O(1).</div></div></div></div>
+
+  <div class="qcard" id="q10"><div class="qhead"><span class="qnum">Q10</span><span class="qtag trace">TRACE</span><span class="qtext">Trace <code>removeFirst()</code> on a list with a single element [42]. What special case must be handled?</span><button class="qbtn" onclick="rcToggle('q10')">Show</button></div><div class="qans" id="q10-a"><div class="qa-label">Answer</div><div class="qa-body"><ol><li>List is not empty → proceed</li><li><code>e = head.element = 42</code></li><li><code>head = head.next = null</code> (only one node)</li><li><code>size-- → size = 0</code></li><li><strong>Special case:</strong> <code>if (isEmpty()) tail = null</code> — both head AND tail must be nulled. If tail still points to the removed node, it's a dangling reference. Forgetting this is a common bug.</li><li>Return 42</li></ol></div></div></div>
+
+  <div class="qcard" id="q11"><div class="qhead"><span class="qnum">Q11</span><span class="qtag trace">TRACE</span><span class="qtext">Trace <code>insertSorted(8)</code> on the list [3 → 7 → 12]. Show p and q at each step.</span><button class="qbtn" onclick="rcToggle('q11')">Show</button></div><div class="qans" id="q11-a"><div class="qa-label">Answer</div><div class="qa-body">List: 3 → 7 → 12, inserting 8.<br><ol><li>Init: <code>p = head(3), q = head(3)</code></li><li>p.element(3) &lt; 8 → q=3, p=7</li><li>p.element(7) &lt; 8 → q=7, p=12</li><li>p.element(12) ≥ 8 → stop</li><li>p ≠ head → insert between q(7) and p(12): <code>newest.next = q.next(12)</code>, <code>q.next = newest</code></li><li>Result: <strong>3 → 7 → 8 → 12</strong></li></ol></div></div></div>
+
+  <div class="qcard" id="q12"><div class="qhead"><span class="qnum">Q12</span><span class="qtag apply">APPLY</span><span class="qtext">What does <code>Find()</code> return if the value is not in the list? How does this differ from <code>Contains()</code>?</span><button class="qbtn" onclick="rcToggle('q12')">Show</button></div><div class="qans" id="q12-a"><div class="qa-label">Answer</div><div class="qa-body"><code>Find()</code> returns <code>null</code> when the value is not found. <code>Contains()</code> returns <code>false</code>. Internally, <code>Contains(value)</code> is equivalent to <code>Find(value) != null</code>. Use <code>Find()</code> when you need the node object for subsequent O(1) insertion/deletion. Use <code>Contains()</code> when you only need a boolean answer.</div></div></div>
+
+  <!-- === SECTION: Complexity === -->
+  <h3 style="margin-bottom:.6rem;margin-top:1.5rem;">⏱️ Complexity Questions</h3>
+
+  <div class="qcard" id="q13"><div class="qhead"><span class="qnum">Q13</span><span class="qtag why">WHY</span><span class="qtext">Why is random access (getting element at index i) O(n) in a linked list but O(1) in an array?</span><button class="qbtn" onclick="rcToggle('q13')">Show</button></div><div class="qans" id="q13-a"><div class="qa-label">Answer</div><div class="qa-body">In an array, element at index i is at memory address <code>base + i × elementSize</code> — calculated in one step. In a linked list, there is no address formula. You must start at HEAD and follow i pointers: <code>head.next.next...next</code> (i times). The i-th node could be anywhere in memory. This is the fundamental tradeoff: linked lists sacrifice O(1) random access for O(1) insert/delete at known positions.</div></div></div>
+
+  <div class="qcard" id="q14"><div class="qhead"><span class="qnum">Q14</span><span class="qtag compare">COMPARE</span><span class="qtext">Fill in: <code>AddFirst</code> is O(___), <code>RemoveLast</code> in singly-linked is O(___), <code>Find</code> is O(___), <code>AddAfter(node)</code> is O(___).</span><button class="qbtn" onclick="rcToggle('q14')">Show</button></div><div class="qans" id="q14-a"><div class="qa-label">Answer</div><div class="qa-body"><ul><li><code>AddFirst</code>: <strong>O(1)</strong> — only rewire head</li><li><code>RemoveLast</code> (singly): <strong>O(n)</strong> — traverse to second-to-last</li><li><code>Find</code>: <strong>O(n)</strong> — linear scan</li><li><code>AddAfter(node)</code>: <strong>O(1)</strong> — given the node, just rewire neighbors</li></ul></div></div></div>
+
+  <div class="qcard" id="q15"><div class="qhead"><span class="qnum">Q15</span><span class="qtag why">WHY</span><span class="qtext">Space complexity of a linked list is O(n). But it uses MORE memory per element than an array. Explain this apparent contradiction.</span><button class="qbtn" onclick="rcToggle('q15')">Show</button></div><div class="qans" id="q15-a"><div class="qa-label">Answer</div><div class="qa-body">Both are O(n) because both scale linearly with n. But the <strong>constant factor</strong> differs: an array stores just the values (4 bytes per int). A singly-linked list stores value + 1 pointer (~12 bytes per int node). A doubly-linked list stores value + 2 pointers + list-ref (~32 bytes per node). O(n) hides this constant — in practice a linked list uses 3–8× more memory per element than an array. The O(n) is the same class, but the real memory is significantly higher.</div></div></div>
+
+  <!-- === SECTION: Interview Questions === -->
+  <h3 style="margin-bottom:.6rem;margin-top:1.5rem;">🟢 Interview Questions</h3>
+
+  <div class="qcard" id="q16"><div class="qhead"><span class="qnum">Q16</span><span class="qtag interview">INTERVIEW</span><span class="qtext">How would you detect if a linked list has a cycle?</span><button class="qbtn" onclick="rcToggle('q16')">Show</button></div><div class="qans" id="q16-a"><div class="qa-label">Answer — Floyd's Cycle Detection</div><div class="qa-body">Use two pointers: <strong>slow</strong> (moves 1 step) and <strong>fast</strong> (moves 2 steps). If there's a cycle, fast will eventually lap slow and they'll meet at the same node. If fast reaches null, no cycle.<div class="qa-eg"><span class="qa-eg-lbl">Code:</span> <code>var slow = head; var fast = head;<br>while (fast != null &amp;&amp; fast.Next != null) {<br>&nbsp;&nbsp;slow = slow.Next; fast = fast.Next.Next;<br>&nbsp;&nbsp;if (slow == fast) return true;<br>}<br>return false;</code><br>Time: O(n) · Space: O(1)</div></div></div></div>
+
+  <div class="qcard" id="q17"><div class="qhead"><span class="qnum">Q17</span><span class="qtag interview">INTERVIEW</span><span class="qtext">How would you find the middle of a linked list in a single pass?</span><button class="qbtn" onclick="rcToggle('q17')">Show</button></div><div class="qans" id="q17-a"><div class="qa-label">Answer — Two Pointer Technique</div><div class="qa-body">Use slow (1 step) and fast (2 steps). When fast reaches the end, slow is at the middle.<div class="qa-eg"><span class="qa-eg-lbl">Code:</span> <code>var slow = head; var fast = head;<br>while (fast != null &amp;&amp; fast.Next != null) {<br>&nbsp;&nbsp;slow = slow.Next; fast = fast.Next.Next;<br>}<br>// slow is now at the middle node</code><br>Time: O(n) · Space: O(1)</div></div></div></div>
+
+  <div class="qcard" id="q18"><div class="qhead"><span class="qnum">Q18</span><span class="qtag interview">INTERVIEW</span><span class="qtext">How would you reverse a singly linked list in-place?</span><button class="qbtn" onclick="rcToggle('q18')">Show</button></div><div class="qans" id="q18-a"><div class="qa-label">Answer — Three Pointer Reversal</div><div class="qa-body">Use three pointers: prev (null), current (head), next (null). At each step: save next, reverse current's pointer, advance both.<div class="qa-eg"><span class="qa-eg-lbl">Code:</span> <code>Node prev = null, curr = head, next = null;<br>while (curr != null) {<br>&nbsp;&nbsp;next = curr.next;<br>&nbsp;&nbsp;curr.next = prev;<br>&nbsp;&nbsp;prev = curr;<br>&nbsp;&nbsp;curr = next;<br>}<br>head = prev;</code><br>Time: O(n) · Space: O(1)</div></div></div></div>
+
+  <div class="qcard" id="q19"><div class="qhead"><span class="qnum">Q19</span><span class="qtag interview">INTERVIEW</span><span class="qtext">How do you find the k-th node from the end of a linked list in a single pass?</span><button class="qbtn" onclick="rcToggle('q19')">Show</button></div><div class="qans" id="q19-a"><div class="qa-label">Answer — Two Pointer Gap Technique</div><div class="qa-body">Put two pointers k steps apart. Advance both together until the fast one hits null — slow is at k-th from end.<div class="qa-eg"><span class="qa-eg-lbl">Code:</span> <code>var fast = head;<br>for (int i = 0; i &lt; k; i++) fast = fast.Next;<br>var slow = head;<br>while (fast != null) { slow = slow.Next; fast = fast.Next; }<br>// slow.element is the k-th from end</code><br>Time: O(n) · Space: O(1)</div></div></div></div>
+
+  <div class="qcard" id="q20"><div class="qhead"><span class="qnum">Q20</span><span class="qtag interview">INTERVIEW</span><span class="qtext">When would you choose a linked list over an array in production code? When would you choose an array?</span><button class="qbtn" onclick="rcToggle('q20')">Show</button></div><div class="qans" id="q20-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>Choose LinkedList when:</strong><ul><li>Frequent insertions/deletions at the front or known positions (O(1) vs array's O(n) shift)</li><li>Unknown or highly variable size — no wasted pre-allocated space</li><li>Implementing a queue or deque where both ends are used</li><li>Memory is fragmented — can't allocate one large contiguous block</li></ul><strong>Choose Array when:</strong><ul><li>Need random access by index — O(1) vs LL's O(n)</li><li>Frequent iteration over all elements — cache locality is 5–10× faster</li><li>Size is known and stable — no allocation overhead</li><li>Binary search needed — requires random access</li></ul></div></div></div>
+
+  <div class="qcard" id="q21"><div class="qhead"><span class="qnum">Q21</span><span class="qtag interview">INTERVIEW</span><span class="qtext">What is the difference between <code>Remove(T value)</code> and <code>Remove(LinkedListNode&lt;T&gt; node)</code>? Which is O(1) and why?</span><button class="qbtn" onclick="rcToggle('q21')">Show</button></div><div class="qans" id="q21-a"><div class="qa-label">Answer</div><div class="qa-body"><code>Remove(T value)</code> is <strong>O(n)</strong> — it must first scan the list to find the node with that value, then remove it.<br><br><code>Remove(LinkedListNode&lt;T&gt; node)</code> is <strong>O(1)</strong> — you already have the node reference. It directly rewires: <code>node.Previous.Next = node.Next</code> and <code>node.Next.Previous = node.Previous</code>. This is the key advantage of a doubly-linked list: once you have a node reference, removal is constant time.</div></div></div></div>
+
+  <div class="qcard" id="q22"><div class="qhead"><span class="qnum">Q22</span><span class="qtag interview">INTERVIEW</span><span class="qtext">Explain the two-pointer (p, q) technique used in <code>insertSorted()</code>. Why is one pointer not enough?</span><button class="qbtn" onclick="rcToggle('q22')">Show</button></div><div class="qans" id="q22-a"><div class="qa-label">Answer</div><div class="qa-body">In a singly-linked list, once <code>p</code> moves past the insertion point, you can't go back (no previous pointer). You need <code>q</code> to trail one step behind <code>p</code> so that when <code>p.element ≥ e</code> (overshoot), <code>q</code> is the node before the insertion point. Insert between <code>q</code> and <code>p</code>: <code>newest.next = q.next</code>, <code>q.next = newest</code>. With only one pointer, you'd have lost the reference to the insertion predecessor.</div></div></div></div>
+
+  <div class="qcard" id="q23"><div class="qhead"><span class="qnum">Q23</span><span class="qtag interview">INTERVIEW</span><span class="qtext">How would you merge two sorted linked lists into one sorted list?</span><button class="qbtn" onclick="rcToggle('q23')">Show</button></div><div class="qans" id="q23-a"><div class="qa-label">Answer — Two Pointer Merge</div><div class="qa-body">Use a dummy head node. Compare the current heads of both lists; append the smaller one to the result, advance that pointer. Append remaining elements when one list is exhausted.<div class="qa-eg"><span class="qa-eg-lbl">Approach:</span> <code>Node dummy = new Node(0, null);<br>Node curr = dummy;<br>while (a != null &amp;&amp; b != null) {<br>&nbsp;&nbsp;if (a.element &lt;= b.element) { curr.next = a; a = a.next; }<br>&nbsp;&nbsp;else { curr.next = b; b = b.next; }<br>&nbsp;&nbsp;curr = curr.next;<br>}<br>curr.next = (a != null) ? a : b;<br>return dummy.next;</code><br>Time: O(n+m) · Space: O(1)</div></div></div></div>
+
+  <div class="qcard" id="q24"><div class="qhead"><span class="qnum">Q24</span><span class="qtag gotcha">GOTCHA</span><span class="qtext">What exception does <code>RemoveFirst()</code> / <code>RemoveLast()</code> throw when called on an empty list? How do you guard against it?</span><button class="qbtn" onclick="rcToggle('q24')">Show</button></div><div class="qans" id="q24-a"><div class="qa-label">Answer</div><div class="qa-body">Both throw <code>InvalidOperationException</code> with message "The LinkedList is empty." Guard with:<br><code>if (list.Count > 0) list.RemoveFirst();</code><br>Or check <code>list.First != null</code>. Unlike the custom implementation which returns -1 on error, the built-in throws — always check before calling on potentially-empty lists.</div></div></div></div>
+
+  <div class="qcard" id="q25"><div class="qhead"><span class="qnum">Q25</span><span class="qtag interview">INTERVIEW</span><span class="qtext">C#'s <code>LinkedList&lt;T&gt;</code> is doubly-linked and supports <code>First</code>/<code>Last</code> direct access. Name two data structures that are commonly implemented using it.</span><button class="qbtn" onclick="rcToggle('q25')">Show</button></div><div class="qans" id="q25-a"><div class="qa-label">Answer</div><div class="qa-body"><ul><li><strong>Deque (Double-Ended Queue)</strong> — AddFirst/AddLast/RemoveFirst/RemoveLast are all O(1). Perfect for deque semantics.</li><li><strong>LRU Cache</strong> — Most Recently Used node moves to front O(1) via Remove(node) + AddFirst. Node lookup is O(1) with a dictionary storing node references. Classic interview favourite.</li><li>Also: <strong>Stack</strong> (AddFirst/RemoveFirst) and <strong>Queue</strong> (AddLast/RemoveFirst), though <code>Stack&lt;T&gt;</code> / <code>Queue&lt;T&gt;</code> are more common for those.</li></ul></div></div></div></div>
+
+  <div class="qcard" id="q26"><div class="qhead"><span class="qnum">Q26</span><span class="qtag interview">INTERVIEW</span><span class="qtext">What is an LRU Cache and how does a linked list help implement it efficiently?</span><button class="qbtn" onclick="rcToggle('q26')">Show</button></div><div class="qans" id="q26-a"><div class="qa-label">Answer</div><div class="qa-body">An LRU (Least Recently Used) Cache keeps the N most recently accessed items and evicts the least recently used when full.<br><br><strong>Implementation using <code>LinkedList&lt;T&gt;</code> + <code>Dictionary&lt;K, LinkedListNode&gt;</code>:</strong><ul><li><strong>Access/Add</strong>: Move node to front (Remove(node) = O(1), AddFirst = O(1)) — total O(1)</li><li><strong>Evict</strong>: RemoveLast() = O(1) — removes LRU item</li><li><strong>Lookup</strong>: Dictionary maps key → node reference for O(1) access</li></ul>Without a doubly-linked list, moving a node to front would be O(n). The doubly-linked structure makes the entire cache O(1) per operation.</div></div></div></div>
+
+  <div class="qcard" id="q27"><div class="qhead"><span class="qnum">Q27</span><span class="qtag trace">TRACE</span><span class="qtext">Trace the state of list [7 → 4 → 12 → 8 → 3] after: <code>RemoveFirst()</code>, then <code>AddFirst(99)</code>, then <code>RemoveLast()</code>.</span><button class="qbtn" onclick="rcToggle('q27')">Show</button></div><div class="qans" id="q27-a"><div class="qa-label">Answer</div><div class="qa-body"><ol><li>Start: <code>7 → 4 → 12 → 8 → 3</code></li><li>RemoveFirst() removes 7: <code>4 → 12 → 8 → 3</code></li><li>AddFirst(99): <code>99 → 4 → 12 → 8 → 3</code></li><li>RemoveLast() removes 3: <code>99 → 4 → 12 → 8</code></li></ol>Final list: <strong>99 → 4 → 12 → 8</strong>, Count = 4</div></div></div></div>
+
+  <div class="qcard" id="q28"><div class="qhead"><span class="qnum">Q28</span><span class="qtag gotcha">GOTCHA</span><span class="qtext">Can you pass a node from one <code>LinkedList&lt;T&gt;</code> to <code>AddBefore()</code> of a different <code>LinkedList&lt;T&gt;</code>? What happens?</span><button class="qbtn" onclick="rcToggle('q28')">Show</button></div><div class="qans" id="q28-a"><div class="qa-label">Answer</div><div class="qa-body">No. <code>LinkedListNode&lt;T&gt;</code> has a <code>List</code> property that records which list it belongs to. If you pass a node that belongs to a different list (or has already been removed/cleared), <code>AddBefore()</code>, <code>AddAfter()</code>, and <code>Remove(node)</code> all throw <code>InvalidOperationException</code>. Always use nodes from the same list instance.</div></div></div></div>
+
+  <div class="qcard" id="q29"><div class="qhead"><span class="qnum">Q29</span><span class="qtag why">WHY</span><span class="qtext">Why is iteration over a linked list slower than over an array in practice, even though both are O(n)?</span><button class="qbtn" onclick="rcToggle('q29')">Show</button></div><div class="qans" id="q29-a"><div class="qa-label">Answer — Cache Locality</div><div class="qa-body">Arrays store elements contiguously — when the CPU loads one element, it prefetches the next cache line (64 bytes = 16 ints) automatically. Almost every access is a cache hit. Linked list nodes are scattered across RAM — each <code>node.next</code> pointer dereference likely causes a <strong>cache miss</strong>, requiring a fresh RAM fetch (~100ns vs ~1ns for cache). For n=1,000,000 elements, iterating a linked list can be 5–10× slower than an array despite the same O(n) Big-O.</div></div></div></div>
+
+  <div class="qcard" id="q30"><div class="qhead"><span class="qnum">Q30</span><span class="qtag interview">INTERVIEW</span><span class="qtext">How do you check if a linked list is a palindrome?</span><button class="qbtn" onclick="rcToggle('q30')">Show</button></div><div class="qans" id="q30-a"><div class="qa-label">Answer</div><div class="qa-body">Three steps: (1) Find the middle using slow/fast pointers. (2) Reverse the second half in-place. (3) Compare first half and reversed second half node-by-node.<div class="qa-eg"><span class="qa-eg-lbl">Result:</span> If all values match → palindrome. Optionally restore the list by reversing the second half again. Time: O(n) · Space: O(1).</div></div></div></div>
+
+  <div class="qcard" id="q31"><div class="qhead"><span class="qnum">Q31</span><span class="qtag interview">INTERVIEW</span><span class="qtext">Explain the <code>Count</code> property vs manually counting nodes with a loop. When does the difference matter?</span><button class="qbtn" onclick="rcToggle('q31')">Show</button></div><div class="qans" id="q31-a"><div class="qa-label">Answer</div><div class="qa-body"><code>Count</code> (built-in) and <code>size</code> (custom) are maintained as an integer field — accessing them is O(1). Counting nodes with a traversal loop is O(n). The difference matters when you call <code>Count</code> (or <code>length()</code>) inside a loop:<br><code>for (int i = 0; i &lt; list.Count; i++) ...</code> — this is O(n) total since Count is O(1).<br>If Count were O(n), the loop would be O(n²). Always prefer stored-counter implementations for size queries on production linked lists.</div></div></div></div>
+</div>
+</div>
+
+<script>
+/* ── NAV ── */
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ── METHOD DETAIL JUMP ── */
+const methodMap = {
+  addFirst:'methods', addFirst2:'methods', addLast:'methods', addLast2:'methods',
+  addBefore:'methods', addAfter:'methods', removeFirst:'methods', removeLast:'methods',
+  removeVal:'methods', removeNode:'methods', clear:'methods', find:'methods',
+  findLast:'methods', contains:'methods', copyTo:'methods', getenumerator:'methods',
+  addAny:'methods', removeAny:'methods', insertSorted:'methods', display:'methods', search:'methods'
+};
+const anchorMap = {
+  addFirst:'md-addFirst', addFirst2:'md-addFirst', addLast:'md-addLast', addLast2:'md-addLast',
+  addBefore:'md-addBefore', addAfter:'md-addBefore', removeFirst:'md-removeFirst',
+  removeLast:'md-removeFirst', removeVal:'md-removeVal', removeNode:'md-removeVal',
+  clear:'md-clear', find:'md-find', findLast:'md-find', contains:'md-find',
+  copyTo:'md-clear', getenumerator:'md-clear',
+  addAny:'md-addAny', removeAny:'md-removeAny', insertSorted:'md-insertSorted',
+  display:'md-search', search:'md-search'
+};
+function goMethod(id) {
+  const pageId = methodMap[id] || 'methods';
+  const btn = [...document.querySelectorAll('.nav-btn')].find(b => b.getAttribute('onclick')?.includes(pageId));
+  if (btn) showPage(pageId, btn);
+  setTimeout(() => {
+    const el = document.getElementById(anchorMap[id]);
+    if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }, 80);
+}
+
+/* ── CODE COPY ── */
+function copyCode(btn) {
+  const code = btn.closest('.cb').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+
+/* ── RECALL ── */
+const answered = new Set();
+function rcToggle(id) {
+  const card = document.getElementById(id);
+  const ans  = document.getElementById(id + '-a');
+  const btn  = card.querySelector('.qbtn');
+  const open = ans.classList.toggle('open');
+  card.classList.toggle('revealed', open);
+  btn.textContent = open ? 'Hide' : 'Show';
+  btn.classList.toggle('open', open);
+  open ? answered.add(id) : answered.delete(id);
+  document.getElementById('rc-ans').textContent = answered.size;
+}
+function rcAll(show) {
+  document.querySelectorAll('.qcard').forEach(card => {
+    const id  = card.id;
+    const ans = document.getElementById(id + '-a');
+    const btn = card.querySelector('.qbtn');
+    if (show) { ans.classList.add('open'); card.classList.add('revealed'); btn.textContent='Hide'; btn.classList.add('open'); answered.add(id); }
+    else       { ans.classList.remove('open'); card.classList.remove('revealed'); btn.textContent='Show'; btn.classList.remove('open'); answered.delete(id); }
+  });
+  document.getElementById('rc-ans').textContent = answered.size;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  hljs.highlightAll();
+  document.getElementById('rc-tot').textContent = document.querySelectorAll('.qcard').length;
+});
+</script>
+</body>
+</html>

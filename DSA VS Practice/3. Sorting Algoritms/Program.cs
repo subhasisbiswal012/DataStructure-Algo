@@ -49,24 +49,28 @@ public class Program
         int[] B = new int[arr.Length];
         while(i <= mid && j <= right)
         {
-            if (arr[i] < arr[j])
+            if (arr[i] < arr[j])//(left element of one section compared with left elememnt of another section)
             {
-                B[k++] = arr[i++];
+                B[k] = arr[i];
+                k++;
+                i++;
             }
             else
             {
-                B[k++] = arr[j++];
+                B[k] = arr[j];
+                k++;
+                j++;
             }
         }
-        while(i <= mid)
+        while(i <= mid) //for remaining elements when both sections have unmatched number of elements in the leftside mainly
         {
             B[k++] = arr[i++];
         }
-        while(j <= right)
+        while(j <= right) //for remaining elements when both sections have unmatched number of elements in the right side mainly
         {
             B[k++] = arr[j++];
         }
-        for(int x = left; x <= right; x++)
+        for(int x = left; x <= right; x++) //It's merging the 2 sections not the whole array, that's why x = left and x <= right
         {
             arr[x] = B[x];
         }
