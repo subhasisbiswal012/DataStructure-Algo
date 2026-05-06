@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3. Sorting Algoritms", "..\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "4. Linked List", "..\4. Linked List\4. Linked List.csproj", "{6A2156BA-BC9D-40F0-A592-169EB699D45D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "5. Circular Linked List", "..\5. Circular Linked List\5. Circular Linked List.csproj", "{9BEB0AEB-9FED-41FB-B8BE-46E1521C3DC1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{6A2156BA-BC9D-40F0-A592-169EB699D45D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A2156BA-BC9D-40F0-A592-169EB699D45D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A2156BA-BC9D-40F0-A592-169EB699D45D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BEB0AEB-9FED-41FB-B8BE-46E1521C3DC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BEB0AEB-9FED-41FB-B8BE-46E1521C3DC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BEB0AEB-9FED-41FB-B8BE-46E1521C3DC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BEB0AEB-9FED-41FB-B8BE-46E1521C3DC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
