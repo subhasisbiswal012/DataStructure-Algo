@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "5. Circular Linked List", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "6. Doubly Linked List", "..\6. Doubly Linked List\6. Doubly Linked List.csproj", "{FF311254-6649-4AF0-9DB8-144F284C5040}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "7. Stack", "..\7. Stack\7. Stack.csproj", "{BAF04605-70F9-4ABE-8549-2FD0FFE7E86A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{FF311254-6649-4AF0-9DB8-144F284C5040}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF311254-6649-4AF0-9DB8-144F284C5040}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF311254-6649-4AF0-9DB8-144F284C5040}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAF04605-70F9-4ABE-8549-2FD0FFE7E86A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAF04605-70F9-4ABE-8549-2FD0FFE7E86A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAF04605-70F9-4ABE-8549-2FD0FFE7E86A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAF04605-70F9-4ABE-8549-2FD0FFE7E86A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

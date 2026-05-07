@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Stack — KnowledgeForge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+:root{
+  --bg:#0d0d0f;--surface:#141417;--card:#1a1a1f;--border:#2a2a32;
+  --accent:#c8f060;--accent2:#60c8f0;--accent3:#f060c8;
+  --text:#f0ede8;--muted:#6b6878;--danger:#f06060;--success:#60f0a0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background-color:var(--bg);color:var(--text);
+  font-family:system-ui,-apple-system,sans-serif;font-size:0.9rem;line-height:1.7;
+  background-image:
+    linear-gradient(rgba(200,240,96,0.02) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(200,240,96,0.02) 1px,transparent 1px);
+  background-size:40px 40px;min-height:100vh;
+}
+header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(13,13,15,0.95);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.75rem 2rem;gap:1rem;
+}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;white-space:nowrap;}
+.logo span{color:var(--accent);}
+.topic-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--muted);text-align:center;flex:1;}
+.tab-buttons{display:flex;gap:0.5rem;white-space:nowrap;}
+.tab-btn{font-family:'Syne',sans-serif;font-weight:700;font-size:0.8rem;padding:0.4rem 1rem;border-radius:6px;cursor:pointer;transition:all 0.2s;border:1px solid var(--border);background:transparent;color:var(--muted);}
+.tab-btn.active{background:var(--accent);color:#0d0d0f;border-color:var(--accent);}
+.tab-content{display:none;opacity:0;transition:opacity 0.2s ease;}
+.tab-content.visible{display:block;opacity:1;}
+
+/* HANDBOOK */
+.handbook-wrap{max-width:900px;margin:0 auto;padding:2rem;}
+h1.page-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.8rem;color:var(--text);margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
+h2{font-family:'Syne',sans-serif;font-weight:700;font-size:1.3rem;color:var(--accent);margin:2.5rem 0 1rem;padding-bottom:0.4rem;border-bottom:1px solid rgba(200,240,96,0.2);}
+h3{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--accent2);margin:1.5rem 0 0.6rem;}
+p,li{color:#ccc;font-size:0.875rem;line-height:1.75;}
+ul,ol{padding-left:1.4rem;margin:0.5rem 0;}
+li{margin:0.3rem 0;}
+strong{color:var(--text);}
+section{margin-bottom:3rem;}
+.section-divider{border:none;border-top:1px solid var(--border);margin:2.5rem 0;}
+.callout{border-radius:6px;padding:0.75rem 1rem;margin:1rem 0;font-size:0.85rem;border-left:3px solid;}
+.callout.tip{border-color:var(--accent);background:rgba(200,240,96,0.05);}
+.callout.warning{border-color:var(--accent3);background:rgba(240,96,200,0.05);}
+.callout.rule{border-color:var(--accent2);background:rgba(96,200,240,0.05);}
+.code-block{border-radius:8px;border:1px solid var(--border);overflow:hidden;margin:1rem 0;}
+.code-header{display:flex;justify-content:space-between;align-items:center;padding:0.4rem 0.75rem;background:var(--card);border-bottom:1px solid var(--border);}
+.code-lang{font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);}
+.copy-btn{font-size:0.72rem;padding:0.2rem 0.6rem;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace;transition:all 0.15s;}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent);}
+.code-block pre{margin:0;padding:1rem;overflow-x:auto;}
+.code-block pre code{font-family:'DM Mono',monospace;font-size:0.8rem;background:transparent!important;padding:0!important;}
+.terminal-block{border-radius:8px;border:1px solid var(--border);overflow:hidden;margin:1rem 0;}
+.terminal-header{background:#0a0a0c;padding:0.4rem 0.75rem;border-bottom:1px solid var(--border);font-size:0.75rem;color:var(--muted);}
+.terminal-output{background:#0a0a0c;color:var(--success);font-family:'DM Mono',monospace;font-size:0.8rem;padding:1rem;margin:0;white-space:pre-wrap;}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.84rem;}
+thead tr{background:var(--card);}
+thead th{color:var(--accent);font-family:'Syne',sans-serif;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.05em;padding:0.6rem 1rem;border:1px solid var(--border);text-align:left;}
+tbody tr:nth-child(odd){background:var(--surface);}
+tbody tr:nth-child(even){background:var(--bg);}
+tbody td{padding:0.6rem 1rem;border:1px solid var(--border);color:#ccc;}
+figure{margin:1.5rem 0;text-align:center;}
+figcaption{font-size:0.78rem;color:var(--muted);margin-top:0.5rem;font-family:'DM Mono',monospace;}
+svg{max-width:100%;height:auto;}
+.complexity-row{display:flex;gap:0.75rem;margin:0.75rem 0;flex-wrap:wrap;}
+.badge{display:inline-flex;align-items:center;gap:0.3rem;font-family:'DM Mono',monospace;font-size:0.75rem;padding:0.25rem 0.65rem;border-radius:20px;border:1px solid;}
+.badge.time{border-color:var(--accent);color:var(--accent);background:rgba(200,240,96,0.07);}
+.badge.space{border-color:var(--accent2);color:var(--accent2);background:rgba(96,200,240,0.07);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;}
+@media(max-width:600px){.two-col{grid-template-columns:1fr;}}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem;}
+.panel-header{font-family:'Syne',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border);}
+.panel-header.array-h{color:var(--accent);}
+.panel-header.ll-h{color:var(--accent2);}
+.real-world-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem;margin:1rem 0;}
+.rw-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1rem;}
+.rw-icon{font-size:1.4rem;margin-bottom:0.3rem;}
+.rw-title{font-family:'Syne',sans-serif;font-weight:700;font-size:0.82rem;color:var(--accent);margin-bottom:0.2rem;}
+.rw-desc{font-size:0.78rem;color:var(--muted);line-height:1.5;}
+
+/* RECALL */
+.recall-wrap{max-width:800px;margin:0 auto;padding:2rem;}
+.recall-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:0.75rem;}
+.recall-header h2{margin:0;border:none;padding:0;font-size:1.2rem;}
+.recall-controls{display:flex;align-items:center;gap:0.75rem;}
+.progress-counter{font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--muted);}
+.control-btn{font-family:'Syne',sans-serif;font-size:0.78rem;padding:0.35rem 0.85rem;border-radius:6px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all 0.2s;}
+.control-btn:hover{border-color:var(--accent);color:var(--accent);}
+.question-card{border:1px solid var(--border);border-radius:8px;background:var(--surface);margin-bottom:1rem;overflow:hidden;transition:border-color 0.2s;}
+.question-card.revealed{border-color:rgba(200,240,96,0.3);}
+.question-header{display:flex;align-items:flex-start;gap:0.75rem;padding:0.9rem 1rem;flex-wrap:wrap;}
+.q-number{font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);white-space:nowrap;padding-top:0.1rem;}
+.q-type{font-family:'DM Mono',monospace;font-size:0.68rem;padding:0.15rem 0.5rem;border-radius:4px;white-space:nowrap;align-self:flex-start;margin-top:0.05rem;}
+.q-type.def{background:rgba(96,200,240,0.1);color:var(--accent2);}
+.q-type.apply{background:rgba(200,240,96,0.1);color:var(--accent);}
+.q-type.why{background:rgba(240,96,200,0.1);color:var(--accent3);}
+.q-type.compare{background:rgba(200,240,96,0.1);color:var(--accent);}
+.q-type.sequence{background:rgba(96,240,200,0.1);color:#60f0c8;}
+.q-type.gotcha{background:rgba(240,96,96,0.1);color:var(--danger);}
+.q-type.draw{background:rgba(240,200,96,0.1);color:#f0c860;}
+.q-text{flex:1;font-size:0.875rem;color:var(--text);line-height:1.5;}
+.show-answer-btn{font-family:'DM Mono',monospace;font-size:0.75rem;padding:0.3rem 0.75rem;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);white-space:nowrap;align-self:flex-start;transition:all 0.2s;}
+.show-answer-btn.active{border-color:var(--accent);color:var(--accent);}
+.answer-block{overflow:hidden;max-height:0;transition:max-height 0.35s ease;}
+.answer-block.open{max-height:3000px;}
+.answer-inner{padding:1rem;border-top:1px solid var(--border);background:var(--card);}
+.answer-label{font-family:'Syne',sans-serif;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent);margin-bottom:0.5rem;}
+.answer-content{font-size:0.85rem;color:#ccc;line-height:1.7;}
+.answer-example{margin-top:0.6rem;padding:0.5rem 0.75rem;border-left:2px solid var(--accent2);background:rgba(96,200,240,0.05);font-size:0.82rem;color:var(--muted);}
+.answer-example .example-label{color:var(--accent2);font-weight:600;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Knowledge<span>Forge</span></div>
+  <div class="topic-title">Stack Data Structure</div>
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="switchTab('handbook')">📘 Handbook</button>
+    <button class="tab-btn" onclick="switchTab('recall')">🧠 Active Recall</button>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════ HANDBOOK -->
+<div id="tab-handbook" class="tab-content visible">
+<div class="handbook-wrap">
+
+<h1 class="page-title">Stack Data Structure</h1>
+
+<!-- ── SECTION 1: DEFINITION ── -->
+<section>
+<h2>1. What is a Stack?</h2>
+
+<div class="callout tip">💡 Think of a stack of plates in a cafeteria. You can only add a plate to the top, and you can only take a plate from the top. The last plate placed is the first one removed.</div>
+
+<p>A <strong>stack</strong> is a linear data structure that follows the <strong>LIFO</strong> principle — <strong>Last In, First Out</strong>. Whatever was inserted most recently is the first thing that comes out. You can insert at any time, but you can only remove from one end: the <strong>top</strong>.</p>
+
+<ul>
+  <li><strong>Push</strong> — insert an element onto the top</li>
+  <li><strong>Pop</strong> — remove and return the top element</li>
+  <li><strong>Top / Peek</strong> — see the top element without removing it</li>
+  <li><strong>IsEmpty</strong> — check if the stack has no elements</li>
+  <li><strong>Length / Count</strong> — number of elements currently in the stack</li>
+</ul>
+
+<div class="callout rule">📌 The only access point is the <strong>top</strong>. There is no "insert at position 3" or "read the bottom element" in a true stack ADT.</div>
+
+<h3>LIFO Visualised</h3>
+
+<figure>
+<svg viewBox="0 0 680 320" xmlns="http://www.w3.org/2000/svg" style="max-width:620px;">
+  <defs>
+    <marker id="pu" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#c8f060"/></marker>
+    <marker id="po" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#f060c8"/></marker>
+  </defs>
+
+  <!-- LEFT: push sequence -->
+  <text x="120" y="22" fill="#c8f060" font-family="DM Mono,monospace" font-size="12" text-anchor="middle" font-weight="bold">PUSH sequence</text>
+
+  <!-- stack outline -->
+  <rect x="70" y="35" width="100" height="230" rx="4" fill="none" stroke="#2a2a32" stroke-width="2"/>
+  <!-- open top indicator -->
+  <line x1="70" y1="35" x2="170" y2="35" stroke="none"/>
+  <text x="120" y="32" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">← open top</text>
+
+  <!-- element 1 (bottom) -->
+  <rect x="74" y="221" width="92" height="40" rx="3" fill="rgba(200,240,96,0.08)" stroke="#c8f060" stroke-width="1"/>
+  <text x="120" y="246" fill="#c8f060" font-family="DM Mono,monospace" font-size="13" text-anchor="middle" font-weight="bold">10</text>
+  <text x="120" y="260" fill="#6b6878" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">pushed first</text>
+
+  <!-- element 2 -->
+  <rect x="74" y="177" width="92" height="40" rx="3" fill="rgba(200,240,96,0.1)" stroke="#c8f060" stroke-width="1"/>
+  <text x="120" y="202" fill="#c8f060" font-family="DM Mono,monospace" font-size="13" text-anchor="middle" font-weight="bold">20</text>
+
+  <!-- element 3 (top) -->
+  <rect x="74" y="133" width="92" height="40" rx="3" fill="rgba(200,240,96,0.16)" stroke="#c8f060" stroke-width="1.5"/>
+  <text x="120" y="158" fill="#c8f060" font-family="DM Mono,monospace" font-size="13" text-anchor="middle" font-weight="bold">30</text>
+  <text x="120" y="170" fill="#6b6878" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">pushed last</text>
+
+  <!-- top pointer -->
+  <text x="195" y="158" fill="#c8f060" font-family="DM Mono,monospace" font-size="10" text-anchor="start">← TOP</text>
+  <line x1="193" y1="153" x2="172" y2="153" stroke="#c8f060" stroke-width="1.5"/>
+
+  <!-- push arrow -->
+  <line x1="120" y1="75" x2="120" y2="130" stroke="#c8f060" stroke-width="2" marker-end="url(#pu)" stroke-dasharray="5,3"/>
+  <text x="140" y="92" fill="#c8f060" font-family="DM Mono,monospace" font-size="10">push(30)</text>
+
+  <!-- closed bottom -->
+  <rect x="70" y="263" width="100" height="8" rx="2" fill="#2a2a32"/>
+  <text x="120" y="285" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">closed bottom</text>
+
+  <!-- divider -->
+  <line x1="340" y1="20" x2="340" y2="300" stroke="#2a2a32" stroke-width="1"/>
+
+  <!-- RIGHT: pop sequence -->
+  <text x="520" y="22" fill="#f060c8" font-family="DM Mono,monospace" font-size="12" text-anchor="middle" font-weight="bold">POP sequence</text>
+
+  <rect x="470" y="35" width="100" height="230" rx="4" fill="none" stroke="#2a2a32" stroke-width="2"/>
+  <text x="520" y="32" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">← open top</text>
+
+  <!-- element 1 (bottom) still there -->
+  <rect x="474" y="221" width="92" height="40" rx="3" fill="rgba(200,240,96,0.08)" stroke="#c8f060" stroke-width="1"/>
+  <text x="520" y="246" fill="#c8f060" font-family="DM Mono,monospace" font-size="13" text-anchor="middle" font-weight="bold">10</text>
+
+  <!-- element 2 -->
+  <rect x="474" y="177" width="92" height="40" rx="3" fill="rgba(200,240,96,0.1)" stroke="#c8f060" stroke-width="1"/>
+  <text x="520" y="202" fill="#c8f060" font-family="DM Mono,monospace" font-size="13" text-anchor="middle" font-weight="bold">20</text>
+  <text x="520" y="214" fill="#c8f060" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">← now TOP</text>
+
+  <!-- popped element (faded, being removed) -->
+  <rect x="474" y="90" width="92" height="40" rx="3" fill="rgba(240,96,200,0.1)" stroke="#f060c8" stroke-width="1.5" opacity="0.7"/>
+  <text x="520" y="115" fill="#f060c8" font-family="DM Mono,monospace" font-size="13" text-anchor="middle" font-weight="bold">30</text>
+
+  <!-- pop arrow -->
+  <line x1="520" y1="88" x2="520" y2="60" stroke="#f060c8" stroke-width="2" marker-end="url(#po)" stroke-dasharray="5,3"/>
+  <text x="540" y="78" fill="#f060c8" font-family="DM Mono,monospace" font-size="10">pop() → 30</text>
+
+  <rect x="470" y="263" width="100" height="8" rx="2" fill="#2a2a32"/>
+  <text x="520" y="285" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">closed bottom</text>
+</svg>
+<figcaption>Left: push(10), push(20), push(30) builds a stack — 30 is on top. Right: pop() removes 30 first (LIFO).</figcaption>
+</figure>
+
+<h3>Stack as an ADT (Abstract Data Type)</h3>
+<p>An ADT defines <em>what</em> a structure does — not <em>how</em> it does it internally. The Stack ADT contract:</p>
+<table>
+  <thead><tr><th>Method</th><th>Description</th><th>Returns</th></tr></thead>
+  <tbody>
+    <tr><td><code>Push(e)</code></td><td>Insert element e at the top</td><td>void</td></tr>
+    <tr><td><code>Pop()</code></td><td>Remove and return the top element</td><td>element</td></tr>
+    <tr><td><code>Peek() / Top()</code></td><td>Return top element without removing</td><td>element</td></tr>
+    <tr><td><code>IsEmpty()</code></td><td>True if stack has zero elements</td><td>bool</td></tr>
+    <tr><td><code>Count / Length()</code></td><td>Number of elements in stack</td><td>int</td></tr>
+  </tbody>
+</table>
+</section>
+
+<hr class="section-divider"/>
+
+<!-- ── SECTION 2: REAL-LIFE USES ── -->
+<section>
+<h2>2. Real-World Applications</h2>
+
+<div class="callout tip">💡 Stacks appear everywhere the phrase "undo the last action" or "go back to where you were" makes sense.</div>
+
+<div class="real-world-grid">
+  <div class="rw-card">
+    <div class="rw-icon">⚙️</div>
+    <div class="rw-title">Function Call Stack</div>
+    <div class="rw-desc">Every function call is pushed; when it returns, it's popped. Stack overflow = running out of stack space.</div>
+  </div>
+  <div class="rw-card">
+    <div class="rw-icon">↩️</div>
+    <div class="rw-title">Undo / Redo</div>
+    <div class="rw-desc">Ctrl+Z in editors. Each action is pushed; undo pops the last action and reverses it.</div>
+  </div>
+  <div class="rw-card">
+    <div class="rw-icon">🌐</div>
+    <div class="rw-title">Browser Back Button</div>
+    <div class="rw-desc">Every page you visit is pushed. Pressing Back pops and returns to the previous URL.</div>
+  </div>
+  <div class="rw-card">
+    <div class="rw-icon">🏷️</div>
+    <div class="rw-title">HTML Tag Validation</div>
+    <div class="rw-desc">Parser pushes opening tags, pops when closing tag is found. Mismatched = syntax error.</div>
+  </div>
+  <div class="rw-card">
+    <div class="rw-icon">🔢</div>
+    <div class="rw-title">Expression Evaluation</div>
+    <div class="rw-desc">Evaluating <code>3 + 4 * 2</code> uses a stack to handle operator precedence correctly.</div>
+  </div>
+  <div class="rw-card">
+    <div class="rw-icon">🔄</div>
+    <div class="rw-title">Infix → Postfix</div>
+    <div class="rw-desc">Shunting-yard algorithm uses a stack to convert <code>a+b*c</code> to <code>abc*+</code>.</div>
+  </div>
+  <div class="rw-card">
+    <div class="rw-icon">🧩</div>
+    <div class="rw-title">Parentheses Matching</div>
+    <div class="rw-desc">Push <code>(</code>, <code>[</code>, <code>{</code>; pop and verify match when closing bracket appears.</div>
+  </div>
+  <div class="rw-card">
+    <div class="rw-icon">🗂️</div>
+    <div class="rw-title">DFS / Graph Traversal</div>
+    <div class="rw-desc">Depth-First Search uses a stack (explicit or via recursion) to track which path to explore next.</div>
+  </div>
+  <div class="rw-card">
+    <div class="rw-icon">💾</div>
+    <div class="rw-title">Memory Management</div>
+    <div class="rw-desc">The call stack in every runtime (JVM, CLR, V8) is literally a stack — frames pushed and popped per call.</div>
+  </div>
+  <div class="rw-card">
+    <div class="rw-icon">🖨️</div>
+    <div class="rw-title">Printer Spooler (LIFO mode)</div>
+    <div class="rw-desc">Some print queues prioritise the most recent document — last sent, first printed.</div>
+  </div>
+</div>
+</section>
+
+<hr class="section-divider"/>
+
+<!-- ── SECTION 3: C# BUILT-IN STACK ── -->
+<section>
+<h2>3. C# Built-in Stack&lt;T&gt;</h2>
+
+<div class="callout tip">💡 C# provides a generic <code>Stack&lt;T&gt;</code> class in <code>System.Collections.Generic</code>. It's ready to use — no implementation needed.</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">using System.Collections.Generic;
+
+Stack&lt;int&gt; stack = new Stack&lt;int&gt;();
+
+stack.Push(10);      // push 10
+stack.Push(20);      // push 20
+stack.Push(30);      // push 30
+
+int top   = stack.Peek();   // 30 — does NOT remove
+int popped = stack.Pop();   // 30 — REMOVES and returns
+bool empty = stack.IsEmpty(); // false — 2 elements remain (note: extension method or Count==0)
+int count = stack.Count;    // 2
+
+stack.Contains(10);  // true — searches entire stack
+stack.Clear();       // empties the stack</code></pre>
+</div>
+
+<h3>All Built-in Methods — Detailed</h3>
+
+<table>
+  <thead><tr><th>Method / Property</th><th>What it does</th><th>Time</th><th>Space</th></tr></thead>
+  <tbody>
+    <tr><td><code>Push(T item)</code></td><td>Adds item to the top. Resizes internal array if needed.</td><td style="color:var(--success)">O(1) amortised</td><td>O(1)</td></tr>
+    <tr><td><code>Pop()</code></td><td>Removes and returns the top item. Throws <code>InvalidOperationException</code> if empty.</td><td style="color:var(--success)">O(1)</td><td>O(1)</td></tr>
+    <tr><td><code>Peek()</code></td><td>Returns top item without removing. Throws if empty.</td><td style="color:var(--success)">O(1)</td><td>O(1)</td></tr>
+    <tr><td><code>Count</code></td><td>Property — number of elements currently in stack.</td><td style="color:var(--success)">O(1)</td><td>O(1)</td></tr>
+    <tr><td><code>Contains(T item)</code></td><td>Searches entire stack for item. Must check every element.</td><td style="color:var(--accent)">O(n)</td><td>O(1)</td></tr>
+    <tr><td><code>Clear()</code></td><td>Removes all elements and resets count to 0.</td><td style="color:var(--accent)">O(n)</td><td>O(1)</td></tr>
+    <tr><td><code>ToArray()</code></td><td>Copies elements to a new array (top-first order).</td><td style="color:var(--accent)">O(n)</td><td>O(n)</td></tr>
+    <tr><td><code>TryPop(out T)</code></td><td>Safe Pop — returns false instead of throwing if empty.</td><td style="color:var(--success)">O(1)</td><td>O(1)</td></tr>
+    <tr><td><code>TryPeek(out T)</code></td><td>Safe Peek — returns false instead of throwing if empty.</td><td style="color:var(--success)">O(1)</td><td>O(1)</td></tr>
+    <tr><td><code>GetEnumerator()</code></td><td>Enables foreach — iterates top to bottom.</td><td style="color:var(--accent)">O(n)</td><td>O(1)</td></tr>
+  </tbody>
+</table>
+
+<div class="callout warning">⚠️ <strong>Push is O(1) amortised</strong> — not always strictly O(1). When the internal array is full, it doubles in size (copies all n elements), making that single push O(n). But because doublings are rare, the average cost over many pushes works out to O(1).</div>
+
+<div class="callout warning">⚠️ Always check <code>stack.Count &gt; 0</code> or use <code>TryPop</code> / <code>TryPeek</code> before calling <code>Pop()</code> / <code>Peek()</code> — calling on empty stack throws <code>InvalidOperationException</code>.</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp — safe pop pattern</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">// Safe approach using TryPop
+if (stack.TryPop(out int value))
+    Console.WriteLine($"Popped: {value}");
+else
+    Console.WriteLine("Stack was empty.");
+
+// Safe approach using Count check
+if (stack.Count > 0)
+    Console.WriteLine(stack.Pop());
+
+// Foreach iterates top → bottom
+foreach (var item in stack)
+    Console.Write(item + " ");  // 20 10 (if stack had [10, 20])</code></pre>
+</div>
+</section>
+
+<hr class="section-divider"/>
+
+<!-- ── SECTION 4: INTERNAL — DYNAMIC ARRAY ── -->
+<section>
+<h2>4. Internals — Dynamic Array Under the Hood</h2>
+
+<div class="callout tip">💡 C#'s <code>Stack&lt;T&gt;</code> is internally backed by a <strong>dynamic array</strong> (just like <code>List&lt;T&gt;</code>). Understanding why requires understanding what a dynamic array is.</div>
+
+<h3>What is a Dynamic Array?</h3>
+<p>A <strong>dynamic array</strong> starts with a fixed-size internal buffer. When it runs out of space, it:</p>
+<ol>
+  <li>Allocates a <strong>new, larger</strong> array (typically 2× the current size)</li>
+  <li>Copies all existing elements to the new array</li>
+  <li>Releases the old array (garbage collected)</li>
+  <li>Continues accepting new elements</li>
+</ol>
+
+<figure>
+<svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+  <defs>
+    <marker id="dar" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#60c8f0"/></marker>
+  </defs>
+
+  <!-- Phase 1: capacity 4, 4 filled -->
+  <text x="90" y="20" fill="#6b6878" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">Initial (capacity=4, size=4)</text>
+  <rect x="10" y="30" width="55" height="35" rx="3" fill="rgba(200,240,96,0.1)" stroke="#c8f060" stroke-width="1"/>
+  <text x="37" y="52" fill="#c8f060" font-family="DM Mono,monospace" font-size="12" text-anchor="middle">10</text>
+  <rect x="67" y="30" width="55" height="35" rx="3" fill="rgba(200,240,96,0.1)" stroke="#c8f060" stroke-width="1"/>
+  <text x="94" y="52" fill="#c8f060" font-family="DM Mono,monospace" font-size="12" text-anchor="middle">20</text>
+  <rect x="124" y="30" width="55" height="35" rx="3" fill="rgba(200,240,96,0.1)" stroke="#c8f060" stroke-width="1"/>
+  <text x="151" y="52" fill="#c8f060" font-family="DM Mono,monospace" font-size="12" text-anchor="middle">30</text>
+  <rect x="181" y="30" width="55" height="35" rx="3" fill="rgba(200,240,96,0.1)" stroke="#c8f060" stroke-width="1"/>
+  <text x="208" y="52" fill="#c8f060" font-family="DM Mono,monospace" font-size="12" text-anchor="middle">40</text>
+
+  <!-- Push 50 trigger -->
+  <text x="270" y="48" fill="#f060c8" font-family="DM Mono,monospace" font-size="11" text-anchor="middle">push(50)</text>
+  <text x="270" y="62" fill="#f06060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">FULL! resize →</text>
+  <line x1="300" y1="48" x2="330" y2="48" stroke="#60c8f0" stroke-width="2" marker-end="url(#dar)"/>
+
+  <!-- Phase 2: capacity 8, 5 filled -->
+  <text x="500" y="20" fill="#6b6878" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">After resize (capacity=8, size=5)</text>
+  <rect x="335" y="30" width="45" height="35" rx="3" fill="rgba(200,240,96,0.1)" stroke="#c8f060" stroke-width="1"/>
+  <text x="357" y="52" fill="#c8f060" font-family="DM Mono,monospace" font-size="11" text-anchor="middle">10</text>
+  <rect x="382" y="30" width="45" height="35" rx="3" fill="rgba(200,240,96,0.1)" stroke="#c8f060" stroke-width="1"/>
+  <text x="404" y="52" fill="#c8f060" font-family="DM Mono,monospace" font-size="11" text-anchor="middle">20</text>
+  <rect x="429" y="30" width="45" height="35" rx="3" fill="rgba(200,240,96,0.1)" stroke="#c8f060" stroke-width="1"/>
+  <text x="451" y="52" fill="#c8f060" font-family="DM Mono,monospace" font-size="11" text-anchor="middle">30</text>
+  <rect x="476" y="30" width="45" height="35" rx="3" fill="rgba(200,240,96,0.1)" stroke="#c8f060" stroke-width="1"/>
+  <text x="498" y="52" fill="#c8f060" font-family="DM Mono,monospace" font-size="11" text-anchor="middle">40</text>
+  <rect x="523" y="30" width="45" height="35" rx="3" fill="rgba(96,240,160,0.15)" stroke="#60f0a0" stroke-width="1.5"/>
+  <text x="545" y="52" fill="#60f0a0" font-family="DM Mono,monospace" font-size="11" text-anchor="middle">50</text>
+  <!-- empty slots -->
+  <rect x="570" y="30" width="45" height="35" rx="3" fill="none" stroke="#2a2a32" stroke-width="1"/>
+  <text x="592" y="52" fill="#2a2a32" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">—</text>
+  <rect x="617" y="30" width="45" height="35" rx="3" fill="none" stroke="#2a2a32" stroke-width="1"/>
+  <text x="639" y="52" fill="#2a2a32" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">—</text>
+  <rect x="664" y="30" width="45" height="35" rx="3" fill="none" stroke="#2a2a32" stroke-width="1"/>
+  <text x="686" y="52" fill="#2a2a32" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">—</text>
+
+  <!-- labels -->
+  <text x="92" y="88" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">old array (discarded)</text>
+  <text x="510" y="88" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">new array — copied + 50 added, 3 slots free</text>
+
+  <!-- amortised cost chart -->
+  <text x="50" y="130" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">Amortised cost visualised (cost per push):</text>
+  <!-- bars -->
+  <rect x="30" y="200" width="20" height="10" rx="2" fill="rgba(200,240,96,0.5)"/>
+  <rect x="55" y="200" width="20" height="10" rx="2" fill="rgba(200,240,96,0.5)"/>
+  <rect x="80" y="200" width="20" height="10" rx="2" fill="rgba(200,240,96,0.5)"/>
+  <rect x="105" y="170" width="20" height="40" rx="2" fill="rgba(240,96,96,0.5)"/><!-- resize -->
+  <text x="115" y="165" fill="#f06060" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">resize!</text>
+  <rect x="130" y="200" width="20" height="10" rx="2" fill="rgba(200,240,96,0.5)"/>
+  <rect x="155" y="200" width="20" height="10" rx="2" fill="rgba(200,240,96,0.5)"/>
+  <rect x="180" y="200" width="20" height="10" rx="2" fill="rgba(200,240,96,0.5)"/>
+  <rect x="205" y="200" width="20" height="10" rx="2" fill="rgba(200,240,96,0.5)"/>
+  <rect x="230" y="155" width="20" height="55" rx="2" fill="rgba(240,96,96,0.5)"/><!-- resize -->
+  <text x="240" y="150" fill="#f06060" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">resize!</text>
+  <!-- average line -->
+  <line x1="25" y1="198" x2="280" y2="198" stroke="#c8f060" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="290" y="202" fill="#c8f060" font-family="DM Mono,monospace" font-size="9">avg ≈ O(1)</text>
+  <!-- x-axis -->
+  <line x1="25" y1="212" x2="280" y2="212" stroke="#2a2a32" stroke-width="1"/>
+  <text x="150" y="235" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">push operations →</text>
+  <text x="14" y="202" fill="#6b6878" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">cost</text>
+</svg>
+<figcaption>Dynamic array doubles capacity on overflow. Resize pushes are expensive but rare — amortised cost stays O(1).</figcaption>
+</figure>
+
+<h3>Why a Dynamic Array (not a fixed array)?</h3>
+<ul>
+  <li><strong>Unknown size at declaration time</strong> — you don't know how many items you'll push before the program runs</li>
+  <li><strong>No wasted pre-allocation</strong> — starts small, grows only as needed</li>
+  <li><strong>O(1) top access</strong> — the "top" is always the last index of the array, reachable instantly</li>
+  <li><strong>Cache friendly</strong> — array elements are contiguous in memory, so modern CPU caches prefetch them efficiently</li>
+</ul>
+
+<div class="callout rule">📌 Doubling strategy is key. If you grew by 1 each time, every push would be O(n). Doubling ensures that resizes become exponentially rare, giving O(1) amortised.</div>
+</section>
+
+<hr class="section-divider"/>
+
+<!-- ── SECTION 5: ARRAY vs LINKED LIST IMPLEMENTATION ── -->
+<section>
+<h2>5. Array-Based vs Linked List-Based Stack</h2>
+
+<div class="callout tip">💡 Both implement the same Stack ADT. The difference is what sits underneath — and that affects memory, speed, and behaviour under load.</div>
+
+<figure>
+<svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+  <!-- Array stack -->
+  <text x="165" y="18" fill="#c8f060" font-family="Syne,sans-serif" font-size="12" text-anchor="middle" font-weight="bold">Array-Based Stack</text>
+  <rect x="20" y="28" width="60" height="35" rx="3" fill="rgba(200,240,96,0.1)" stroke="#c8f060" stroke-width="1"/>
+  <text x="50" y="50" fill="#c8f060" font-family="DM Mono,monospace" font-size="12" text-anchor="middle">10</text>
+  <rect x="82" y="28" width="60" height="35" rx="3" fill="rgba(200,240,96,0.1)" stroke="#c8f060" stroke-width="1"/>
+  <text x="112" y="50" fill="#c8f060" font-family="DM Mono,monospace" font-size="12" text-anchor="middle">20</text>
+  <rect x="144" y="28" width="60" height="35" rx="3" fill="rgba(200,240,96,0.14)" stroke="#c8f060" stroke-width="1.5"/>
+  <text x="174" y="50" fill="#c8f060" font-family="DM Mono,monospace" font-size="12" text-anchor="middle">30</text>
+  <rect x="206" y="28" width="60" height="35" rx="3" fill="none" stroke="#2a2a32" stroke-width="1"/>
+  <text x="236" y="50" fill="#2a2a32" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">—</text>
+  <rect x="268" y="28" width="60" height="35" rx="3" fill="none" stroke="#2a2a32" stroke-width="1"/>
+  <text x="298" y="50" fill="#2a2a32" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">—</text>
+  <text x="174" y="82" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">↑ top (index=2)</text>
+  <text x="165" y="105" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">contiguous memory — capacity=5, size=3</text>
+
+  <!-- divider -->
+  <line x1="360" y1="10" x2="360" y2="190" stroke="#2a2a32" stroke-width="1"/>
+
+  <!-- Linked list stack -->
+  <text x="540" y="18" fill="#60c8f0" font-family="Syne,sans-serif" font-size="12" text-anchor="middle" font-weight="bold">Linked List-Based Stack</text>
+
+  <!-- top node -->
+  <rect x="390" y="28" width="90" height="55" rx="5" fill="#1a1a1f" stroke="#60c8f0" stroke-width="1.5"/>
+  <text x="435" y="50" fill="#60c8f0" font-family="DM Mono,monospace" font-size="13" text-anchor="middle" font-weight="bold">30</text>
+  <text x="435" y="75" fill="#6b6878" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">next → </text>
+  <text x="390" y="100" fill="#60c8f0" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">← HEAD (top)</text>
+
+  <rect x="500" y="28" width="90" height="55" rx="5" fill="#1a1a1f" stroke="#2a2a32" stroke-width="1"/>
+  <text x="545" y="50" fill="#f0ede8" font-family="DM Mono,monospace" font-size="13" text-anchor="middle" font-weight="bold">20</text>
+  <text x="545" y="75" fill="#6b6878" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">next → </text>
+
+  <rect x="610" y="28" width="90" height="55" rx="5" fill="#1a1a1f" stroke="#2a2a32" stroke-width="1"/>
+  <text x="655" y="50" fill="#f0ede8" font-family="DM Mono,monospace" font-size="13" text-anchor="middle" font-weight="bold">10</text>
+  <text x="655" y="75" fill="#6b6878" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">null</text>
+
+  <defs><marker id="ll" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><polygon points="0 0,7 3.5,0 7" fill="#2a2a32"/></marker></defs>
+  <line x1="482" y1="55" x2="498" y2="55" stroke="#2a2a32" stroke-width="1.5" marker-end="url(#ll)"/>
+  <line x1="592" y1="55" x2="608" y2="55" stroke="#2a2a32" stroke-width="1.5" marker-end="url(#ll)"/>
+  <text x="540" y="105" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">scattered memory — nodes linked by pointers</text>
+</svg>
+<figcaption>Array stack: contiguous block with unused capacity. Linked list stack: nodes anywhere in memory, head = top.</figcaption>
+</figure>
+
+<div class="two-col" style="margin-top:1.5rem;">
+  <div class="panel">
+    <div class="panel-header array-h">Array-Based Stack</div>
+    <ul>
+      <li>Push/Pop: <strong>O(1) amortised</strong> (occasional O(n) resize)</li>
+      <li>Pre-allocates capacity — some wasted space possible</li>
+      <li>Cache-friendly — elements are contiguous</li>
+      <li>Resizing copies entire array — brief O(n) spike</li>
+      <li>Fixed overhead: just an array + top index</li>
+      <li>No pointer overhead per element</li>
+    </ul>
+  </div>
+  <div class="panel">
+    <div class="panel-header ll-h">Linked List-Based Stack</div>
+    <ul>
+      <li>Push/Pop: <strong>O(1) always</strong> — no resize ever</li>
+      <li>No wasted capacity — allocates exactly one node per push</li>
+      <li>Each node has pointer overhead (8 bytes on 64-bit)</li>
+      <li>Nodes scattered in memory — CPU cache misses more likely</li>
+      <li>Never has a sudden O(n) spike</li>
+      <li>Better for real-time systems where predictable latency matters</li>
+    </ul>
+  </div>
+</div>
+
+<table style="margin-top:1rem;">
+  <thead><tr><th>Criterion</th><th>Array-Based</th><th>Linked List-Based</th></tr></thead>
+  <tbody>
+    <tr><td>Push worst case</td><td style="color:var(--accent)">O(n) during resize</td><td style="color:var(--success)">O(1) always</td></tr>
+    <tr><td>Push amortised</td><td style="color:var(--success)">O(1)</td><td style="color:var(--success)">O(1)</td></tr>
+    <tr><td>Pop</td><td style="color:var(--success)">O(1)</td><td style="color:var(--success)">O(1)</td></tr>
+    <tr><td>Memory per element</td><td style="color:var(--success)">Low (just the value)</td><td style="color:var(--accent)">Higher (+pointer field)</td></tr>
+    <tr><td>Memory waste</td><td style="color:var(--accent)">Possible (empty capacity)</td><td style="color:var(--success)">None</td></tr>
+    <tr><td>Cache performance</td><td style="color:var(--success)">Excellent (contiguous)</td><td style="color:var(--accent)">Poor (scattered)</td></tr>
+    <tr><td>Predictable latency</td><td style="color:var(--accent)">No (resize spikes)</td><td style="color:var(--success)">Yes</td></tr>
+    <tr><td>C# built-in</td><td style="color:var(--success)">Yes (Stack&lt;T&gt;)</td><td>Manual implementation</td></tr>
+  </tbody>
+</table>
+
+<h3>Linked List Stack — C# Implementation</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">public class Node&lt;T&gt;
+{
+    public T element;
+    public Node&lt;T&gt; next;
+    public Node(T e, Node&lt;T&gt; n) { element = e; next = n; }
+}
+
+public class LinkedStack&lt;T&gt;
+{
+    private Node&lt;T&gt; _top = null;
+    private int _size = 0;
+
+    public int Count    => _size;
+    public bool IsEmpty => _size == 0;
+
+    public void Push(T item)
+    {
+        _top = new Node&lt;T&gt;(item, _top);   // new node points to old top; head moves
+        _size++;
+    }
+
+    public T Pop()
+    {
+        if (IsEmpty) throw new InvalidOperationException("Stack is empty.");
+        T val = _top.element;
+        _top  = _top.next;                 // advance top; old top becomes unreferenced
+        _size--;
+        return val;
+    }
+
+    public T Peek()
+    {
+        if (IsEmpty) throw new InvalidOperationException("Stack is empty.");
+        return _top.element;
+    }
+}</code></pre>
+</div>
+
+<div class="callout rule">📌 In a linked-list stack, <strong>head = top of stack</strong>. Push = addFirst. Pop = removeFirst. Both are strict O(1) — no resize possible.</div>
+</section>
+
+<hr class="section-divider"/>
+
+<!-- ── SECTION 6: KEY APPLICATIONS WITH CODE ── -->
+<section>
+<h2>6. Classic Stack Algorithms with Code</h2>
+
+<h3>Balanced Parentheses Checker</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">public static bool IsBalanced(string expression)
+{
+    var stack = new Stack&lt;char&gt;();
+    foreach (char c in expression)
+    {
+        if (c == '(' || c == '[' || c == '{')
+            stack.Push(c);
+        else if (c == ')' || c == ']' || c == '}')
+        {
+            if (stack.Count == 0) return false;    // closing with nothing open
+            char top = stack.Pop();
+            if ((c == ')' && top != '(') ||
+                (c == ']' && top != '[') ||
+                (c == '}' && top != '{'))
+                return false;                       // mismatched pair
+        }
+    }
+    return stack.Count == 0;   // true only if all opened tags were closed
+}
+// IsBalanced("({[]})") → true
+// IsBalanced("({[})") → false</code></pre>
+</div>
+
+<h3>Function Call Stack (How Recursion Works)</h3>
+<figure>
+<svg viewBox="0 0 600 290" xmlns="http://www.w3.org/2000/svg" style="max-width:560px;">
+  <defs>
+    <marker id="ca" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#c8f060"/></marker>
+    <marker id="cr" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#f060c8"/></marker>
+  </defs>
+
+  <text x="150" y="18" fill="#c8f060" font-family="Syne,sans-serif" font-size="11" text-anchor="middle" font-weight="bold">CALL STACK</text>
+  <text x="420" y="18" fill="#6b6878" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">Code</text>
+
+  <!-- stack frames -->
+  <rect x="60" y="25" width="180" height="45" rx="4" fill="rgba(200,240,96,0.15)" stroke="#c8f060" stroke-width="1.5"/>
+  <text x="150" y="46" fill="#c8f060" font-family="DM Mono,monospace" font-size="11" text-anchor="middle" font-weight="bold">factorial(1)</text>
+  <text x="150" y="62" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">returns 1 ← base case (TOP)</text>
+
+  <rect x="60" y="72" width="180" height="40" rx="4" fill="rgba(200,240,96,0.1)" stroke="#c8f060" stroke-width="1"/>
+  <text x="150" y="90" fill="#c8f060" font-family="DM Mono,monospace" font-size="11" text-anchor="middle">factorial(2)</text>
+  <text x="150" y="104" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">waiting for factorial(1)</text>
+
+  <rect x="60" y="114" width="180" height="40" rx="4" fill="rgba(200,240,96,0.07)" stroke="#c8f060" stroke-width="1"/>
+  <text x="150" y="132" fill="#c8f060" font-family="DM Mono,monospace" font-size="11" text-anchor="middle">factorial(3)</text>
+  <text x="150" y="146" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">waiting for factorial(2)</text>
+
+  <rect x="60" y="156" width="180" height="40" rx="4" fill="rgba(200,240,96,0.04)" stroke="#2a2a32" stroke-width="1"/>
+  <text x="150" y="174" fill="#f0ede8" font-family="DM Mono,monospace" font-size="11" text-anchor="middle">Main()</text>
+  <text x="150" y="188" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">called factorial(3)</text>
+
+  <!-- push / pop arrows -->
+  <line x1="42" y1="110" x2="42" y2="28" stroke="#c8f060" stroke-width="1.5" marker-end="url(#ca)"/>
+  <text x="28" y="70" fill="#c8f060" font-family="DM Mono,monospace" font-size="8" transform="rotate(-90,28,70)">push (call)</text>
+  <line x1="255" y1="28" x2="255" y2="110" stroke="#f060c8" stroke-width="1.5" marker-end="url(#cr)"/>
+  <text x="268" y="70" fill="#f060c8" font-family="DM Mono,monospace" font-size="8" transform="rotate(-90,268,70)">pop (return)</text>
+
+  <!-- code -->
+  <rect x="305" y="25" width="270" height="160" rx="6" fill="#0a0a0c" stroke="#2a2a32" stroke-width="1"/>
+  <text x="318" y="48" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">int factorial(int n)</text>
+  <text x="318" y="65" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">&#123;</text>
+  <text x="328" y="82" fill="#c8f060" font-family="DM Mono,monospace" font-size="10">if (n == 1) return 1;</text>
+  <text x="328" y="99" fill="#60c8f0" font-family="DM Mono,monospace" font-size="10">return n * factorial(n-1);</text>
+  <text x="318" y="116" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">&#125;</text>
+  <text x="318" y="148" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">// Main calls factorial(3)</text>
+  <text x="318" y="165" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">// 3 → 2 → 1 pushed, then</text>
+  <text x="318" y="182" fill="#6b6878" font-family="DM Mono,monospace" font-size="10">// 1 → 2 → 3 returned (LIFO)</text>
+
+  <text x="150" y="230" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">Each recursive call is a frame pushed onto the call stack.</text>
+  <text x="150" y="245" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">Returning pops frames in reverse order (LIFO).</text>
+  <text x="150" y="262" fill="#f06060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">Stack Overflow = frames pushed faster than they're popped (infinite recursion).</text>
+</svg>
+<figcaption>The call stack during factorial(3) — each recursive call is pushed; returns pop frames in LIFO order</figcaption>
+</figure>
+</section>
+
+<hr class="section-divider"/>
+
+<!-- ── SECTION 7: QUICK REFERENCE ── -->
+<section>
+<h2>⚡ Quick Reference</h2>
+<table>
+  <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+  <tbody>
+    <tr><td>LIFO</td><td>Last In, First Out — the governing principle of a stack</td></tr>
+    <tr><td>Push</td><td>Insert an element onto the top of the stack</td></tr>
+    <tr><td>Pop</td><td>Remove and return the top element</td></tr>
+    <tr><td>Peek / Top</td><td>Read top element without removing it</td></tr>
+    <tr><td>Stack overflow</td><td>Call stack exhausted — too many frames pushed (infinite recursion)</td></tr>
+    <tr><td>Dynamic array</td><td>Array that doubles in capacity when full, enabling amortised O(1) push</td></tr>
+    <tr><td>Amortised O(1)</td><td>Average O(1) over many operations even if occasional one is O(n)</td></tr>
+    <tr><td>ADT</td><td>Abstract Data Type — defines behaviour (what), not implementation (how)</td></tr>
+  </tbody>
+</table>
+
+<table style="margin-top:1rem;">
+  <thead><tr><th>C# Method</th><th>Purpose</th><th>Time</th></tr></thead>
+  <tbody>
+    <tr><td><code>Push(item)</code></td><td>Add to top</td><td>O(1) amortised</td></tr>
+    <tr><td><code>Pop()</code></td><td>Remove and return top</td><td>O(1)</td></tr>
+    <tr><td><code>Peek()</code></td><td>Read top without removing</td><td>O(1)</td></tr>
+    <tr><td><code>TryPop(out T)</code></td><td>Safe pop — no exception</td><td>O(1)</td></tr>
+    <tr><td><code>TryPeek(out T)</code></td><td>Safe peek — no exception</td><td>O(1)</td></tr>
+    <tr><td><code>Count</code></td><td>Number of elements</td><td>O(1)</td></tr>
+    <tr><td><code>Contains(item)</code></td><td>Search entire stack</td><td>O(n)</td></tr>
+    <tr><td><code>Clear()</code></td><td>Remove all elements</td><td>O(n)</td></tr>
+    <tr><td><code>ToArray()</code></td><td>Copy to array (top first)</td><td>O(n)</td></tr>
+  </tbody>
+</table>
+</section>
+
+</div>
+</div><!-- end handbook -->
+
+<!-- ══════════════════════════════════════════ RECALL TAB -->
+<div id="tab-recall" class="tab-content">
+<div class="recall-wrap">
+
+<div class="recall-header">
+  <h2 style="font-family:'Syne',sans-serif;color:var(--accent);border:none;padding:0;margin:0;">🧠 Active Recall — Interview Edition</h2>
+  <div class="recall-controls">
+    <span class="progress-counter" id="progress-counter">0 of 20 answered</span>
+    <button class="control-btn" onclick="revealAll()">Reveal All</button>
+    <button class="control-btn" onclick="hideAll()">Hide All</button>
+  </div>
+</div>
+
+<!-- Q1 -->
+<div class="question-card" id="q1">
+  <div class="question-header">
+    <span class="q-number">Q01</span><span class="q-type def">DEF</span>
+    <span class="q-text">What is a stack? Define it formally and state its core property.</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q1')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q1-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">A stack is a linear data structure that follows the <strong>LIFO (Last In, First Out)</strong> principle — the most recently inserted element is always the first to be removed. It supports insertion and removal from only one end, called the <strong>top</strong>. Elements at the bottom are inaccessible until everything above them is popped.</div>
+      <div class="answer-example"><span class="example-label">Analogy:</span> A stack of plates — you can only add or remove from the top.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q2 -->
+<div class="question-card" id="q2">
+  <div class="question-header">
+    <span class="q-number">Q02</span><span class="q-type apply">APPLY</span>
+    <span class="q-text">Write a C# method using Stack&lt;T&gt; to check if a string's parentheses are balanced. Handle (, [, and {.</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q2')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q2-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <div class="code-block" style="margin-top:0.5rem;">
+          <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-csharp">public static bool IsBalanced(string s)
+{
+    var stack = new Stack&lt;char&gt;();
+    foreach (char c in s)
+    {
+        if (c == '(' || c == '[' || c == '{') stack.Push(c);
+        else if (c == ')' || c == ']' || c == '}')
+        {
+            if (stack.Count == 0) return false;
+            char top = stack.Pop();
+            if ((c == ')' && top != '(') ||
+                (c == ']' && top != '[') ||
+                (c == '}' && top != '{')) return false;
+        }
+    }
+    return stack.Count == 0;
+}</code></pre>
+        </div>
+      </div>
+      <div class="answer-example"><span class="example-label">Key insight:</span> Empty stack on closing bracket = error. Non-empty stack at end = unclosed bracket.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q3 -->
+<div class="question-card" id="q3">
+  <div class="question-header">
+    <span class="q-number">Q03</span><span class="q-type why">WHY</span>
+    <span class="q-text">Why is Push O(1) amortised rather than strictly O(1) in an array-based stack?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q3')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q3-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">The internal array has a fixed capacity. When it fills up, Push triggers a <strong>resize</strong>: a new array of double the size is allocated, and all n existing elements are copied. This single push costs O(n). However, because the array doubles each time, resizes become exponentially rare — the average cost per push across n operations works out to O(1). That's why we say <strong>amortised O(1)</strong>.</div>
+      <div class="answer-example"><span class="example-label">Mental model:</span> After 8 pushes at capacity 8, you pay O(8) for the resize. Spread over 8 pushes, each effectively cost O(1).</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q4 -->
+<div class="question-card" id="q4">
+  <div class="question-header">
+    <span class="q-number">Q04</span><span class="q-type compare">COMPARE</span>
+    <span class="q-text">Compare array-based and linked list-based stack implementations. When would you prefer each?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q4')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q4-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <strong>Array-based:</strong> Cache-friendly (contiguous memory), less memory per element, but occasional O(n) resize spike. Use when: memory efficiency and average-case throughput matter (most general cases — C#'s Stack&lt;T&gt; is this).<br/><br/>
+        <strong>Linked list-based:</strong> Strictly O(1) push/pop always — no resize. Each node has pointer overhead and is scattered in memory (cache unfriendly). Use when: predictable worst-case latency is critical (real-time systems, embedded).
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Q5 -->
+<div class="question-card" id="q5">
+  <div class="question-header">
+    <span class="q-number">Q05</span><span class="q-type gotcha">GOTCHA</span>
+    <span class="q-text">What exception does C#'s Stack&lt;T&gt;.Pop() or Peek() throw on an empty stack, and how do you avoid it?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q5')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q5-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Both throw <strong>InvalidOperationException</strong> when called on an empty stack. Avoid it by either checking <code>stack.Count &gt; 0</code> before calling, or using the safe variants: <code>TryPop(out T result)</code> and <code>TryPeek(out T result)</code> — these return <code>false</code> instead of throwing.</div>
+      <div class="answer-example"><span class="example-label">Best practice:</span> In production code, always use TryPop/TryPeek. The regular Pop/Peek is fine only when you've already verified Count &gt; 0.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q6 -->
+<div class="question-card" id="q6">
+  <div class="question-header">
+    <span class="q-number">Q06</span><span class="q-type apply">APPLY</span>
+    <span class="q-text">Using only a stack, reverse a string "hello". Walk through the steps.</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q6')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q6-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        1. Push each character: push 'h', 'e', 'l', 'l', 'o' → stack top = 'o'<br/>
+        2. Pop each character and append: pop 'o', 'l', 'l', 'e', 'h' → "olleh"<br/><br/>
+        <div class="code-block" style="margin-top:0.5rem;">
+          <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-csharp">string Reverse(string s)
+{
+    var stack = new Stack&lt;char&gt;();
+    foreach (char c in s) stack.Push(c);
+    var sb = new System.Text.StringBuilder();
+    while (stack.Count > 0) sb.Append(stack.Pop());
+    return sb.ToString();
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Q7 -->
+<div class="question-card" id="q7">
+  <div class="question-header">
+    <span class="q-number">Q07</span><span class="q-type why">WHY</span>
+    <span class="q-text">Why is a stack used for function call management (the call stack)? Why not a queue?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q7')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q7-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">When function A calls function B, B must <em>finish first</em> before A can continue. This is exactly LIFO — the most recently called function is always the one that returns next. A queue would require FIFO — meaning A would return before B, which makes no sense for nested calls. The call stack models the natural nesting of function calls.</div>
+      <div class="answer-example"><span class="example-label">Extension:</span> Stack overflow = the call stack grows beyond its memory limit, usually caused by infinite recursion.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q8 -->
+<div class="question-card" id="q8">
+  <div class="question-header">
+    <span class="q-number">Q08</span><span class="q-type sequence">SEQUENCE</span>
+    <span class="q-text">Push 5, 10, 15 onto a stack, then call Pop() twice and Peek() once. What is returned in order?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q8')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q8-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        After push(5), push(10), push(15) → stack = [5, 10, 15] (15 on top)<br/>
+        <strong>Pop() #1</strong> → returns 15. Stack = [5, 10]<br/>
+        <strong>Pop() #2</strong> → returns 10. Stack = [5]<br/>
+        <strong>Peek()</strong> → returns 5. Stack still = [5] (not removed)
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Q9 -->
+<div class="question-card" id="q9">
+  <div class="question-header">
+    <span class="q-number">Q09</span><span class="q-type apply">APPLY</span>
+    <span class="q-text">Implement a MinStack — a stack that supports Push, Pop, and GetMin() in O(1) time.</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q9')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q9-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Use two stacks — one for data, one to track the current minimum at each level.
+        <div class="code-block" style="margin-top:0.5rem;">
+          <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-csharp">public class MinStack
+{
+    private Stack&lt;int&gt; _data = new();
+    private Stack&lt;int&gt; _mins = new();
+
+    public void Push(int val)
+    {
+        _data.Push(val);
+        int currentMin = _mins.Count == 0 ? val : Math.Min(val, _mins.Peek());
+        _mins.Push(currentMin);
+    }
+    public int Pop()    { _mins.Pop(); return _data.Pop(); }
+    public int Peek()   => _data.Peek();
+    public int GetMin() => _mins.Peek();   // O(1)!
+}</code></pre>
+        </div>
+      </div>
+      <div class="answer-example"><span class="example-label">Key:</span> _mins tracks the minimum at each stack level. When you pop from _data, pop the corresponding min too.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q10 -->
+<div class="question-card" id="q10">
+  <div class="question-header">
+    <span class="q-number">Q10</span><span class="q-type gotcha">GOTCHA</span>
+    <span class="q-text">What is "stack overflow" in the context of programming runtimes? What causes it?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q10')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q10-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Stack overflow occurs when the call stack (the runtime's stack of function frames) exceeds its allocated memory limit. Each function call pushes a frame; if frames are pushed faster than they're popped (e.g., infinite recursion with no base case), the stack runs out of space. The runtime throws a <strong>StackOverflowException</strong> in .NET.</div>
+      <div class="answer-example"><span class="example-label">Example:</span> <code>void Recurse() &#123; Recurse(); &#125;</code> — no base case, infinite push, stack overflow.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q11 -->
+<div class="question-card" id="q11">
+  <div class="question-header">
+    <span class="q-number">Q11</span><span class="q-type apply">APPLY</span>
+    <span class="q-text">Implement a queue using two stacks. What is the time complexity of enqueue and dequeue?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q11')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q11-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <div class="code-block" style="margin-top:0.5rem;">
+          <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-csharp">public class QueueUsingStacks&lt;T&gt;
+{
+    private Stack&lt;T&gt; _inbox  = new();  // for enqueue
+    private Stack&lt;T&gt; _outbox = new();  // for dequeue
+
+    public void Enqueue(T item) => _inbox.Push(item);  // O(1)
+
+    public T Dequeue()
+    {
+        if (_outbox.Count == 0)
+            while (_inbox.Count > 0)
+                _outbox.Push(_inbox.Pop());   // transfer reverses order → FIFO
+        if (_outbox.Count == 0) throw new InvalidOperationException();
+        return _outbox.Pop();
+    }
+}</code></pre>
+        </div>
+      </div>
+      <div class="answer-example"><span class="example-label">Complexity:</span> Enqueue = O(1). Dequeue = O(1) amortised (each element transferred at most once across all dequeues).</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q12 -->
+<div class="question-card" id="q12">
+  <div class="question-header">
+    <span class="q-number">Q12</span><span class="q-type def">DEF</span>
+    <span class="q-text">What is a dynamic array? Why does C#'s Stack&lt;T&gt; use one instead of a fixed-size array?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q12')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q12-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">A dynamic array is an array that automatically grows when its capacity is exceeded — it allocates a new larger buffer (typically 2× size), copies all elements, and discards the old buffer. C# uses it in Stack&lt;T&gt; because: (1) you don't know how many elements will be pushed at compile time, (2) a fixed array would either waste space or run out, (3) the dynamic approach gives O(1) amortised push with no upfront over-allocation.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q13 -->
+<div class="question-card" id="q13">
+  <div class="question-header">
+    <span class="q-number">Q13</span><span class="q-type apply">APPLY</span>
+    <span class="q-text">Given the sequence of operations: Push(1), Push(2), Pop(), Push(3), Push(4), Pop(), Peek() — what does each Pop/Peek return?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q13')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q13-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        Push(1) → [1]<br/>
+        Push(2) → [1, 2] (2 on top)<br/>
+        Pop() → returns <strong>2</strong>, stack = [1]<br/>
+        Push(3) → [1, 3]<br/>
+        Push(4) → [1, 3, 4]<br/>
+        Pop() → returns <strong>4</strong>, stack = [1, 3]<br/>
+        Peek() → returns <strong>3</strong>, stack unchanged = [1, 3]
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Q14 -->
+<div class="question-card" id="q14">
+  <div class="question-header">
+    <span class="q-number">Q14</span><span class="q-type why">WHY</span>
+    <span class="q-text">Why is the linked list-based stack preferred in real-time systems over the array-based stack?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q14')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q14-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Real-time systems require <strong>predictable, bounded latency</strong>. The array-based stack has an occasional O(n) resize that can take an unpredictable amount of time — in a real-time system (medical device firmware, flight control, trading systems), a sudden O(n) spike at the wrong moment is unacceptable. The linked list stack guarantees <strong>strictly O(1)</strong> push and pop — no resize, no spikes, no surprises.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q15 -->
+<div class="question-card" id="q15">
+  <div class="question-header">
+    <span class="q-number">Q15</span><span class="q-type gotcha">GOTCHA</span>
+    <span class="q-text">Does foreach on a C# Stack&lt;T&gt; iterate from top to bottom or bottom to top?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q15')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q15-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content"><strong>Top to bottom.</strong> The stack's enumerator starts at the most recently pushed element (top) and works toward the oldest (bottom). If you push 1, 2, 3, foreach yields 3, 2, 1. This is the opposite of the insertion order — a common source of bugs when people assume bottom-to-top.</div>
+      <div class="answer-example"><span class="example-label">Gotcha:</span> foreach does NOT pop the elements — the stack remains intact after iteration.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q16 -->
+<div class="question-card" id="q16">
+  <div class="question-header">
+    <span class="q-number">Q16</span><span class="q-type compare">COMPARE</span>
+    <span class="q-text">What is the difference between a stack and a queue? Give a real-world example of each.</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q16')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q16-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <strong>Stack — LIFO:</strong> Last element in is the first element out. Access only from the top.<br/>
+        Real-world: undo/redo in a text editor — the last action is the first to be undone.<br/><br/>
+        <strong>Queue — FIFO:</strong> First element in is the first element out. Insert at rear, remove from front.<br/>
+        Real-world: a ticket queue at a cinema — first person in line is the first served.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Q17 -->
+<div class="question-card" id="q17">
+  <div class="question-header">
+    <span class="q-number">Q17</span><span class="q-type apply">APPLY</span>
+    <span class="q-text">How would you use a stack to evaluate the postfix expression "5 3 + 2 *"?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q17')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q17-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        Scan left to right:<br/>
+        See 5 → push 5. Stack: [5]<br/>
+        See 3 → push 3. Stack: [5, 3]<br/>
+        See + → pop 3 and 5, compute 5+3=8, push 8. Stack: [8]<br/>
+        See 2 → push 2. Stack: [8, 2]<br/>
+        See * → pop 2 and 8, compute 8*2=16, push 16. Stack: [16]<br/>
+        End → result = <strong>16</strong>
+      </div>
+      <div class="answer-example"><span class="example-label">Rule:</span> Operand → push. Operator → pop two, apply, push result.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q18 -->
+<div class="question-card" id="q18">
+  <div class="question-header">
+    <span class="q-number">Q18</span><span class="q-type sequence">SEQUENCE</span>
+    <span class="q-text">What is the space complexity of the C# built-in Stack&lt;T&gt;? What contributes to it?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q18')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q18-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">Overall space: <strong>O(n)</strong> where n is the number of elements pushed. Contributions: (1) the internal array holding n elements of type T, (2) the capacity — which may be up to 2n after a resize (empty slots), (3) a few O(1) tracking variables (count, version). The extra empty capacity is bounded by a constant factor of n, so overall is still O(n).</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q19 -->
+<div class="question-card" id="q19">
+  <div class="question-header">
+    <span class="q-number">Q19</span><span class="q-type gotcha">GOTCHA</span>
+    <span class="q-text">Can you iterate a Stack&lt;T&gt; while modifying it (push/pop during foreach)? What happens?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q19')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q19-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content"><strong>No.</strong> C#'s Stack&lt;T&gt; (like most .NET collections) tracks a version counter that increments on every structural modification. The enumerator checks this on every MoveNext() call. If the version has changed, it throws <strong>InvalidOperationException: Collection was modified; enumeration operation may not execute.</strong></div>
+      <div class="answer-example"><span class="example-label">Fix:</span> Snapshot the stack first (<code>var copy = new Stack&lt;T&gt;(stack.ToArray())</code>) and iterate the copy if you need to modify the original.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q20 -->
+<div class="question-card" id="q20">
+  <div class="question-header">
+    <span class="q-number">Q20</span><span class="q-type compare">COMPARE</span>
+    <span class="q-text">What is the difference between Stack&lt;T&gt; in System.Collections.Generic and Stack in System.Collections (non-generic)? Which should you use and why?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q20')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q20-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        <strong>System.Collections.Stack (legacy):</strong> Non-generic — stores <code>object</code>. Any type can be pushed, but every read requires a cast. Boxing/unboxing happens for value types (int, bool, etc.) which is slower and generates garbage. No compile-time type safety.<br/><br/>
+        <strong>System.Collections.Generic.Stack&lt;T&gt; (modern):</strong> Generic — type-safe at compile time. No boxing for value types. Better performance and catches type errors at compile time instead of runtime.<br/><br/>
+        <strong>Always use Stack&lt;T&gt;</strong> unless maintaining legacy .NET Framework code.
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div><!-- end recall -->
+
+<script>
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(t => { t.classList.remove('visible'); t.style.display = 'none'; });
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('tab-' + tab);
+  el.style.display = 'block';
+  requestAnimationFrame(() => el.classList.add('visible'));
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    if (b.textContent.toLowerCase().includes(tab === 'handbook' ? 'handbook' : 'recall')) b.classList.add('active');
+  });
+}
+function copyCode(btn) {
+  const code = btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.textContent).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+let revealedCount = 0;
+const totalQuestions = 20;
+function updateProgress() {
+  document.getElementById('progress-counter').textContent = revealedCount + ' of ' + totalQuestions + ' answered';
+}
+function toggleAnswer(id) {
+  const card = document.getElementById(id);
+  const block = document.getElementById(id + '-answer');
+  const btn = card.querySelector('.show-answer-btn');
+  const isOpen = block.classList.contains('open');
+  if (isOpen) {
+    block.classList.remove('open'); btn.textContent = 'Show Answer'; btn.classList.remove('active'); card.classList.remove('revealed'); revealedCount--;
+  } else {
+    block.classList.add('open'); btn.textContent = 'Hide Answer'; btn.classList.add('active'); card.classList.add('revealed'); revealedCount++;
+  }
+  updateProgress();
+}
+function revealAll() {
+  revealedCount = 0;
+  document.querySelectorAll('.question-card').forEach(card => {
+    const id = card.id;
+    document.getElementById(id + '-answer').classList.add('open');
+    card.querySelector('.show-answer-btn').textContent = 'Hide Answer';
+    card.querySelector('.show-answer-btn').classList.add('active');
+    card.classList.add('revealed');
+    revealedCount++;
+  });
+  updateProgress();
+}
+function hideAll() {
+  document.querySelectorAll('.question-card').forEach(card => {
+    const id = card.id;
+    document.getElementById(id + '-answer').classList.remove('open');
+    card.querySelector('.show-answer-btn').textContent = 'Show Answer';
+    card.querySelector('.show-answer-btn').classList.remove('active');
+    card.classList.remove('revealed');
+  });
+  revealedCount = 0;
+  updateProgress();
+}
+document.addEventListener('DOMContentLoaded', () => {
+  hljs.highlightAll();
+  document.getElementById('tab-handbook').style.display = 'block';
+  document.getElementById('tab-recall').style.display = 'none';
+});
+</script>
+</body>
+</html>
