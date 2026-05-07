@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Queue & Deque — KnowledgeForge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+:root{
+  --bg:#0d0d0f;--surface:#141417;--card:#1a1a1f;--border:#2a2a32;
+  --accent:#c8f060;--accent2:#60c8f0;--accent3:#f060c8;
+  --text:#f0ede8;--muted:#6b6878;--danger:#f06060;--success:#60f0a0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background-color:var(--bg);color:var(--text);
+  font-family:system-ui,-apple-system,sans-serif;font-size:0.9rem;line-height:1.7;
+  background-image:linear-gradient(rgba(200,240,96,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(200,240,96,0.02) 1px,transparent 1px);
+  background-size:40px 40px;min-height:100vh;
+}
+header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(13,13,15,0.96);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.7rem 2rem;gap:1rem;flex-wrap:wrap;
+}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;white-space:nowrap;}
+.logo span{color:var(--accent);}
+.topic-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--muted);text-align:center;flex:1;}
+.tab-buttons{display:flex;gap:0.4rem;flex-wrap:wrap;}
+.tab-btn{font-family:'Syne',sans-serif;font-weight:700;font-size:0.78rem;padding:0.38rem 0.9rem;border-radius:6px;cursor:pointer;transition:all 0.18s;border:1px solid var(--border);background:transparent;color:var(--muted);white-space:nowrap;}
+.tab-btn.active{background:var(--accent);color:#0d0d0f;border-color:var(--accent);}
+.tab-content{display:none;opacity:0;transition:opacity 0.2s ease;}
+.tab-content.visible{display:block;opacity:1;}
+.wrap{max-width:900px;margin:0 auto;padding:2rem;}
+h1.page-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.8rem;color:var(--text);margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
+h2{font-family:'Syne',sans-serif;font-weight:700;font-size:1.25rem;color:var(--accent);margin:2.5rem 0 1rem;padding-bottom:0.4rem;border-bottom:1px solid rgba(200,240,96,0.2);}
+h3{font-family:'Syne',sans-serif;font-weight:700;font-size:0.98rem;color:var(--accent2);margin:1.4rem 0 0.5rem;}
+p,li{color:#ccc;font-size:0.875rem;line-height:1.8;}
+ul,ol{padding-left:1.4rem;margin:0.5rem 0;}
+li{margin:0.25rem 0;}
+strong{color:var(--text);}
+section{margin-bottom:2.8rem;}
+hr.div{border:none;border-top:1px solid var(--border);margin:2.5rem 0;}
+.callout{border-radius:6px;padding:0.72rem 1rem;margin:0.9rem 0;font-size:0.85rem;border-left:3px solid;line-height:1.6;}
+.callout.tip{border-color:var(--accent);background:rgba(200,240,96,0.05);}
+.callout.warning{border-color:var(--accent3);background:rgba(240,96,200,0.05);}
+.callout.rule{border-color:var(--accent2);background:rgba(96,200,240,0.05);}
+.code-block{border-radius:8px;border:1px solid var(--border);overflow:hidden;margin:1rem 0;}
+.code-header{display:flex;justify-content:space-between;align-items:center;padding:0.38rem 0.75rem;background:var(--card);border-bottom:1px solid var(--border);}
+.code-lang{font-family:'DM Mono',monospace;font-size:0.74rem;color:var(--muted);}
+.copy-btn{font-size:0.71rem;padding:0.18rem 0.55rem;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace;transition:all 0.15s;}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent);}
+.code-block pre{margin:0;padding:1rem;overflow-x:auto;}
+.code-block pre code{font-family:'DM Mono',monospace;font-size:0.79rem;background:transparent!important;padding:0!important;}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.83rem;}
+thead tr{background:var(--card);}
+thead th{color:var(--accent);font-family:'Syne',sans-serif;font-size:0.77rem;text-transform:uppercase;letter-spacing:0.05em;padding:0.55rem 0.9rem;border:1px solid var(--border);text-align:left;}
+tbody tr:nth-child(odd){background:var(--surface);}
+tbody tr:nth-child(even){background:var(--bg);}
+tbody td{padding:0.55rem 0.9rem;border:1px solid var(--border);color:#ccc;}
+figure{margin:1.4rem 0;text-align:center;}
+figcaption{font-size:0.77rem;color:var(--muted);margin-top:0.45rem;font-family:'DM Mono',monospace;}
+.badge{display:inline-flex;align-items:center;gap:0.3rem;font-family:'DM Mono',monospace;font-size:0.74rem;padding:0.22rem 0.6rem;border-radius:20px;border:1px solid;}
+.badge.time{border-color:var(--accent);color:var(--accent);background:rgba(200,240,96,0.07);}
+.badge.space{border-color:var(--accent2);color:var(--accent2);background:rgba(96,200,240,0.07);}
+.cx-row{display:flex;gap:0.6rem;margin:0.7rem 0;flex-wrap:wrap;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;}
+@media(max-width:640px){.two-col{grid-template-columns:1fr;}}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem;}
+.panel-h{font-family:'Syne',sans-serif;font-weight:700;font-size:0.77rem;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.65rem;padding-bottom:0.45rem;border-bottom:1px solid var(--border);}
+.panel-h.q{color:var(--accent);}
+.panel-h.ll{color:var(--accent2);}
+.rw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:0.7rem;margin:1rem 0;}
+.rw-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:0.72rem 0.9rem;}
+.rw-icon{font-size:1.3rem;margin-bottom:0.25rem;}
+.rw-title{font-family:'Syne',sans-serif;font-weight:700;font-size:0.8rem;color:var(--accent);margin-bottom:0.18rem;}
+.rw-desc{font-size:0.77rem;color:var(--muted);line-height:1.5;}
+/* recall */
+.recall-wrap{max-width:820px;margin:0 auto;padding:2rem;}
+.recall-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.4rem;flex-wrap:wrap;gap:0.7rem;}
+.recall-hdr h2{margin:0;border:none;padding:0;font-size:1.15rem;}
+.recall-ctrl{display:flex;align-items:center;gap:0.7rem;}
+.prog{font-family:'DM Mono',monospace;font-size:0.79rem;color:var(--muted);}
+.ctrl-btn{font-family:'Syne',sans-serif;font-size:0.77rem;padding:0.32rem 0.8rem;border-radius:6px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all 0.18s;}
+.ctrl-btn:hover{border-color:var(--accent);color:var(--accent);}
+.qcard{border:1px solid var(--border);border-radius:8px;background:var(--surface);margin-bottom:0.9rem;overflow:hidden;transition:border-color 0.18s;}
+.qcard.revealed{border-color:rgba(200,240,96,0.28);}
+.qhdr{display:flex;align-items:flex-start;gap:0.65rem;padding:0.85rem 0.9rem;flex-wrap:wrap;}
+.qnum{font-family:'DM Mono',monospace;font-size:0.74rem;color:var(--muted);white-space:nowrap;padding-top:0.08rem;}
+.qtype{font-family:'DM Mono',monospace;font-size:0.67rem;padding:0.13rem 0.45rem;border-radius:4px;white-space:nowrap;align-self:flex-start;margin-top:0.04rem;}
+.qtype.def{background:rgba(96,200,240,0.1);color:var(--accent2);}
+.qtype.apply{background:rgba(200,240,96,0.1);color:var(--accent);}
+.qtype.why{background:rgba(240,96,200,0.1);color:var(--accent3);}
+.qtype.compare{background:rgba(200,240,96,0.1);color:var(--accent);}
+.qtype.seq{background:rgba(96,240,200,0.1);color:#60f0c8;}
+.qtype.gotcha{background:rgba(240,96,96,0.1);color:var(--danger);}
+.qtype.draw{background:rgba(240,200,96,0.1);color:#f0c860;}
+.qtxt{flex:1;font-size:0.87rem;color:var(--text);line-height:1.5;}
+.show-btn{font-family:'DM Mono',monospace;font-size:0.74rem;padding:0.27rem 0.7rem;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);white-space:nowrap;align-self:flex-start;transition:all 0.18s;}
+.show-btn.active{border-color:var(--accent);color:var(--accent);}
+.ans-block{overflow:hidden;max-height:0;transition:max-height 0.32s ease;}
+.ans-block.open{max-height:3000px;}
+.ans-inner{padding:0.9rem;border-top:1px solid var(--border);background:var(--card);}
+.ans-lbl{font-family:'Syne',sans-serif;font-size:0.69rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent);margin-bottom:0.45rem;}
+.ans-body{font-size:0.85rem;color:#ccc;line-height:1.72;}
+.ans-ex{margin-top:0.55rem;padding:0.45rem 0.7rem;border-left:2px solid var(--accent2);background:rgba(96,200,240,0.05);font-size:0.81rem;color:var(--muted);}
+.ans-ex .exlbl{color:var(--accent2);font-weight:600;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Knowledge<span>Forge</span></div>
+  <div class="topic-title">Queue &amp; Deque</div>
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="switchTab('queue')">📥 Queue</button>
+    <button class="tab-btn" onclick="switchTab('deque')">↔️ Deque</button>
+    <button class="tab-btn" onclick="switchTab('recall')">🧠 Active Recall</button>
+  </div>
+</header>
+
+<!-- ══════════════════════════════ QUEUE TAB ══════════════════════════════ -->
+<div id="tab-queue" class="tab-content visible">
+<div class="wrap">
+<h1 class="page-title">Queue Data Structure</h1>
+
+<!-- 1. DEFINITION -->
+<section>
+<h2>1. What is a Queue?</h2>
+
+<div class="callout tip">💡 Think of a queue at a movie ticket counter. The person who arrived first gets served first. Nobody cuts the line from behind.</div>
+
+<p>A <strong>Queue</strong> is a linear data structure that follows the <strong>FIFO</strong> principle — <strong>First In, First Out</strong>. The first element you add is the first element you take out. You insert at one end called the <strong>Rear</strong>, and you remove from the other end called the <strong>Front</strong>.</p>
+
+<ul>
+  <li><strong>Enqueue</strong> — insert an element at the rear</li>
+  <li><strong>Dequeue</strong> — remove and return the element at the front</li>
+  <li><strong>Peek / Front</strong> — see the front element without removing it</li>
+  <li><strong>IsEmpty</strong> — check if no elements exist</li>
+  <li><strong>Count</strong> — how many elements are currently in the queue</li>
+</ul>
+
+<div class="callout rule">📌 FIFO = First In, First Out. Whatever enters the queue first, leaves first. The newest arrival must wait at the back — no shortcuts.</div>
+
+<figure>
+<svg viewBox="0 0 740 190" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+  <defs>
+    <marker id="enq" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#c8f060"/></marker>
+    <marker id="deq" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#f060c8"/></marker>
+  </defs>
+
+  <!-- Enqueue arrow from right -->
+  <text x="680" y="75" fill="#c8f060" font-family="DM Mono,monospace" font-size="11" text-anchor="middle">Enqueue</text>
+  <text x="680" y="90" fill="#c8f060" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">(add here)</text>
+  <line x1="680" y1="100" x2="610" y2="100" stroke="#c8f060" stroke-width="2" marker-end="url(#enq)"/>
+
+  <!-- queue box -->
+  <rect x="120" y="68" width="490" height="64" rx="6" fill="none" stroke="#2a2a32" stroke-width="2"/>
+
+  <!-- elements: newest at right (rear), oldest at left (front) -->
+  <rect x="124" y="72" width="100" height="56" rx="3" fill="rgba(200,240,96,0.18)" stroke="#c8f060" stroke-width="1.5"/>
+  <text x="174" y="96" fill="#c8f060" font-family="DM Mono,monospace" font-size="14" text-anchor="middle" font-weight="bold">10</text>
+  <text x="174" y="115" fill="#6b6878" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">arrived first</text>
+
+  <rect x="227" y="72" width="100" height="56" rx="3" fill="rgba(200,240,96,0.12)" stroke="#c8f060" stroke-width="1"/>
+  <text x="277" y="100" fill="#c8f060" font-family="DM Mono,monospace" font-size="14" text-anchor="middle" font-weight="bold">20</text>
+
+  <rect x="330" y="72" width="100" height="56" rx="3" fill="rgba(200,240,96,0.08)" stroke="#c8f060" stroke-width="1"/>
+  <text x="380" y="100" fill="#c8f060" font-family="DM Mono,monospace" font-size="14" text-anchor="middle" font-weight="bold">30</text>
+
+  <rect x="433" y="72" width="100" height="56" rx="3" fill="rgba(200,240,96,0.05)" stroke="#c8f060" stroke-width="1"/>
+  <text x="483" y="100" fill="#c8f060" font-family="DM Mono,monospace" font-size="14" text-anchor="middle" font-weight="bold">40</text>
+
+  <rect x="536" y="72" width="70" height="56" rx="3" fill="rgba(200,240,96,0.03)" stroke="#2a2a32" stroke-width="1"/>
+  <text x="571" y="100" fill="#2a2a32" font-family="DM Mono,monospace" font-size="12" text-anchor="middle">—</text>
+
+  <!-- Dequeue arrow from left -->
+  <text x="60" y="75" fill="#f060c8" font-family="DM Mono,monospace" font-size="11" text-anchor="middle">Dequeue</text>
+  <text x="60" y="90" fill="#f060c8" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">(exits here)</text>
+  <line x1="118" y1="100" x2="50" y2="100" stroke="#f060c8" stroke-width="2" marker-end="url(#deq)"/>
+
+  <!-- labels -->
+  <text x="174" y="148" fill="#c8f060" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">FRONT</text>
+  <text x="571" y="148" fill="#6b6878" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">REAR</text>
+
+  <text x="370" y="170" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">10 was added first → 10 leaves first. 40 was added last → 40 leaves last. (FIFO)</text>
+</svg>
+<figcaption>Queue — elements enter at REAR (right), exit from FRONT (left). 10 was first in → first out.</figcaption>
+</figure>
+</section>
+
+<hr class="div"/>
+
+<!-- 2. REAL-WORLD USES -->
+<section>
+<h2>2. Real-World Uses of Queue</h2>
+<div class="callout tip">💡 Any time something is "waiting in line" to be processed in order — that's a queue in action.</div>
+<div class="rw-grid">
+  <div class="rw-card"><div class="rw-icon">🖨️</div><div class="rw-title">Printer Spooler</div><div class="rw-desc">Print jobs wait in a queue. First job sent is first printed.</div></div>
+  <div class="rw-card"><div class="rw-icon">🌐</div><div class="rw-title">Web Server Requests</div><div class="rw-desc">HTTP requests queued when server is busy. Oldest request handled first.</div></div>
+  <div class="rw-card"><div class="rw-icon">📞</div><div class="rw-title">Customer Support</div><div class="rw-desc">Phone calls put on hold. First caller gets next available agent.</div></div>
+  <div class="rw-card"><div class="rw-icon">🚦</div><div class="rw-title">Traffic Signals</div><div class="rw-desc">Cars queue at red lights. First car to arrive is first to move.</div></div>
+  <div class="rw-card"><div class="rw-icon">📨</div><div class="rw-title">Message Brokers</div><div class="rw-desc">RabbitMQ, Kafka — messages queued and consumed in order by workers.</div></div>
+  <div class="rw-card"><div class="rw-icon">🧵</div><div class="rw-title">Thread Scheduling</div><div class="rw-desc">CPU time-slices tasks queued up for the processor.</div></div>
+  <div class="rw-card"><div class="rw-icon">🎮</div><div class="rw-title">Game Event Queue</div><div class="rw-desc">Mouse clicks, key presses queued and processed in the order they happened.</div></div>
+  <div class="rw-card"><div class="rw-icon">📦</div><div class="rw-title">Order Processing</div><div class="rw-desc">E-commerce orders queued for warehouse dispatch in arrival order.</div></div>
+  <div class="rw-card"><div class="rw-icon">🔁</div><div class="rw-title">BFS / Graph Search</div><div class="rw-desc">Breadth-First Search uses a queue to explore neighbours level by level.</div></div>
+  <div class="rw-card"><div class="rw-icon">🏥</div><div class="rw-title">Hospital Triage</div><div class="rw-desc">Patients with same priority level queued in arrival order.</div></div>
+</div>
+</section>
+
+<hr class="div"/>
+
+<!-- 3. C# BUILT-IN QUEUE -->
+<section>
+<h2>3. C# Built-in Queue&lt;T&gt;</h2>
+<div class="callout tip">💡 C# provides <code>Queue&lt;T&gt;</code> in <code>System.Collections.Generic</code>. It's generic, type-safe, and backed by a circular array internally.</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">using System.Collections.Generic;
+
+Queue&lt;string&gt; queue = new Queue&lt;string&gt;();
+
+queue.Enqueue("Alice");   // rear: Alice
+queue.Enqueue("Bob");     // rear: Alice → Bob
+queue.Enqueue("Charlie"); // rear: Alice → Bob → Charlie
+
+string front = queue.Peek();     // "Alice" — does NOT remove
+string served = queue.Dequeue(); // "Alice" — REMOVES from front
+
+bool has = queue.Contains("Bob"); // true — searches entire queue
+int count = queue.Count;          // 2
+bool empty = queue.Count == 0;    // false
+
+queue.Clear();           // empties everything
+string[] arr = queue.ToArray(); // copy to array (front-to-back order)</code></pre>
+</div>
+
+<h3>All Methods — Time &amp; Space Complexity</h3>
+<table>
+  <thead><tr><th>Method / Property</th><th>Description</th><th>Time</th><th>Space</th></tr></thead>
+  <tbody>
+    <tr><td><code>Enqueue(T item)</code></td><td>Add item to the rear. Internal array grows if needed.</td><td style="color:var(--success)">O(1) amortised</td><td>O(1)</td></tr>
+    <tr><td><code>Dequeue()</code></td><td>Remove and return the front item. Throws if empty.</td><td style="color:var(--success)">O(1)</td><td>O(1)</td></tr>
+    <tr><td><code>Peek()</code></td><td>Return front item without removing. Throws if empty.</td><td style="color:var(--success)">O(1)</td><td>O(1)</td></tr>
+    <tr><td><code>TryDequeue(out T)</code></td><td>Safe Dequeue — returns false if empty instead of throwing.</td><td style="color:var(--success)">O(1)</td><td>O(1)</td></tr>
+    <tr><td><code>TryPeek(out T)</code></td><td>Safe Peek — returns false if empty instead of throwing.</td><td style="color:var(--success)">O(1)</td><td>O(1)</td></tr>
+    <tr><td><code>Count</code></td><td>Number of elements currently in the queue.</td><td style="color:var(--success)">O(1)</td><td>O(1)</td></tr>
+    <tr><td><code>Contains(T item)</code></td><td>Search the entire queue for item. Scans every element.</td><td style="color:var(--accent)">O(n)</td><td>O(1)</td></tr>
+    <tr><td><code>Clear()</code></td><td>Remove all elements, reset count to 0.</td><td style="color:var(--accent)">O(n)</td><td>O(1)</td></tr>
+    <tr><td><code>ToArray()</code></td><td>Copy all elements to a new array (front → rear order).</td><td style="color:var(--accent)">O(n)</td><td>O(n)</td></tr>
+    <tr><td><code>CopyTo(T[], int)</code></td><td>Copy elements into an existing array starting at a given index.</td><td style="color:var(--accent)">O(n)</td><td>O(1)</td></tr>
+    <tr><td><code>TrimExcess()</code></td><td>Shrink internal array to match Count. Frees wasted capacity.</td><td style="color:var(--accent)">O(n)</td><td>O(n)</td></tr>
+    <tr><td><code>GetEnumerator()</code></td><td>Foreach support — iterates front to rear.</td><td style="color:var(--accent)">O(n)</td><td>O(1)</td></tr>
+  </tbody>
+</table>
+
+<div class="callout warning">⚠️ <code>Dequeue()</code> and <code>Peek()</code> throw <strong>InvalidOperationException</strong> on an empty queue. Always use <code>TryDequeue</code> / <code>TryPeek</code>, or check <code>Count &gt; 0</code> first.</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp — safe patterns</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">// Pattern 1: TryDequeue (recommended)
+if (queue.TryDequeue(out string result))
+    Console.WriteLine($"Served: {result}");
+else
+    Console.WriteLine("Queue is empty.");
+
+// Pattern 2: Count check
+if (queue.Count &gt; 0)
+    Console.WriteLine(queue.Dequeue());
+
+// Pattern 3: Process all items
+while (queue.Count &gt; 0)
+    Console.WriteLine(queue.Dequeue());</code></pre>
+</div>
+</section>
+
+<hr class="div"/>
+
+<!-- 4. CIRCULAR ARRAY -->
+<section>
+<h2>4. Why a Circular Array? — Internals of Queue&lt;T&gt;</h2>
+
+<div class="callout tip">💡 Without a circular array, dequeuing from the front of a regular array would shift all elements left — costing O(n) per dequeue. A circular array avoids all shifting.</div>
+
+<h3>The Problem with a Plain Array</h3>
+<p>Imagine you dequeue from index 0 of a regular array. You then need to slide every remaining element one position to the left to keep the front at index 0. That's O(n) per dequeue — awful for a queue that dequeues constantly.</p>
+
+<h3>What is a Circular Array?</h3>
+<p>A circular array treats the array as if it wraps around like a ring. Instead of moving elements when you dequeue, you just move a <strong>front pointer</strong> forward. When rear reaches the end of the array, it wraps back to index 0 using the modulo operator: <code>rear = (rear + 1) % capacity</code>.</p>
+
+<figure>
+<svg viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+  <defs>
+    <marker id="ca" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#c8f060"/></marker>
+    <marker id="cb" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#f060c8"/></marker>
+    <marker id="cc" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#60f0a0"/></marker>
+  </defs>
+
+  <!-- LEFT: plain array problem -->
+  <text x="160" y="18" fill="#f06060" font-family="Syne,sans-serif" font-size="11" text-anchor="middle" font-weight="bold">❌ Plain Array (bad)</text>
+  <text x="160" y="34" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">After dequeue(10): shift everything left</text>
+
+  <rect x="20" y="45" width="55" height="36" rx="3" fill="rgba(240,96,96,0.12)" stroke="#f06060" stroke-width="1.5"/>
+  <text x="47" y="68" fill="#f06060" font-family="DM Mono,monospace" font-size="12" text-anchor="middle">20</text>
+  <text x="47" y="82" fill="#f06060" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">← shift</text>
+
+  <rect x="78" y="45" width="55" height="36" rx="3" fill="rgba(240,96,96,0.1)" stroke="#f06060" stroke-width="1"/>
+  <text x="105" y="68" fill="#f06060" font-family="DM Mono,monospace" font-size="12" text-anchor="middle">30</text>
+  <text x="105" y="82" fill="#f06060" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">← shift</text>
+
+  <rect x="136" y="45" width="55" height="36" rx="3" fill="rgba(240,96,96,0.08)" stroke="#f06060" stroke-width="1"/>
+  <text x="163" y="68" fill="#f06060" font-family="DM Mono,monospace" font-size="12" text-anchor="middle">40</text>
+  <text x="163" y="82" fill="#f06060" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">← shift</text>
+
+  <rect x="194" y="45" width="55" height="36" rx="3" fill="none" stroke="#2a2a32" stroke-width="1"/>
+  <text x="221" y="66" fill="#2a2a32" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">—</text>
+
+  <rect x="252" y="45" width="55" height="36" rx="3" fill="none" stroke="#2a2a32" stroke-width="1"/>
+  <text x="279" y="66" fill="#2a2a32" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">—</text>
+
+  <text x="160" y="108" fill="#f06060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">O(n) shift cost every dequeue!</text>
+
+  <!-- divider -->
+  <line x1="360" y1="10" x2="360" y2="310" stroke="#2a2a32" stroke-width="1"/>
+
+  <!-- RIGHT: circular array -->
+  <text x="545" y="18" fill="#c8f060" font-family="Syne,sans-serif" font-size="11" text-anchor="middle" font-weight="bold">✅ Circular Array (good)</text>
+
+  <!-- circular ring diagram -->
+  <!-- 8 slots around a circle, center 545, 195 -->
+  <!-- slot 0: top, slot 1: top-right, ..., slot 7: top-left -->
+  <!-- positions: angle = -90 + i*45 degrees, r=90 -->
+
+  <!-- slot circles -->
+  <circle cx="545" cy="195" r="90" fill="none" stroke="#2a2a32" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+  <!-- slot 0 (top) -->
+  <rect x="515" y="86" width="60" height="34" rx="5" fill="rgba(200,240,96,0.12)" stroke="#c8f060" stroke-width="1.5"/>
+  <text x="545" y="103" fill="#c8f060" font-family="DM Mono,monospace" font-size="11" text-anchor="middle" font-weight="bold">10</text>
+  <text x="545" y="115" fill="#6b6878" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">idx 0</text>
+
+  <!-- slot 1 (top-right: ~45°) -->
+  <rect x="597" y="110" width="60" height="34" rx="5" fill="rgba(200,240,96,0.1)" stroke="#c8f060" stroke-width="1"/>
+  <text x="627" y="127" fill="#c8f060" font-family="DM Mono,monospace" font-size="11" text-anchor="middle" font-weight="bold">20</text>
+  <text x="627" y="139" fill="#6b6878" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">idx 1</text>
+
+  <!-- slot 2 (right: ~90°) -->
+  <rect x="618" y="165" width="60" height="34" rx="5" fill="rgba(200,240,96,0.08)" stroke="#c8f060" stroke-width="1"/>
+  <text x="648" y="182" fill="#c8f060" font-family="DM Mono,monospace" font-size="11" text-anchor="middle" font-weight="bold">30</text>
+  <text x="648" y="194" fill="#6b6878" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">idx 2</text>
+
+  <!-- slot 3 (bottom-right) -->
+  <rect x="600" y="223" width="60" height="34" rx="5" fill="none" stroke="#2a2a32" stroke-width="1"/>
+  <text x="630" y="244" fill="#2a2a32" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">—</text>
+  <text x="630" y="254" fill="#2a2a32" font-family="DM Mono,monospace" font-size="7" text-anchor="middle">idx 3</text>
+
+  <!-- slot 4 (bottom) -->
+  <rect x="515" y="252" width="60" height="34" rx="5" fill="none" stroke="#2a2a32" stroke-width="1"/>
+  <text x="545" y="272" fill="#2a2a32" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">—</text>
+  <text x="545" y="282" fill="#2a2a32" font-family="DM Mono,monospace" font-size="7" text-anchor="middle">idx 4</text>
+
+  <!-- slot 5 (bottom-left) -->
+  <rect x="430" y="223" width="60" height="34" rx="5" fill="none" stroke="#2a2a32" stroke-width="1"/>
+  <text x="460" y="244" fill="#2a2a32" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">—</text>
+  <text x="460" y="254" fill="#2a2a32" font-family="DM Mono,monospace" font-size="7" text-anchor="middle">idx 5</text>
+
+  <!-- slot 6 (left) -->
+  <rect x="410" y="165" width="60" height="34" rx="5" fill="none" stroke="#2a2a32" stroke-width="1"/>
+  <text x="440" y="185" fill="#2a2a32" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">—</text>
+  <text x="440" y="195" fill="#2a2a32" font-family="DM Mono,monospace" font-size="7" text-anchor="middle">idx 6</text>
+
+  <!-- slot 7 (top-left) -->
+  <rect x="430" y="110" width="60" height="34" rx="5" fill="rgba(96,240,160,0.1)" stroke="#60f0a0" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="460" y="127" fill="#60f0a0" font-family="DM Mono,monospace" font-size="11" text-anchor="middle" font-weight="bold">40</text>
+  <text x="460" y="139" fill="#6b6878" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">idx 7 ← rear</text>
+
+  <!-- front pointer (idx 0) -->
+  <text x="501" y="93" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="end">FRONT→</text>
+
+  <!-- wrap arrow -->
+  <path d="M 460 144 A 78 78 0 1 1 515 88" fill="none" stroke="#60f0a0" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#cc)"/>
+  <text x="545" y="200" fill="#60f0a0" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">wraps around!</text>
+
+  <text x="545" y="298" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">rear = (rear + 1) % capacity → wraps to 0 when end is reached</text>
+</svg>
+<figcaption>Circular array — front and rear pointers advance without shifting. When rear hits the end, it wraps back to index 0.</figcaption>
+</figure>
+
+<h3>Circular Array Queue — C# Code</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp — circular array queue implementation</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">public class CircularArrayQueue
+{
+    private int[] _data;
+    private int _front = 0;   // index of the front element
+    private int _rear  = 0;   // index where next element will go
+    private int _count = 0;
+    private int _capacity;
+
+    public CircularArrayQueue(int capacity)
+    {
+        _capacity = capacity;
+        _data     = new int[capacity];
+    }
+
+    public bool IsEmpty =&gt; _count == 0;
+    public bool IsFull  =&gt; _count == _capacity;
+    public int  Count   =&gt; _count;
+
+    public void Enqueue(int item)
+    {
+        if (IsFull) throw new InvalidOperationException("Queue is full.");
+        _data[_rear] = item;
+        _rear  = (_rear + 1) % _capacity;  // ← key: wrap around!
+        _count++;
+    }
+
+    public int Dequeue()
+    {
+        if (IsEmpty) throw new InvalidOperationException("Queue is empty.");
+        int val = _data[_front];
+        _front = (_front + 1) % _capacity; // ← key: move front forward
+        _count--;
+        return val;
+    }
+
+    public int Peek() =&gt; IsEmpty
+        ? throw new InvalidOperationException("Queue is empty.")
+        : _data[_front];
+}</code></pre>
+</div>
+
+<div class="callout rule">📌 The magic line: <code>rear = (rear + 1) % capacity</code>. When rear = capacity-1 and you add 1, modulo wraps it back to 0 — as if the array is a circle.</div>
+
+<h3>Why Not a Simple Linear Array?</h3>
+<table>
+  <thead><tr><th></th><th>Linear Array Queue</th><th>Circular Array Queue</th></tr></thead>
+  <tbody>
+    <tr><td>Enqueue</td><td style="color:var(--success)">O(1)</td><td style="color:var(--success)">O(1)</td></tr>
+    <tr><td>Dequeue</td><td style="color:var(--danger)">O(n) — must shift elements</td><td style="color:var(--success)">O(1) — just move front pointer</td></tr>
+    <tr><td>Memory reuse</td><td style="color:var(--danger)">No — old slots wasted</td><td style="color:var(--success)">Yes — front slots reused after dequeue</td></tr>
+    <tr><td>Wasted space</td><td style="color:var(--danger)">Grows indefinitely even if capacity exists</td><td style="color:var(--success)">No waste</td></tr>
+  </tbody>
+</table>
+</section>
+
+<hr class="div"/>
+
+<!-- 5. ARRAY vs LINKED LIST -->
+<section>
+<h2>5. Array-Based vs Linked List-Based Queue</h2>
+
+<div class="callout tip">💡 Both implement the same FIFO behaviour. The difference is under the hood — and that matters for memory and performance.</div>
+
+<figure>
+<svg viewBox="0 0 720 170" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+  <text x="165" y="18" fill="#c8f060" font-family="Syne,sans-serif" font-size="11" text-anchor="middle" font-weight="bold">Array-Based Queue</text>
+  <!-- cells -->
+  <rect x="20" y="30" width="60" height="36" rx="3" fill="rgba(200,240,96,0.14)" stroke="#c8f060" stroke-width="1.5"/>
+  <text x="50" y="52" fill="#c8f060" font-family="DM Mono,monospace" font-size="12" text-anchor="middle">10</text>
+  <rect x="83" y="30" width="60" height="36" rx="3" fill="rgba(200,240,96,0.10)" stroke="#c8f060" stroke-width="1"/>
+  <text x="113" y="52" fill="#c8f060" font-family="DM Mono,monospace" font-size="12" text-anchor="middle">20</text>
+  <rect x="146" y="30" width="60" height="36" rx="3" fill="rgba(200,240,96,0.07)" stroke="#c8f060" stroke-width="1"/>
+  <text x="176" y="52" fill="#c8f060" font-family="DM Mono,monospace" font-size="12" text-anchor="middle">30</text>
+  <rect x="209" y="30" width="60" height="36" rx="3" fill="none" stroke="#2a2a32" stroke-width="1"/>
+  <text x="239" y="52" fill="#2a2a32" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">—</text>
+  <rect x="272" y="30" width="60" height="36" rx="3" fill="none" stroke="#2a2a32" stroke-width="1"/>
+  <text x="302" y="52" fill="#2a2a32" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">—</text>
+  <text x="50" y="85" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">FRONT</text>
+  <text x="176" y="85" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">REAR</text>
+  <text x="165" y="110" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">contiguous memory block — empty slots at rear</text>
+
+  <line x1="365" y1="10" x2="365" y2="160" stroke="#2a2a32" stroke-width="1"/>
+
+  <text x="545" y="18" fill="#60c8f0" font-family="Syne,sans-serif" font-size="11" text-anchor="middle" font-weight="bold">Linked List-Based Queue</text>
+  <defs><marker id="lln" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><polygon points="0 0,7 3.5,0 7" fill="#2a2a32"/></marker></defs>
+
+  <!-- head node -->
+  <rect x="390" y="28" width="90" height="55" rx="5" fill="#1a1a1f" stroke="#60c8f0" stroke-width="1.5"/>
+  <text x="435" y="52" fill="#60c8f0" font-family="DM Mono,monospace" font-size="13" text-anchor="middle" font-weight="bold">10</text>
+  <text x="435" y="68" fill="#6b6878" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">next →</text>
+  <text x="435" y="98" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">FRONT (head)</text>
+
+  <rect x="495" y="28" width="90" height="55" rx="5" fill="#1a1a1f" stroke="#2a2a32" stroke-width="1"/>
+  <text x="540" y="52" fill="#f0ede8" font-family="DM Mono,monospace" font-size="13" text-anchor="middle" font-weight="bold">20</text>
+  <text x="540" y="68" fill="#6b6878" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">next →</text>
+
+  <rect x="600" y="28" width="90" height="55" rx="5" fill="#1a1a1f" stroke="#2a2a32" stroke-width="1"/>
+  <text x="645" y="52" fill="#f0ede8" font-family="DM Mono,monospace" font-size="13" text-anchor="middle" font-weight="bold">30</text>
+  <text x="645" y="68" fill="#6b6878" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">null</text>
+  <text x="645" y="98" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">REAR (tail)</text>
+
+  <line x1="487" y1="52" x2="493" y2="52" stroke="#2a2a32" stroke-width="1.5" marker-end="url(#lln)"/>
+  <line x1="592" y1="52" x2="598" y2="52" stroke="#2a2a32" stroke-width="1.5" marker-end="url(#lln)"/>
+  <text x="545" y="120" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">scattered nodes — head = front, tail = rear</text>
+</svg>
+<figcaption>Array queue: contiguous block, front/rear pointers. Linked list queue: nodes anywhere, head=front, tail=rear.</figcaption>
+</figure>
+
+<div class="two-col">
+  <div class="panel"><div class="panel-h q">Array-Based (C# Queue&lt;T&gt;)</div>
+    <ul>
+      <li>Backed by circular array — O(1) enqueue &amp; dequeue</li>
+      <li>Cache-friendly — contiguous memory</li>
+      <li>Occasional O(n) resize when capacity exceeded</li>
+      <li>Some wasted capacity (empty slots)</li>
+      <li>Less memory per element — no pointer overhead</li>
+    </ul>
+  </div>
+  <div class="panel"><div class="panel-h ll">Linked List-Based</div>
+    <ul>
+      <li>O(1) always — no resize, no spikes</li>
+      <li>No wasted capacity — one node per element</li>
+      <li>Pointer overhead per node (+8 bytes on 64-bit)</li>
+      <li>Scattered memory — cache misses more likely</li>
+      <li>Predictable latency — preferred for real-time systems</li>
+    </ul>
+  </div>
+</div>
+
+<h3>Linked List Queue — C# Implementation</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">// C# LinkedList&lt;T&gt; used as a Queue (built-in doubly linked list)
+LinkedList&lt;int&gt; queue = new LinkedList&lt;int&gt;();
+
+// Enqueue → add at tail (AddLast)
+queue.AddLast(10);
+queue.AddLast(20);
+queue.AddLast(30);
+
+// Peek → read front without removing
+int front = queue.First.Value;  // 10
+
+// Dequeue → read front then remove (RemoveFirst)
+int served = queue.First.Value; // 10
+queue.RemoveFirst();             // O(1) — no traversal needed
+
+// All enqueue (AddLast) and dequeue (RemoveFirst) are O(1)</code></pre>
+</div>
+
+<div class="callout rule">📌 For a linked list queue: <strong>AddLast = Enqueue</strong>, <strong>RemoveFirst = Dequeue</strong>. Both are O(1) because we have direct access to both ends via head (front) and tail (rear).</div>
+</section>
+
+<hr class="div"/>
+
+<!-- QUICK REF -->
+<section>
+<h2>⚡ Quick Reference — Queue</h2>
+<table>
+  <thead><tr><th>Term</th><th>Plain English</th></tr></thead>
+  <tbody>
+    <tr><td>FIFO</td><td>First In, First Out — first element added is first to leave</td></tr>
+    <tr><td>Enqueue</td><td>Add an element to the rear of the queue</td></tr>
+    <tr><td>Dequeue</td><td>Remove and return the element from the front</td></tr>
+    <tr><td>Peek</td><td>Read the front element without removing it</td></tr>
+    <tr><td>Front</td><td>The end where elements are removed (oldest element)</td></tr>
+    <tr><td>Rear</td><td>The end where elements are added (newest element)</td></tr>
+    <tr><td>Circular Array</td><td>Array where rear wraps to index 0 when it reaches capacity — avoids shifting</td></tr>
+  </tbody>
+</table>
+<table style="margin-top:1rem;">
+  <thead><tr><th>C# Method</th><th>Purpose</th><th>Time</th></tr></thead>
+  <tbody>
+    <tr><td><code>Enqueue(item)</code></td><td>Add to rear</td><td>O(1) amortised</td></tr>
+    <tr><td><code>Dequeue()</code></td><td>Remove from front (throws if empty)</td><td>O(1)</td></tr>
+    <tr><td><code>Peek()</code></td><td>Read front (throws if empty)</td><td>O(1)</td></tr>
+    <tr><td><code>TryDequeue(out T)</code></td><td>Safe dequeue</td><td>O(1)</td></tr>
+    <tr><td><code>TryPeek(out T)</code></td><td>Safe peek</td><td>O(1)</td></tr>
+    <tr><td><code>Count</code></td><td>Number of elements</td><td>O(1)</td></tr>
+    <tr><td><code>Contains(item)</code></td><td>Search queue</td><td>O(n)</td></tr>
+    <tr><td><code>Clear()</code></td><td>Empty queue</td><td>O(n)</td></tr>
+  </tbody>
+</table>
+</section>
+</div>
+</div><!-- end queue tab -->
+
+<!-- ══════════════════════════════ DEQUE TAB ══════════════════════════════ -->
+<div id="tab-deque" class="tab-content">
+<div class="wrap">
+<h1 class="page-title">Deque (Double-Ended Queue)</h1>
+
+<!-- 1. DEFINITION -->
+<section>
+<h2>1. What is a Deque?</h2>
+
+<div class="callout tip">💡 "Deque" is short for Double-Ended Queue. If a Queue is a one-way street, a Deque is a two-way street. You can add or remove from either end.</div>
+
+<p>A <strong>Deque</strong> (pronounced "deck") is a data structure that generalises both the <strong>Queue</strong> and the <strong>Stack</strong>. It allows insertion and deletion at <strong>both the front and the rear</strong> — giving you full control over both ends.</p>
+
+<ul>
+  <li><strong>AddFront</strong> — insert at the front</li>
+  <li><strong>AddRear</strong> — insert at the rear</li>
+  <li><strong>RemoveFront</strong> — remove from the front</li>
+  <li><strong>RemoveRear</strong> — remove from the rear</li>
+  <li><strong>PeekFront / PeekRear</strong> — read either end without removing</li>
+</ul>
+
+<figure>
+<svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+  <defs>
+    <marker id="daf" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#c8f060"/></marker>
+    <marker id="drf" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#f060c8"/></marker>
+    <marker id="dal" markerWidth="7" markerHeight="7" refX="1" refY="3.5" orient="auto"><polygon points="7 0,0 3.5,7 7" fill="#c8f060"/></marker>
+    <marker id="drl" markerWidth="7" markerHeight="7" refX="1" refY="3.5" orient="auto"><polygon points="7 0,0 3.5,7 7" fill="#f060c8"/></marker>
+  </defs>
+
+  <!-- FRONT side -->
+  <text x="72" y="42" fill="#c8f060" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">Add Front ↓</text>
+  <line x1="72" y1="52" x2="72" y2="72" stroke="#c8f060" stroke-width="2" marker-end="url(#daf)"/>
+  <text x="72" y="165" fill="#f060c8" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">Remove Front ↑</text>
+  <line x1="72" y1="148" x2="72" y2="140" stroke="#f060c8" stroke-width="2" marker-end="url(#drf)"/>
+
+  <!-- REAR side -->
+  <text x="648" y="42" fill="#c8f060" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">Add Rear ↓</text>
+  <line x1="648" y1="52" x2="648" y2="72" stroke="#c8f060" stroke-width="2" marker-end="url(#daf)"/>
+  <text x="648" y="165" fill="#f060c8" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">Remove Rear ↑</text>
+  <line x1="648" y1="148" x2="648" y2="140" stroke="#f060c8" stroke-width="2" marker-end="url(#drf)"/>
+
+  <!-- elements -->
+  <rect x="22" y="72" width="100" height="56" rx="4" fill="rgba(200,240,96,0.14)" stroke="#c8f060" stroke-width="1.5"/>
+  <text x="72" y="104" fill="#c8f060" font-family="DM Mono,monospace" font-size="14" text-anchor="middle" font-weight="bold">10</text>
+
+  <rect x="125" y="72" width="100" height="56" rx="4" fill="rgba(200,240,96,0.10)" stroke="#c8f060" stroke-width="1"/>
+  <text x="175" y="104" fill="#c8f060" font-family="DM Mono,monospace" font-size="14" text-anchor="middle" font-weight="bold">20</text>
+
+  <rect x="228" y="72" width="100" height="56" rx="4" fill="rgba(200,240,96,0.07)" stroke="#c8f060" stroke-width="1"/>
+  <text x="278" y="104" fill="#c8f060" font-family="DM Mono,monospace" font-size="14" text-anchor="middle" font-weight="bold">30</text>
+
+  <rect x="331" y="72" width="100" height="56" rx="4" fill="rgba(200,240,96,0.07)" stroke="#c8f060" stroke-width="1"/>
+  <text x="381" y="104" fill="#c8f060" font-family="DM Mono,monospace" font-size="14" text-anchor="middle" font-weight="bold">40</text>
+
+  <rect x="434" y="72" width="100" height="56" rx="4" fill="rgba(200,240,96,0.07)" stroke="#c8f060" stroke-width="1"/>
+  <text x="484" y="104" fill="#c8f060" font-family="DM Mono,monospace" font-size="14" text-anchor="middle" font-weight="bold">50</text>
+
+  <rect x="537" y="72" width="100" height="56" rx="4" fill="rgba(200,240,96,0.14)" stroke="#c8f060" stroke-width="1.5"/>
+  <text x="587" y="104" fill="#c8f060" font-family="DM Mono,monospace" font-size="14" text-anchor="middle" font-weight="bold">60</text>
+
+  <text x="72" y="143" fill="#6b6878" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">FRONT</text>
+  <text x="587" y="143" fill="#6b6878" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">REAR</text>
+
+  <text x="360" y="185" fill="#6b6878" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">Both ends support insert AND remove — unlike a Queue (one-directional)</text>
+</svg>
+<figcaption>Deque — AddFront, AddRear, RemoveFront, RemoveRear — all four operations supported.</figcaption>
+</figure>
+
+<div class="callout rule">📌 A Deque is a superset: it can behave as a Queue (FIFO) by only using AddRear + RemoveFront, or as a Stack (LIFO) by only using AddFront + RemoveFront.</div>
+</section>
+
+<hr class="div"/>
+
+<!-- 2. C# INBUILT DEQUE — LinkedList -->
+<section>
+<h2>2. Deque in Modern C# — LinkedList&lt;T&gt;</h2>
+
+<div class="callout tip">💡 C# doesn't have a class literally named "Deque". But <code>LinkedList&lt;T&gt;</code> in <code>System.Collections.Generic</code> is the official, built-in way to get full Deque behaviour. It's a doubly linked list — so O(1) at both ends naturally.</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">using System.Collections.Generic;
+
+LinkedList&lt;int&gt; deque = new LinkedList&lt;int&gt;();
+
+// ── ADD ──────────────────────────────────
+deque.AddLast(10);   // deque: [10]         ← add to rear
+deque.AddLast(20);   // deque: [10, 20]
+deque.AddFirst(5);   // deque: [5, 10, 20]  ← add to front
+deque.AddFirst(1);   // deque: [1, 5, 10, 20]
+
+// ── PEEK ─────────────────────────────────
+int peekFront = deque.First.Value;  // 1  (does NOT remove)
+int peekRear  = deque.Last.Value;   // 20 (does NOT remove)
+
+// ── REMOVE ───────────────────────────────
+deque.RemoveFirst();  // removes 1, deque: [5, 10, 20]
+deque.RemoveLast();   // removes 20, deque: [5, 10]
+
+// ── INFO ─────────────────────────────────
+int count = deque.Count;          // 2
+bool empty = deque.Count == 0;    // false
+bool has   = deque.Contains(10);  // true
+
+// ── UTILITY ──────────────────────────────
+deque.Remove(10);    // remove specific value (O(n) search)
+deque.Clear();       // remove all</code></pre>
+</div>
+
+<h3>All LinkedList&lt;T&gt; Methods — Time &amp; Space</h3>
+<table>
+  <thead><tr><th>Method / Property</th><th>What it does</th><th>Time</th><th>Space</th></tr></thead>
+  <tbody>
+    <tr><td><code>AddFirst(T value)</code></td><td>Insert new node at the front of the list.</td><td style="color:var(--success)">O(1)</td><td>O(1)</td></tr>
+    <tr><td><code>AddLast(T value)</code></td><td>Insert new node at the rear of the list.</td><td style="color:var(--success)">O(1)</td><td>O(1)</td></tr>
+    <tr><td><code>AddBefore(node, value)</code></td><td>Insert new node before a given node (you must have the node reference).</td><td style="color:var(--success)">O(1)*</td><td>O(1)</td></tr>
+    <tr><td><code>AddAfter(node, value)</code></td><td>Insert new node after a given node.</td><td style="color:var(--success)">O(1)*</td><td>O(1)</td></tr>
+    <tr><td><code>RemoveFirst()</code></td><td>Remove the first node. Throws if list empty.</td><td style="color:var(--success)">O(1)</td><td>O(1)</td></tr>
+    <tr><td><code>RemoveLast()</code></td><td>Remove the last node. Throws if list empty.</td><td style="color:var(--success)">O(1)</td><td>O(1)</td></tr>
+    <tr><td><code>Remove(T value)</code></td><td>Find and remove the first node with this value.</td><td style="color:var(--accent)">O(n)</td><td>O(1)</td></tr>
+    <tr><td><code>Remove(LinkedListNode)</code></td><td>Remove a specific node by reference (no search).</td><td style="color:var(--success)">O(1)</td><td>O(1)</td></tr>
+    <tr><td><code>First</code></td><td>Property — returns the first LinkedListNode (or null if empty).</td><td style="color:var(--success)">O(1)</td><td>O(1)</td></tr>
+    <tr><td><code>Last</code></td><td>Property — returns the last LinkedListNode (or null if empty).</td><td style="color:var(--success)">O(1)</td><td>O(1)</td></tr>
+    <tr><td><code>Count</code></td><td>Number of nodes currently in the list.</td><td style="color:var(--success)">O(1)</td><td>O(1)</td></tr>
+    <tr><td><code>Contains(T value)</code></td><td>Search the list for a value. Linear scan.</td><td style="color:var(--accent)">O(n)</td><td>O(1)</td></tr>
+    <tr><td><code>Find(T value)</code></td><td>Return the first node with this value, or null. Linear scan from head.</td><td style="color:var(--accent)">O(n)</td><td>O(1)</td></tr>
+    <tr><td><code>FindLast(T value)</code></td><td>Return the last node with this value. Linear scan from tail.</td><td style="color:var(--accent)">O(n)</td><td>O(1)</td></tr>
+    <tr><td><code>Clear()</code></td><td>Remove all nodes.</td><td style="color:var(--accent)">O(n)</td><td>O(1)</td></tr>
+    <tr><td><code>CopyTo(T[], int)</code></td><td>Copy all values to an existing array starting at an index.</td><td style="color:var(--accent)">O(n)</td><td>O(1)</td></tr>
+    <tr><td><code>ToArray()</code> (via LINQ)</code></td><td>Create a new array copy (front → rear order).</td><td style="color:var(--accent)">O(n)</td><td>O(n)</td></tr>
+  </tbody>
+</table>
+<p style="font-size:0.78rem;color:var(--muted);margin-top:0.4rem;">* AddBefore/AddAfter are O(1) if you already hold the LinkedListNode reference. Finding the node first via Find() costs O(n).</p>
+
+<div class="callout warning">⚠️ <code>First</code> and <code>Last</code> return <code>null</code> if the list is empty — not an exception. Always null-check before accessing <code>.Value</code>:<br/><code>int v = deque.First?.Value ?? throw new InvalidOperationException();</code></div>
+</section>
+
+<hr class="div"/>
+
+<!-- 3. WHERE IS DEQUE USED -->
+<section>
+<h2>3. Why Deque? Real-World Uses</h2>
+
+<div class="callout tip">💡 A Deque is used whenever you need fast operations at both ends — not just one. The moment you need to "add to front" efficiently, a plain Queue fails you. Deque steps in.</div>
+
+<div class="rw-grid">
+  <div class="rw-card"><div class="rw-icon">↩️↪️</div><div class="rw-title">Undo + Redo</div><div class="rw-desc">Undo pops from front. Redo pushes back to front. Deque handles both naturally.</div></div>
+  <div class="rw-card"><div class="rw-icon">🌐</div><div class="rw-title">Browser History</div><div class="rw-desc">New pages added to front. Back/Forward navigates both ends. Deque is perfect.</div></div>
+  <div class="rw-card"><div class="rw-icon">📋</div><div class="rw-title">Sliding Window Max</div><div class="rw-desc">Classic algorithm (e.g., LeetCode 239) — front holds max, expired elements dropped from rear and front.</div></div>
+  <div class="rw-card"><div class="rw-icon">📅</div><div class="rw-title">Task Scheduling</div><div class="rw-desc">High-priority tasks inserted at front; normal tasks at rear. Priority without a full priority queue.</div></div>
+  <div class="rw-card"><div class="rw-icon">🔁</div><div class="rw-title">Palindrome Check</div><div class="rw-desc">Compare front and rear, pop both sides inward. O(n) check using deque.</div></div>
+  <div class="rw-card"><div class="rw-icon">🎮</div><div class="rw-title">Game AI Pathfinding</div><div class="rw-desc">0-1 BFS uses a deque — weight-0 edges added to front, weight-1 to rear.</div></div>
+  <div class="rw-card"><div class="rw-icon">🖥️</div><div class="rw-title">Work-Stealing Queues</div><div class="rw-desc">JVM thread pools steal tasks from the rear of another thread's deque. Both ends are live.</div></div>
+  <div class="rw-card"><div class="rw-icon">📦</div><div class="rw-title">Input Buffer / Text Editors</div><div class="rw-desc">Cursor movements insert/delete at arbitrary positions — deque enables efficient front/back editing.</div></div>
+</div>
+</section>
+
+<hr class="div"/>
+
+<!-- 4. BEFORE LINKEDLIST — WHAT WAS USED -->
+<section>
+<h2>4. Before LinkedList&lt;T&gt; — How Deque Was Built</h2>
+
+<div class="callout tip">💡 Before C# had <code>LinkedList&lt;T&gt;</code> as a clean Deque, developers had to build one manually. The two approaches were: a <strong>circular doubly linked list</strong> from scratch, or a <strong>pair of stacks</strong>.</div>
+
+<h3>Approach 1 — Two Stacks as a Deque</h3>
+<p>Use two stacks — <code>frontStack</code> and <code>rearStack</code>. Each stack covers one end. When one runs out, rebalance by reversing the other into it.</p>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp — deque from two stacks (old-school approach)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">public class DequeFromTwoStacks&lt;T&gt;
+{
+    private Stack&lt;T&gt; _front = new Stack&lt;T&gt;();
+    private Stack&lt;T&gt; _rear  = new Stack&lt;T&gt;();
+
+    public void AddFront(T item) =&gt; _front.Push(item);
+    public void AddRear(T item)  =&gt; _rear.Push(item);
+
+    public T RemoveFront()
+    {
+        if (_front.Count == 0)
+            Rebalance(_rear, _front);      // move rear elements to front
+        if (_front.Count == 0) throw new InvalidOperationException("Empty");
+        return _front.Pop();
+    }
+
+    public T RemoveRear()
+    {
+        if (_rear.Count == 0)
+            Rebalance(_front, _rear);      // move front elements to rear
+        if (_rear.Count == 0) throw new InvalidOperationException("Empty");
+        return _rear.Pop();
+    }
+
+    private void Rebalance(Stack&lt;T&gt; source, Stack&lt;T&gt; dest)
+    {
+        int half = source.Count / 2;
+        // move half of source into a temp, other half into dest, then back
+        var temp = new Stack&lt;T&gt;();
+        while (source.Count &gt; half) temp.Push(source.Pop());
+        while (source.Count &gt; 0)    dest.Push(source.Pop());
+        while (temp.Count &gt; 0)      source.Push(temp.Pop());
+    }
+}</code></pre>
+</div>
+
+<div class="callout warning">⚠️ Two-stack Deque gives O(1) amortised for all operations but individual rebalance calls cost O(n). Not suitable for real-time systems.</div>
+
+<h3>Approach 2 — Custom Doubly Linked List (Manual Node Class)</h3>
+<p>Before <code>LinkedList&lt;T&gt;</code> was available (or trusted), developers wrote a raw doubly linked list themselves — a Node class with <code>prev</code> and <code>next</code>, plus a wrapper class managing <code>head</code> and <code>tail</code>.</p>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp — manual doubly linked deque (pre-LinkedList era)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">public class DequeNode&lt;T&gt;
+{
+    public T Value;
+    public DequeNode&lt;T&gt; Prev, Next;
+    public DequeNode(T v) { Value = v; }
+}
+
+public class ManualDeque&lt;T&gt;
+{
+    private DequeNode&lt;T&gt; _head, _tail;
+    public int Count { get; private set; }
+
+    public void AddFront(T item)
+    {
+        var node = new DequeNode&lt;T&gt;(item);
+        if (_head == null) { _head = _tail = node; }
+        else { node.Next = _head; _head.Prev = node; _head = node; }
+        Count++;
+    }
+
+    public void AddRear(T item)
+    {
+        var node = new DequeNode&lt;T&gt;(item);
+        if (_tail == null) { _head = _tail = node; }
+        else { _tail.Next = node; node.Prev = _tail; _tail = node; }
+        Count++;
+    }
+
+    public T RemoveFront()
+    {
+        if (_head == null) throw new InvalidOperationException();
+        T val = _head.Value;
+        _head = _head.Next;
+        if (_head != null) _head.Prev = null; else _tail = null;
+        Count--;
+        return val;
+    }
+
+    public T RemoveRear()
+    {
+        if (_tail == null) throw new InvalidOperationException();
+        T val = _tail.Value;
+        _tail = _tail.Prev;
+        if (_tail != null) _tail.Next = null; else _head = null;
+        Count--;
+        return val;
+    }
+}</code></pre>
+</div>
+
+<div class="callout rule">📌 Today, just use <code>LinkedList&lt;T&gt;</code> — it is this manual deque, already implemented, tested, and maintained by Microsoft. No reason to reinvent it.</div>
+
+<h3>Comparison — Old vs Modern</h3>
+<table>
+  <thead><tr><th>Approach</th><th>AddFront</th><th>AddRear</th><th>RemoveFront</th><th>RemoveRear</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Two Stacks</td><td>O(1)</td><td>O(1)</td><td>O(1) amortised</td><td>O(1) amortised</td><td>O(n) rebalance spikes possible</td></tr>
+    <tr><td>Manual DLL</td><td style="color:var(--success)">O(1)</td><td style="color:var(--success)">O(1)</td><td style="color:var(--success)">O(1)</td><td style="color:var(--success)">O(1)</td><td>More code to maintain</td></tr>
+    <tr><td>LinkedList&lt;T&gt; (modern)</td><td style="color:var(--success)">O(1)</td><td style="color:var(--success)">O(1)</td><td style="color:var(--success)">O(1)</td><td style="color:var(--success)">O(1)</td><td>✅ Use this today</td></tr>
+  </tbody>
+</table>
+</section>
+
+<hr class="div"/>
+
+<!-- 5. QUEUE vs STACK vs DEQUE -->
+<section>
+<h2>5. Queue vs Stack vs Deque — At a Glance</h2>
+<table>
+  <thead><tr><th>Feature</th><th>Stack</th><th>Queue</th><th>Deque</th></tr></thead>
+  <tbody>
+    <tr><td>Principle</td><td>LIFO</td><td>FIFO</td><td>Both (or neither)</td></tr>
+    <tr><td>Add Front</td><td>✅ (Push)</td><td>❌</td><td>✅ AddFirst</td></tr>
+    <tr><td>Add Rear</td><td>❌</td><td>✅ (Enqueue)</td><td>✅ AddLast</td></tr>
+    <tr><td>Remove Front</td><td>✅ (Pop)</td><td>✅ (Dequeue)</td><td>✅ RemoveFirst</td></tr>
+    <tr><td>Remove Rear</td><td>❌</td><td>❌</td><td>✅ RemoveLast</td></tr>
+    <tr><td>C# built-in</td><td>Stack&lt;T&gt;</td><td>Queue&lt;T&gt;</td><td>LinkedList&lt;T&gt;</td></tr>
+    <tr><td>Internal structure</td><td>Dynamic array</td><td>Circular array</td><td>Doubly linked list</td></tr>
+  </tbody>
+</table>
+</section>
+
+<hr class="div"/>
+
+<section>
+<h2>⚡ Quick Reference — Deque</h2>
+<table>
+  <thead><tr><th>LinkedList&lt;T&gt; Method</th><th>Deque Operation</th><th>Time</th></tr></thead>
+  <tbody>
+    <tr><td><code>AddFirst(item)</code></td><td>AddFront</td><td>O(1)</td></tr>
+    <tr><td><code>AddLast(item)</code></td><td>AddRear</td><td>O(1)</td></tr>
+    <tr><td><code>RemoveFirst()</code></td><td>RemoveFront</td><td>O(1)</td></tr>
+    <tr><td><code>RemoveLast()</code></td><td>RemoveRear</td><td>O(1)</td></tr>
+    <tr><td><code>First.Value</code></td><td>PeekFront</td><td>O(1)</td></tr>
+    <tr><td><code>Last.Value</code></td><td>PeekRear</td><td>O(1)</td></tr>
+    <tr><td><code>Count</code></td><td>Size</td><td>O(1)</td></tr>
+    <tr><td><code>Contains(item)</code></td><td>Search</td><td>O(n)</td></tr>
+    <tr><td><code>Clear()</code></td><td>Empty deque</td><td>O(n)</td></tr>
+    <tr><td><code>Remove(node)</code></td><td>Remove by reference</td><td>O(1)</td></tr>
+    <tr><td><code>Find(value)</code></td><td>Find node (linear)</td><td>O(n)</td></tr>
+  </tbody>
+</table>
+</section>
+
+</div>
+</div><!-- end deque tab -->
+
+<!-- ══════════════════════════════ RECALL TAB ══════════════════════════════ -->
+<div id="tab-recall" class="tab-content">
+<div class="recall-wrap">
+
+<div class="recall-hdr">
+  <h2 style="font-family:'Syne',sans-serif;color:var(--accent);border:none;padding:0;margin:0;">🧠 Active Recall — 30 Interview Questions</h2>
+  <div class="recall-ctrl">
+    <span class="prog" id="prog">0 of 30 answered</span>
+    <button class="ctrl-btn" onclick="revealAll()">Reveal All</button>
+    <button class="ctrl-btn" onclick="hideAll()">Hide All</button>
+  </div>
+</div>
+
+<!-- QUEUE SECTION LABEL -->
+<div style="font-family:'Syne',sans-serif;font-size:0.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:0.5rem 0 0.8rem;padding-left:0.2rem;">── Queue Questions (Q01–Q18) ──</div>
+
+<!-- Q01 -->
+<div class="qcard" id="q1"><div class="qhdr"><span class="qnum">Q01</span><span class="qtype def">DEF</span><span class="qtxt">What is a Queue? Define it with FIFO and state what operations are allowed.</span><button class="show-btn" onclick="tog('q1')">Show</button></div><div class="ans-block" id="q1-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">A Queue is a linear data structure following <strong>FIFO — First In, First Out</strong>. The element that was added earliest is always the first to be removed. You can only insert at one end (the <strong>rear</strong>) and remove from the other end (the <strong>front</strong>). Core operations: Enqueue (add to rear), Dequeue (remove from front), Peek (read front without removing), Count, IsEmpty.</div><div class="ans-ex"><span class="exlbl">Analogy:</span> A line at a cinema ticket counter — first person in line is first served.</div></div></div></div>
+
+<!-- Q02 -->
+<div class="qcard" id="q2"><div class="qhdr"><span class="qnum">Q02</span><span class="qtype why">WHY</span><span class="qtxt">Why does C#'s Queue&lt;T&gt; internally use a circular array instead of a plain array?</span><button class="show-btn" onclick="tog('q2')">Show</button></div><div class="ans-block" id="q2-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">A plain array requires shifting all elements left every time you dequeue from the front — that's O(n) per dequeue. A circular array instead keeps a <strong>front pointer</strong> that advances on dequeue, and a <strong>rear pointer</strong> that wraps to index 0 using <code>(rear + 1) % capacity</code> when it hits the end. No element is ever moved. Both enqueue and dequeue become O(1). Memory is also reused — dequeued slots at the front are reclaimed for new elements.</div><div class="ans-ex"><span class="exlbl">Key line:</span> <code>rear = (rear + 1) % capacity</code> — this is the wrap-around magic.</div></div></div></div>
+
+<!-- Q03 -->
+<div class="qcard" id="q3"><div class="qhdr"><span class="qnum">Q03</span><span class="qtype apply">APPLY</span><span class="qtxt">Write C# code to process print jobs from a Queue. Enqueue "Doc1", "Doc2", "Doc3", then dequeue and print each.</span><button class="show-btn" onclick="tog('q3')">Show</button></div><div class="ans-block" id="q3-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><div class="code-block" style="margin-top:0.5rem;"><div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code class="language-csharp">Queue&lt;string&gt; printQueue = new Queue&lt;string&gt;();
+printQueue.Enqueue("Doc1");
+printQueue.Enqueue("Doc2");
+printQueue.Enqueue("Doc3");
+
+while (printQueue.Count &gt; 0)
+    Console.WriteLine("Printing: " + printQueue.Dequeue());
+// Output: Doc1, Doc2, Doc3 (in that order — FIFO)</code></pre></div></div></div></div></div>
+
+<!-- Q04 -->
+<div class="qcard" id="q4"><div class="qhdr"><span class="qnum">Q04</span><span class="qtype gotcha">GOTCHA</span><span class="qtxt">What exception does Queue&lt;T&gt;.Dequeue() or Peek() throw on an empty queue? How do you avoid it?</span><button class="show-btn" onclick="tog('q4')">Show</button></div><div class="ans-block" id="q4-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Both throw <strong>InvalidOperationException</strong> when the queue is empty. Avoid it by using: <code>TryDequeue(out T result)</code> — returns false instead of throwing; or <code>TryPeek(out T result)</code>; or explicitly checking <code>queue.Count &gt; 0</code> before calling Dequeue/Peek.</div><div class="ans-ex"><span class="exlbl">Best practice:</span> Always use TryDequeue in production code where empty queue is a valid scenario.</div></div></div></div>
+
+<!-- Q05 -->
+<div class="qcard" id="q5"><div class="qhdr"><span class="qnum">Q05</span><span class="qtype compare">COMPARE</span><span class="qtxt">Compare Queue and Stack — FIFO vs LIFO. Give a real-world example for each.</span><button class="show-btn" onclick="tog('q5')">Show</button></div><div class="ans-block" id="q5-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><strong>Queue (FIFO):</strong> First added = first removed. Example: printer queue — first document sent is first printed. First-come-first-served.<br/><br/><strong>Stack (LIFO):</strong> Last added = first removed. Example: browser Back button — the most recently visited page is where "Back" takes you. Most recent first.</div></div></div></div>
+
+<!-- Q06 -->
+<div class="qcard" id="q6"><div class="qhdr"><span class="qnum">Q06</span><span class="qtype apply">APPLY</span><span class="qtxt">Implement Breadth-First Search (BFS) using a Queue in C#. Sketch the approach.</span><button class="show-btn" onclick="tog('q6')">Show</button></div><div class="ans-block" id="q6-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><div class="code-block" style="margin-top:0.5rem;"><div class="code-header"><span class="code-lang">csharp — BFS skeleton</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code class="language-csharp">void BFS(int start, Dictionary&lt;int, List&lt;int&gt;&gt; graph)
+{
+    var visited = new HashSet&lt;int&gt;();
+    var queue   = new Queue&lt;int&gt;();
+
+    queue.Enqueue(start);
+    visited.Add(start);
+
+    while (queue.Count &gt; 0)
+    {
+        int node = queue.Dequeue();
+        Console.Write(node + " ");
+
+        foreach (int neighbour in graph[node])
+        {
+            if (!visited.Contains(neighbour))
+            {
+                visited.Add(neighbour);
+                queue.Enqueue(neighbour);  // explore level by level
+            }
+        }
+    }
+}</code></pre></div></div><div class="ans-ex"><span class="exlbl">Why Queue?</span> BFS processes nodes level-by-level. The queue ensures nodes are visited in the order they were discovered (FIFO = level order).</div></div></div></div>
+
+<!-- Q07 -->
+<div class="qcard" id="q7"><div class="qhdr"><span class="qnum">Q07</span><span class="qtype seq">SEQUENCE</span><span class="qtxt">Enqueue 5, 10, 15 into a queue. Then Dequeue once, Peek once, Dequeue again. What are the results?</span><button class="show-btn" onclick="tog('q7')">Show</button></div><div class="ans-block" id="q7-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Queue after Enqueue(5, 10, 15): [5, 10, 15] — 5 is at front.<br/>Dequeue() → returns <strong>5</strong>. Queue: [10, 15]<br/>Peek() → returns <strong>10</strong>. Queue unchanged: [10, 15]<br/>Dequeue() → returns <strong>10</strong>. Queue: [15]</div></div></div></div>
+
+<!-- Q08 -->
+<div class="qcard" id="q8"><div class="qhdr"><span class="qnum">Q08</span><span class="qtype why">WHY</span><span class="qtxt">Why is Enqueue O(1) amortised rather than strictly O(1) in Queue&lt;T&gt;?</span><button class="show-btn" onclick="tog('q8')">Show</button></div><div class="ans-block" id="q8-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Queue&lt;T&gt; internally uses a circular array. When the array fills up, it allocates a new array of double the size and copies all elements — a single O(n) operation. However, because the array doubles each time, resizes become exponentially rare. Averaged across all enqueue operations, the cost per enqueue is O(1) — this is <strong>amortised</strong> O(1). Any single enqueue could be O(n) if it triggers a resize.</div></div></div></div>
+
+<!-- Q09 -->
+<div class="qcard" id="q9"><div class="qhdr"><span class="qnum">Q09</span><span class="qtype apply">APPLY</span><span class="qtxt">Using only a Queue, reverse the integers in [1, 2, 3, 4, 5] to get [5, 4, 3, 2, 1]. How?</span><button class="show-btn" onclick="tog('q9')">Show</button></div><div class="ans-block" id="q9-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">You cannot reverse a queue with only a queue. You need a stack (or recursion) to reverse.<br/><div class="code-block" style="margin-top:0.5rem;"><div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code class="language-csharp">Queue&lt;int&gt; q = new Queue&lt;int&gt;(new[] {1,2,3,4,5});
+Stack&lt;int&gt; s = new Stack&lt;int&gt;();
+while (q.Count &gt; 0) s.Push(q.Dequeue()); // dump into stack
+while (s.Count &gt; 0) q.Enqueue(s.Pop());  // pull back (reversed)
+// q is now [5,4,3,2,1]</code></pre></div></div><div class="ans-ex"><span class="exlbl">Gotcha:</span> A single queue cannot self-reverse — that's a key difference from a stack.</div></div></div></div>
+
+<!-- Q10 -->
+<div class="qcard" id="q10"><div class="qhdr"><span class="qnum">Q10</span><span class="qtype gotcha">GOTCHA</span><span class="qtxt">Does foreach on a Queue&lt;T&gt; dequeue elements? What order does it iterate?</span><button class="show-btn" onclick="tog('q10')">Show</button></div><div class="ans-block" id="q10-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><strong>No</strong> — foreach does NOT dequeue. The queue remains intact after iteration. It iterates from <strong>front to rear</strong> (oldest to newest). If you enqueue 1, 2, 3 and do foreach, you see 1, 2, 3 — the same order as dequeuing would give, but nothing is removed.</div><div class="ans-ex"><span class="exlbl">Gotcha:</span> Modifying the queue (Enqueue/Dequeue) during foreach throws InvalidOperationException.</div></div></div></div>
+
+<!-- Q11 -->
+<div class="qcard" id="q11"><div class="qhdr"><span class="qnum">Q11</span><span class="qtype apply">APPLY</span><span class="qtxt">Implement a Queue using two Stacks. What is the amortised time complexity of each operation?</span><button class="show-btn" onclick="tog('q11')">Show</button></div><div class="ans-block" id="q11-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><div class="code-block" style="margin-top:0.5rem;"><div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code class="language-csharp">public class QueueFromStacks&lt;T&gt;
+{
+    Stack&lt;T&gt; _inbox = new(), _outbox = new();
+    public void Enqueue(T item) =&gt; _inbox.Push(item);
+    public T Dequeue()
+    {
+        if (_outbox.Count == 0)
+            while (_inbox.Count &gt; 0)
+                _outbox.Push(_inbox.Pop());  // transfer reverses → FIFO
+        if (_outbox.Count == 0) throw new InvalidOperationException();
+        return _outbox.Pop();
+    }
+}</code></pre></div></div><div class="ans-ex"><span class="exlbl">Complexity:</span> Enqueue = O(1). Dequeue = O(1) amortised (each element transferred at most once).</div></div></div></div>
+
+<!-- Q12 -->
+<div class="qcard" id="q12"><div class="qhdr"><span class="qnum">Q12</span><span class="qtype compare">COMPARE</span><span class="qtxt">Compare array-based queue vs linked list-based queue. When would you choose each?</span><button class="show-btn" onclick="tog('q12')">Show</button></div><div class="ans-block" id="q12-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><strong>Array-based (Queue&lt;T&gt;):</strong> Cache-friendly, less memory overhead, occasional O(n) resize. Use for general purpose — most applications.<br/><br/><strong>Linked list-based (LinkedList&lt;T&gt;):</strong> Strictly O(1) enqueue/dequeue always, no resize, but each node has pointer overhead and is scattered in memory. Use when you need <strong>guaranteed worst-case O(1)</strong> — real-time systems, trading engines, embedded software.</div></div></div></div>
+
+<!-- Q13 -->
+<div class="qcard" id="q13"><div class="qhdr"><span class="qnum">Q13</span><span class="qtype why">WHY</span><span class="qtxt">Why is a Queue used in BFS instead of a Stack? What happens if you use a Stack instead?</span><button class="show-btn" onclick="tog('q13')">Show</button></div><div class="ans-block" id="q13-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">BFS explores nodes level by level. A queue ensures the <em>first discovered</em> nodes are visited first (FIFO = level order). If you use a Stack instead, you process the most recently discovered node first — which gives you <strong>DFS (Depth-First Search)</strong>, not BFS. The choice of data structure literally defines which traversal algorithm you're running.</div></div></div></div>
+
+<!-- Q14 -->
+<div class="qcard" id="q14"><div class="qhdr"><span class="qnum">Q14</span><span class="qtype def">DEF</span><span class="qtxt">What is a Priority Queue? How is it different from a regular Queue?</span><button class="show-btn" onclick="tog('q14')">Show</button></div><div class="ans-block" id="q14-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">A regular Queue is FIFO — first in, first out regardless of importance. A <strong>Priority Queue</strong> dequeues the element with the highest priority first — regardless of insertion order. C# has <code>PriorityQueue&lt;TElement, TPriority&gt;</code> (added in .NET 6). Internally it uses a min-heap. Enqueue with a priority, Dequeue returns the element with the lowest priority number (highest priority).</div><div class="ans-ex"><span class="exlbl">Example:</span> Hospital ER — critical patients (priority 1) are seen before minor injuries (priority 3) even if they arrived later.</div></div></div></div>
+
+<!-- Q15 -->
+<div class="qcard" id="q15"><div class="qhdr"><span class="qnum">Q15</span><span class="qtype apply">APPLY</span><span class="qtxt">What is TrimExcess() on Queue&lt;T&gt; and when would you use it?</span><button class="show-btn" onclick="tog('q15')">Show</button></div><div class="ans-block" id="q15-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><code>TrimExcess()</code> reduces the internal array's capacity to match the current Count. After a resize, the array might have 2n capacity but only n elements. Calling TrimExcess releases the wasted slots. Use it when: you've finished filling a queue and won't add more elements, and memory pressure is a concern. Time: O(n) — must copy all elements to a smaller array.</div></div></div></div>
+
+<!-- Q16 -->
+<div class="qcard" id="q16"><div class="qhdr"><span class="qnum">Q16</span><span class="qtype seq">SEQUENCE</span><span class="qtxt">In a circular array queue with capacity 5, front=3, rear=1, what are the valid indices currently occupied?</span><button class="show-btn" onclick="tog('q16')">Show</button></div><div class="ans-block" id="q16-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Indices occupied: 3, 4, 0 (wraps around). The queue "wraps" from index 4 back to 0 before reaching rear=1. So the elements are at indices 3, 4, 0 — that's 3 elements. Rear=1 means the next Enqueue would go to index 1. This is exactly why a circular array can reuse front slots that were dequeued.</div></div></div></div>
+
+<!-- Q17 -->
+<div class="qcard" id="q17"><div class="qhdr"><span class="qnum">Q17</span><span class="qtype gotcha">GOTCHA</span><span class="qtxt">In a full circular array queue (front == rear), how do you distinguish "full" from "empty" since both states could have front == rear?</span><button class="show-btn" onclick="tog('q17')">Show</button></div><div class="ans-block" id="q17-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Classic problem. Three solutions: (1) <strong>Maintain a count variable</strong> — empty if count==0, full if count==capacity. This is what C#'s Queue&lt;T&gt; does. (2) <strong>Keep one slot always empty</strong> — full when (rear+1)%capacity==front. (3) <strong>Use a boolean flag</strong> — track "was last operation enqueue or dequeue?" C# uses approach #1 (count variable) because it also provides O(1) Count property.</div></div></div></div>
+
+<!-- Q18 -->
+<div class="qcard" id="q18"><div class="qhdr"><span class="qnum">Q18</span><span class="qtype apply">APPLY</span><span class="qtxt">Given a stream of integers, find the sliding window maximum of size k using a Deque. Sketch the algorithm.</span><button class="show-btn" onclick="tog('q18')">Show</button></div><div class="ans-block" id="q18-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><div class="code-block" style="margin-top:0.5rem;"><div class="code-header"><span class="code-lang">csharp — sliding window max (classic Deque use)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code class="language-csharp">int[] SlidingWindowMax(int[] nums, int k)
+{
+    var deque  = new LinkedList&lt;int&gt;(); // stores indices
+    var result = new int[nums.Length - k + 1];
+    int ri = 0;
+
+    for (int i = 0; i &lt; nums.Length; i++)
+    {
+        // remove elements outside window from front
+        while (deque.Count &gt; 0 &amp;&amp; deque.First.Value &lt; i - k + 1)
+            deque.RemoveFirst();
+
+        // remove smaller elements from rear (they can never be max)
+        while (deque.Count &gt; 0 &amp;&amp; nums[deque.Last.Value] &lt; nums[i])
+            deque.RemoveLast();
+
+        deque.AddLast(i);
+
+        if (i &gt;= k - 1)
+            result[ri++] = nums[deque.First.Value]; // front = max of window
+    }
+    return result;
+}
+// Input: [1,3,-1,-3,5,3,6,7], k=3 → Output: [3,3,5,5,6,7]</code></pre></div></div><div class="ans-ex"><span class="exlbl">Why Deque?</span> You need to add/remove from both ends: drop old indices from front, drop smaller candidates from rear. No other single structure supports both ends in O(1).</div></div></div></div>
+
+<!-- DEQUE SECTION LABEL -->
+<div style="font-family:'Syne',sans-serif;font-size:0.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:1.5rem 0 0.8rem;padding-left:0.2rem;">── Deque Questions (Q19–Q30) ──</div>
+
+<!-- Q19 -->
+<div class="qcard" id="q19"><div class="qhdr"><span class="qnum">Q19</span><span class="qtype def">DEF</span><span class="qtxt">What is a Deque? How is it different from both a Queue and a Stack?</span><button class="show-btn" onclick="tog('q19')">Show</button></div><div class="ans-block" id="q19-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">A Deque (Double-Ended Queue) allows insert and remove at <strong>both</strong> the front and the rear. A Queue only allows enqueue at rear and dequeue at front (FIFO). A Stack only allows push/pop at the top (LIFO). A Deque is a superset — it can simulate both. It doesn't enforce FIFO or LIFO — the caller decides which end to use.</div></div></div></div>
+
+<!-- Q20 -->
+<div class="qcard" id="q20"><div class="qhdr"><span class="qnum">Q20</span><span class="qtype why">WHY</span><span class="qtxt">Why does C# not have a dedicated Deque class, and what do you use instead?</span><button class="show-btn" onclick="tog('q20')">Show</button></div><div class="ans-block" id="q20-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">C# does not have a class named "Deque" in the standard library, but <code>LinkedList&lt;T&gt;</code> in System.Collections.Generic acts as a perfect Deque — it has AddFirst, AddLast, RemoveFirst, RemoveLast all in O(1). It's a doubly linked list so both ends are instantly accessible. Some developers also use third-party libraries (e.g., C5 collections) that have an explicit Deque type.</div></div></div></div>
+
+<!-- Q21 -->
+<div class="qcard" id="q21"><div class="qhdr"><span class="qnum">Q21</span><span class="qtype apply">APPLY</span><span class="qtxt">Check if a string is a palindrome using a Deque (LinkedList in C#). Write the code.</span><button class="show-btn" onclick="tog('q21')">Show</button></div><div class="ans-block" id="q21-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><div class="code-block" style="margin-top:0.5rem;"><div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code class="language-csharp">bool IsPalindrome(string s)
+{
+    var deque = new LinkedList&lt;char&gt;(s);
+    while (deque.Count &gt; 1)
+    {
+        if (deque.First.Value != deque.Last.Value) return false;
+        deque.RemoveFirst();
+        deque.RemoveLast();
+    }
+    return true;
+}
+// "racecar" → true, "hello" → false</code></pre></div></div><div class="ans-ex"><span class="exlbl">Why Deque?</span> Comparing and removing from both ends simultaneously — only a Deque makes both operations O(1).</div></div></div></div>
+
+<!-- Q22 -->
+<div class="qcard" id="q22"><div class="qhdr"><span class="qnum">Q22</span><span class="qtype gotcha">GOTCHA</span><span class="qtxt">What is the difference between Remove(T value) and Remove(LinkedListNode) in LinkedList&lt;T&gt;? Which is faster and why?</span><button class="show-btn" onclick="tog('q22')">Show</button></div><div class="ans-block" id="q22-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><strong>Remove(T value)</strong> — must scan the list to find the first node with this value. O(n) because it's a linear search.<br/><br/><strong>Remove(LinkedListNode)</strong> — you already have the node reference. Just update its neighbours' pointers. O(1) because no search is needed — pointer rewiring only.<br/><br/>If you're frequently removing specific elements, store the node reference (from AddFirst/AddLast return value) and use the node overload.</div></div></div></div>
+
+<!-- Q23 -->
+<div class="qcard" id="q23"><div class="qhdr"><span class="qnum">Q23</span><span class="qtype seq">SEQUENCE</span><span class="qtxt">On a LinkedList&lt;T&gt; acting as a Deque, perform: AddLast(10), AddFirst(5), AddLast(20), RemoveFirst(), PeekRear(). What is the result?</span><button class="show-btn" onclick="tog('q23')">Show</button></div><div class="ans-block" id="q23-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Start: []<br/>AddLast(10) → [10]<br/>AddFirst(5) → [5, 10]<br/>AddLast(20) → [5, 10, 20]<br/>RemoveFirst() → removes 5. List: [10, 20]<br/>PeekRear → <code>deque.Last.Value</code> → <strong>20</strong> (list unchanged: [10, 20])</div></div></div></div>
+
+<!-- Q24 -->
+<div class="qcard" id="q24"><div class="qhdr"><span class="qnum">Q24</span><span class="qtype compare">COMPARE</span><span class="qtxt">How was a Deque implemented before LinkedList&lt;T&gt; was available? What are the trade-offs?</span><button class="show-btn" onclick="tog('q24')">Show</button></div><div class="ans-block" id="q24-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><strong>Two Stacks:</strong> One stack for front, one for rear. Amortised O(1) per operation, but rebalancing causes occasional O(n) spikes. Simple to implement.<br/><br/><strong>Manual doubly linked list:</strong> Custom Node class with prev + next, head and tail tracked. Strictly O(1) all operations — same performance as LinkedList&lt;T&gt; today. More code to write and maintain, and no battle-tested standard library backing.<br/><br/><strong>Today:</strong> Just use LinkedList&lt;T&gt; — it's the same as the manual DLL, already tested.</div></div></div></div>
+
+<!-- Q25 -->
+<div class="qcard" id="q25"><div class="qhdr"><span class="qnum">Q25</span><span class="qtype apply">APPLY</span><span class="qtxt">Implement a browser history (Back/Forward) using LinkedList&lt;T&gt; as a Deque. Describe the data model.</span><button class="show-btn" onclick="tog('q25')">Show</button></div><div class="ans-block" id="q25-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><div class="code-block" style="margin-top:0.5rem;"><div class="code-header"><span class="code-lang">csharp — browser history model</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code class="language-csharp">public class BrowserHistory
+{
+    private LinkedList&lt;string&gt; _history = new();
+    private LinkedListNode&lt;string&gt; _current;
+
+    public void Visit(string url)
+    {
+        // remove all "forward" history (nodes after current)
+        while (_current != null &amp;&amp; _current.Next != null)
+            _history.RemoveLast();
+
+        _history.AddLast(url);
+        _current = _history.Last;
+    }
+
+    public string Back()
+    {
+        if (_current?.Prev == null) return _current?.Value ?? "No history";
+        _current = _current.Prev;
+        return _current.Value;
+    }
+
+    public string Forward()
+    {
+        if (_current?.Next == null) return _current?.Value ?? "No history";
+        _current = _current.Next;
+        return _current.Value;
+    }
+}</code></pre></div></div></div></div></div>
+
+<!-- Q26 -->
+<div class="qcard" id="q26"><div class="qhdr"><span class="qnum">Q26</span><span class="qtype why">WHY</span><span class="qtxt">Why is LinkedList&lt;T&gt; better than a circular array for Deque operations?</span><button class="show-btn" onclick="tog('q26')">Show</button></div><div class="ans-block" id="q26-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">A circular array supports O(1) add/remove at both ends only if it never resizes — but it has a fixed capacity. When full, it must resize (O(n)). LinkedList&lt;T&gt; has <strong>no capacity limit</strong> — each node is allocated on demand. AddFirst/AddLast/RemoveFirst/RemoveLast are <strong>strictly O(1) always</strong> — no surprise resizes. The trade-off: each node carries pointer overhead (prev + next) and is scattered in memory, causing more cache misses than a contiguous array.</div></div></div></div>
+
+<!-- Q27 -->
+<div class="qcard" id="q27"><div class="qhdr"><span class="qnum">Q27</span><span class="qtype gotcha">GOTCHA</span><span class="qtxt">What does deque.First return if the LinkedList is empty? Does it throw?</span><button class="show-btn" onclick="tog('q27')">Show</button></div><div class="ans-block" id="q27-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><code>LinkedList&lt;T&gt;.First</code> returns <strong>null</strong> if the list is empty — it does NOT throw an exception. The danger is that accessing <code>.Value</code> on the null node will throw a NullReferenceException. Always check before accessing: <code>if (deque.First != null) { var v = deque.First.Value; }</code> — or use the null-conditional operator: <code>deque.First?.Value</code>.</div><div class="ans-ex"><span class="exlbl">Contrast with Queue:</span> Queue&lt;T&gt;.Peek() throws InvalidOperationException on empty. LinkedList&lt;T&gt;.First is null — a different failure mode.</div></div></div></div>
+
+<!-- Q28 -->
+<div class="qcard" id="q28"><div class="qhdr"><span class="qnum">Q28</span><span class="qtype apply">APPLY</span><span class="qtxt">How do work-stealing thread pools (like .NET's ThreadPool) use a Deque internally?</span><button class="show-btn" onclick="tog('q28')">Show</button></div><div class="ans-block" id="q28-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Each worker thread has its own local Deque of tasks. The owning thread adds tasks to and takes tasks from its <strong>front</strong> (LIFO — for better cache locality). When a thread runs out of work, it "steals" tasks from another thread's <strong>rear end</strong> (FIFO — takes older tasks). This lets threads work without locking (mostly), and idle threads help busy threads. The Deque is essential because both ends need to be independently accessible and fast.</div></div></div></div>
+
+<!-- Q29 -->
+<div class="qcard" id="q29"><div class="qhdr"><span class="qnum">Q29</span><span class="qtype compare">COMPARE</span><span class="qtxt">What is the space complexity of LinkedList&lt;T&gt; compared to Queue&lt;T&gt; for the same n elements? Which uses more memory?</span><button class="show-btn" onclick="tog('q29')">Show</button></div><div class="ans-block" id="q29-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Both are O(n) space overall, but <strong>LinkedList&lt;T&gt; uses more memory per element</strong>. Each LinkedListNode stores: the value + a prev pointer + a next pointer (typically 3 × 8 = 24 bytes on 64-bit just for the node object, plus GC overhead). Queue&lt;T&gt; stores just the values in a contiguous array — the only overhead is the array wrapper itself, shared across all elements. For large n with value types (int, struct), Queue&lt;T&gt; is significantly more memory-efficient.</div></div></div></div>
+
+<!-- Q30 -->
+<div class="qcard" id="q30"><div class="qhdr"><span class="qnum">Q30</span><span class="qtype apply">APPLY</span><span class="qtxt">An interviewer asks: "Implement a Stack using only a Queue (single queue, not two)." Walk through the approach.</span><button class="show-btn" onclick="tog('q30')">Show</button></div><div class="ans-block" id="q30-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><div class="code-block" style="margin-top:0.5rem;"><div class="code-header"><span class="code-lang">csharp — stack using single queue</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code class="language-csharp">public class StackFromOneQueue&lt;T&gt;
+{
+    private Queue&lt;T&gt; _q = new();
+
+    // On every Push: enqueue, then rotate the queue so new item is at front
+    public void Push(T item)
+    {
+        _q.Enqueue(item);
+        int size = _q.Count;
+        while (size-- &gt; 1)
+            _q.Enqueue(_q.Dequeue());  // rotate: move front items to back
+    }
+
+    public T Pop()  =&gt; _q.Dequeue();   // front is always the last-pushed item
+    public T Peek() =&gt; _q.Peek();
+}
+// Push is O(n) — rotates n-1 times
+// Pop/Peek is O(1)</code></pre></div></div><div class="ans-ex"><span class="exlbl">Key insight:</span> After each Push, rotate all n-1 existing items to the back. This puts the newest item at the front — which is what Pop() needs for LIFO behaviour.</div></div></div></div>
+
+</div>
+</div><!-- end recall -->
+
+<script>
+// ── TAB SWITCHING ────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(t => { t.classList.remove('visible'); t.style.display = 'none'; });
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('tab-' + tab);
+  el.style.display = 'block';
+  requestAnimationFrame(() => el.classList.add('visible'));
+  const labels = { queue: 'queue', deque: 'deque', recall: 'recall' };
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    if (b.textContent.toLowerCase().includes(tab)) b.classList.add('active');
+  });
+}
+
+// ── COPY CODE ────────────────────────────────────
+function copyCode(btn) {
+  const code = btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.textContent).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+
+// ── RECALL ───────────────────────────────────────
+let revealed = 0;
+const total = 30;
+
+function updateProg() {
+  document.getElementById('prog').textContent = revealed + ' of ' + total + ' answered';
+}
+
+function tog(id) {
+  const card = document.getElementById(id);
+  const block = document.getElementById(id + '-a');
+  const btn = card.querySelector('.show-btn');
+  const open = block.classList.contains('open');
+  if (open) {
+    block.classList.remove('open'); btn.textContent = 'Show'; btn.classList.remove('active'); card.classList.remove('revealed'); revealed--;
+  } else {
+    block.classList.add('open'); btn.textContent = 'Hide'; btn.classList.add('active'); card.classList.add('revealed'); revealed++;
+  }
+  updateProg();
+}
+
+function revealAll() {
+  revealed = 0;
+  document.querySelectorAll('.qcard').forEach(card => {
+    const id = card.id;
+    document.getElementById(id + '-a').classList.add('open');
+    card.querySelector('.show-btn').textContent = 'Hide';
+    card.querySelector('.show-btn').classList.add('active');
+    card.classList.add('revealed');
+    revealed++;
+  });
+  updateProg();
+}
+
+function hideAll() {
+  document.querySelectorAll('.qcard').forEach(card => {
+    const id = card.id;
+    document.getElementById(id + '-a').classList.remove('open');
+    card.querySelector('.show-btn').textContent = 'Show';
+    card.querySelector('.show-btn').classList.remove('active');
+    card.classList.remove('revealed');
+  });
+  revealed = 0;
+  updateProg();
+}
+
+// ── INIT ─────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  hljs.highlightAll();
+  document.getElementById('tab-queue').style.display = 'block';
+  document.getElementById('tab-deque').style.display = 'none';
+  document.getElementById('tab-recall').style.display = 'none';
+});
+</script>
+</body>
+</html>
