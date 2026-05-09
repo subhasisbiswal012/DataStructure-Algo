@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Trees & Binary Trees — KnowledgeForge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+:root{
+  --bg:#0d0d0f;--surface:#141417;--card:#1a1a1f;--border:#2a2a32;
+  --accent:#c8f060;--accent2:#60c8f0;--accent3:#f060c8;
+  --text:#f0ede8;--muted:#6b6878;--danger:#f06060;--success:#60f0a0;
+  --sidebar-w:248px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background-color:var(--bg);color:var(--text);
+  font-family:system-ui,-apple-system,sans-serif;font-size:0.875rem;line-height:1.75;
+  background-image:linear-gradient(rgba(200,240,96,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(200,240,96,0.018) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+header{
+  position:fixed;top:0;left:0;right:0;z-index:200;height:52px;
+  background:rgba(13,13,15,0.97);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 1.5rem;gap:1.5rem;
+}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;white-space:nowrap;flex-shrink:0;}
+.logo span{color:var(--accent);}
+.topic-title{font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;color:var(--muted);flex:1;text-align:center;}
+.tab-buttons{display:flex;gap:0.35rem;flex-shrink:0;}
+.tab-btn{font-family:'Syne',sans-serif;font-weight:700;font-size:0.75rem;padding:0.32rem 0.75rem;border-radius:5px;cursor:pointer;transition:all 0.18s;border:1px solid var(--border);background:transparent;color:var(--muted);white-space:nowrap;}
+.tab-btn.active{background:var(--accent);color:#0d0d0f;border-color:var(--accent);}
+.layout{display:flex;margin-top:52px;min-height:calc(100vh - 52px);}
+.sidebar{
+  position:fixed;top:52px;left:0;bottom:0;width:var(--sidebar-w);
+  background:rgba(20,20,23,0.98);border-right:1px solid var(--border);
+  overflow-y:auto;z-index:100;
+}
+.sidebar::-webkit-scrollbar{width:4px;}
+.sidebar::-webkit-scrollbar-track{background:transparent;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.sidebar-section{padding:0.5rem 0;}
+.sidebar-heading{font-family:'Syne',sans-serif;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);padding:0.5rem 1rem 0.2rem;}
+.nav-item{display:block;padding:0.3rem 1rem 0.3rem 1.2rem;font-size:0.77rem;color:var(--muted);cursor:pointer;transition:all 0.15s;border-left:2px solid transparent;text-decoration:none;line-height:1.4;}
+.nav-item:hover{color:var(--text);background:rgba(200,240,96,0.04);}
+.nav-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(200,240,96,0.06);}
+.nav-item.sub{padding-left:1.9rem;font-size:0.73rem;}
+.main-content{margin-left:var(--sidebar-w);flex:1;padding:2rem 2.2rem 5rem;}
+.tab-content{display:none;}
+.tab-content.visible{display:block;}
+.content-wrap{max-width:860px;}
+.section{margin-bottom:3.5rem;scroll-margin-top:68px;}
+h2.sec-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.28rem;color:var(--accent);margin-bottom:1rem;padding-bottom:0.4rem;border-bottom:1px solid rgba(200,240,96,0.18);}
+h3.sub-title{font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;color:var(--accent2);margin:1.5rem 0 0.55rem;}
+p,li{color:#ccc;font-size:0.855rem;line-height:1.82;}
+ul,ol{padding-left:1.4rem;margin:0.4rem 0;}
+li{margin:0.22rem 0;}
+strong{color:var(--text);}
+.callout{border-radius:7px;padding:0.7rem 1rem;margin:0.9rem 0;font-size:0.83rem;border-left:3px solid;line-height:1.65;}
+.callout.tip{border-color:var(--accent);background:rgba(200,240,96,0.05);}
+.callout.warning{border-color:var(--accent3);background:rgba(240,96,200,0.05);}
+.callout.rule{border-color:var(--accent2);background:rgba(96,200,240,0.05);}
+.callout.info{border-color:var(--muted);background:rgba(107,104,120,0.08);}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.82rem;}
+thead tr{background:var(--card);}
+thead th{color:var(--accent);font-family:'Syne',sans-serif;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.05em;padding:0.5rem 0.85rem;border:1px solid var(--border);text-align:left;}
+tbody tr:nth-child(odd){background:var(--surface);}
+tbody tr:nth-child(even){background:var(--bg);}
+tbody td{padding:0.5rem 0.85rem;border:1px solid var(--border);color:#ccc;}
+.code-block{border-radius:8px;border:1px solid var(--border);overflow:hidden;margin:1rem 0;}
+.code-header{display:flex;justify-content:space-between;align-items:center;padding:0.35rem 0.7rem;background:var(--card);border-bottom:1px solid var(--border);}
+.code-lang{font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);}
+.copy-btn{font-size:0.7rem;padding:0.17rem 0.5rem;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace;transition:all 0.14s;}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent);}
+.code-block pre{margin:0;padding:0.9rem;overflow-x:auto;}
+.code-block pre code{font-family:'DM Mono',monospace;font-size:0.78rem;background:transparent!important;padding:0!important;}
+figure{margin:1.3rem 0;text-align:center;}
+figcaption{font-size:0.74rem;color:var(--muted);margin-top:0.45rem;font-family:'DM Mono',monospace;}
+.svg-wrap{background:var(--card);border-radius:10px;border:1px solid var(--border);padding:0.8rem;display:block;width:100%;}
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin:1.2rem 0;}
+.type-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.2rem 0.85rem;text-align:center;}
+.type-card.valid{border-top:3px solid var(--success);}
+.type-card.invalid{border-top:3px solid var(--danger);}
+.type-label{font-family:'Syne',sans-serif;font-weight:700;font-size:0.78rem;margin-bottom:0.5rem;}
+.type-label.v{color:var(--success);}
+.type-label.x{color:var(--danger);}
+/* RECALL */
+.recall-wrap{max-width:820px;}
+.recall-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.4rem;flex-wrap:wrap;gap:0.7rem;}
+.recall-hdr h2{font-family:'Syne',sans-serif;color:var(--accent);font-size:1.15rem;}
+.recall-ctrl{display:flex;align-items:center;gap:0.65rem;}
+.prog{font-family:'DM Mono',monospace;font-size:0.78rem;color:var(--muted);}
+.ctrl-btn{font-family:'Syne',sans-serif;font-size:0.74rem;padding:0.28rem 0.72rem;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all 0.17s;}
+.ctrl-btn:hover{border-color:var(--accent);color:var(--accent);}
+.qcard{border:1px solid var(--border);border-radius:8px;background:var(--surface);margin-bottom:0.82rem;overflow:hidden;transition:border-color 0.17s;}
+.qcard.revealed{border-color:rgba(200,240,96,0.28);}
+.qhdr{display:flex;align-items:flex-start;gap:0.6rem;padding:0.8rem 0.9rem;flex-wrap:wrap;}
+.qnum{font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);white-space:nowrap;padding-top:0.06rem;}
+.qtype{font-family:'DM Mono',monospace;font-size:0.65rem;padding:0.12rem 0.42rem;border-radius:4px;white-space:nowrap;align-self:flex-start;margin-top:0.03rem;}
+.qtype.def{background:rgba(96,200,240,0.1);color:var(--accent2);}
+.qtype.apply{background:rgba(200,240,96,0.1);color:var(--accent);}
+.qtype.why{background:rgba(240,96,200,0.1);color:var(--accent3);}
+.qtype.compare{background:rgba(200,240,96,0.1);color:var(--accent);}
+.qtype.seq{background:rgba(96,240,200,0.1);color:#60f0c8;}
+.qtype.gotcha{background:rgba(240,96,96,0.1);color:var(--danger);}
+.qtxt{flex:1;font-size:0.855rem;color:var(--text);line-height:1.5;}
+.show-btn{font-family:'DM Mono',monospace;font-size:0.72rem;padding:0.25rem 0.65rem;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);white-space:nowrap;align-self:flex-start;transition:all 0.17s;}
+.show-btn.active{border-color:var(--accent);color:var(--accent);}
+.ans-block{overflow:hidden;max-height:0;transition:max-height 0.32s ease;}
+.ans-block.open{max-height:4000px;}
+.ans-inner{padding:0.9rem;border-top:1px solid var(--border);background:var(--card);}
+.ans-lbl{font-family:'Syne',sans-serif;font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent);margin-bottom:0.4rem;}
+.ans-body{font-size:0.835rem;color:#ccc;line-height:1.72;}
+.ans-ex{margin-top:0.5rem;padding:0.42rem 0.65rem;border-left:2px solid var(--accent2);background:rgba(96,200,240,0.05);font-size:0.8rem;color:var(--muted);}
+.ans-ex .exlbl{color:var(--accent2);font-weight:600;}
+.sec-lbl{font-family:'Syne',sans-serif;font-size:0.77rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin:1.6rem 0 0.75rem;padding-left:0.1rem;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Knowledge<span>Forge</span></div>
+  <div class="topic-title">Trees &amp; Binary Trees</div>
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="switchTab('handbook')">📘 Handbook</button>
+    <button class="tab-btn" onclick="switchTab('recall')">🧠 Active Recall</button>
+  </div>
+</header>
+<div class="layout">
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-heading">Trees</div>
+    <a class="nav-item" onclick="goTo('s1')">1. What is a Tree?</a>
+    <a class="nav-item" onclick="goTo('s2')">2. Terminology</a>
+    <a class="nav-item sub" onclick="goTo('s2a')">↳ Root / Parent / Child</a>
+    <a class="nav-item sub" onclick="goTo('s2b')">↳ Siblings / Leaf / Internal</a>
+    <a class="nav-item sub" onclick="goTo('s2c')">↳ Edge / Path / Subtree</a>
+    <a class="nav-item sub" onclick="goTo('s2d')">↳ Level vs Height</a>
+    <a class="nav-item sub" onclick="goTo('s2e')">↳ Node &amp; Tree Degree</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-heading">Binary Trees</div>
+    <a class="nav-item" onclick="goTo('s3')">3. Binary Tree Basics</a>
+    <a class="nav-item" onclick="goTo('s4')">4. Types of Binary Trees</a>
+    <a class="nav-item sub" onclick="goTo('s4a')">↳ Proper / Strict</a>
+    <a class="nav-item sub" onclick="goTo('s4b')">↳ Full</a>
+    <a class="nav-item sub" onclick="goTo('s4c')">↳ Complete</a>
+    <a class="nav-item sub" onclick="goTo('s4d')">↳ Skewed</a>
+    <a class="nav-item" onclick="goTo('s5')">5. Type Differences</a>
+    <a class="nav-item" onclick="goTo('s6')">6. Array Representation</a>
+    <a class="nav-item" onclick="goTo('s7')">7. Linked Representation</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-heading">Traversals</div>
+    <a class="nav-item" onclick="goTo('s8')">8. Traversal Overview</a>
+    <a class="nav-item sub" onclick="goTo('s8a')">↳ Pre-order</a>
+    <a class="nav-item sub" onclick="goTo('s8b')">↳ In-order</a>
+    <a class="nav-item sub" onclick="goTo('s8c')">↳ Post-order</a>
+    <a class="nav-item sub" onclick="goTo('s8d')">↳ Level-order</a>
+    <a class="nav-item" onclick="goTo('s9')">9. Memory Shortcut</a>
+    <a class="nav-item" onclick="goTo('s10')">10. Quick Reference</a>
+  </div>
+</nav>
+<main class="main-content">
+<div id="tab-handbook" class="tab-content visible">
+<div class="content-wrap">
+
+<!-- ══ S1: WHAT IS A TREE ══ -->
+<div class="section" id="s1">
+<h2 class="sec-title">1. What is a Tree?</h2>
+<div class="callout tip">💡 Think of a company org chart — CEO at the top, managers in the middle, employees at the bottom. That hierarchy <em>is</em> a tree. Everyone except the CEO has exactly one boss, and some people manage others below them.</div>
+<p>A <strong>tree</strong> is a nonlinear, hierarchical Abstract Data Type (ADT) consisting of <strong>nodes</strong> connected by <strong>edges</strong>. Unlike arrays or linked lists (sequential, before/after), trees arrange data in levels where some elements are above others.</p>
+<ul>
+  <li><strong>Linear structures</strong> (array, linked list, stack, queue) — elements in a line, before/after relationships.</li>
+  <li><strong>Nonlinear structures</strong> (trees, graphs) — elements in levels, above/below relationships.</li>
+  <li>For <strong>n nodes</strong>, a tree always has exactly <strong>n − 1 edges</strong>. Always.</li>
+  <li>A tree can be empty (zero nodes) — valid state, just like an empty stack.</li>
+</ul>
+<figure>
+<div class="svg-wrap">
+<svg viewBox="0 0 856 440" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+  <!-- edges -->
+  <line x1="427.8" y1="88.0" x2="227.7" y2="198.8" stroke="#2a2a32" stroke-width="4.76"/>
+  <line x1="427.8" y1="88.0" x2="427.8" y2="198.8" stroke="#2a2a32" stroke-width="4.76"/>
+  <line x1="427.8" y1="88.0" x2="593.4" y2="198.8" stroke="#2a2a32" stroke-width="4.76"/>
+  <line x1="427.8" y1="88.0" x2="745.2" y2="198.8" stroke="#2a2a32" stroke-width="4.76"/>
+  <line x1="427.8" y1="230.0" x2="358.8" y2="329.4" stroke="#2a2a32" stroke-width="3.92"/>
+  <line x1="427.8" y1="230.0" x2="499.6" y2="329.4" stroke="#2a2a32" stroke-width="3.92"/>
+  <line x1="745.2" y1="230.0" x2="690.0" y2="329.4" stroke="#2a2a32" stroke-width="3.92"/>
+  <line x1="745.2" y1="230.0" x2="797.6" y2="329.4" stroke="#2a2a32" stroke-width="3.92"/>
+  <line x1="499.6" y1="357.8" x2="455.4" y2="417.5" stroke="#2a2a32" stroke-width="3.92"/>
+  <line x1="499.6" y1="357.8" x2="503.7" y2="417.5" stroke="#2a2a32" stroke-width="3.92"/>
+  <line x1="499.6" y1="357.8" x2="552.0" y2="417.5" stroke="#2a2a32" stroke-width="3.92"/>
+  <!-- ROOT node -->
+  <circle cx="427.8" cy="65.3" r="44.8" fill="#141417" stroke="#c8f060" stroke-width="4.76"/>
+  <text x="427.8" y="58.2" fill="#c8f060" font-family="DM Mono,monospace" font-size="14.0" text-anchor="middle" font-weight="bold">Company</text>
+  <text x="427.8" y="78.1" fill="#c8f060" font-family="DM Mono,monospace" font-size="11.2" text-anchor="middle">(root)</text>
+  <!-- Level 2 nodes -->
+  <circle cx="227.7" cy="215.8" r="39.2" fill="#141417" stroke="#60f0a0" stroke-width="3.92"/>
+  <text x="227.7" y="210.2" fill="#60f0a0" font-family="DM Mono,monospace" font-size="12.6" text-anchor="middle">Mktg</text>
+  <text x="227.7" y="228.6" fill="#6b6878" font-family="DM Mono,monospace" font-size="10.5" text-anchor="middle">leaf</text>
+  <circle cx="427.8" cy="215.8" r="39.2" fill="#141417" stroke="#60c8f0" stroke-width="3.92"/>
+  <text x="427.8" y="210.2" fill="#60c8f0" font-family="DM Mono,monospace" font-size="12.6" text-anchor="middle">Sales</text>
+  <text x="427.8" y="228.6" fill="#6b6878" font-family="DM Mono,monospace" font-size="10.5" text-anchor="middle">internal</text>
+  <circle cx="593.4" cy="215.8" r="39.2" fill="#141417" stroke="#60f0a0" stroke-width="3.92"/>
+  <text x="593.4" y="210.2" fill="#60f0a0" font-family="DM Mono,monospace" font-size="12.6" text-anchor="middle">Purch</text>
+  <text x="593.4" y="228.6" fill="#6b6878" font-family="DM Mono,monospace" font-size="10.5" text-anchor="middle">leaf</text>
+  <circle cx="745.2" cy="215.8" r="39.2" fill="#141417" stroke="#60c8f0" stroke-width="3.92"/>
+  <text x="745.2" y="210.2" fill="#60c8f0" font-family="DM Mono,monospace" font-size="12.6" text-anchor="middle">Mfg</text>
+  <text x="745.2" y="228.6" fill="#6b6878" font-family="DM Mono,monospace" font-size="10.5" text-anchor="middle">internal</text>
+  <!-- Level 3 nodes -->
+  <circle cx="358.8" cy="346.5" r="36.4" fill="#141417" stroke="#60f0a0" stroke-width="2.94"/>
+  <text x="358.8" y="352.2" fill="#60f0a0" font-family="DM Mono,monospace" font-size="12.6" text-anchor="middle">Dom</text>
+  <circle cx="499.6" cy="346.5" r="36.4" fill="#141417" stroke="#60c8f0" stroke-width="2.94"/>
+  <text x="499.6" y="352.2" fill="#60c8f0" font-family="DM Mono,monospace" font-size="12.6" text-anchor="middle">Intl</text>
+  <circle cx="690.0" cy="346.5" r="36.4" fill="#141417" stroke="#60f0a0" stroke-width="2.94"/>
+  <text x="690.0" y="352.2" fill="#60f0a0" font-family="DM Mono,monospace" font-size="12.6" text-anchor="middle">Phones</text>
+  <circle cx="797.6" cy="346.5" r="36.4" fill="#141417" stroke="#60f0a0" stroke-width="2.94"/>
+  <text x="797.6" y="352.2" fill="#60f0a0" font-family="DM Mono,monospace" font-size="12.6" text-anchor="middle">TVs</text>
+  <!-- Level 4 nodes -->
+  <circle cx="455.4" cy="423.2" r="28.0" fill="#141417" stroke="#6b6878" stroke-width="2.94"/>
+  <text x="455.4" y="428.8" fill="#ccc" font-family="DM Mono,monospace" font-size="11.2" text-anchor="middle">India</text>
+  <circle cx="503.7" cy="423.2" r="28.0" fill="#141417" stroke="#6b6878" stroke-width="2.94"/>
+  <text x="503.7" y="428.8" fill="#ccc" font-family="DM Mono,monospace" font-size="11.2" text-anchor="middle">Amer</text>
+  <circle cx="552.0" cy="423.2" r="28.0" fill="#141417" stroke="#6b6878" stroke-width="2.94"/>
+  <text x="552.0" y="428.8" fill="#ccc" font-family="DM Mono,monospace" font-size="11.2" text-anchor="middle">UK</text>
+  <!-- Annotations -->
+  <text x="82.8" y="36.9" fill="#6b6878" font-family="DM Mono,monospace" font-size="11.2">node ●</text>
+  <line x1="131.1" y1="34.1" x2="190.4" y2="51.1" stroke="#6b6878" stroke-width="1.96" stroke-dasharray="3,2"/>
+  <text x="527.2" y="150.5" fill="#f060c8" font-family="DM Mono,monospace" font-size="11.2">edge</text>
+  <line x1="549.2" y1="150.5" x2="576.8" y2="167.6" stroke="#f060c8" stroke-width="1.96" stroke-dasharray="3,2"/>
+  <!-- legend -->
+  <circle cx="30.4" cy="323.8" r="8.4" fill="none" stroke="#60f0a0" stroke-width="2.94"/>
+  <text x="46.9" y="329.4" fill="#60f0a0" font-family="DM Mono,monospace" font-size="11.2">Leaf node (no children)</text>
+  <circle cx="30.4" cy="352.2" r="8.4" fill="none" stroke="#60c8f0" stroke-width="2.94"/>
+  <text x="46.9" y="357.8" fill="#60c8f0" font-family="DM Mono,monospace" font-size="11.2">Internal node (has children)</text>
+</svg>
+</div>
+<figcaption>Company org chart as a tree. Nodes = entities, Edges = parent-child links. 10 nodes → 9 edges (n−1).</figcaption>
+</figure>
+<div class="callout rule">📌 Iron rule: A tree with n nodes always has exactly n − 1 edges. No exceptions.</div>
+</div>
+
+<!-- ══ S2: TERMINOLOGY ══ -->
+<div class="section" id="s2">
+<h2 class="sec-title">2. Tree Terminology</h2>
+
+<div id="s2a">
+<h3 class="sub-title">Root, Parent &amp; Child</h3>
+<ul>
+  <li><strong>Root node</strong> — the only node with no parent. Sits at the top. Every tree has exactly one root.</li>
+  <li><strong>Parent node</strong> — a node that has one or more children directly below it.</li>
+  <li><strong>Child node</strong> — a node directly below another node (its parent).</li>
+</ul>
+<figure>
+<div class="svg-wrap">
+<svg viewBox="0 0 561 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+  <line x1="280.5" y1="94.0" x2="140.2" y2="207.4" stroke="#2a2a32" stroke-width="6.70"/>
+  <line x1="280.5" y1="94.0" x2="420.8" y2="207.4" stroke="#2a2a32" stroke-width="6.70"/>
+  <circle cx="280.5" cy="71.3" r="49.0" fill="#141417" stroke="#c8f060" stroke-width="6.70"/>
+  <text x="280.5" y="64.8" fill="#c8f060" font-family="DM Mono,monospace" font-size="19.6" text-anchor="middle" font-weight="bold">A</text>
+  <text x="280.5" y="87.5" fill="#c8f060" font-family="DM Mono,monospace" font-size="13.1" text-anchor="middle">root</text>
+  <circle cx="140.2" cy="226.8" r="45.8" fill="#141417" stroke="#60c8f0" stroke-width="5.40"/>
+  <text x="140.2" y="220.3" fill="#60c8f0" font-family="DM Mono,monospace" font-size="19.6" text-anchor="middle" font-weight="bold">B</text>
+  <text x="140.2" y="243.0" fill="#6b6878" font-family="DM Mono,monospace" font-size="12.3" text-anchor="middle">child of A</text>
+  <circle cx="420.8" cy="226.8" r="45.8" fill="#141417" stroke="#60c8f0" stroke-width="5.40"/>
+  <text x="420.8" y="220.3" fill="#60c8f0" font-family="DM Mono,monospace" font-size="19.6" text-anchor="middle" font-weight="bold">C</text>
+  <text x="420.8" y="243.0" fill="#6b6878" font-family="DM Mono,monospace" font-size="12.3" text-anchor="middle">child of A</text>
+  <text x="280.5" y="288.4" fill="#6b6878" font-family="DM Mono,monospace" font-size="13.1" text-anchor="middle">A = root AND parent of B, C. B and C = children of A.</text>
+</svg>
+</div>
+<figcaption>Root has no parent. A is parent, B and C are its children.</figcaption>
+</figure>
+</div>
+
+<div id="s2b">
+<h3 class="sub-title">Siblings, Leaf &amp; Internal Nodes</h3>
+<ul>
+  <li><strong>Siblings</strong> — nodes sharing the same parent. Marketing, Sales, Purchase, Manufacturing are all siblings (parent = Company). Domestic and International are siblings (parent = Sales).</li>
+  <li><strong>Leaf / External node</strong> — node with no children. End of a branch. (Marketing, Purchase, Domestic, Phones, TVs, India, America, UK)</li>
+  <li><strong>Internal / Non-leaf node</strong> — node with at least one child. (Sales, Manufacturing, International, America)</li>
+</ul>
+<figure>
+<div class="svg-wrap">
+<svg viewBox="0 0 680 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+  <line x1="260" y1="52" x2="110" y2="128" stroke="#2a2a32" stroke-width="2"/>
+  <line x1="260" y1="52" x2="260" y2="128" stroke="#2a2a32" stroke-width="2"/>
+  <line x1="260" y1="52" x2="410" y2="128" stroke="#2a2a32" stroke-width="2"/>
+  <line x1="260" y1="148" x2="220" y2="185" stroke="#2a2a32" stroke-width="2"/>
+  <line x1="260" y1="148" x2="300" y2="185" stroke="#2a2a32" stroke-width="2"/>
+  <!-- root -->
+  <circle cx="260" cy="38" r="26" fill="#141417" stroke="#c8f060" stroke-width="2"/>
+  <text x="260" y="42" fill="#c8f060" font-family="DM Mono,monospace" font-size="9.5" text-anchor="middle" font-weight="bold">Company</text>
+  <!-- level 2 -->
+  <circle cx="110" cy="140" r="24" fill="#141417" stroke="#60f0a0" stroke-width="2"/>
+  <text x="110" y="144" fill="#60f0a0" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">Mktg</text>
+  <circle cx="260" cy="140" r="24" fill="#141417" stroke="#60c8f0" stroke-width="2"/>
+  <text x="260" y="144" fill="#60c8f0" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">Sales</text>
+  <circle cx="410" cy="140" r="24" fill="#141417" stroke="#60f0a0" stroke-width="2"/>
+  <text x="410" y="144" fill="#60f0a0" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">Purch</text>
+  <!-- siblings brace -->
+  <path d="M 88 166 Q 260 180 432 166" fill="none" stroke="#c8f060" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="260" y="194" fill="#c8f060" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">← siblings: Mktg, Sales, Purch share parent Company →</text>
+  <!-- level 3 -->
+  <circle cx="220" cy="185" r="0" fill="none"/>
+  <circle cx="300" cy="185" r="0" fill="none"/>
+  <!-- legend bottom -->
+  <rect x="4" y="4" width="10" height="10" rx="5" fill="none" stroke="#60f0a0" stroke-width="1.5"/>
+  <text x="20" y="13" fill="#60f0a0" font-family="DM Mono,monospace" font-size="7.5">Leaf (no children)</text>
+  <rect x="4" y="20" width="10" height="10" rx="5" fill="none" stroke="#60c8f0" stroke-width="1.5"/>
+  <text x="20" y="29" fill="#60c8f0" font-family="DM Mono,monospace" font-size="7.5">Internal (has children)</text>
+</svg>
+</div>
+<figcaption>Green border = leaf nodes. Blue border = internal nodes. Dashed arc shows sibling relationship.</figcaption>
+</figure>
+</div>
+
+<div id="s2c">
+<h3 class="sub-title">Edge, Path, Subtree &amp; Forest</h3>
+<ul>
+  <li><strong>Edge</strong> — a directed link between a parent and its child. In a tree with n nodes there are exactly n−1 edges.</li>
+  <li><strong>Path</strong> — a sequence of nodes where every consecutive pair is connected by an edge. Paths run from root to leaf.</li>
+  <li><strong>Subtree</strong> — any node plus all of its descendants. A single leaf node is also a valid subtree.</li>
+  <li><strong>Forest</strong> — a collection of trees. Remove the root of a tree → you get a forest of subtrees.</li>
+</ul>
+<figure>
+<div class="svg-wrap">
+<svg viewBox="0 0 800 355" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+  <!-- subtree highlight -->
+  <rect x="397.4" y="163.3" width="255.3" height="170.4" rx="11.0" fill="rgba(200,240,96,0.05)" stroke="#c8f060" stroke-width="2.94" stroke-dasharray="6,3"/>
+  <text x="527.2" y="153.4" fill="#c8f060" font-family="DM Mono,monospace" font-size="11.2" text-anchor="middle">subtree rooted at Intl</text>
+  <!-- path highlight -->
+  <line x1="151.8" y1="65.3" x2="303.6" y2="167.6" stroke="#f060c8" stroke-width="6.72" opacity="0.4"/>
+  <line x1="303.6" y1="201.6" x2="496.8" y2="198.8" stroke="#f060c8" stroke-width="6.72" opacity="0.4"/>
+  <text x="338.1" y="142.0" fill="#f060c8" font-family="DM Mono,monospace" font-size="11.2">path: Co→Sales→Intl</text>
+  <!-- edges normal -->
+  <line x1="151.8" y1="65.3" x2="303.6" y2="167.6" stroke="#2a2a32" stroke-width="3.92"/>
+  <line x1="303.6" y1="201.6" x2="207.0" y2="298.2" stroke="#2a2a32" stroke-width="3.92"/>
+  <line x1="303.6" y1="201.6" x2="496.8" y2="198.8" stroke="#2a2a32" stroke-width="3.92"/>
+  <line x1="496.8" y1="230.0" x2="441.6" y2="305.3" stroke="#2a2a32" stroke-width="3.92"/>
+  <line x1="496.8" y1="230.0" x2="524.4" y2="305.3" stroke="#2a2a32" stroke-width="3.92"/>
+  <line x1="496.8" y1="230.0" x2="607.2" y2="305.3" stroke="#2a2a32" stroke-width="3.92"/>
+  <!-- nodes -->
+  <circle cx="151.8" cy="48.3" r="36.4" fill="#141417" stroke="#c8f060" stroke-width="3.92"/>
+  <text x="151.8" y="54.0" fill="#c8f060" font-family="DM Mono,monospace" font-size="14.0" text-anchor="middle" font-weight="bold">Co.</text>
+  <circle cx="303.6" cy="184.6" r="36.4" fill="#141417" stroke="#60c8f0" stroke-width="3.92"/>
+  <text x="303.6" y="190.3" fill="#60c8f0" font-family="DM Mono,monospace" font-size="14.0" text-anchor="middle">Sales</text>
+  <circle cx="207.0" cy="309.6" r="30.8" fill="#141417" stroke="#6b6878" stroke-width="2.94"/>
+  <text x="207.0" y="315.2" fill="#ccc" font-family="DM Mono,monospace" font-size="12.6" text-anchor="middle">Dom</text>
+  <circle cx="496.8" cy="213.0" r="36.4" fill="#141417" stroke="#c8f060" stroke-width="3.92"/>
+  <text x="496.8" y="218.7" fill="#c8f060" font-family="DM Mono,monospace" font-size="14.0" text-anchor="middle">Intl</text>
+  <circle cx="441.6" cy="315.2" r="28.0" fill="#141417" stroke="#6b6878" stroke-width="2.94"/>
+  <text x="441.6" y="320.9" fill="#ccc" font-family="DM Mono,monospace" font-size="11.2" text-anchor="middle">India</text>
+  <circle cx="524.4" cy="315.2" r="28.0" fill="#141417" stroke="#6b6878" stroke-width="2.94"/>
+  <text x="524.4" y="320.9" fill="#ccc" font-family="DM Mono,monospace" font-size="11.2" text-anchor="middle">Amer</text>
+  <circle cx="607.2" cy="315.2" r="28.0" fill="#141417" stroke="#6b6878" stroke-width="2.94"/>
+  <text x="607.2" y="320.9" fill="#ccc" font-family="DM Mono,monospace" font-size="11.2" text-anchor="middle">UK</text>
+  <!-- forest note -->
+  <text x="662.4" y="71.0" fill="#6b6878" font-family="DM Mono,monospace" font-size="11.2" text-anchor="middle">Remove Co. →</text>
+  <text x="662.4" y="88.0" fill="#6b6878" font-family="DM Mono,monospace" font-size="11.2" text-anchor="middle">Forest of trees</text>
+  <text x="662.4" y="105.1" fill="#6b6878" font-family="DM Mono,monospace" font-size="11.2" text-anchor="middle">(Sales, Mktg, etc.)</text>
+</svg>
+</div>
+<figcaption>Pink highlight = path Co→Sales→Intl. Dashed box = subtree rooted at Intl. Remove root → forest.</figcaption>
+</figure>
+</div>
+
+<div id="s2d">
+<h3 class="sub-title">Level vs Height</h3>
+<div class="callout tip">💡 Both measure depth, but count differently. <strong>Level</strong> counts nodes in the path to root (starts at 1). <strong>Height</strong> counts edges in the path to root (starts at 0).</div>
+<ul>
+  <li><strong>Level</strong> — number of nodes on path from the node to root (including both endpoints). Root = Level 1.</li>
+  <li><strong>Height</strong> — number of edges on path from the node to root. Root = Height 0.</li>
+  <li><strong>Relationship:</strong> Level = Height + 1</li>
+  <li><strong>Tree height</strong> = maximum level − 1</li>
+</ul>
+<figure>
+<div class="svg-wrap">
+<svg viewBox="0 0 720 426" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+  <!-- level bands -->
+  <rect x="0.0" y="0.0"   width="720.0" height="110.8"  fill="rgba(200,240,96,0.04)"/>
+  <rect x="0.0" y="110.8"  width="720.0" height="99.4"  fill="rgba(96,200,240,0.04)"/>
+  <rect x="0.0" y="210.2" width="720.0" height="106.5"  fill="rgba(240,96,200,0.04)"/>
+  <rect x="0.0" y="316.7" width="720.0" height="109.3"  fill="rgba(96,240,160,0.04)"/>
+  <!-- level / height labels left -->
+  <text x="20.2" y="62.5"  fill="#c8f060" font-family="DM Mono,monospace" font-size="12.9" font-weight="bold">Level 1</text>
+  <text x="20.2" y="80.9"  fill="#6b6878" font-family="DM Mono,monospace" font-size="11.4">Height 0</text>
+  <text x="20.2" y="167.6" fill="#60c8f0" font-family="DM Mono,monospace" font-size="12.9" font-weight="bold">Level 2</text>
+  <text x="20.2" y="186.0" fill="#6b6878" font-family="DM Mono,monospace" font-size="11.4">Height 1</text>
+  <text x="20.2" y="269.8" fill="#f060c8" font-family="DM Mono,monospace" font-size="12.9" font-weight="bold">Level 3</text>
+  <text x="20.2" y="288.3" fill="#6b6878" font-family="DM Mono,monospace" font-size="11.4">Height 2</text>
+  <text x="20.2" y="372.0" fill="#60f0a0" font-family="DM Mono,monospace" font-size="12.9" font-weight="bold">Level 4</text>
+  <text x="20.2" y="390.5" fill="#6b6878" font-family="DM Mono,monospace" font-size="11.4">Height 3</text>
+  <!-- edges -->
+  <line x1="403.2" y1="79.5" x2="280.8" y2="167.6" stroke="#2a2a32" stroke-width="4.15"/>
+  <line x1="403.2" y1="79.5" x2="532.8" y2="167.6" stroke="#2a2a32" stroke-width="4.15"/>
+  <line x1="280.8" y1="196.0" x2="223.2" y2="276.9" stroke="#2a2a32" stroke-width="4.15"/>
+  <line x1="280.8" y1="196.0" x2="338.4" y2="276.9" stroke="#2a2a32" stroke-width="4.15"/>
+  <line x1="532.8" y1="196.0" x2="475.2" y2="276.9" stroke="#2a2a32" stroke-width="4.15"/>
+  <line x1="532.8" y1="196.0" x2="597.6" y2="276.9" stroke="#2a2a32" stroke-width="4.15"/>
+  <line x1="338.4" y1="305.3" x2="309.6" y2="369.2" stroke="#2a2a32" stroke-width="4.15"/>
+  <line x1="338.4" y1="305.3" x2="371.5" y2="369.2" stroke="#2a2a32" stroke-width="4.15"/>
+  <!-- nodes -->
+  <circle cx="403.2" cy="59.6" r="37.2" fill="#141417" stroke="#c8f060" stroke-width="5.15"/>
+  <text x="403.2" y="65.3" fill="#c8f060" font-family="DM Mono,monospace" font-size="18.6" text-anchor="middle" font-weight="bold">A</text>
+  <circle cx="280.8" cy="181.8" r="34.3" fill="#141417" stroke="#60c8f0" stroke-width="4.15"/>
+  <text x="280.8" y="187.4" fill="#60c8f0" font-family="DM Mono,monospace" font-size="18.6" text-anchor="middle" font-weight="bold">B</text>
+  <circle cx="532.8" cy="181.8" r="34.3" fill="#141417" stroke="#60c8f0" stroke-width="4.15"/>
+  <text x="532.8" y="187.4" fill="#60c8f0" font-family="DM Mono,monospace" font-size="18.6" text-anchor="middle" font-weight="bold">C</text>
+  <circle cx="223.2" cy="293.9" r="31.5" fill="#141417" stroke="#f060c8" stroke-width="4.15"/>
+  <text x="223.2" y="299.6" fill="#f060c8" font-family="DM Mono,monospace" font-size="18.6" text-anchor="middle" font-weight="bold">D</text>
+  <circle cx="338.4" cy="293.9" r="31.5" fill="#141417" stroke="#f060c8" stroke-width="4.15"/>
+  <text x="338.4" y="299.6" fill="#f060c8" font-family="DM Mono,monospace" font-size="18.6" text-anchor="middle" font-weight="bold">E</text>
+  <circle cx="475.2" cy="293.9" r="31.5" fill="#141417" stroke="#f060c8" stroke-width="4.15"/>
+  <text x="475.2" y="299.6" fill="#f060c8" font-family="DM Mono,monospace" font-size="18.6" text-anchor="middle" font-weight="bold">F</text>
+  <circle cx="597.6" cy="293.9" r="31.5" fill="#141417" stroke="#f060c8" stroke-width="4.15"/>
+  <text x="597.6" y="299.6" fill="#f060c8" font-family="DM Mono,monospace" font-size="18.6" text-anchor="middle" font-weight="bold">G</text>
+  <circle cx="309.6" cy="380.6" r="28.6" fill="#141417" stroke="#60f0a0" stroke-width="4.15"/>
+  <text x="309.6" y="386.2" fill="#60f0a0" font-family="DM Mono,monospace" font-size="17.2" text-anchor="middle" font-weight="bold">H</text>
+  <circle cx="371.5" cy="380.6" r="28.6" fill="#141417" stroke="#60f0a0" stroke-width="4.15"/>
+  <text x="371.5" y="386.2" fill="#60f0a0" font-family="DM Mono,monospace" font-size="17.2" text-anchor="middle" font-weight="bold">I</text>
+  <!-- tree height annotation -->
+  <text x="659.5" y="383.4" fill="#6b6878" font-family="DM Mono,monospace" font-size="11.4" text-anchor="middle">Tree height</text>
+  <text x="659.5" y="400.4" fill="#6b6878" font-family="DM Mono,monospace" font-size="11.4" text-anchor="middle">= 3</text>
+</svg>
+</div>
+<figcaption>Colored bands show levels. Root A = Level 1 / Height 0. H, I = Level 4 / Height 3. Tree height = 3.</figcaption>
+</figure>
+<table>
+  <thead><tr><th>Node</th><th>Path to Root</th><th>Level (count nodes)</th><th>Height (count edges)</th></tr></thead>
+  <tbody>
+    <tr><td>A (root)</td><td>A</td><td>1</td><td>0</td></tr>
+    <tr><td>B, C</td><td>B→A or C→A</td><td>2</td><td>1</td></tr>
+    <tr><td>D, E, F, G</td><td>e.g. D→B→A</td><td>3</td><td>2</td></tr>
+    <tr><td>H, I</td><td>H→E→B→A</td><td>4</td><td>3</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div id="s2e">
+<h3 class="sub-title">Node Degree &amp; Tree Degree</h3>
+<ul>
+  <li><strong>Node degree</strong> — the count of children a node has. Leaf nodes always have degree 0.</li>
+  <li><strong>Tree degree</strong> — the maximum degree found among all nodes in the tree. The root doesn't always have the highest degree.</li>
+</ul>
+<figure>
+<div class="svg-wrap">
+<svg viewBox="0 0 680 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+  <line x1="260" y1="48" x2="100" y2="120" stroke="#2a2a32" stroke-width="2"/>
+  <line x1="260" y1="48" x2="200" y2="120" stroke="#2a2a32" stroke-width="2"/>
+  <line x1="260" y1="48" x2="330" y2="120" stroke="#2a2a32" stroke-width="2"/>
+  <line x1="260" y1="48" x2="430" y2="120" stroke="#2a2a32" stroke-width="2"/>
+  <line x1="330" y1="140" x2="290" y2="190" stroke="#2a2a32" stroke-width="2"/>
+  <line x1="330" y1="140" x2="330" y2="190" stroke="#2a2a32" stroke-width="2"/>
+  <line x1="330" y1="140" x2="375" y2="190" stroke="#2a2a32" stroke-width="2"/>
+  <!-- company -->
+  <circle cx="260" cy="34" r="28" fill="#141417" stroke="#c8f060" stroke-width="2"/>
+  <text x="260" y="30" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">Company</text>
+  <text x="260" y="44" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">deg=4 ★</text>
+  <!-- level 2 -->
+  <circle cx="100" cy="132" r="24" fill="#141417" stroke="#6b6878" stroke-width="1.5"/>
+  <text x="100" y="129" fill="#ccc" font-family="DM Mono,monospace" font-size="8.5" text-anchor="middle">Mktg</text>
+  <text x="100" y="141" fill="#6b6878" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">deg=0</text>
+  <circle cx="200" cy="132" r="24" fill="#141417" stroke="#6b6878" stroke-width="1.5"/>
+  <text x="200" y="129" fill="#ccc" font-family="DM Mono,monospace" font-size="8.5" text-anchor="middle">Sales</text>
+  <text x="200" y="141" fill="#6b6878" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">deg=0</text>
+  <circle cx="330" cy="132" r="24" fill="#141417" stroke="#60c8f0" stroke-width="1.5"/>
+  <text x="330" y="129" fill="#60c8f0" font-family="DM Mono,monospace" font-size="8.5" text-anchor="middle">Intl</text>
+  <text x="330" y="141" fill="#6b6878" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">deg=3</text>
+  <circle cx="430" cy="132" r="24" fill="#141417" stroke="#6b6878" stroke-width="1.5"/>
+  <text x="430" y="129" fill="#ccc" font-family="DM Mono,monospace" font-size="8.5" text-anchor="middle">Mfg</text>
+  <text x="430" y="141" fill="#6b6878" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">deg=0</text>
+  <!-- level 3 -->
+  <circle cx="290" cy="192" r="18" fill="#141417" stroke="#6b6878" stroke-width="1.2"/>
+  <text x="290" y="196" fill="#ccc" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">India</text>
+  <circle cx="330" cy="192" r="18" fill="#141417" stroke="#6b6878" stroke-width="1.2"/>
+  <text x="330" y="196" fill="#ccc" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">Amer</text>
+  <circle cx="375" cy="192" r="18" fill="#141417" stroke="#6b6878" stroke-width="1.2"/>
+  <text x="375" y="196" fill="#ccc" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">UK</text>
+  <!-- tree degree label -->
+  <text x="470" y="28" fill="#f060c8" font-family="DM Mono,monospace" font-size="10" font-weight="bold">Tree Degree = 4</text>
+  <text x="470" y="42" fill="#6b6878" font-family="DM Mono,monospace" font-size="8">(max of all node degrees)</text>
+</svg>
+</div>
+<figcaption>Company has degree 4 → Tree degree = 4. Intl has degree 3. Leaf nodes all have degree 0.</figcaption>
+</figure>
+</div>
+</div>
+
+<!-- ══ S3: BINARY TREE BASICS ══ -->
+<div class="section" id="s3">
+<h2 class="sec-title">3. Binary Tree — Definition &amp; Formula</h2>
+<div class="callout tip">💡 "Binary" = 2. A binary tree is a tree where each node can have at most 2 children — named left child and right child.</div>
+<ul>
+  <li>Every node has <strong>0, 1, or 2</strong> children — never 3 or more.</li>
+  <li>The two children are labeled <strong>left child</strong> and <strong>right child</strong> — order matters.</li>
+  <li>Alternative definition: a tree with <strong>degree ≤ 2</strong>.</li>
+</ul>
+<h3 class="sub-title">Maximum Nodes Formula</h3>
+<div class="callout rule">📌 Maximum nodes a binary tree of height h can contain = <strong>2<sup>(h+1)</sup> − 1</strong></div>
+<figure>
+<div class="svg-wrap">
+<svg viewBox="0 0 756 440" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+  <text x="378.0" y="25.6" fill="#6b6878" font-family="DM Mono,monospace" font-size="12.7" text-anchor="middle">Full binary tree, height h=3 → max 2⁴−1 = 15 nodes</text>
+  <!-- edges level1-2 -->
+  <line x1="378.0" y1="76.7" x2="235.2" y2="156.2" stroke="#2a2a32" stroke-width="3.95"/>
+  <line x1="378.0" y1="76.7" x2="520.8" y2="156.2" stroke="#2a2a32" stroke-width="3.95"/>
+  <!-- edges level2-3 -->
+  <line x1="235.2" y1="181.8" x2="165.2" y2="258.4" stroke="#2a2a32" stroke-width="2.96"/>
+  <line x1="235.2" y1="181.8" x2="305.2" y2="258.4" stroke="#2a2a32" stroke-width="2.96"/>
+  <line x1="520.8" y1="181.8" x2="450.8" y2="258.4" stroke="#2a2a32" stroke-width="2.96"/>
+  <line x1="520.8" y1="181.8" x2="590.8" y2="258.4" stroke="#2a2a32" stroke-width="2.96"/>
+  <!-- edges level3-4 -->
+  <line x1="165.2" y1="281.2" x2="131.6"  y2="357.8" stroke="#2a2a32" stroke-width="2.96"/>
+  <line x1="165.2" y1="281.2" x2="198.8" y2="357.8" stroke="#2a2a32" stroke-width="2.96"/>
+  <line x1="305.2" y1="281.2" x2="271.6" y2="357.8" stroke="#2a2a32" stroke-width="2.96"/>
+  <line x1="305.2" y1="281.2" x2="338.8" y2="357.8" stroke="#2a2a32" stroke-width="2.96"/>
+  <line x1="450.8" y1="281.2" x2="417.2" y2="357.8" stroke="#2a2a32" stroke-width="2.96"/>
+  <line x1="450.8" y1="281.2" x2="484.4" y2="357.8" stroke="#2a2a32" stroke-width="2.96"/>
+  <line x1="590.8" y1="281.2" x2="557.2" y2="357.8" stroke="#2a2a32" stroke-width="2.96"/>
+  <line x1="590.8" y1="281.2" x2="624.4" y2="357.8" stroke="#2a2a32" stroke-width="2.96"/>
+  <!-- level 1 -->
+  <circle cx="378.0" cy="56.8" r="33.8" fill="#141417" stroke="#c8f060" stroke-width="4.93"/>
+  <text x="378.0" y="62.5" fill="#c8f060" font-family="DM Mono,monospace" font-size="16.9" text-anchor="middle" font-weight="bold">A</text>
+  <!-- level 2 -->
+  <circle cx="235.2" cy="167.6" r="31.0" fill="#141417" stroke="#60c8f0" stroke-width="3.95"/>
+  <text x="235.2" y="173.2" fill="#60c8f0" font-family="DM Mono,monospace" font-size="16.9" text-anchor="middle" font-weight="bold">B</text>
+  <circle cx="520.8" cy="167.6" r="31.0" fill="#141417" stroke="#60c8f0" stroke-width="3.95"/>
+  <text x="520.8" y="173.2" fill="#60c8f0" font-family="DM Mono,monospace" font-size="16.9" text-anchor="middle" font-weight="bold">C</text>
+  <!-- level 3 -->
+  <circle cx="165.2" cy="269.8" r="28.2" fill="#141417" stroke="#f060c8" stroke-width="2.96"/>
+  <text x="165.2" y="275.5" fill="#f060c8" font-family="DM Mono,monospace" font-size="15.5" text-anchor="middle" font-weight="bold">D</text>
+  <circle cx="305.2" cy="269.8" r="28.2" fill="#141417" stroke="#f060c8" stroke-width="2.96"/>
+  <text x="305.2" y="275.5" fill="#f060c8" font-family="DM Mono,monospace" font-size="15.5" text-anchor="middle" font-weight="bold">E</text>
+  <circle cx="450.8" cy="269.8" r="28.2" fill="#141417" stroke="#f060c8" stroke-width="2.96"/>
+  <text x="450.8" y="275.5" fill="#f060c8" font-family="DM Mono,monospace" font-size="15.5" text-anchor="middle" font-weight="bold">F</text>
+  <circle cx="590.8" cy="269.8" r="28.2" fill="#141417" stroke="#f060c8" stroke-width="2.96"/>
+  <text x="590.8" y="275.5" fill="#f060c8" font-family="DM Mono,monospace" font-size="15.5" text-anchor="middle" font-weight="bold">G</text>
+  <!-- level 4 - 8 nodes tight spacing -->
+  <circle cx="131.6"  cy="372.0" r="24.0" fill="#141417" stroke="#60f0a0" stroke-width="2.96"/>
+  <text x="131.6"  y="377.7" fill="#60f0a0" font-family="DM Mono,monospace" font-size="14.1" text-anchor="middle">H</text>
+  <circle cx="198.8" cy="372.0" r="24.0" fill="#141417" stroke="#60f0a0" stroke-width="2.96"/>
+  <text x="198.8" y="377.7" fill="#60f0a0" font-family="DM Mono,monospace" font-size="14.1" text-anchor="middle">I</text>
+  <circle cx="271.6" cy="372.0" r="24.0" fill="#141417" stroke="#60f0a0" stroke-width="2.96"/>
+  <text x="271.6" y="377.7" fill="#60f0a0" font-family="DM Mono,monospace" font-size="14.1" text-anchor="middle">J</text>
+  <circle cx="338.8" cy="372.0" r="24.0" fill="#141417" stroke="#60f0a0" stroke-width="2.96"/>
+  <text x="338.8" y="377.7" fill="#60f0a0" font-family="DM Mono,monospace" font-size="14.1" text-anchor="middle">K</text>
+  <circle cx="417.2" cy="372.0" r="24.0" fill="#141417" stroke="#60f0a0" stroke-width="2.96"/>
+  <text x="417.2" y="377.7" fill="#60f0a0" font-family="DM Mono,monospace" font-size="14.1" text-anchor="middle">L</text>
+  <circle cx="484.4" cy="372.0" r="24.0" fill="#141417" stroke="#60f0a0" stroke-width="2.96"/>
+  <text x="484.4" y="377.7" fill="#60f0a0" font-family="DM Mono,monospace" font-size="14.1" text-anchor="middle">M</text>
+  <circle cx="557.2" cy="372.0" r="24.0" fill="#141417" stroke="#60f0a0" stroke-width="2.96"/>
+  <text x="557.2" y="377.7" fill="#60f0a0" font-family="DM Mono,monospace" font-size="14.1" text-anchor="middle">N</text>
+  <circle cx="624.4" cy="372.0" r="24.0" fill="#141417" stroke="#60f0a0" stroke-width="2.96"/>
+  <text x="624.4" y="377.7" fill="#60f0a0" font-family="DM Mono,monospace" font-size="14.1" text-anchor="middle">O</text>
+  <!-- node count per level -->
+  <text x="700.0" y="62.5"  fill="#c8f060" font-family="DM Mono,monospace" font-size="11.3">1 node</text>
+  <text x="700.0" y="173.2" fill="#60c8f0" font-family="DM Mono,monospace" font-size="11.3">2 nodes</text>
+  <text x="700.0" y="275.5" fill="#f060c8" font-family="DM Mono,monospace" font-size="11.3">4 nodes</text>
+  <text x="700.0" y="377.7" fill="#60f0a0" font-family="DM Mono,monospace" font-size="11.3">8 nodes</text>
+  <text x="700.0" y="426.0" fill="#6b6878" font-family="DM Mono,monospace" font-size="11.3">Total=15</text>
+</svg>
+</div>
+<figcaption>Height 3 binary tree — maximum 15 nodes (1+2+4+8). Each level doubles the previous.</figcaption>
+</figure>
+<table>
+  <thead><tr><th>Height (h)</th><th>Formula 2^(h+1)−1</th><th>Max Nodes</th><th>Nodes per Level</th></tr></thead>
+  <tbody>
+    <tr><td>0</td><td>2¹ − 1</td><td>1</td><td>1</td></tr>
+    <tr><td>1</td><td>2² − 1</td><td>3</td><td>1, 2</td></tr>
+    <tr><td>2</td><td>2³ − 1</td><td>7</td><td>1, 2, 4</td></tr>
+    <tr><td>3</td><td>2⁴ − 1</td><td>15</td><td>1, 2, 4, 8</td></tr>
+  </tbody>
+</table>
+</div>
+<!-- ══ S4: TYPES OF BINARY TREES ══ -->
+<div class="section" id="s4">
+<h2 class="sec-title">4. Types of Binary Trees</h2>
+
+<!-- S4A: PROPER -->
+<div id="s4a">
+<h3 class="sub-title">Proper / Strict Binary Tree</h3>
+<div class="callout rule">📌 Every node must have exactly <strong>0 or 2</strong> children. Any node with exactly 1 child disqualifies the entire tree.</div>
+<div class="type-grid">
+  <div class="type-card valid">
+    <div class="type-label v">✅ IS Proper</div>
+    <svg viewBox="0 0 420 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;margin:auto;">
+      <line x1="210.0" y1="76.0" x2="115.5"  y2="190.0"  stroke="#2a2a32" stroke-width="8.61"/>
+      <line x1="210.0" y1="76.0" x2="304.5" y2="190.0"  stroke="#2a2a32" stroke-width="8.61"/>
+      <line x1="115.5"  y1="226.0" x2="58.8"  y2="304.0" stroke="#2a2a32" stroke-width="8.61"/>
+      <line x1="115.5"  y1="226.0" x2="172.2"  y2="304.0" stroke="#2a2a32" stroke-width="8.61"/>
+      <circle cx="210.0" cy="52.0" r="45.1" fill="#141417" stroke="#60f0a0" stroke-width="8.61"/>
+      <text x="210.0" y="60.0" fill="#60f0a0" font-family="DM Mono,monospace" font-size="22.5" text-anchor="middle" font-weight="bold">A</text>
+      <circle cx="115.5"  cy="208.0" r="41.0" fill="#141417" stroke="#60f0a0" stroke-width="8.61"/>
+      <text x="115.5"  y="216.0" fill="#60f0a0" font-family="DM Mono,monospace" font-size="22.5" text-anchor="middle" font-weight="bold">B</text>
+      <circle cx="304.5" cy="208.0" r="41.0" fill="#141417" stroke="#6b6878" stroke-width="6.56"/>
+      <text x="304.5" y="216.0" fill="#ccc"    font-family="DM Mono,monospace" font-size="22.5" text-anchor="middle" font-weight="bold">C</text>
+      <text x="304.5" y="260.0" fill="#6b6878" font-family="DM Mono,monospace" font-size="14.3" text-anchor="middle">leaf (deg 0)</text>
+      <circle cx="58.8"  cy="320.0" r="32.8" fill="#141417" stroke="#6b6878" stroke-width="4.30"/>
+      <text x="58.8"  y="328.0" fill="#ccc"    font-family="DM Mono,monospace" font-size="20.5" text-anchor="middle">D</text>
+      <circle cx="172.2"  cy="320.0" r="32.8" fill="#141417" stroke="#6b6878" stroke-width="4.30"/>
+      <text x="172.2"  y="328.0" fill="#ccc"    font-family="DM Mono,monospace" font-size="20.5" text-anchor="middle">E</text>
+      <text x="210.0" y="28.0" fill="#6b6878" font-family="DM Mono,monospace" font-size="14.3" text-anchor="middle">A→deg 2 ✓  B→deg 2 ✓  C,D,E→deg 0 ✓</text>
+    </svg>
+    <p style="font-size:0.75rem;color:var(--muted);margin-top:0.5rem;">All nodes have 0 or 2 children. No node has exactly 1. ✓</p>
+  </div>
+  <div class="type-card invalid">
+    <div class="type-label x">❌ NOT Proper</div>
+    <svg viewBox="0 0 420 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;margin:auto;">
+      <line x1="210.0" y1="76.0" x2="115.5"  y2="190.0"  stroke="#2a2a32" stroke-width="8.61"/>
+      <line x1="210.0" y1="76.0" x2="304.5" y2="190.0"  stroke="#2a2a32" stroke-width="8.61"/>
+      <line x1="304.5" y1="228.0" x2="304.5" y2="304.0" stroke="#f06060" stroke-width="8.61"/>
+      <circle cx="210.0" cy="52.0" r="45.1" fill="#141417" stroke="#60f0a0" stroke-width="8.61"/>
+      <text x="210.0" y="60.0" fill="#60f0a0" font-family="DM Mono,monospace" font-size="22.5" text-anchor="middle" font-weight="bold">A</text>
+      <circle cx="115.5"  cy="208.0" r="41.0" fill="#141417" stroke="#6b6878" stroke-width="6.56"/>
+      <text x="115.5"  y="216.0" fill="#ccc"    font-family="DM Mono,monospace" font-size="22.5" text-anchor="middle" font-weight="bold">B</text>
+      <text x="115.5"  y="256.0" fill="#6b6878" font-family="DM Mono,monospace" font-size="14.3" text-anchor="middle">leaf(deg 0)</text>
+      <circle cx="304.5" cy="208.0" r="41.0" fill="#141417" stroke="#f06060" stroke-width="10.66"/>
+      <text x="304.5" y="200.0" fill="#f06060" font-family="DM Mono,monospace" font-size="22.5" text-anchor="middle" font-weight="bold">C</text>
+      <text x="304.5" y="228.0" fill="#f06060" font-family="DM Mono,monospace" font-size="14.3" text-anchor="middle">deg=1 ✗</text>
+      <circle cx="304.5" cy="320.0" r="32.8" fill="#141417" stroke="#6b6878" stroke-width="4.30"/>
+      <text x="304.5" y="328.0" fill="#ccc"    font-family="DM Mono,monospace" font-size="20.5" text-anchor="middle">E</text>
+    </svg>
+    <p style="font-size:0.75rem;color:var(--danger);margin-top:0.5rem;">Node C has exactly 1 child. Degree 1 anywhere → NOT proper. ✗</p>
+  </div>
+</div>
+</div>
+
+<!-- S4B: FULL -->
+<div id="s4b">
+<h3 class="sub-title">Full Binary Tree</h3>
+<div class="callout rule">📌 Two conditions BOTH required: (1) Every internal node has exactly 2 children. (2) All leaf nodes are at the same level. Formula: must have exactly 2<sup>(h+1)</sup> − 1 nodes.</div>
+<div class="type-grid">
+  <div class="type-card valid">
+    <div class="type-label v">✅ IS Full (h=2, 7 nodes)</div>
+    <svg viewBox="0 0 420 350" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;margin:auto;">
+      <line x1="210.0" y1="72.0" x2="115.5"  y2="184.0"  stroke="#2a2a32" stroke-width="8.61"/>
+      <line x1="210.0" y1="72.0" x2="304.5" y2="184.0"  stroke="#2a2a32" stroke-width="8.61"/>
+      <line x1="115.5"  y1="220.0" x2="50.4"  y2="308.0" stroke="#2a2a32" stroke-width="8.61"/>
+      <line x1="115.5"  y1="220.0" x2="159.6"  y2="308.0" stroke="#2a2a32" stroke-width="8.61"/>
+      <line x1="304.5" y1="220.0" x2="260.4" y2="308.0" stroke="#2a2a32" stroke-width="8.61"/>
+      <line x1="304.5" y1="220.0" x2="369.6" y2="308.0" stroke="#2a2a32" stroke-width="8.61"/>
+      <circle cx="210.0" cy="48.0" r="45.1" fill="#141417" stroke="#60f0a0" stroke-width="8.61"/>
+      <text x="210.0" y="56.0" fill="#60f0a0" font-family="DM Mono,monospace" font-size="24.6" text-anchor="middle" font-weight="bold">A</text>
+      <circle cx="115.5"  cy="200.0" r="41.0" fill="#141417" stroke="#60c8f0" stroke-width="8.61"/>
+      <text x="115.5"  y="208.0" fill="#60c8f0" font-family="DM Mono,monospace" font-size="24.6" text-anchor="middle" font-weight="bold">B</text>
+      <circle cx="304.5" cy="200.0" r="41.0" fill="#141417" stroke="#60c8f0" stroke-width="8.61"/>
+      <text x="304.5" y="208.0" fill="#60c8f0" font-family="DM Mono,monospace" font-size="24.6" text-anchor="middle" font-weight="bold">C</text>
+      <circle cx="50.4"  cy="324.0" r="32.8" fill="#141417" stroke="#6b6878" stroke-width="6.56"/>
+      <text x="50.4"  y="332.0" fill="#ccc" font-family="DM Mono,monospace" font-size="20.5" text-anchor="middle">D</text>
+      <circle cx="159.6"  cy="324.0" r="32.8" fill="#141417" stroke="#6b6878" stroke-width="6.56"/>
+      <text x="159.6"  y="332.0" fill="#ccc" font-family="DM Mono,monospace" font-size="20.5" text-anchor="middle">E</text>
+      <circle cx="260.4" cy="324.0" r="32.8" fill="#141417" stroke="#6b6878" stroke-width="6.56"/>
+      <text x="260.4" y="332.0" fill="#ccc" font-family="DM Mono,monospace" font-size="20.5" text-anchor="middle">F</text>
+      <circle cx="369.6" cy="324.0" r="32.8" fill="#141417" stroke="#6b6878" stroke-width="6.56"/>
+      <text x="369.6" y="332.0" fill="#ccc" font-family="DM Mono,monospace" font-size="20.5" text-anchor="middle">G</text>
+      <line x1="16.8" y1="356.0" x2="403.2" y2="356.0" stroke="#60f0a0" stroke-width="4.30" stroke-dasharray="3,2" opacity="0.6"/>
+      <text x="210.0" y="378.0" fill="#60f0a0" font-family="DM Mono,monospace" font-size="14.3" text-anchor="middle">All leaves same level ✓  7 = 2³−1 ✓</text>
+    </svg>
+    <p style="font-size:0.75rem;color:var(--muted);margin-top:0.4rem;">7 nodes = 2^(2+1)−1 ✓ All internals have 2 children ✓ All leaves at level 3 ✓</p>
+  </div>
+  <div class="type-card invalid">
+    <div class="type-label x">❌ NOT Full (gap in leaves)</div>
+    <svg viewBox="0 0 420 350" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;margin:auto;">
+      <line x1="210.0" y1="72.0" x2="115.5"  y2="184.0"  stroke="#2a2a32" stroke-width="8.61"/>
+      <line x1="210.0" y1="72.0" x2="304.5" y2="184.0"  stroke="#2a2a32" stroke-width="8.61"/>
+      <line x1="115.5"  y1="220.0" x2="50.4"  y2="308.0" stroke="#2a2a32" stroke-width="8.61"/>
+      <line x1="115.5"  y1="220.0" x2="159.6"  y2="308.0" stroke="#2a2a32" stroke-width="8.61"/>
+      <line x1="304.5" y1="220.0" x2="304.5" y2="308.0" stroke="#f06060" stroke-width="8.61"/>
+      <circle cx="210.0" cy="48.0" r="45.1" fill="#141417" stroke="#60f0a0" stroke-width="8.61"/>
+      <text x="210.0" y="56.0" fill="#60f0a0" font-family="DM Mono,monospace" font-size="24.6" text-anchor="middle" font-weight="bold">A</text>
+      <circle cx="115.5"  cy="200.0" r="41.0" fill="#141417" stroke="#60c8f0" stroke-width="8.61"/>
+      <text x="115.5"  y="208.0" fill="#60c8f0" font-family="DM Mono,monospace" font-size="24.6" text-anchor="middle" font-weight="bold">B</text>
+      <circle cx="304.5" cy="200.0" r="41.0" fill="#141417" stroke="#f06060" stroke-width="10.66"/>
+      <text x="304.5" y="192.0"  fill="#f06060" font-family="DM Mono,monospace" font-size="22.5" text-anchor="middle" font-weight="bold">C</text>
+      <text x="304.5" y="216.0" fill="#f06060" font-family="DM Mono,monospace" font-size="14.3"  text-anchor="middle">deg=1 ✗</text>
+      <circle cx="50.4"  cy="324.0" r="32.8" fill="#141417" stroke="#6b6878" stroke-width="6.56"/>
+      <text x="50.4"  y="332.0" fill="#ccc" font-family="DM Mono,monospace" font-size="20.5" text-anchor="middle">D</text>
+      <circle cx="159.6"  cy="324.0" r="32.8" fill="#141417" stroke="#6b6878" stroke-width="6.56"/>
+      <text x="159.6"  y="332.0" fill="#ccc" font-family="DM Mono,monospace" font-size="20.5" text-anchor="middle">E</text>
+      <circle cx="304.5" cy="324.0" r="32.8" fill="#141417" stroke="#f06060" stroke-width="6.56"/>
+      <text x="304.5" y="332.0" fill="#f06060" font-family="DM Mono,monospace" font-size="20.5" text-anchor="middle">F</text>
+      <text x="210.0" y="376.0" fill="#f06060" font-family="DM Mono,monospace" font-size="14.3" text-anchor="middle">C has 1 child + F at diff level → fails ✗</text>
+    </svg>
+    <p style="font-size:0.75rem;color:var(--danger);margin-top:0.4rem;">C has 1 child (deg=1). F is a leaf at level 2 while D,E are at level 3. Fails both conditions. ✗</p>
+  </div>
+</div>
+</div>
+
+<!-- S4C: COMPLETE -->
+<div id="s4c">
+<h3 class="sub-title">Complete Binary Tree</h3>
+<div class="callout rule">📌 All levels fully filled except possibly the last. The last level is filled <strong>left to right with no gaps</strong>. Number nodes 1,2,3… left-to-right level by level — there must be no missing numbers.</div>
+<div class="type-grid">
+  <div class="type-card valid">
+    <div class="type-label v">✅ IS Complete</div>
+    <svg viewBox="0 0 441 360" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;margin:auto;">
+      <line x1="220.5" y1="72.0" x2="121.8"  y2="184.0"  stroke="#2a2a32" stroke-width="8.61"/>
+      <line x1="220.5" y1="72.0" x2="319.2" y2="184.0"  stroke="#2a2a32" stroke-width="8.61"/>
+      <line x1="121.8"  y1="220.0" x2="63.0"  y2="310.0" stroke="#2a2a32" stroke-width="8.61"/>
+      <line x1="121.8"  y1="220.0" x2="163.8"  y2="310.0" stroke="#2a2a32" stroke-width="8.61"/>
+      <line x1="319.2" y1="220.0" x2="277.2" y2="310.0" stroke="#2a2a32" stroke-width="8.61"/>
+      <!-- no right child of C — acceptable, last level fills left first -->
+      <circle cx="220.5" cy="48.0" r="45.1" fill="#141417" stroke="#60f0a0" stroke-width="8.61"/>
+      <text x="220.5" y="56.0" fill="#60f0a0" font-family="DM Mono,monospace" font-size="24.6" text-anchor="middle" font-weight="bold">A</text>
+      <text x="220.5" y="24.0" fill="#6b6878" font-family="DM Mono,monospace" font-size="14.3" text-anchor="middle">[1]</text>
+      <circle cx="121.8"  cy="200.0" r="41.0" fill="#141417" stroke="#60c8f0" stroke-width="8.61"/>
+      <text x="121.8"  y="208.0" fill="#60c8f0" font-family="DM Mono,monospace" font-size="24.6" text-anchor="middle" font-weight="bold">B</text>
+      <text x="88.2"  y="188.0"  fill="#6b6878" font-family="DM Mono,monospace" font-size="14.3">[2]</text>
+      <circle cx="319.2" cy="200.0" r="41.0" fill="#141417" stroke="#60c8f0" stroke-width="8.61"/>
+      <text x="319.2" y="208.0" fill="#60c8f0" font-family="DM Mono,monospace" font-size="24.6" text-anchor="middle" font-weight="bold">C</text>
+      <text x="357.0" y="188.0"  fill="#6b6878" font-family="DM Mono,monospace" font-size="14.3">[3]</text>
+      <circle cx="63.0"  cy="326.0" r="32.8" fill="#141417" stroke="#6b6878" stroke-width="6.56"/>
+      <text x="63.0"  y="334.0" fill="#ccc" font-family="DM Mono,monospace" font-size="20.5" text-anchor="middle">D</text>
+      <text x="63.0"  y="300.0" fill="#6b6878" font-family="DM Mono,monospace" font-size="14.3" text-anchor="middle">[4]</text>
+      <circle cx="163.8"  cy="326.0" r="32.8" fill="#141417" stroke="#6b6878" stroke-width="6.56"/>
+      <text x="163.8"  y="334.0" fill="#ccc" font-family="DM Mono,monospace" font-size="20.5" text-anchor="middle">E</text>
+      <text x="163.8"  y="300.0" fill="#6b6878" font-family="DM Mono,monospace" font-size="14.3" text-anchor="middle">[5]</text>
+      <circle cx="277.2" cy="326.0" r="32.8" fill="#141417" stroke="#6b6878" stroke-width="6.56"/>
+      <text x="277.2" y="334.0" fill="#ccc" font-family="DM Mono,monospace" font-size="20.5" text-anchor="middle">F</text>
+      <text x="277.2" y="300.0" fill="#6b6878" font-family="DM Mono,monospace" font-size="14.3" text-anchor="middle">[6]</text>
+      <text x="220.5" y="370.0" fill="#60f0a0" font-family="DM Mono,monospace" font-size="14.3" text-anchor="middle">Positions 1-6, no gaps. C missing right child is OK ✓</text>
+    </svg>
+    <p style="font-size:0.75rem;color:var(--muted);margin-top:0.3rem;">Positions 1–6 filled left-to-right. C has no right child — that's fine, last level fills left first. ✓</p>
+  </div>
+  <div class="type-card invalid">
+    <div class="type-label x">❌ NOT Complete (gap)</div>
+    <svg viewBox="0 0 441 360" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;margin:auto;">
+      <line x1="220.5" y1="72.0" x2="121.8"  y2="184.0"  stroke="#2a2a32" stroke-width="8.61"/>
+      <line x1="220.5" y1="72.0" x2="319.2" y2="184.0"  stroke="#2a2a32" stroke-width="8.61"/>
+      <line x1="121.8"  y1="220.0" x2="63.0"  y2="310.0" stroke="#2a2a32" stroke-width="8.61"/>
+      <!-- missing B's right child at position 5 -->
+      <line x1="319.2" y1="220.0" x2="346.5" y2="310.0" stroke="#f06060" stroke-width="8.61"/>
+      <circle cx="220.5" cy="48.0" r="45.1" fill="#141417" stroke="#60f0a0" stroke-width="8.61"/>
+      <text x="220.5" y="56.0" fill="#60f0a0" font-family="DM Mono,monospace" font-size="24.6" text-anchor="middle" font-weight="bold">A</text>
+      <text x="220.5" y="24.0" fill="#6b6878" font-family="DM Mono,monospace" font-size="14.3" text-anchor="middle">[1]</text>
+      <circle cx="121.8"  cy="200.0" r="41.0" fill="#141417" stroke="#f06060" stroke-width="10.66"/>
+      <text x="121.8"  y="208.0" fill="#f06060" font-family="DM Mono,monospace" font-size="24.6" text-anchor="middle" font-weight="bold">B</text>
+      <text x="88.2"  y="188.0"  fill="#6b6878" font-family="DM Mono,monospace" font-size="14.3">[2]</text>
+      <circle cx="319.2" cy="200.0" r="41.0" fill="#141417" stroke="#60c8f0" stroke-width="8.61"/>
+      <text x="319.2" y="208.0" fill="#60c8f0" font-family="DM Mono,monospace" font-size="24.6" text-anchor="middle" font-weight="bold">C</text>
+      <text x="357.0" y="188.0"  fill="#6b6878" font-family="DM Mono,monospace" font-size="14.3">[3]</text>
+      <circle cx="63.0"  cy="326.0" r="32.8" fill="#141417" stroke="#6b6878" stroke-width="6.56"/>
+      <text x="63.0"  y="334.0" fill="#ccc" font-family="DM Mono,monospace" font-size="20.5" text-anchor="middle">D</text>
+      <text x="63.0"  y="300.0" fill="#6b6878" font-family="DM Mono,monospace" font-size="14.3" text-anchor="middle">[4]</text>
+      <!-- gap at position 5 -->
+      <circle cx="178.5"  cy="326.0" r="32.8" fill="rgba(240,96,96,0.1)" stroke="#f06060" stroke-width="6.56" stroke-dasharray="4,2"/>
+      <text x="178.5"  y="334.0" fill="#f06060" font-family="DM Mono,monospace" font-size="20.5" text-anchor="middle">?</text>
+      <text x="178.5"  y="300.0" fill="#f06060" font-family="DM Mono,monospace" font-size="14.3" text-anchor="middle">[5] GAP</text>
+      <circle cx="346.5" cy="326.0" r="32.8" fill="#141417" stroke="#f06060" stroke-width="8.61"/>
+      <text x="346.5" y="334.0" fill="#f06060" font-family="DM Mono,monospace" font-size="20.5" text-anchor="middle">G</text>
+      <text x="346.5" y="300.0" fill="#f06060" font-family="DM Mono,monospace" font-size="14.3" text-anchor="middle">[6]</text>
+      <text x="220.5" y="370.0" fill="#f06060" font-family="DM Mono,monospace" font-size="14.3" text-anchor="middle">Gap at [5]: B's right child missing, but [6] exists → ✗</text>
+    </svg>
+    <p style="font-size:0.75rem;color:var(--danger);margin-top:0.3rem;">Position 5 (B's right child) is missing but position 6 (C's right child) exists. Gap = NOT complete. ✗</p>
+  </div>
+</div>
+</div>
+
+<!-- S4D: SKEWED -->
+<div id="s4d">
+<h3 class="sub-title">Skewed Binary Trees</h3>
+<div class="callout info">ℹ️ Every node has exactly one child, creating a linear chain. Technically a binary tree, but it performs like a linked list — O(n) search instead of O(log n).</div>
+<div class="type-grid">
+  <div class="type-card" style="border-top:3px solid var(--accent2);">
+    <div class="type-label" style="color:var(--accent2);">Left Skewed</div>
+    <svg viewBox="0 0 330 399" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;margin:auto;">
+      <line x1="253.0" y1="60.8"  x2="193.6"  y2="155.8"  stroke="#2a2a32" stroke-width="9.02"/>
+      <line x1="193.6"  y1="190.0" x2="132.0"  y2="281.2" stroke="#2a2a32" stroke-width="9.02"/>
+      <line x1="132.0"  y1="313.5" x2="70.4"  y2="395.2" stroke="#2a2a32" stroke-width="9.02"/>
+      <circle cx="253.0" cy="41.8"  r="41.0" fill="#141417" stroke="#60c8f0" stroke-width="9.02"/>
+      <text x="253.0"  y="49.4"  fill="#60c8f0" font-family="DM Mono,monospace" font-size="22.5" text-anchor="middle" font-weight="bold">A</text>
+      <circle cx="193.6"  cy="171.0"  r="41.0" fill="#141417" stroke="#60c8f0" stroke-width="9.02"/>
+      <text x="193.6"   y="178.6"  fill="#60c8f0" font-family="DM Mono,monospace" font-size="22.5" text-anchor="middle" font-weight="bold">B</text>
+      <circle cx="132.0"  cy="294.5" r="41.0" fill="#141417" stroke="#60c8f0" stroke-width="9.02"/>
+      <text x="132.0"   y="302.1" fill="#60c8f0" font-family="DM Mono,monospace" font-size="22.5" text-anchor="middle" font-weight="bold">C</text>
+      <circle cx="70.4"  cy="395.2" r="32.8" fill="#141417" stroke="#6b6878" stroke-width="6.76"/>
+      <text x="70.4"   y="402.8" fill="#ccc"    font-family="DM Mono,monospace" font-size="20.5" text-anchor="middle">D</text>
+      <text x="176.0"   y="19.0"  fill="#6b6878" font-family="DM Mono,monospace" font-size="15.4" text-anchor="middle">Only LEFT children</text>
+    </svg>
+    <p style="font-size:0.75rem;color:var(--muted);margin-top:0.4rem;">Every node only has a left child. Height = n−1. Worst case for most operations.</p>
+  </div>
+  <div class="type-card" style="border-top:3px solid var(--accent3);">
+    <div class="type-label" style="color:var(--accent3);">Right Skewed</div>
+    <svg viewBox="0 0 330 399" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;margin:auto;">
+      <line x1="70.4"  y1="60.8"  x2="132.0"  y2="155.8"  stroke="#2a2a32" stroke-width="9.02"/>
+      <line x1="132.0"  y1="190.0" x2="193.6"  y2="281.2" stroke="#2a2a32" stroke-width="9.02"/>
+      <line x1="193.6"  y1="313.5" x2="253.0" y2="395.2" stroke="#2a2a32" stroke-width="9.02"/>
+      <circle cx="70.4"  cy="41.8"  r="41.0" fill="#141417" stroke="#f060c8" stroke-width="9.02"/>
+      <text x="70.4"   y="49.4"  fill="#f060c8" font-family="DM Mono,monospace" font-size="22.5" text-anchor="middle" font-weight="bold">A</text>
+      <circle cx="132.0"  cy="171.0"  r="41.0" fill="#141417" stroke="#f060c8" stroke-width="9.02"/>
+      <text x="132.0"   y="178.6"  fill="#f060c8" font-family="DM Mono,monospace" font-size="22.5" text-anchor="middle" font-weight="bold">B</text>
+      <circle cx="193.6"  cy="294.5" r="41.0" fill="#141417" stroke="#f060c8" stroke-width="9.02"/>
+      <text x="193.6"   y="302.1" fill="#f060c8" font-family="DM Mono,monospace" font-size="22.5" text-anchor="middle" font-weight="bold">C</text>
+      <circle cx="253.0" cy="395.2" r="32.8" fill="#141417" stroke="#6b6878" stroke-width="6.76"/>
+      <text x="253.0"  y="402.8" fill="#ccc"    font-family="DM Mono,monospace" font-size="20.5" text-anchor="middle">D</text>
+      <text x="176.0"   y="19.0"  fill="#6b6878" font-family="DM Mono,monospace" font-size="15.4" text-anchor="middle">Only RIGHT children</text>
+    </svg>
+    <p style="font-size:0.75rem;color:var(--muted);margin-top:0.4rem;">Every node only has a right child. Same O(n) problem. Happens when inserting sorted data into a BST.</p>
+  </div>
+</div>
+</div>
+</div><!-- end S4 -->
+
+<!-- ══ S5: DIFFERENCES ══ -->
+<div class="section" id="s5">
+<h2 class="sec-title">5. Differences Between Binary Tree Types</h2>
+
+<table>
+  <thead><tr><th>Property</th><th>Proper</th><th>Full</th><th>Complete</th><th>Skewed</th></tr></thead>
+  <tbody>
+    <tr><td>Children per internal node</td><td>Exactly 0 or 2</td><td>Exactly 2</td><td>0, 1, or 2</td><td>Exactly 1</td></tr>
+    <tr><td>Leaf nodes</td><td>Any level</td><td>All same level</td><td>Last level, left→right</td><td>Only one leaf</td></tr>
+    <tr><td>Node count (height h)</td><td>2k+1 (k = internals)</td><td>2^(h+1)−1</td><td>Between 2^h and 2^(h+1)−1</td><td>h+1</td></tr>
+    <tr><td>Also Proper?</td><td>—</td><td>✅ Yes</td><td>Not necessarily</td><td>❌ No</td></tr>
+    <tr><td>Also Complete?</td><td>Not necessarily</td><td>✅ Yes</td><td>—</td><td>❌ No</td></tr>
+    <tr><td>Heap-compatible?</td><td>❌</td><td>✅</td><td>✅ (heaps use this)</td><td>❌</td></tr>
+    <tr><td>Practical use</td><td>Expression trees</td><td>Decision trees</td><td>Heaps / Priority Queues</td><td>Worst-case BST</td></tr>
+  </tbody>
+</table>
+
+<div class="callout rule">📌 Full ⊂ Complete ⊂ Binary Tree. A full binary tree is always complete and proper. But complete or proper does NOT imply full.</div>
+
+<figure>
+<div class="svg-wrap">
+<svg viewBox="0 0 720 262" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+  <!-- outer: Binary Tree -->
+  <ellipse cx="338.4" cy="138.0" rx="316.8" ry="111.0" fill="none" stroke="#2a2a32" stroke-width="3.23"/>
+  <text x="40.3" y="45.0" fill="#6b6878" font-family="DM Mono,monospace" font-size="13.2">Binary Tree</text>
+  <!-- Complete -->
+  <ellipse cx="338.4" cy="147.0" rx="223.2" ry="81.0" fill="none" stroke="#60c8f0" stroke-width="3.23"/>
+  <text x="115.2" y="82.5" fill="#60c8f0" font-family="DM Mono,monospace" font-size="13.2">Complete</text>
+  <!-- Full -->
+  <ellipse cx="338.4" cy="157.5" rx="126.7" ry="54.0" fill="none" stroke="#c8f060" stroke-width="3.23"/>
+  <text x="266.4" y="147.0" fill="#c8f060" font-family="DM Mono,monospace" font-size="13.2">Full (= Proper + Complete)</text>
+  <!-- Proper bubble (separate, overlapping) -->
+  <ellipse cx="103.7" cy="180.0" rx="89.3" ry="51.0" fill="none" stroke="#f060c8" stroke-width="3.23" stroke-dasharray="5,3"/>
+  <text x="103.7" y="177.0" fill="#f060c8" font-family="DM Mono,monospace" font-size="12.5" text-anchor="middle">Proper</text>
+  <text x="103.7" y="195.0" fill="#6b6878" font-family="DM Mono,monospace" font-size="10.3" text-anchor="middle">overlaps but ≠ Complete</text>
+  <!-- Skewed -->
+  <circle cx="648.0" cy="180.0" r="32.3" fill="none" stroke="#6b6878" stroke-width="3.23" stroke-dasharray="4,3"/>
+  <text x="648.0" y="177.0" fill="#6b6878" font-family="DM Mono,monospace" font-size="11.8" text-anchor="middle">Skewed</text>
+  <text x="648.0" y="195.0" fill="#6b6878" font-family="DM Mono,monospace" font-size="10.3" text-anchor="middle">outside</text>
+</svg>
+</div>
+<figcaption>Subset relationships. Full is the most restrictive. Skewed technically is a binary tree, but outside Complete/Full/Proper.</figcaption>
+</figure>
+</div>
+<!-- ══ S6: ARRAY REPRESENTATION ══ -->
+<div class="section" id="s6">
+<h2 class="sec-title">6. Array Representation of Binary Trees</h2>
+<div class="callout tip">💡 Store a binary tree in a plain array using index math instead of pointers. Number nodes level-by-level left-to-right starting at index 1 — and the parent-child relationship falls out of simple arithmetic.</div>
+<ul>
+  <li>Array indices start at <strong>1</strong> (not 0) — makes the formulas clean.</li>
+  <li><strong>Root</strong> is always at index 1.</li>
+  <li>Level-order numbering: each level numbered left to right.</li>
+  <li>Array size required = 2<sup>(h+1)</sup> − 1 for a tree of height h.</li>
+</ul>
+
+<h3 class="sub-title">Index Formulas</h3>
+<table>
+  <thead><tr><th>Relationship</th><th>Formula</th><th>Example — parent at index 2</th></tr></thead>
+  <tbody>
+    <tr><td>Left child of node at i</td><td><strong>2i</strong></td><td>left child at index 4</td></tr>
+    <tr><td>Right child of node at i</td><td><strong>2i + 1</strong></td><td>right child at index 5</td></tr>
+    <tr><td>Parent of node at i</td><td><strong>⌊i / 2⌋</strong></td><td>parent of index 5 → ⌊5/2⌋ = 2</td></tr>
+  </tbody>
+</table>
+
+<figure>
+<div class="svg-wrap">
+<svg viewBox="0 0 924 450" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+  <text x="462.0" y="26.1" fill="#6b6878" font-family="DM Mono,monospace" font-size="13.5" text-anchor="middle">Binary Tree → Array (index starts at 1)</text>
+  <!-- TREE edges -->
+  <line x1="462.0" y1="81.2" x2="294.0" y2="168.2" stroke="#2a2a32" stroke-width="3.99"/>
+  <line x1="462.0" y1="81.2" x2="630.0" y2="168.2" stroke="#2a2a32" stroke-width="3.99"/>
+  <line x1="294.0" y1="197.2" x2="210.0" y2="272.6" stroke="#2a2a32" stroke-width="3.99"/>
+  <line x1="294.0" y1="197.2" x2="378.0" y2="272.6" stroke="#2a2a32" stroke-width="3.99"/>
+  <line x1="630.0" y1="197.2" x2="546.0" y2="272.6" stroke="#2a2a32" stroke-width="3.99"/>
+  <line x1="630.0" y1="197.2" x2="714.0" y2="272.6" stroke="#2a2a32" stroke-width="3.99"/>
+  <!-- TREE nodes -->
+  <circle cx="462.0" cy="60.9"  r="37.0" fill="#141417" stroke="#c8f060" stroke-width="4.99"/>
+  <text x="462.0" y="55.1"  fill="#c8f060" font-family="DM Mono,monospace" font-size="18.5" text-anchor="middle" font-weight="bold">A</text>
+  <text x="462.0" y="75.4"  fill="#f060c8" font-family="DM Mono,monospace" font-size="12.8"  text-anchor="middle">[1]</text>
+  <circle cx="294.0" cy="182.7" r="34.2" fill="#141417" stroke="#60c8f0" stroke-width="3.99"/>
+  <text x="294.0" y="176.9" fill="#60c8f0" font-family="DM Mono,monospace" font-size="18.5" text-anchor="middle" font-weight="bold">B</text>
+  <text x="294.0" y="197.2" fill="#f060c8" font-family="DM Mono,monospace" font-size="12.8"  text-anchor="middle">[2]</text>
+  <circle cx="630.0" cy="182.7" r="34.2" fill="#141417" stroke="#60c8f0" stroke-width="3.99"/>
+  <text x="630.0" y="176.9" fill="#60c8f0" font-family="DM Mono,monospace" font-size="18.5" text-anchor="middle" font-weight="bold">C</text>
+  <text x="630.0" y="197.2" fill="#f060c8" font-family="DM Mono,monospace" font-size="12.8"  text-anchor="middle">[3]</text>
+  <circle cx="210.0" cy="290.0" r="31.3" fill="#141417" stroke="#2a2a32" stroke-width="2.99"/>
+  <text x="210.0" y="284.2" fill="#ccc"    font-family="DM Mono,monospace" font-size="17.1" text-anchor="middle" font-weight="bold">D</text>
+  <text x="210.0" y="301.6" fill="#f060c8" font-family="DM Mono,monospace" font-size="12.8"  text-anchor="middle">[4]</text>
+  <circle cx="378.0" cy="290.0" r="31.3" fill="#141417" stroke="#2a2a32" stroke-width="2.99"/>
+  <text x="378.0" y="284.2" fill="#ccc"    font-family="DM Mono,monospace" font-size="17.1" text-anchor="middle" font-weight="bold">E</text>
+  <text x="378.0" y="301.6" fill="#f060c8" font-family="DM Mono,monospace" font-size="12.8"  text-anchor="middle">[5]</text>
+  <circle cx="546.0" cy="290.0" r="31.3" fill="#141417" stroke="#2a2a32" stroke-width="2.99"/>
+  <text x="546.0" y="284.2" fill="#ccc"    font-family="DM Mono,monospace" font-size="17.1" text-anchor="middle" font-weight="bold">F</text>
+  <text x="546.0" y="301.6" fill="#f060c8" font-family="DM Mono,monospace" font-size="12.8"  text-anchor="middle">[6]</text>
+  <circle cx="714.0" cy="290.0" r="31.3" fill="#141417" stroke="#2a2a32" stroke-width="2.99"/>
+  <text x="714.0" y="284.2" fill="#ccc"    font-family="DM Mono,monospace" font-size="17.1" text-anchor="middle" font-weight="bold">G</text>
+  <text x="714.0" y="301.6" fill="#f060c8" font-family="DM Mono,monospace" font-size="12.8"  text-anchor="middle">[7]</text>
+  <!-- formula annotation -->
+  <path d=" M 492.8   63.8  Q 560.0   113.1   596.4   171.1" fill="none" stroke="#c8f060" stroke-width="2.99" stroke-dasharray="5,3" marker-end="ur l (# a rw)"/>
+  <text x="581.0" y="110.2" fill="#c8f060" font-family="DM Mono,monospace" font-size="11.4">2(1)+1=3 ✓</text>
+
+  <!-- ARRAY -->
+  <text x="462.0" y="353.8" fill="#6b6878" font-family="DM Mono,monospace" font-size="12.8" text-anchor="middle">Array (1-indexed)</text>
+  <!-- index labels -->
+  <text x="147.0" y="379.9" fill="#f060c8" font-family="DM Mono,monospace" font-size="12.1" text-anchor="middle">idx:</text>
+  <text x="210.0" y="379.9" fill="#f060c8" font-family="DM Mono,monospace" font-size="12.1" text-anchor="middle">1</text>
+  <text x="301.0" y="379.9" fill="#f060c8" font-family="DM Mono,monospace" font-size="12.1" text-anchor="middle">2</text>
+  <text x="392.0" y="379.9" fill="#f060c8" font-family="DM Mono,monospace" font-size="12.1" text-anchor="middle">3</text>
+  <text x="483.0" y="379.9" fill="#f060c8" font-family="DM Mono,monospace" font-size="12.1" text-anchor="middle">4</text>
+  <text x="574.0" y="379.9" fill="#f060c8" font-family="DM Mono,monospace" font-size="12.1" text-anchor="middle">5</text>
+  <text x="665.0" y="379.9" fill="#f060c8" font-family="DM Mono,monospace" font-size="12.1" text-anchor="middle">6</text>
+  <text x="756.0" y="379.9" fill="#f060c8" font-family="DM Mono,monospace" font-size="12.1" text-anchor="middle">7</text>
+  <!-- cells -->
+  <rect x="165.2" y="387.1" width="89.6" height="52.2" rx="5.6" fill="rgba(200,240,96,0.12)" stroke="#c8f060" stroke-width="2.99"/>
+  <text x="210.0" y="420.5"  fill="#c8f060" font-family="DM Mono,monospace" font-size="21.4" text-anchor="middle" font-weight="bold">A</text>
+  <rect x="256.2" y="387.1" width="89.6" height="52.2" rx="5.6" fill="rgba(96,200,240,0.1)"  stroke="#60c8f0" stroke-width="2.99"/>
+  <text x="301.0" y="420.5"  fill="#60c8f0" font-family="DM Mono,monospace" font-size="21.4" text-anchor="middle" font-weight="bold">B</text>
+  <rect x="347.2" y="387.1" width="89.6" height="52.2" rx="5.6" fill="rgba(96,200,240,0.1)"  stroke="#60c8f0" stroke-width="2.99"/>
+  <text x="392.0" y="420.5"  fill="#60c8f0" font-family="DM Mono,monospace" font-size="21.4" text-anchor="middle" font-weight="bold">C</text>
+  <rect x="438.2" y="387.1" width="89.6" height="52.2" rx="5.6" fill="rgba(107,104,120,0.18)" stroke="#2a2a32" stroke-width="2.99"/>
+  <text x="483.0" y="420.5"  fill="#ccc"    font-family="DM Mono,monospace" font-size="21.4" text-anchor="middle" font-weight="bold">D</text>
+  <rect x="529.2" y="387.1" width="89.6" height="52.2" rx="5.6" fill="rgba(107,104,120,0.18)" stroke="#2a2a32" stroke-width="2.99"/>
+  <text x="574.0" y="420.5"  fill="#ccc"    font-family="DM Mono,monospace" font-size="21.4" text-anchor="middle" font-weight="bold">E</text>
+  <rect x="620.2" y="387.1" width="89.6" height="52.2" rx="5.6" fill="rgba(107,104,120,0.18)" stroke="#2a2a32" stroke-width="2.99"/>
+  <text x="665.0" y="420.5"  fill="#ccc"    font-family="DM Mono,monospace" font-size="21.4" text-anchor="middle" font-weight="bold">F</text>
+  <rect x="711.2" y="387.1" width="89.6" height="52.2" rx="5.6" fill="rgba(107,104,120,0.18)" stroke="#2a2a32" stroke-width="2.99"/>
+  <text x="756.0" y="420.5"  fill="#ccc"    font-family="DM Mono,monospace" font-size="21.4" text-anchor="middle" font-weight="bold">G</text>
+  <!-- verify labels -->
+  <text x="301.0" y="455.3" fill="#60c8f0" font-family="DM Mono,monospace" font-size="10.7" text-anchor="middle">B[2]: left=D[4], right=E[5]  →  2×2=4 ✓  2×2+1=5 ✓</text>
+  <defs><marker id=" a rw" markerWidth="10.0" markerHeight="10.0" refX="8.5" refY="5.0" orient="auto"><polygon points="0 0,7 3.5,0 7" fill="#c8f060"/></marker></defs>
+</svg>
+</div>
+<figcaption>Nodes stored at positions 1–7. Index math replaces pointers: left child of B[2] is D[4] = 2×2. Parent of E[5] is B[2] = ⌊5/2⌋.</figcaption>
+</figure>
+<div class="callout warning">⚠️ Array representation is efficient only for <strong>complete or full</strong> trees. For a skewed tree with n nodes, you'd need an array of size 2^n − 1 — mostly empty. Massive waste.</div>
+</div>
+
+<!-- ══ S7: LINKED REPRESENTATION ══ -->
+<div class="section" id="s7">
+<h2 class="sec-title">7. Linked Representation</h2>
+<div class="callout tip">💡 Instead of index math, each node carries explicit memory addresses to its left and right children. Nodes can be anywhere in RAM — the links stitch them together.</div>
+<p>Each node contains <strong>three fields</strong>: a left pointer, the data value, and a right pointer.</p>
+
+<figure>
+<div class="svg-wrap">
+<svg viewBox="0 0 909 464" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+  <defs>
+    <marker id=" l p" markerWidth="11.5" markerHeight="11.5" refX="10.0" refY="5.0" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#f060c8"/></marker>
+    <marker id="rp" markerWidth="11.5" markerHeight="11.5" refX="10.0" refY="5.0" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#60c8f0"/></marker>
+  </defs>
+  <!-- NODE STRUCTURE template -->
+  <text x="454.4" y="23.2" fill="#6b6878" font-family="DM Mono,monospace" font-size="12.2" text-anchor="middle">Each node = [left_addr | data | right_addr]</text>
+  <rect x="238.6" y="34.8" width="78.1" height="34.8" rx="4.3" fill="rgba(240,96,200,0.1)" stroke="#f060c8" stroke-width="3.01"/>
+  <text x="276.9" y="58.0" fill="#f060c8" font-family="DM Mono,monospace" font-size="11.5" text-anchor="middle">left addr</text>
+  <rect x="319.5" y="34.8" width="54.0" height="34.8" rx="4.3" fill="rgba(200,240,96,0.1)" stroke="#c8f060" stroke-width="3.01"/>
+  <text x="346.5" y="58.0" fill="#c8f060" font-family="DM Mono,monospace" font-size="12.9" text-anchor="middle" font-weight="bold">data</text>
+  <rect x="376.3" y="34.8" width="78.1" height="34.8" rx="4.3" fill="rgba(96,200,240,0.1)" stroke="#60c8f0" stroke-width="3.01"/>
+  <text x="414.6" y="58.0" fill="#60c8f0" font-family="DM Mono,monospace" font-size="11.5" text-anchor="middle">right addr</text>
+
+  <!-- ROOT A (addr 4120) -->
+  <text x="457.2" y="95.7" fill="#6b6878" font-family="DM Mono,monospace" font-size="10.0" text-anchor="middle">addr: 4120</text>
+  <rect x="366.4" y="101.5" width="73.8" height="37.7" rx="4.3" fill="rgba(240,96,200,0.08)" stroke="#f060c8" stroke-width="3.01"/>
+  <text x="403.3" y="126.1" fill="#f060c8" font-family="DM Mono,monospace" font-size="11.5" text-anchor="middle">4125</text>
+  <rect x="443.0" y="101.5" width="45.4" height="37.7" rx="4.3" fill="rgba(200,240,96,0.12)" stroke="#c8f060" stroke-width="4.02"/>
+  <text x="465.8" y="126.1" fill="#c8f060" font-family="DM Mono,monospace" font-size="18.7" text-anchor="middle" font-weight="bold">A</text>
+  <rect x="491.3" y="101.5" width="73.8" height="37.7" rx="4.3" fill="rgba(96,200,240,0.08)" stroke="#60c8f0" stroke-width="3.01"/>
+  <text x="528.2" y="126.1" fill="#60c8f0" font-family="DM Mono,monospace" font-size="11.5" text-anchor="middle">4132</text>
+
+  <!-- B node (addr 4125) -->
+  <text x="230.0" y="220.4" fill="#6b6878" font-family="DM Mono,monospace" font-size="10.0" text-anchor="middle">addr: 4125</text>
+  <rect x="142.0" y="226.2" width="73.8" height="37.7" rx="4.3" fill="rgba(240,96,200,0.08)" stroke="#f060c8" stroke-width="3.01"/>
+  <text x="178.9" y="250.8" fill="#f060c8" font-family="DM Mono,monospace" font-size="11.5" text-anchor="middle">4137</text>
+  <rect x="218.7" y="226.2" width="45.4" height="37.7" rx="4.3" fill="rgba(200,240,96,0.08)" stroke="#c8f060" stroke-width="3.01"/>
+  <text x="241.4" y="250.8" fill="#c8f060" font-family="DM Mono,monospace" font-size="18.7" text-anchor="middle" font-weight="bold">B</text>
+  <rect x="267.0" y="226.2" width="73.8" height="37.7" rx="4.3" fill="rgba(96,200,240,0.08)" stroke="#60c8f0" stroke-width="3.01"/>
+  <text x="303.9" y="250.8" fill="#60c8f0" font-family="DM Mono,monospace" font-size="11.5" text-anchor="middle">4141</text>
+
+  <!-- C node (addr 4132) -->
+  <text x="693.0" y="220.4" fill="#6b6878" font-family="DM Mono,monospace" font-size="10.0" text-anchor="middle">addr: 4132</text>
+  <rect x="603.5" y="226.2" width="73.8" height="37.7" rx="4.3" fill="rgba(240,96,200,0.08)" stroke="#f060c8" stroke-width="3.01"/>
+  <text x="640.4" y="250.8" fill="#f060c8" font-family="DM Mono,monospace" font-size="11.5" text-anchor="middle">4145</text>
+  <rect x="680.2" y="226.2" width="45.4" height="37.7" rx="4.3" fill="rgba(200,240,96,0.08)" stroke="#c8f060" stroke-width="3.01"/>
+  <text x="702.9" y="250.8" fill="#c8f060" font-family="DM Mono,monospace" font-size="18.7" text-anchor="middle" font-weight="bold">C</text>
+  <rect x="728.5" y="226.2" width="73.8" height="37.7" rx="4.3" fill="rgba(96,200,240,0.08)" stroke="#60c8f0" stroke-width="3.01"/>
+  <text x="765.4" y="250.8" fill="#60c8f0" font-family="DM Mono,monospace" font-size="11.5" text-anchor="middle">4148</text>
+
+  <!-- pointer arrows A→B and A→C -->
+  <line x1="403.3" y1="139.2"  x2="241.4" y2="220.4" stroke="#f060c8" stroke-width="3.01" marker-end="ur l (# l p)"/>
+  <line x1="528.2" y1="139.2"  x2="702.9" y2="220.4" stroke="#60c8f0" stroke-width="3.01" marker-end="ur l (#rp)"/>
+
+  <!-- LEAF NODES row 3 — D(4137) E(4141) F(4145) G(4148) -->
+  <!-- D -->
+  <text x="102.2" y="345.1" fill="#6b6878" font-family="DM Mono,monospace" font-size="9.3" text-anchor="middle">4137</text>
+  <rect x="54.0"  y="350.9" width="48.3" height="31.9" rx="2.8" fill="rgba(107,104,120,0.15)" stroke="#2a2a32" stroke-width="2.01"/>
+  <text x="78.1"  y="372.6" fill="#6b6878" font-family="DM Mono,monospace" font-size="10.0" text-anchor="middle">null</text>
+  <rect x="105.1"  y="350.9" width="36.9" height="31.9" rx="2.8" fill="rgba(200,240,96,0.07)" stroke="#c8f060" stroke-width="2.01"/>
+  <text x="123.5"  y="372.6" fill="#ccc"    font-family="DM Mono,monospace" font-size="17.2" text-anchor="middle" font-weight="bold">D</text>
+  <rect x="144.8" y="350.9" width="48.3" height="31.9" rx="2.8" fill="rgba(107,104,120,0.15)" stroke="#2a2a32" stroke-width="2.01"/>
+  <text x="169.0" y="372.6" fill="#6b6878" font-family="DM Mono,monospace" font-size="10.0" text-anchor="middle">null</text>
+  <!-- E -->
+  <text x="284.0" y="345.1" fill="#6b6878" font-family="DM Mono,monospace" font-size="9.3" text-anchor="middle">4141</text>
+  <rect x="234.3" y="350.9" width="48.3" height="31.9" rx="2.8" fill="rgba(107,104,120,0.15)" stroke="#2a2a32" stroke-width="2.01"/>
+  <text x="258.4" y="372.6" fill="#6b6878" font-family="DM Mono,monospace" font-size="10.0" text-anchor="middle">null</text>
+  <rect x="285.4" y="350.9" width="36.9" height="31.9" rx="2.8" fill="rgba(200,240,96,0.07)" stroke="#c8f060" stroke-width="2.01"/>
+  <text x="303.9" y="372.6" fill="#ccc"    font-family="DM Mono,monospace" font-size="17.2" text-anchor="middle" font-weight="bold">E</text>
+  <rect x="325.2" y="350.9" width="48.3" height="31.9" rx="2.8" fill="rgba(107,104,120,0.15)" stroke="#2a2a32" stroke-width="2.01"/>
+  <text x="349.3" y="372.6" fill="#6b6878" font-family="DM Mono,monospace" font-size="10.0" text-anchor="middle">null</text>
+  <!-- F -->
+  <text x="560.9" y="345.1" fill="#6b6878" font-family="DM Mono,monospace" font-size="9.3" text-anchor="middle">4145</text>
+  <rect x="511.2" y="350.9" width="48.3" height="31.9" rx="2.8" fill="rgba(107,104,120,0.15)" stroke="#2a2a32" stroke-width="2.01"/>
+  <text x="535.3" y="372.6" fill="#6b6878" font-family="DM Mono,monospace" font-size="10.0" text-anchor="middle">null</text>
+  <rect x="562.3" y="350.9" width="36.9" height="31.9" rx="2.8" fill="rgba(200,240,96,0.07)" stroke="#c8f060" stroke-width="2.01"/>
+  <text x="580.8" y="372.6" fill="#ccc"    font-family="DM Mono,monospace" font-size="17.2" text-anchor="middle" font-weight="bold">F</text>
+  <rect x="602.1" y="350.9" width="48.3" height="31.9" rx="2.8" fill="rgba(107,104,120,0.15)" stroke="#2a2a32" stroke-width="2.01"/>
+  <text x="626.2" y="372.6" fill="#6b6878" font-family="DM Mono,monospace" font-size="10.0" text-anchor="middle">null</text>
+  <!-- G -->
+  <text x="749.8" y="345.1" fill="#6b6878" font-family="DM Mono,monospace" font-size="9.3" text-anchor="middle">4148</text>
+  <rect x="701.5" y="350.9" width="48.3" height="31.9" rx="2.8" fill="rgba(107,104,120,0.15)" stroke="#2a2a32" stroke-width="2.01"/>
+  <text x="725.6" y="372.6" fill="#6b6878" font-family="DM Mono,monospace" font-size="10.0" text-anchor="middle">null</text>
+  <rect x="752.6" y="350.9" width="36.9" height="31.9" rx="2.8" fill="rgba(200,240,96,0.07)" stroke="#c8f060" stroke-width="2.01"/>
+  <text x="771.1" y="372.6" fill="#ccc"    font-family="DM Mono,monospace" font-size="17.2" text-anchor="middle" font-weight="bold">G</text>
+  <rect x="792.4" y="350.9" width="48.3" height="31.9" rx="2.8" fill="rgba(107,104,120,0.15)" stroke="#2a2a32" stroke-width="2.01"/>
+  <text x="816.5" y="372.6" fill="#6b6878" font-family="DM Mono,monospace" font-size="10.0" text-anchor="middle">null</text>
+
+  <!-- B→D, B→E pointers -->
+  <line x1="178.9" y1="263.9" x2="123.5"  y2="345.1" stroke="#f060c8" stroke-width="3.01" marker-end="ur l (# l p)"/>
+  <line x1="303.9" y1="263.9" x2="303.9" y2="345.1" stroke="#60c8f0" stroke-width="3.01" marker-end="ur l (#rp)"/>
+  <!-- C→F, C→G pointers -->
+  <line x1="640.4" y1="263.9" x2="580.8" y2="345.1" stroke="#f060c8" stroke-width="3.01" marker-end="ur l (# l p)"/>
+  <line x1="765.4" y1="263.9" x2="771.1" y2="345.1" stroke="#60c8f0" stroke-width="3.01" marker-end="ur l (#rp)"/>
+
+  <!-- legend -->
+  <text x="25.6" y="420.5" fill="#f060c8" font-family="DM Mono,monospace" font-size="11.5">pink arrow = left link</text>
+  <text x="25.6" y="437.9" fill="#60c8f0" font-family="DM Mono,monospace" font-size="11.5">blue arrow = right link</text>
+  <text x="326.6" y="420.5" fill="#6b6878" font-family="DM Mono,monospace" font-size="11.5">null = no child (leaf node)</text>
+  <text x="326.6" y="437.9" fill="#6b6878" font-family="DM Mono,monospace" font-size="11.5">numbers = memory addresses (scattered in RAM)</text>
+</svg>
+</div>
+<figcaption>Three-field node: [left_addr | data | right_addr]. Leaf nodes store null in both link fields. Memory addresses can be anywhere.</figcaption>
+</figure>
+
+<table>
+  <thead><tr><th>Feature</th><th>Array Representation</th><th>Linked Representation</th></tr></thead>
+  <tbody>
+    <tr><td>Memory allocation</td><td>Fixed — 2^(h+1)−1 slots pre-allocated</td><td>Dynamic — one node at a time</td></tr>
+    <tr><td>Navigate to child</td><td>Index math: 2i or 2i+1 — O(1)</td><td>Follow pointer — O(1)</td></tr>
+    <tr><td>Navigate to parent</td><td>⌊i/2⌋ — O(1)</td><td>No parent pointer (must traverse) — O(n)</td></tr>
+    <tr><td>Wasted memory</td><td>High for sparse/skewed trees</td><td>Minimal (3 fields per node)</td></tr>
+    <tr><td>Best for</td><td>Complete / Full trees (heaps)</td><td>Any shape tree</td></tr>
+    <tr><td>Random access by index</td><td>O(1)</td><td>Not supported directly</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ══ S8: TRAVERSALS ══ -->
+<div class="section" id="s8">
+<h2 class="sec-title">8. Binary Tree Traversal</h2>
+<div class="callout tip">💡 Traversal = visiting every node in the tree exactly once in a defined order. Trees are nonlinear so there are multiple valid orderings — each useful for different tasks.</div>
+<ul>
+  <li><strong>Depth-First (DFS)</strong> — go deep before wide. Pre-order, In-order, Post-order are all DFS. Use recursion or a Stack.</li>
+  <li><strong>Breadth-First (BFS)</strong> — go wide before deep. Level-order is BFS. Requires a Queue.</li>
+</ul>
+
+<!-- S8A: PRE-ORDER -->
+<div id="s8a">
+<h3 class="sub-title">Pre-order: Root → Left → Right</h3>
+<div class="callout rule">📌 Visit the <strong>current node first</strong>, then recurse on the left subtree, then recurse on the right subtree.</div>
+<figure>
+<div class="svg-wrap">
+<svg viewBox="0 0 896 403" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+  <defs><marker id="t a " markerWidth="10.3" markerHeight="10.3" refX="8.9" refY="5.2" orient="auto"><polygon points="0 0,7 3.5,0 7" fill="#c8f060"/></marker></defs>
+  <text x="448.0" y="24.8" fill="#c8f060" font-family="DM Mono,monospace" font-size="14.8" text-anchor="middle" font-weight="bold">Pre-order: Root → Left → Right</text>
+
+  <!-- LEFT: simple 3-node -->
+  <text x="140.0" y="55.8" fill="#6b6878" font-family="DM Mono,monospace" font-size="12.5" text-anchor="middle">Simple 3-node tree</text>
+  <line x1="140.0" y1="85.2" x2="81.2"  y2="161.2" stroke="#2a2a32" stroke-width="4.13"/>
+  <line x1="140.0" y1="85.2" x2="198.8" y2="161.2" stroke="#2a2a32" stroke-width="4.13"/>
+  <circle cx="140.0" cy="68.2"  r="32.5" fill="rgba(200,240,96,0.18)" stroke="#c8f060" stroke-width="5.16"/>
+  <text x="140.0" y="62.0"  fill="#c8f060" font-family="DM Mono,monospace" font-size="17.7" text-anchor="middle" font-weight="bold">A</text>
+  <text x="140.0" y="80.6"  fill="#f060c8" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">①</text>
+  <circle cx="81.2"  cy="176.7" r="29.5" fill="#141417" stroke="#c8f060" stroke-width="3.10"/>
+  <text x="81.2"  y="170.5"  fill="#60c8f0" font-family="DM Mono,monospace" font-size="17.7" text-anchor="middle" font-weight="bold">B</text>
+  <text x="81.2"  y="189.1"  fill="#f060c8" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">②</text>
+  <circle cx="198.8" cy="176.7" r="29.5" fill="#141417" stroke="#c8f060" stroke-width="3.10"/>
+  <text x="198.8" y="170.5"  fill="#60c8f0" font-family="DM Mono,monospace" font-size="17.7" text-anchor="middle" font-weight="bold">C</text>
+  <text x="198.8" y="189.1"  fill="#f060c8" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">③</text>
+  <text x="140.0" y="235.6" fill="#60f0a0" font-family="DM Mono,monospace" font-size="13.3" text-anchor="middle" font-weight="bold">A → B → C</text>
+
+  <!-- RIGHT: 7-node tree -->
+  <text x="616.0" y="55.8" fill="#6b6878" font-family="DM Mono,monospace" font-size="12.5" text-anchor="middle">7-node tree</text>
+  <line x1="616.0" y1="89.9" x2="483.0" y2="170.5" stroke="#2a2a32" stroke-width="4.13"/>
+  <line x1="616.0" y1="89.9" x2="749.0" y2="170.5" stroke="#2a2a32" stroke-width="4.13"/>
+  <line x1="483.0" y1="201.5" x2="417.2" y2="275.9" stroke="#2a2a32" stroke-width="4.13"/>
+  <line x1="483.0" y1="201.5" x2="548.8" y2="275.9" stroke="#2a2a32" stroke-width="4.13"/>
+  <line x1="749.0" y1="201.5" x2="683.2" y2="275.9" stroke="#2a2a32" stroke-width="4.13"/>
+  <line x1="749.0" y1="201.5" x2="814.8" y2="275.9" stroke="#2a2a32" stroke-width="4.13"/>
+  <circle cx="616.0" cy="71.3"  r="32.5" fill="rgba(200,240,96,0.18)" stroke="#c8f060" stroke-width="5.16"/>
+  <text x="616.0" y="65.1"  fill="#c8f060" font-family="DM Mono,monospace" font-size="17.7" text-anchor="middle" font-weight="bold">A</text>
+  <text x="616.0" y="83.7"  fill="#f060c8" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">①</text>
+  <circle cx="483.0" cy="186.0" r="29.5" fill="#141417" stroke="#c8f060" stroke-width="3.10"/>
+  <text x="483.0" y="179.8" fill="#c8f060" font-family="DM Mono,monospace" font-size="17.7" text-anchor="middle" font-weight="bold">B</text>
+  <text x="483.0" y="198.4" fill="#f060c8" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">②</text>
+  <circle cx="749.0" cy="186.0" r="29.5" fill="#141417" stroke="#c8f060" stroke-width="3.10"/>
+  <text x="749.0" y="179.8" fill="#c8f060" font-family="DM Mono,monospace" font-size="17.7" text-anchor="middle" font-weight="bold">C</text>
+  <text x="749.0" y="198.4" fill="#f060c8" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">⑤</text>
+  <circle cx="417.2" cy="294.5" r="26.6" fill="#141417" stroke="#60c8f0" stroke-width="3.10"/>
+  <text x="417.2" y="288.3" fill="#60c8f0" font-family="DM Mono,monospace" font-size="16.2" text-anchor="middle" font-weight="bold">D</text>
+  <text x="417.2" y="305.4" fill="#f060c8" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">③</text>
+  <circle cx="548.8" cy="294.5" r="26.6" fill="#141417" stroke="#60c8f0" stroke-width="3.10"/>
+  <text x="548.8" y="288.3" fill="#60c8f0" font-family="DM Mono,monospace" font-size="16.2" text-anchor="middle" font-weight="bold">E</text>
+  <text x="548.8" y="305.4" fill="#f060c8" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">④</text>
+  <circle cx="683.2" cy="294.5" r="26.6" fill="#141417" stroke="#60c8f0" stroke-width="3.10"/>
+  <text x="683.2" y="288.3" fill="#60c8f0" font-family="DM Mono,monospace" font-size="16.2" text-anchor="middle" font-weight="bold">F</text>
+  <text x="683.2" y="305.4" fill="#f060c8" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">⑥</text>
+  <circle cx="814.8" cy="294.5" r="26.6" fill="#141417" stroke="#60c8f0" stroke-width="3.10"/>
+  <text x="814.8" y="288.3" fill="#60c8f0" font-family="DM Mono,monospace" font-size="16.2" text-anchor="middle" font-weight="bold">G</text>
+  <text x="814.8" y="305.4" fill="#f060c8" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">⑦</text>
+  <text x="616.0" y="350.3" fill="#60f0a0" font-family="DM Mono,monospace" font-size="13.3" text-anchor="middle" font-weight="bold">A → B → D → E → C → F → G</text>
+  <text x="616.0" y="372.0" fill="#6b6878" font-family="DM Mono,monospace" font-size="11.1" text-anchor="middle">Visit A①, go left to B②, D③, E④, then right to C⑤, F⑥, G⑦</text>
+  <text x="616.0" y="393.7" fill="#c8f060" font-family="DM Mono,monospace" font-size="11.1" text-anchor="middle">Use: copy tree, serialize tree, prefix notation</text>
+</svg>
+</div>
+<figcaption>Pink circled numbers = visit order. Root always visited before any of its children.</figcaption>
+</figure>
+</div>
+
+<!-- S8B: IN-ORDER -->
+<div id="s8b">
+<h3 class="sub-title">In-order: Left → Root → Right</h3>
+<div class="callout rule">📌 Recurse into the left subtree all the way down, then visit the root, then the right subtree. For a BST, this gives nodes in <strong>sorted ascending order</strong>.</div>
+<figure>
+<div class="svg-wrap">
+<svg viewBox="0 0 896 403" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+  <text x="448.0" y="24.8" fill="#60c8f0" font-family="DM Mono,monospace" font-size="14.8" text-anchor="middle" font-weight="bold">In-order: Left → Root → Right</text>
+  <!-- Simple 3-node -->
+  <text x="140.0" y="55.8" fill="#6b6878" font-family="DM Mono,monospace" font-size="12.5" text-anchor="middle">Simple 3-node tree</text>
+  <line x1="140.0" y1="85.2" x2="81.2"  y2="161.2" stroke="#2a2a32" stroke-width="4.13"/>
+  <line x1="140.0" y1="85.2" x2="198.8" y2="161.2" stroke="#2a2a32" stroke-width="4.13"/>
+  <circle cx="140.0" cy="68.2" r="32.5" fill="#141417" stroke="#60c8f0" stroke-width="4.13"/>
+  <text x="140.0" y="62.0" fill="#60c8f0" font-family="DM Mono,monospace" font-size="17.7" text-anchor="middle" font-weight="bold">A</text>
+  <text x="140.0" y="80.6" fill="#f060c8" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">②</text>
+  <circle cx="81.2"  cy="176.7" r="29.5" fill="rgba(96,200,240,0.18)" stroke="#60c8f0" stroke-width="5.16"/>
+  <text x="81.2"  y="170.5" fill="#60c8f0" font-family="DM Mono,monospace" font-size="17.7" text-anchor="middle" font-weight="bold">B</text>
+  <text x="81.2"  y="189.1" fill="#f060c8" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">①</text>
+  <circle cx="198.8" cy="176.7" r="29.5" fill="#141417" stroke="#60c8f0" stroke-width="3.10"/>
+  <text x="198.8" y="170.5" fill="#60c8f0" font-family="DM Mono,monospace" font-size="17.7" text-anchor="middle" font-weight="bold">C</text>
+  <text x="198.8" y="189.1" fill="#f060c8" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">③</text>
+  <text x="140.0" y="235.6" fill="#60f0a0" font-family="DM Mono,monospace" font-size="13.3" text-anchor="middle" font-weight="bold">B → A → C</text>
+  <!-- 7-node -->
+  <text x="616.0" y="55.8" fill="#6b6878" font-family="DM Mono,monospace" font-size="12.5" text-anchor="middle">7-node tree</text>
+  <line x1="616.0" y1="89.9" x2="483.0" y2="170.5" stroke="#2a2a32" stroke-width="4.13"/>
+  <line x1="616.0" y1="89.9" x2="749.0" y2="170.5" stroke="#2a2a32" stroke-width="4.13"/>
+  <line x1="483.0" y1="201.5" x2="417.2" y2="275.9" stroke="#2a2a32" stroke-width="4.13"/>
+  <line x1="483.0" y1="201.5" x2="548.8" y2="275.9" stroke="#2a2a32" stroke-width="4.13"/>
+  <line x1="749.0" y1="201.5" x2="683.2" y2="275.9" stroke="#2a2a32" stroke-width="4.13"/>
+  <line x1="749.0" y1="201.5" x2="814.8" y2="275.9" stroke="#2a2a32" stroke-width="4.13"/>
+  <circle cx="616.0" cy="71.3"  r="32.5" fill="#141417" stroke="#60c8f0" stroke-width="4.13"/>
+  <text x="616.0" y="65.1"  fill="#60c8f0" font-family="DM Mono,monospace" font-size="17.7" text-anchor="middle" font-weight="bold">A</text>
+  <text x="616.0" y="83.7"  fill="#f060c8" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">④</text>
+  <circle cx="483.0" cy="186.0" r="29.5" fill="#141417" stroke="#60c8f0" stroke-width="3.10"/>
+  <text x="483.0" y="179.8" fill="#60c8f0" font-family="DM Mono,monospace" font-size="17.7" text-anchor="middle" font-weight="bold">B</text>
+  <text x="483.0" y="198.4" fill="#f060c8" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">②</text>
+  <circle cx="749.0" cy="186.0" r="29.5" fill="#141417" stroke="#60c8f0" stroke-width="3.10"/>
+  <text x="749.0" y="179.8" fill="#60c8f0" font-family="DM Mono,monospace" font-size="17.7" text-anchor="middle" font-weight="bold">C</text>
+  <text x="749.0" y="198.4" fill="#f060c8" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">⑥</text>
+  <circle cx="417.2" cy="294.5" r="26.6" fill="rgba(96,200,240,0.15)" stroke="#60c8f0" stroke-width="4.13"/>
+  <text x="417.2" y="288.3" fill="#60c8f0" font-family="DM Mono,monospace" font-size="16.2" text-anchor="middle" font-weight="bold">D</text>
+  <text x="417.2" y="305.4" fill="#f060c8" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">①</text>
+  <circle cx="548.8" cy="294.5" r="26.6" fill="#141417" stroke="#60c8f0" stroke-width="3.10"/>
+  <text x="548.8" y="288.3" fill="#60c8f0" font-family="DM Mono,monospace" font-size="16.2" text-anchor="middle" font-weight="bold">E</text>
+  <text x="548.8" y="305.4" fill="#f060c8" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">③</text>
+  <circle cx="683.2" cy="294.5" r="26.6" fill="#141417" stroke="#60c8f0" stroke-width="3.10"/>
+  <text x="683.2" y="288.3" fill="#60c8f0" font-family="DM Mono,monospace" font-size="16.2" text-anchor="middle" font-weight="bold">F</text>
+  <text x="683.2" y="305.4" fill="#f060c8" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">⑤</text>
+  <circle cx="814.8" cy="294.5" r="26.6" fill="#141417" stroke="#60c8f0" stroke-width="3.10"/>
+  <text x="814.8" y="288.3" fill="#60c8f0" font-family="DM Mono,monospace" font-size="16.2" text-anchor="middle" font-weight="bold">G</text>
+  <text x="814.8" y="305.4" fill="#f060c8" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">⑦</text>
+  <text x="616.0" y="353.4" fill="#60f0a0" font-family="DM Mono,monospace" font-size="13.3" text-anchor="middle" font-weight="bold">D → B → E → A → F → C → G</text>
+  <text x="616.0" y="375.1" fill="#6b6878" font-family="DM Mono,monospace" font-size="11.1" text-anchor="middle">Go all the way left (D①), back up to B②, E③, root A④, then right F⑤ C⑥ G⑦</text>
+  <text x="616.0" y="396.8" fill="#60c8f0" font-family="DM Mono,monospace" font-size="11.1" text-anchor="middle">Use: BST sorted output, infix expression evaluation</text>
+</svg>
+</div>
+<figcaption>In-order — go as far left as possible first. For a BST, this always produces sorted ascending output.</figcaption>
+</figure>
+</div>
+
+<!-- S8C: POST-ORDER -->
+<div id="s8c">
+<h3 class="sub-title">Post-order: Left → Right → Root</h3>
+<div class="callout rule">📌 Visit the left subtree, then the right subtree, and only then the root — which is always visited <strong>last</strong>.</div>
+<figure>
+<div class="svg-wrap">
+<svg viewBox="0 0 896 403" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+  <text x="448.0" y="24.8" fill="#f060c8" font-family="DM Mono,monospace" font-size="14.8" text-anchor="middle" font-weight="bold">Post-order: Left → Right → Root</text>
+  <!-- Simple 3-node -->
+  <text x="140.0" y="55.8" fill="#6b6878" font-family="DM Mono,monospace" font-size="12.5" text-anchor="middle">Simple 3-node tree</text>
+  <line x1="140.0" y1="85.2" x2="81.2"  y2="161.2" stroke="#2a2a32" stroke-width="4.13"/>
+  <line x1="140.0" y1="85.2" x2="198.8" y2="161.2" stroke="#2a2a32" stroke-width="4.13"/>
+  <circle cx="140.0" cy="68.2"  r="32.5" fill="#141417" stroke="#f060c8" stroke-width="4.13"/>
+  <text x="140.0" y="62.0"  fill="#f060c8" font-family="DM Mono,monospace" font-size="17.7" text-anchor="middle" font-weight="bold">A</text>
+  <text x="140.0" y="80.6"  fill="#c8f060" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">③last</text>
+  <circle cx="81.2"  cy="176.7" r="29.5" fill="#141417" stroke="#f060c8" stroke-width="3.10"/>
+  <text x="81.2"  y="170.5"  fill="#f060c8" font-family="DM Mono,monospace" font-size="17.7" text-anchor="middle" font-weight="bold">B</text>
+  <text x="81.2"  y="189.1"  fill="#c8f060" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">①</text>
+  <circle cx="198.8" cy="176.7" r="29.5" fill="#141417" stroke="#f060c8" stroke-width="3.10"/>
+  <text x="198.8" y="170.5"  fill="#f060c8" font-family="DM Mono,monospace" font-size="17.7" text-anchor="middle" font-weight="bold">C</text>
+  <text x="198.8" y="189.1"  fill="#c8f060" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">②</text>
+  <text x="140.0" y="235.6"  fill="#60f0a0" font-family="DM Mono,monospace" font-size="13.3" text-anchor="middle" font-weight="bold">B → C → A</text>
+  <!-- 7-node -->
+  <text x="616.0" y="55.8" fill="#6b6878" font-family="DM Mono,monospace" font-size="12.5" text-anchor="middle">7-node tree</text>
+  <line x1="616.0" y1="89.9" x2="483.0" y2="170.5" stroke="#2a2a32" stroke-width="4.13"/>
+  <line x1="616.0" y1="89.9" x2="749.0" y2="170.5" stroke="#2a2a32" stroke-width="4.13"/>
+  <line x1="483.0" y1="201.5" x2="417.2" y2="275.9" stroke="#2a2a32" stroke-width="4.13"/>
+  <line x1="483.0" y1="201.5" x2="548.8" y2="275.9" stroke="#2a2a32" stroke-width="4.13"/>
+  <line x1="749.0" y1="201.5" x2="683.2" y2="275.9" stroke="#2a2a32" stroke-width="4.13"/>
+  <line x1="749.0" y1="201.5" x2="814.8" y2="275.9" stroke="#2a2a32" stroke-width="4.13"/>
+  <circle cx="616.0" cy="71.3"  r="32.5" fill="#141417" stroke="#f060c8" stroke-width="4.13"/>
+  <text x="616.0" y="65.1"  fill="#f060c8" font-family="DM Mono,monospace" font-size="17.7" text-anchor="middle" font-weight="bold">A</text>
+  <text x="616.0" y="83.7"  fill="#c8f060" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">⑦last</text>
+  <circle cx="483.0" cy="186.0" r="29.5" fill="#141417" stroke="#f060c8" stroke-width="3.10"/>
+  <text x="483.0" y="179.8" fill="#f060c8" font-family="DM Mono,monospace" font-size="17.7" text-anchor="middle" font-weight="bold">B</text>
+  <text x="483.0" y="198.4" fill="#c8f060" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">③</text>
+  <circle cx="749.0" cy="186.0" r="29.5" fill="#141417" stroke="#f060c8" stroke-width="3.10"/>
+  <text x="749.0" y="179.8" fill="#f060c8" font-family="DM Mono,monospace" font-size="17.7" text-anchor="middle" font-weight="bold">C</text>
+  <text x="749.0" y="198.4" fill="#c8f060" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">⑥</text>
+  <circle cx="417.2" cy="294.5" r="26.6" fill="#141417" stroke="#f060c8" stroke-width="3.10"/>
+  <text x="417.2" y="288.3" fill="#f060c8" font-family="DM Mono,monospace" font-size="16.2" text-anchor="middle" font-weight="bold">D</text>
+  <text x="417.2" y="305.4" fill="#c8f060" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">①</text>
+  <circle cx="548.8" cy="294.5" r="26.6" fill="#141417" stroke="#f060c8" stroke-width="3.10"/>
+  <text x="548.8" y="288.3" fill="#f060c8" font-family="DM Mono,monospace" font-size="16.2" text-anchor="middle" font-weight="bold">E</text>
+  <text x="548.8" y="305.4" fill="#c8f060" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">②</text>
+  <circle cx="683.2" cy="294.5" r="26.6" fill="#141417" stroke="#f060c8" stroke-width="3.10"/>
+  <text x="683.2" y="288.3" fill="#f060c8" font-family="DM Mono,monospace" font-size="16.2" text-anchor="middle" font-weight="bold">F</text>
+  <text x="683.2" y="305.4" fill="#c8f060" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">④</text>
+  <circle cx="814.8" cy="294.5" r="26.6" fill="#141417" stroke="#f060c8" stroke-width="3.10"/>
+  <text x="814.8" y="288.3" fill="#f060c8" font-family="DM Mono,monospace" font-size="16.2" text-anchor="middle" font-weight="bold">G</text>
+  <text x="814.8" y="305.4" fill="#c8f060" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">⑤</text>
+  <text x="616.0" y="353.4" fill="#60f0a0" font-family="DM Mono,monospace" font-size="13.3" text-anchor="middle" font-weight="bold">D → E → B → F → G → C → A</text>
+  <text x="616.0" y="375.1" fill="#6b6878" font-family="DM Mono,monospace" font-size="11.1" text-anchor="middle">Leaves first (D①E②), back to B③, then F④G⑤, back to C⑥, root A last ⑦</text>
+  <text x="616.0" y="396.8" fill="#f060c8" font-family="DM Mono,monospace" font-size="11.1" text-anchor="middle">Use: delete tree safely, evaluate expression trees, postfix notation</text>
+</svg>
+</div>
+<figcaption>Post-order — root is ALWAYS the very last node visited. Leaves are visited before their parents.</figcaption>
+</figure>
+</div>
+
+<!-- S8D: LEVEL-ORDER -->
+<div id="s8d">
+<h3 class="sub-title">Level-order (BFS): Top to Bottom, Left to Right</h3>
+<div class="callout rule">📌 Visit all nodes at level 1, then all at level 2, then level 3, and so on. Within each level, visit left to right. Needs a <strong>Queue</strong> to implement.</div>
+<figure>
+<div class="svg-wrap">
+<svg viewBox="0 0 824 435" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+  <text x="411.8" y="24.0" fill="#60f0a0" font-family="DM Mono,monospace" font-size="14.6" text-anchor="middle" font-weight="bold">Level-order: Top to Bottom, Left to Right</text>
+  <!-- level bands -->
+  <rect x="11.4"  y="33.0"  width="802.3" height="87.0"  rx="5.7" fill="rgba(200,240,96,0.04)"  stroke="rgba(200,240,96,0.15)"  stroke-width="2.04"/>
+  <rect x="11.4"  y="123.0"  width="802.3" height="102.0"  rx="5.7" fill="rgba(96,200,240,0.04)"  stroke="rgba(96,200,240,0.15)"  stroke-width="2.04"/>
+  <rect x="11.4"  y="228.0" width="802.3" height="120.0"  rx="5.7" fill="rgba(240,96,200,0.04)"  stroke="rgba(240,96,200,0.15)"  stroke-width="2.04"/>
+  <text x="31.2" y="81.0"  fill="#c8f060" font-family="DM Mono,monospace" font-size="11.7">Level 1</text>
+  <text x="31.2" y="177.0" fill="#60c8f0" font-family="DM Mono,monospace" font-size="11.7">Level 2</text>
+  <text x="31.2" y="288.0" fill="#f060c8" font-family="DM Mono,monospace" font-size="11.7">Level 3</text>
+  <!-- edges -->
+  <line x1="411.8" y1="87.0"  x2="262.7" y2="162.0" stroke="#2a2a32" stroke-width="4.09"/>
+  <line x1="411.8" y1="87.0"  x2="560.9" y2="162.0" stroke="#2a2a32" stroke-width="4.09"/>
+  <line x1="262.7" y1="192.0" x2="181.8" y2="255.0" stroke="#2a2a32" stroke-width="4.09"/>
+  <line x1="262.7" y1="192.0" x2="343.6" y2="255.0" stroke="#2a2a32" stroke-width="4.09"/>
+  <line x1="560.9" y1="192.0" x2="480.0" y2="255.0" stroke="#2a2a32" stroke-width="4.09"/>
+  <line x1="560.9" y1="192.0" x2="641.8" y2="255.0" stroke="#2a2a32" stroke-width="4.09"/>
+  <!-- nodes -->
+  <circle cx="411.8" cy="69.0"  r="35.0" fill="rgba(200,240,96,0.16)" stroke="#c8f060" stroke-width="5.11"/>
+  <text x="411.8" y="63.0"  fill="#c8f060" font-family="DM Mono,monospace" font-size="19.0" text-anchor="middle" font-weight="bold">A</text>
+  <text x="411.8" y="81.0"  fill="#60f0a0" font-family="DM Mono,monospace" font-size="13.1"  text-anchor="middle">visit ①</text>
+  <circle cx="262.7" cy="177.0" r="32.1" fill="rgba(96,200,240,0.14)" stroke="#60c8f0" stroke-width="4.09"/>
+  <text x="262.7" y="171.0" fill="#60c8f0" font-family="DM Mono,monospace" font-size="19.0" text-anchor="middle" font-weight="bold">B</text>
+  <text x="262.7" y="189.0" fill="#60f0a0" font-family="DM Mono,monospace" font-size="13.1"  text-anchor="middle">visit ②</text>
+  <circle cx="560.9" cy="177.0" r="32.1" fill="rgba(96,200,240,0.14)" stroke="#60c8f0" stroke-width="4.09"/>
+  <text x="560.9" y="171.0" fill="#60c8f0" font-family="DM Mono,monospace" font-size="19.0" text-anchor="middle" font-weight="bold">C</text>
+  <text x="560.9" y="189.0" fill="#60f0a0" font-family="DM Mono,monospace" font-size="13.1"  text-anchor="middle">visit ③</text>
+  <circle cx="181.8" cy="276.0" r="29.2" fill="rgba(240,96,200,0.14)" stroke="#f060c8" stroke-width="4.09"/>
+  <text x="181.8" y="270.0" fill="#f060c8" font-family="DM Mono,monospace" font-size="17.5" text-anchor="middle" font-weight="bold">D</text>
+  <text x="181.8" y="288.0" fill="#60f0a0" font-family="DM Mono,monospace" font-size="13.1"  text-anchor="middle">visit ④</text>
+  <circle cx="343.6" cy="276.0" r="29.2" fill="rgba(240,96,200,0.14)" stroke="#f060c8" stroke-width="4.09"/>
+  <text x="343.6" y="270.0" fill="#f060c8" font-family="DM Mono,monospace" font-size="17.5" text-anchor="middle" font-weight="bold">E</text>
+  <text x="343.6" y="288.0" fill="#60f0a0" font-family="DM Mono,monospace" font-size="13.1"  text-anchor="middle">visit ⑤</text>
+  <circle cx="480.0" cy="276.0" r="29.2" fill="rgba(240,96,200,0.14)" stroke="#f060c8" stroke-width="4.09"/>
+  <text x="480.0" y="270.0" fill="#f060c8" font-family="DM Mono,monospace" font-size="17.5" text-anchor="middle" font-weight="bold">F</text>
+  <text x="480.0" y="288.0" fill="#60f0a0" font-family="DM Mono,monospace" font-size="13.1"  text-anchor="middle">visit ⑥</text>
+  <circle cx="641.8" cy="276.0" r="29.2" fill="rgba(240,96,200,0.14)" stroke="#f060c8" stroke-width="4.09"/>
+  <text x="641.8" y="270.0" fill="#f060c8" font-family="DM Mono,monospace" font-size="17.5" text-anchor="middle" font-weight="bold">G</text>
+  <text x="641.8" y="288.0" fill="#60f0a0" font-family="DM Mono,monospace" font-size="13.1"  text-anchor="middle">visit ⑦</text>
+  <!-- result -->
+  <text x="411.8" y="372.0" fill="#60f0a0" font-family="DM Mono,monospace" font-size="14.6" text-anchor="middle" font-weight="bold">Result: A → B → C → D → E → F → G</text>
+  <text x="411.8" y="394.5" fill="#6b6878" font-family="DM Mono,monospace" font-size="10.9" text-anchor="middle">Implementation: Enqueue root. Loop: dequeue node, visit it, enqueue its left then right children.</text>
+  <text x="411.8" y="417.0" fill="#60f0a0" font-family="DM Mono,monospace" font-size="10.9" text-anchor="middle">Use: level display, BFS, shortest path in unweighted graphs</text>
+</svg>
+</div>
+<figcaption>Level-order visits entire rows before going deeper. Each node's children are enqueued for later processing.</figcaption>
+</figure>
+</div>
+</div><!-- end S8 -->
+<!-- ══ S9: MEMORY SHORTCUT ══ -->
+<div class="section" id="s9">
+<h2 class="sec-title">9. Memory Shortcut — a + b Trick</h2>
+<div class="callout tip">💡 Remember the simple math expression <strong>a + b</strong>. The position of the operator (+) tells you which traversal it maps to — and where the root is visited.</div>
+
+<figure>
+<div class="svg-wrap">
+<svg viewBox="0 0 868 310" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+  <!-- PRE -->
+  <rect x="19.6"  y="37.2" width="246.4" height="248.0" rx="11.2" fill="rgba(200,240,96,0.05)" stroke="#c8f060" stroke-width="3.10"/>
+  <text x="142.8" y="74.4"  fill="#c8f060" font-family="DM Mono,monospace" font-size="16.2" text-anchor="middle" font-weight="bold">PRE-ORDER</text>
+  <text x="142.8" y="97.7"  fill="#c8f060" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">Root → Left → Right</text>
+  <text x="142.8" y="158.1" fill="#f0ede8" font-family="Syne,sans-serif" font-size="38.4" text-anchor="middle" font-weight="bold">+ a b</text>
+  <text x="142.8" y="192.2" fill="#6b6878" font-family="DM Mono,monospace" font-size="12.5" text-anchor="middle">Prefix notation</text>
+  <text x="142.8" y="213.9" fill="#6b6878" font-family="DM Mono,monospace" font-size="11.8" text-anchor="middle">Operator BEFORE operands</text>
+  <text x="142.8" y="263.5" fill="#c8f060" font-family="DM Mono,monospace" font-size="12.5" text-anchor="middle">Root = FIRST ①</text>
+  <!-- IN -->
+  <rect x="305.2" y="37.2" width="246.4" height="248.0" rx="11.2" fill="rgba(96,200,240,0.05)" stroke="#60c8f0" stroke-width="3.10"/>
+  <text x="428.4" y="74.4"  fill="#60c8f0" font-family="DM Mono,monospace" font-size="16.2" text-anchor="middle" font-weight="bold">IN-ORDER</text>
+  <text x="428.4" y="97.7"  fill="#60c8f0" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">Left → Root → Right</text>
+  <text x="428.4" y="158.1" fill="#f0ede8" font-family="Syne,sans-serif" font-size="38.4" text-anchor="middle" font-weight="bold">a + b</text>
+  <text x="428.4" y="192.2" fill="#6b6878" font-family="DM Mono,monospace" font-size="12.5" text-anchor="middle">Infix notation</text>
+  <text x="428.4" y="213.9" fill="#6b6878" font-family="DM Mono,monospace" font-size="11.8" text-anchor="middle">Operator IN BETWEEN operands</text>
+  <text x="428.4" y="263.5" fill="#60c8f0" font-family="DM Mono,monospace" font-size="12.5" text-anchor="middle">Root = MIDDLE ②</text>
+  <!-- POST -->
+  <rect x="590.8" y="37.2" width="246.4" height="248.0" rx="11.2" fill="rgba(240,96,200,0.05)" stroke="#f060c8" stroke-width="3.10"/>
+  <text x="714.0" y="74.4"  fill="#f060c8" font-family="DM Mono,monospace" font-size="16.2" text-anchor="middle" font-weight="bold">POST-ORDER</text>
+  <text x="714.0" y="97.7"  fill="#f060c8" font-family="DM Mono,monospace" font-size="13.3"  text-anchor="middle">Left → Right → Root</text>
+  <text x="714.0" y="158.1" fill="#f0ede8" font-family="Syne,sans-serif" font-size="38.4" text-anchor="middle" font-weight="bold">a b +</text>
+  <text x="714.0" y="192.2" fill="#6b6878" font-family="DM Mono,monospace" font-size="12.5" text-anchor="middle">Postfix notation</text>
+  <text x="714.0" y="213.9" fill="#6b6878" font-family="DM Mono,monospace" font-size="11.8" text-anchor="middle">Operator AFTER operands</text>
+  <text x="714.0" y="263.5" fill="#f060c8" font-family="DM Mono,monospace" font-size="12.5" text-anchor="middle">Root = LAST ③</text>
+</svg>
+</div>
+<figcaption>The a+b trick: root = operator (+), left child = a, right child = b. Operator position = root visit position. Memorise once, remember forever.</figcaption>
+</figure>
+<div class="callout rule">📌 Pre = Prefix = +ab (root first). In = Infix = a+b (root middle). Post = Postfix = ab+ (root last). This pattern works for any binary tree.</div>
+</div>
+
+<!-- ══ S10: QUICK REFERENCE ══ -->
+<div class="section" id="s10">
+<h2 class="sec-title">10. ⚡ Quick Reference</h2>
+<table>
+  <thead><tr><th>Traversal</th><th>Order</th><th>Root Position</th><th>Data Structure Used</th><th>Primary Use</th></tr></thead>
+  <tbody>
+    <tr><td>Pre-order</td><td>Root → L → R</td><td>First</td><td>Recursion / Stack</td><td>Copy tree, serialize, prefix notation</td></tr>
+    <tr><td>In-order</td><td>L → Root → R</td><td>Middle</td><td>Recursion / Stack</td><td>BST sorted output, infix notation</td></tr>
+    <tr><td>Post-order</td><td>L → R → Root</td><td>Last</td><td>Recursion / Stack</td><td>Delete tree, evaluate expressions, postfix</td></tr>
+    <tr><td>Level-order</td><td>Level by level</td><td>First</td><td>Queue (BFS)</td><td>Level display, BFS, shortest path</td></tr>
+  </tbody>
+</table>
+<table style="margin-top:1.2rem;">
+  <thead><tr><th>Tree Type</th><th>Children Rule</th><th>Leaf Level</th><th>Max Nodes</th><th>Heap-compatible?</th></tr></thead>
+  <tbody>
+    <tr><td>Binary</td><td>0, 1, or 2</td><td>Any</td><td>2^(h+1)−1</td><td>—</td></tr>
+    <tr><td>Proper / Strict</td><td>0 or 2 only</td><td>Any</td><td>2k+1 (k = internals)</td><td>No</td></tr>
+    <tr><td>Full</td><td>Exactly 2 (internal)</td><td>All same level</td><td>2^(h+1)−1 (exact)</td><td>Yes</td></tr>
+    <tr><td>Complete</td><td>0, 1, or 2</td><td>Last level, left fill</td><td>2^h to 2^(h+1)−1</td><td>Yes ✅</td></tr>
+    <tr><td>Skewed</td><td>Exactly 1</td><td>Single leaf</td><td>h + 1</td><td>No</td></tr>
+  </tbody>
+</table>
+<table style="margin-top:1.2rem;">
+  <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+  <tbody>
+    <tr><td>Root</td><td>Top node; no parent; every tree has exactly one</td></tr>
+    <tr><td>Leaf / External</td><td>Node with no children; degree = 0</td></tr>
+    <tr><td>Internal</td><td>Node with at least one child</td></tr>
+    <tr><td>Level</td><td>Count of nodes on path from node to root (root = 1)</td></tr>
+    <tr><td>Height</td><td>Count of edges on path from node to root (root = 0)</td></tr>
+    <tr><td>Degree</td><td>Number of children a node has</td></tr>
+    <tr><td>Tree Degree</td><td>Maximum degree among all nodes</td></tr>
+    <tr><td>Path</td><td>Sequence of nodes linked by consecutive edges</td></tr>
+    <tr><td>Subtree</td><td>Any node plus all its descendants</td></tr>
+    <tr><td>Forest</td><td>Collection of trees (e.g., after removing root)</td></tr>
+    <tr><td>n−1 edges</td><td>A tree with n nodes always has exactly n−1 edges</td></tr>
+  </tbody>
+</table>
+</div>
+
+</div><!-- content-wrap -->
+</div><!-- tab-handbook -->
+
+<!-- ══════════════════════════════ ACTIVE RECALL TAB ══════════════════════════════ -->
+<div id="tab-recall" class="tab-content">
+<div class="recall-wrap">
+<div class="recall-hdr">
+  <h2>🧠 Active Recall — 45 Questions</h2>
+  <div class="recall-ctrl">
+    <span class="prog" id="prog">0 of 45 answered</span>
+    <button class="ctrl-btn" onclick="revealAll()">Reveal All</button>
+    <button class="ctrl-btn" onclick="hideAll()">Hide All</button>
+  </div>
+</div>
+
+<div class="sec-lbl">── From the Notes (Q01–Q15) ──</div>
+
+<div class="qcard" id="q1"><div class="qhdr"><span class="qnum">Q01</span><span class="qtype def">DEF</span><span class="qtxt">What is a tree data structure and how does it differ from linear data structures like arrays and linked lists?</span><button class="show-btn" onclick="tog('q1')">Show</button></div><div class="ans-block" id="q1-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">A tree is a nonlinear, hierarchical ADT consisting of nodes connected by edges, with parent-child relationships between levels. Linear structures (array, linked list, stack, queue) arrange elements sequentially — every element has a before and after. Trees arrange elements hierarchically — some elements are above others (parent), some below (children). Trees enable faster algorithm implementations for many operations and are modelled after family trees (parent, child, sibling). For n nodes, a tree always has exactly n−1 edges.</div></div></div></div>
+
+<div class="qcard" id="q2"><div class="qhdr"><span class="qnum">Q02</span><span class="qtype def">DEF</span><span class="qtxt">Define root, leaf, internal node, sibling, parent, and child with examples from a company org tree.</span><button class="show-btn" onclick="tog('q2')">Show</button></div><div class="ans-block" id="q2-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><strong>Root:</strong> Top node with no parent — Company. <strong>Parent:</strong> Node with children below — Sales is parent of Domestic and International. <strong>Child:</strong> Node directly below another — Domestic is child of Sales. <strong>Sibling:</strong> Nodes sharing same parent — Marketing, Sales, Purchase, Manufacturing are siblings (parent = Company). <strong>Leaf:</strong> Node with no children, degree 0 — Marketing, Purchase, Domestic, India. <strong>Internal:</strong> Node with at least one child — Sales, Manufacturing, International.</div></div></div></div>
+
+<div class="qcard" id="q3"><div class="qhdr"><span class="qnum">Q03</span><span class="qtype def">DEF</span><span class="qtxt">What is the difference between Level and Height of a node? What is their exact mathematical relationship?</span><button class="show-btn" onclick="tog('q3')">Show</button></div><div class="ans-block" id="q3-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><strong>Level:</strong> Number of nodes on the path from the node to the root, including both endpoints. Root = Level 1. <strong>Height:</strong> Number of edges on the path from the node to the root. Root = Height 0. <strong>Relationship:</strong> Level = Height + 1. Tree height = maximum level − 1.</div><div class="ans-ex"><span class="exlbl">Example:</span> A node at Level 4 has 3 edges to root → Height 3.</div></div></div></div>
+
+<div class="qcard" id="q4"><div class="qhdr"><span class="qnum">Q04</span><span class="qtype def">DEF</span><span class="qtxt">Define node degree and tree degree. Does the root always have the highest degree in a tree?</span><button class="show-btn" onclick="tog('q4')">Show</button></div><div class="ans-block" id="q4-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><strong>Node degree:</strong> Number of children a node has. Leaf nodes always have degree 0. <strong>Tree degree:</strong> Maximum node degree among all nodes in the tree — the tree's branching factor. <strong>No</strong> — the root doesn't always have the highest degree. If Company has 2 children but International has 3, tree degree = 3 (from International, not root).</div></div></div></div>
+
+<div class="qcard" id="q5"><div class="qhdr"><span class="qnum">Q05</span><span class="qtype def">DEF</span><span class="qtxt">Define edge, path, subtree, and forest in tree terminology.</span><button class="show-btn" onclick="tog('q5')">Show</button></div><div class="ans-block" id="q5-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><strong>Edge:</strong> A directed connection between a parent node and its child. A tree with n nodes has exactly n−1 edges. <strong>Path:</strong> Sequence of nodes where every consecutive pair is connected by an edge (e.g., Company → Sales → International). <strong>Subtree:</strong> Any node plus all its descendants. A single leaf is also a valid subtree. <strong>Forest:</strong> Collection of disjoint trees. Removing a tree's root creates a forest of independent subtrees.</div></div></div></div>
+
+<div class="qcard" id="q6"><div class="qhdr"><span class="qnum">Q06</span><span class="qtype def">DEF</span><span class="qtxt">What is a Binary Tree? What values can a node's degree take? What is the maximum nodes formula?</span><button class="show-btn" onclick="tog('q6')">Show</button></div><div class="ans-block" id="q6-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">A binary tree is a tree where every node has at most two children — specifically named left child and right child. Node degree can be 0, 1, or 2. It can also be defined as a tree with degree ≤ 2. <strong>Max nodes formula:</strong> A binary tree of height h can contain at most 2^(h+1) − 1 nodes. Height 0 → 1 node. Height 1 → 3 nodes. Height 2 → 7 nodes. Height 3 → 15 nodes.</div></div></div></div>
+
+<div class="qcard" id="q7"><div class="qhdr"><span class="qnum">Q07</span><span class="qtype def">DEF</span><span class="qtxt">What is a Proper (Strict) Binary Tree? What single rule defines it, and what disqualifies a tree from being proper?</span><button class="show-btn" onclick="tog('q7')">Show</button></div><div class="ans-block" id="q7-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">A proper (strict) binary tree is one where every node has exactly <strong>0 or 2 children</strong> — never exactly 1. A single node with degree 1 anywhere in the entire tree disqualifies it. Leaf nodes (degree 0) are always fine. To verify: check every node — if any has exactly 1 child, the tree is NOT proper.</div><div class="ans-ex"><span class="exlbl">Quick test:</span> Scan all nodes. Any degree-1 node → fail immediately.</div></div></div></div>
+
+<div class="qcard" id="q8"><div class="qhdr"><span class="qnum">Q08</span><span class="qtype def">DEF</span><span class="qtxt">What is a Full Binary Tree? State both required conditions and the node-count formula.</span><button class="show-btn" onclick="tog('q8')">Show</button></div><div class="ans-block" id="q8-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">A full binary tree requires BOTH: (1) Every internal node has exactly 2 children. (2) All leaf nodes are at the same level. Missing either condition = not full. A full binary tree of height h has exactly 2^(h+1)−1 nodes. Equivalently, if a binary tree of height h has exactly 2^(h+1)−1 nodes, it is a full binary tree. Full → also proper AND complete.</div></div></div></div>
+
+<div class="qcard" id="q9"><div class="qhdr"><span class="qnum">Q09</span><span class="qtype def">DEF</span><span class="qtxt">What is a Complete Binary Tree? What must be true about the last level? How do you detect an incomplete tree?</span><button class="show-btn" onclick="tog('q9')">Show</button></div><div class="ans-block" id="q9-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">A complete binary tree has all levels fully filled except possibly the last, which must be filled <strong>left to right with no gaps</strong>. To detect: number all nodes 1,2,3... level by level left-to-right. If any number is missing while a higher number exists → NOT complete. A missing rightmost node at the last level is fine; a missing middle node with nodes to its right is not.</div><div class="ans-ex"><span class="exlbl">Gotcha:</span> Position 5 missing but position 6 exists = gap = NOT complete.</div></div></div></div>
+
+<div class="qcard" id="q10"><div class="qhdr"><span class="qnum">Q10</span><span class="qtype apply">APPLY</span><span class="qtxt">For a binary tree stored in an array (1-indexed), give the formulas for left child, right child, and parent of node at index i. Verify with i=3.</span><button class="show-btn" onclick="tog('q10')">Show</button></div><div class="ans-block" id="q10-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><strong>Left child:</strong> 2i. <strong>Right child:</strong> 2i + 1. <strong>Parent:</strong> ⌊i / 2⌋.</div><div class="ans-ex"><span class="exlbl">Verification i=3:</span> Left child = 2×3 = 6. Right child = 2×3+1 = 7. Parent = ⌊3/2⌋ = 1 (root). Check: C[3]'s left is F[6], right is G[7], parent is A[1]. ✓</div></div></div></div>
+
+<div class="qcard" id="q11"><div class="qhdr"><span class="qnum">Q11</span><span class="qtype compare">COMPARE</span><span class="qtxt">Compare array representation vs linked representation of a binary tree — memory, access speed, and ideal use cases.</span><button class="show-btn" onclick="tog('q11')">Show</button></div><div class="ans-block" id="q11-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><strong>Array:</strong> Pre-allocates 2^(h+1)−1 slots. O(1) access by index. No pointer overhead. Wastes space for sparse/skewed trees. Ideal for complete/full trees and heaps. <strong>Linked:</strong> Each node = [left_ptr | data | right_ptr]. Grows dynamically. Works for any shape tree. O(n) traversal to reach a node. No wasted slots but 2 pointer fields per node. <strong>Choose array</strong> when tree is complete/full. <strong>Choose linked</strong> for general trees.</div></div></div></div>
+
+<div class="qcard" id="q12"><div class="qhdr"><span class="qnum">Q12</span><span class="qtype seq">SEQUENCE</span><span class="qtxt">Give all four traversal results for tree: A(root), B(left of A), C(right of A), D(left of B), E(right of B), F(left of C), G(right of C).</span><button class="show-btn" onclick="tog('q12')">Show</button></div><div class="ans-block" id="q12-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><strong>Pre-order:</strong> A, B, D, E, C, F, G<br/><strong>In-order:</strong> D, B, E, A, F, C, G<br/><strong>Post-order:</strong> D, E, B, F, G, C, A<br/><strong>Level-order:</strong> A, B, C, D, E, F, G</div><div class="ans-ex"><span class="exlbl">Pattern:</span> Pre → A first. Post → A last. In → A middle (position 4 of 7). Level → row by row.</div></div></div></div>
+
+<div class="qcard" id="q13"><div class="qhdr"><span class="qnum">Q13</span><span class="qtype apply">APPLY</span><span class="qtxt">What is the a+b memory shortcut for remembering traversal orders? Map it to all three depth-first traversals.</span><button class="show-btn" onclick="tog('q13')">Show</button></div><div class="ans-block" id="q13-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Use the math expression a + b. The position of the operator (+) = position of the root in the traversal:<br/>• <strong>Pre-order = Prefix</strong> → +ab → operator (root) BEFORE operands → Root First<br/>• <strong>In-order = Infix</strong> → a+b → operator (root) IN BETWEEN → Root Middle<br/>• <strong>Post-order = Postfix</strong> → ab+ → operator (root) AFTER operands → Root Last<br/>Root = operator. Left child = a. Right child = b.</div></div></div></div>
+
+<div class="qcard" id="q14"><div class="qhdr"><span class="qnum">Q14</span><span class="qtype compare">COMPARE</span><span class="qtxt">Is every Full binary tree also Complete? Is every Complete binary tree also Full? Justify both answers.</span><button class="show-btn" onclick="tog('q14')">Show</button></div><div class="ans-block" id="q14-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><strong>Full → Complete: YES.</strong> A full binary tree has all levels completely filled (every level, including the last). This satisfies the complete tree requirement — no gaps, last level filled L→R. <strong>Complete → Full: NO.</strong> A complete tree's last level may be only partially filled (not all 2^h nodes present). So it has fewer than 2^(h+1)−1 total nodes — not full. Example: 6-node height-2 complete tree is NOT full (needs 7 nodes to be full).</div></div></div></div>
+
+<div class="qcard" id="q15"><div class="qhdr"><span class="qnum">Q15</span><span class="qtype apply">APPLY</span><span class="qtxt">A binary tree has height 3. Calculate the maximum number of nodes it can contain, step by step.</span><button class="show-btn" onclick="tog('q15')">Show</button></div><div class="ans-block" id="q15-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Formula: 2^(h+1) − 1 where h = 3.<br/>= 2^(3+1) − 1 = 2^4 − 1 = 16 − 1 = <strong>15 nodes</strong>.<br/>Breakdown by level: Level 1 = 1, Level 2 = 2, Level 3 = 4, Level 4 = 8. Sum = 15. ✓</div></div></div></div>
+
+<div class="sec-lbl" style="margin-top:1.8rem;">── Real-Life Interview Questions (Q16–Q45) ──</div>
+
+<div class="qcard" id="q16"><div class="qhdr"><span class="qnum">Q16</span><span class="qtype def">DEF</span><span class="qtxt">What is a Binary Search Tree (BST)? How does it differ from a regular binary tree?</span><button class="show-btn" onclick="tog('q16')">Show</button></div><div class="ans-block" id="q16-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">A BST is a binary tree with an ordering constraint: for every node, <strong>all values in its left subtree are less</strong> and <strong>all values in its right subtree are greater</strong>. A plain binary tree has no such constraint — it just limits each node to ≤ 2 children. BST enables O(log n) search/insert/delete in balanced state. In-order traversal of a BST always yields sorted ascending output.</div></div></div></div>
+
+<div class="qcard" id="q17"><div class="qhdr"><span class="qnum">Q17</span><span class="qtype apply">APPLY</span><span class="qtxt">How do you find the height of a binary tree? Write the recursive logic in C#.</span><button class="show-btn" onclick="tog('q17')">Show</button></div><div class="ans-block" id="q17-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><div class="code-block"><div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code class="language-csharp">int Height(Node root) {
+    if (root == null) return -1;  // empty tree
+    int leftH  = Height(root.left);
+    int rightH = Height(root.right);
+    return 1 + Math.Max(leftH, rightH);
+}</code></pre></div></div><div class="ans-ex"><span class="exlbl">Time:</span> O(n) — visits every node once. Space: O(h) for recursion stack.</div></div></div></div>
+
+<div class="qcard" id="q18"><div class="qhdr"><span class="qnum">Q18</span><span class="qtype apply">APPLY</span><span class="qtxt">How do you check if a binary tree is balanced? What does "balanced" mean?</span><button class="show-btn" onclick="tog('q18')">Show</button></div><div class="ans-block" id="q18-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Balanced = for every node, the height difference between left and right subtrees is at most 1. Recursively compute heights. If |leftH − rightH| &gt; 1 at any node → not balanced. Optimised approach: return −1 as a sentinel when an unbalanced subtree is detected, to short-circuit further recursion. Time O(n).</div><div class="ans-ex"><span class="exlbl">Examples:</span> AVL trees and Red-Black trees maintain balance automatically. Skewed tree = worst case unbalanced.</div></div></div></div>
+
+<div class="qcard" id="q19"><div class="qhdr"><span class="qnum">Q19</span><span class="qtype apply">APPLY</span><span class="qtxt">How do you find the Lowest Common Ancestor (LCA) of two nodes in a binary tree?</span><button class="show-btn" onclick="tog('q19')">Show</button></div><div class="ans-block" id="q19-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Recurse from root. Base case: if null or current node equals either target, return current node. Get LCA results from left and right subtrees. If both return non-null, current node is the LCA (targets are on different sides). If only one side returns non-null, that result propagates up. Time O(n).</div><div class="ans-ex"><span class="exlbl">Key insight:</span> The first node where the two targets "split" into different subtrees is the LCA.</div></div></div></div>
+
+<div class="qcard" id="q20"><div class="qhdr"><span class="qnum">Q20</span><span class="qtype apply">APPLY</span><span class="qtxt">How do you serialize and deserialize a binary tree? Which traversal is best, and why?</span><button class="show-btn" onclick="tog('q20')">Show</button></div><div class="ans-block" id="q20-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Use <strong>pre-order</strong> traversal. Serialize: output each node's value; output "null" for missing children. This captures the complete structure. Deserialize: read the pre-order sequence left-to-right; create each node and recursively build its left then right subtrees. Pre-order works because the root is always first — you can immediately create it and then reconstruct its subtrees.</div><div class="ans-ex"><span class="exlbl">Example:</span> Tree A(B,C) → "A,B,null,null,C,null,null" → deserialises back to exact same tree.</div></div></div></div>
+
+<div class="qcard" id="q21"><div class="qhdr"><span class="qnum">Q21</span><span class="qtype apply">APPLY</span><span class="qtxt">How do you find the diameter (longest path between any two nodes) of a binary tree?</span><button class="show-btn" onclick="tog('q21')">Show</button></div><div class="ans-block" id="q21-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">The diameter may or may not pass through the root. For each node: candidate diameter = height(left) + height(right) + 2. Track the global maximum. Use a recursive helper that returns height of each subtree while updating a maxDiameter variable. Time O(n) — single DFS pass.</div><div class="ans-ex"><span class="exlbl">Key insight:</span> The longest path passes through the node that maximises leftH + rightH — not necessarily the root.</div></div></div></div>
+
+<div class="qcard" id="q22"><div class="qhdr"><span class="qnum">Q22</span><span class="qtype apply">APPLY</span><span class="qtxt">How do you check if two binary trees are structurally identical?</span><button class="show-btn" onclick="tog('q22')">Show</button></div><div class="ans-block" id="q22-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Recurse simultaneously on both trees. Base cases: (1) Both null → true. (2) One null, one not → false. (3) Values differ → false. Recursive case: both left subtrees are identical AND both right subtrees are identical. All three checks must pass. Time O(min(n1, n2)).</div></div></div></div>
+
+<div class="qcard" id="q23"><div class="qhdr"><span class="qnum">Q23</span><span class="qtype apply">APPLY</span><span class="qtxt">How do you mirror (invert) a binary tree? Write the C# logic.</span><button class="show-btn" onclick="tog('q23')">Show</button></div><div class="ans-block" id="q23-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><div class="code-block"><div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code class="language-csharp">Node Mirror(Node root) {
+    if (root == null) return null;
+    // Swap children
+    (root.left, root.right) = (root.right, root.left);
+    Mirror(root.left);
+    Mirror(root.right);
+    return root;
+}</code></pre></div>Swap left and right pointers at every node, then recurse. Time O(n).</div></div></div></div>
+
+<div class="qcard" id="q24"><div class="qhdr"><span class="qnum">Q24</span><span class="qtype apply">APPLY</span><span class="qtxt">How do you find all root-to-leaf paths in a binary tree?</span><button class="show-btn" onclick="tog('q24')">Show</button></div><div class="ans-block" id="q24-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">DFS with backtracking. Maintain a current path list. At each node: add it to the path. If it's a leaf (both children null), record the path as a complete root-to-leaf path. Otherwise, recurse on left and right children. After recursion, remove the current node (backtrack). This systematically explores all root-to-leaf paths.</div></div></div></div>
+
+<div class="qcard" id="q25"><div class="qhdr"><span class="qnum">Q25</span><span class="qtype apply">APPLY</span><span class="qtxt">How do you find the level with the maximum number of nodes in a binary tree?</span><button class="show-btn" onclick="tog('q25')">Show</button></div><div class="ans-block" id="q25-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Level-order BFS with a Queue. At the start of each level, snapshot the queue size — that's the node count for that level. Track the maximum. The snapshot before dequeuing each level's nodes tells you exactly how many nodes are on that level.</div><div class="ans-ex"><span class="exlbl">Pattern:</span> int levelSize = queue.Count; before the inner for-loop.</div></div></div></div>
+
+<div class="qcard" id="q26"><div class="qhdr"><span class="qnum">Q26</span><span class="qtype why">WHY</span><span class="qtxt">Why is in-order traversal of a BST important? What does it always produce?</span><button class="show-btn" onclick="tog('q26')">Show</button></div><div class="ans-block" id="q26-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">In-order traversal (Left → Root → Right) of a BST always produces values in <strong>sorted ascending order</strong>. This is because BST's ordering property (left subtree &lt; node &lt; right subtree) aligns perfectly with in-order's visit pattern — smallest values first, then the root (middle), then larger values. This enables O(n) sorted extraction from a BST with no extra sorting step.</div></div></div></div>
+
+<div class="qcard" id="q27"><div class="qhdr"><span class="qnum">Q27</span><span class="qtype compare">COMPARE</span><span class="qtxt">What is the difference between DFS and BFS traversal? Which tree traversals are DFS and which are BFS?</span><button class="show-btn" onclick="tog('q27')">Show</button></div><div class="ans-block" id="q27-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><strong>DFS (Depth-First):</strong> Goes deep before wide — explores one branch completely before backtracking. Pre-order, In-order, Post-order are all DFS. Implemented with recursion or an explicit Stack. <strong>BFS (Breadth-First):</strong> Goes wide before deep — explores all nodes at current level before going deeper. Level-order is BFS. Requires a Queue. BFS finds shortest paths in unweighted trees/graphs; DFS is better for tree operations like copy, delete, and expression evaluation.</div></div></div></div>
+
+<div class="qcard" id="q28"><div class="qhdr"><span class="qnum">Q28</span><span class="qtype apply">APPLY</span><span class="qtxt">How do you count the number of leaf nodes in a binary tree?</span><button class="show-btn" onclick="tog('q28')">Show</button></div><div class="ans-block" id="q28-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Recurse: if node is null return 0. If node is a leaf (both children null), return 1. Otherwise return CountLeaves(left) + CountLeaves(right). Single DFS pass, O(n). Every node is visited exactly once.</div></div></div></div>
+
+<div class="qcard" id="q29"><div class="qhdr"><span class="qnum">Q29</span><span class="qtype gotcha">GOTCHA</span><span class="qtxt">Can you uniquely reconstruct a binary tree from just one traversal (pre-order alone, or in-order alone)? What combination is needed?</span><button class="show-btn" onclick="tog('q29')">Show</button></div><div class="ans-block" id="q29-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><strong>No.</strong> A single traversal cannot uniquely identify a binary tree — multiple different trees can produce the same pre-order or in-order sequence. You need <strong>two traversals</strong>: Pre-order + In-order, OR Post-order + In-order. In-order is essential in both combinations because it identifies which nodes belong to the left vs right subtrees. Pre-order + Post-order alone is not sufficient for trees with single-child nodes.</div></div></div></div>
+
+<div class="qcard" id="q30"><div class="qhdr"><span class="qnum">Q30</span><span class="qtype apply">APPLY</span><span class="qtxt">How do you print a binary tree in zigzag (spiral) order?</span><button class="show-btn" onclick="tog('q30')">Show</button></div><div class="ans-block" id="q30-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Level-order BFS with a direction flag. Even levels: left to right. Odd levels: right to left. Use two stacks or a deque: for left-to-right levels enqueue children left-then-right; for right-to-left levels enqueue right-then-left. Alternate the flag after each level completes.</div></div></div></div>
+
+<div class="qcard" id="q31"><div class="qhdr"><span class="qnum">Q31</span><span class="qtype apply">APPLY</span><span class="qtxt">How do you find the maximum path sum in a binary tree (path can start and end at any node)?</span><button class="show-btn" onclick="tog('q31')">Show</button></div><div class="ans-block" id="q31-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">For each node: candidate = node.val + max(leftGain, 0) + max(rightGain, 0). Update global maximum. Return to parent: node.val + max(leftGain, rightGain, 0) — only one branch goes upward. Use max(gain, 0) to exclude negative-sum subtrees. Single DFS pass, O(n). Track maxSum as a global variable or ref parameter.</div></div></div></div>
+
+<div class="qcard" id="q32"><div class="qhdr"><span class="qnum">Q32</span><span class="qtype compare">COMPARE</span><span class="qtxt">What is the difference between a Heap and a BST? When do you use each?</span><button class="show-btn" onclick="tog('q32')">Show</button></div><div class="ans-block" id="q32-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><strong>Heap:</strong> Complete binary tree. Parent ≥ children (max-heap) or parent ≤ children (min-heap). No ordering between siblings. O(1) peek at max/min, O(log n) insert/delete. Used for priority queues and heapsort. <strong>BST:</strong> Left &lt; node &lt; right strictly. O(log n) search/insert/delete when balanced. O(n) worst case (skewed). Used for sorted data, ordered maps, range queries.</div></div></div></div>
+
+<div class="qcard" id="q33"><div class="qhdr"><span class="qnum">Q33</span><span class="qtype apply">APPLY</span><span class="qtxt">How do you validate whether a binary tree is a valid BST? What's the common mistake?</span><button class="show-btn" onclick="tog('q33')">Show</button></div><div class="ans-block" id="q33-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Use min/max bounds. Recurse: IsValid(node, min, max). Each node must satisfy min &lt; node.val &lt; max. Left subtree: upper bound = node.val. Right subtree: lower bound = node.val. Initial call: IsValid(root, int.MinValue, int.MaxValue). <strong>Common mistake:</strong> Only comparing a node with its immediate children — this misses cases where a distant ancestor's constraint is violated (e.g., a node in the right subtree smaller than the root).</div></div></div></div>
+
+<div class="qcard" id="q34"><div class="qhdr"><span class="qnum">Q34</span><span class="qtype apply">APPLY</span><span class="qtxt">How do you find the kth smallest element in a BST efficiently?</span><button class="show-btn" onclick="tog('q34')">Show</button></div><div class="ans-block" id="q34-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">In-order traversal of a BST gives ascending sorted order. Count nodes as you visit them in-order. When the count reaches k, that node is the answer. Use an iterative in-order with a Stack and stop after k dequeues to avoid traversing the whole tree unnecessarily. Time O(h + k) where h is height.</div><div class="ans-ex"><span class="exlbl">Why?</span> In-order of BST = sorted ascending. kth visit = kth smallest value.</div></div></div></div>
+
+<div class="qcard" id="q35"><div class="qhdr"><span class="qnum">Q35</span><span class="qtype why">WHY</span><span class="qtxt">Why is post-order the correct traversal for deleting a binary tree? Why can't you use pre-order?</span><button class="show-btn" onclick="tog('q35')">Show</button></div><div class="ans-block" id="q35-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Post-order visits children BEFORE the parent, so you delete leaves first and then their parents. No parent is freed while its children still hold memory. Pre-order visits the root first — deleting it loses the only references to its children, causing a memory leak in languages without GC, or orphaning subtrees. The rule: always free children before freeing the parent = post-order.</div></div></div></div>
+
+<div class="qcard" id="q36"><div class="qhdr"><span class="qnum">Q36</span><span class="qtype apply">APPLY</span><span class="qtxt">Write iterative in-order traversal of a binary tree in C# without recursion.</span><button class="show-btn" onclick="tog('q36')">Show</button></div><div class="ans-block" id="q36-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><div class="code-block"><div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code class="language-csharp">void InOrderIterative(Node root) {
+    var stack = new Stack&lt;Node&gt;();
+    Node curr = root;
+    while (curr != null || stack.Count &gt; 0) {
+        // Go all the way left
+        while (curr != null) {
+            stack.Push(curr);
+            curr = curr.left;
+        }
+        // Visit node, then go right
+        curr = stack.Pop();
+        Console.Write(curr.val + " ");
+        curr = curr.right;
+    }
+}</code></pre></div>The explicit Stack simulates the recursive call stack. Time O(n), Space O(h).</div></div></div></div>
+
+<div class="qcard" id="q37"><div class="qhdr"><span class="qnum">Q37</span><span class="qtype apply">APPLY</span><span class="qtxt">How do you check if a binary tree is symmetric (a mirror image of itself)?</span><button class="show-btn" onclick="tog('q37')">Show</button></div><div class="ans-block" id="q37-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Write helper IsMirror(left, right): both null → true. One null → false. Values differ → false. Then: IsMirror(left.left, right.right) AND IsMirror(left.right, right.left). Call IsMirror(root.left, root.right) from the main function. This checks that outer pairs and inner pairs mirror each other at every level.</div></div></div></div>
+
+<div class="qcard" id="q38"><div class="qhdr"><span class="qnum">Q38</span><span class="qtype gotcha">GOTCHA</span><span class="qtxt">What is a skewed binary tree and why is it a severe performance problem?</span><button class="show-btn" onclick="tog('q38')">Show</button></div><div class="ans-block" id="q38-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">A skewed binary tree has every node with only one child — all left (left-skewed) or all right (right-skewed). With n nodes, height = n−1 instead of log n. This degrades BST operations from O(log n) to O(n) — equivalent to a linked list. It happens when inserting already-sorted data into a BST (1,2,3,4,5 → every node goes right). Self-balancing trees (AVL, Red-Black) prevent this by performing rotations after inserts/deletes.</div></div></div></div>
+
+<div class="qcard" id="q39"><div class="qhdr"><span class="qnum">Q39</span><span class="qtype apply">APPLY</span><span class="qtxt">How do you find the sum of all nodes at depth k in a binary tree?</span><button class="show-btn" onclick="tog('q39')">Show</button></div><div class="ans-block" id="q39-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Recurse with a depth counter. When depth == k, return node.val. If depth &gt; k or node is null, return 0. Otherwise return SumAtDepth(left, depth+1, k) + SumAtDepth(right, depth+1, k). Alternatively, use level-order BFS and stop when you reach level k, then sum all nodes dequeued in that iteration.</div></div></div></div>
+
+<div class="qcard" id="q40"><div class="qhdr"><span class="qnum">Q40</span><span class="qtype apply">APPLY</span><span class="qtxt">Reconstruct a binary tree from its post-order and in-order traversal sequences.</span><button class="show-btn" onclick="tog('q40')">Show</button></div><div class="ans-block" id="q40-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">In post-order, the <strong>last element is always the root</strong>. Find this root in the in-order array — elements to its left are in the left subtree, elements to its right are in the right subtree. Count the left subtree size. Use that count to split the post-order array into left and right parts. Recurse on both halves. Use a HashMap for O(1) in-order index lookup. Total time O(n).</div></div></div></div>
+
+<div class="qcard" id="q41"><div class="qhdr"><span class="qnum">Q41</span><span class="qtype compare">COMPARE</span><span class="qtxt">What is an AVL tree? How does it differ from a regular BST and why does it matter?</span><button class="show-btn" onclick="tog('q41')">Show</button></div><div class="ans-block" id="q41-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">An AVL tree is a self-balancing BST. After every insert or delete, it checks the balance factor (|leftH − rightH|) for affected nodes. If any node has |balance| &gt; 1, it performs rotations (LL, RR, LR, RL) to restore balance. This guarantees height stays O(log n) always, so search/insert/delete remain O(log n) in the worst case. A regular BST on sorted input becomes a right-skewed chain with O(n) height — all operations degrade to O(n).</div></div></div></div>
+
+<div class="qcard" id="q42"><div class="qhdr"><span class="qnum">Q42</span><span class="qtype apply">APPLY</span><span class="qtxt">How do you find the second largest element in a BST?</span><button class="show-btn" onclick="tog('q42')">Show</button></div><div class="ans-block" id="q42-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">Two cases: (1) The largest node (rightmost) has a left subtree → second largest is the rightmost node of that left subtree. (2) The largest node has no left child → second largest is the largest node's parent. Traverse right to find the largest while keeping a pointer to its parent. Then handle the two cases. Time O(h).</div></div></div></div>
+
+<div class="qcard" id="q43"><div class="qhdr"><span class="qnum">Q43</span><span class="qtype apply">APPLY</span><span class="qtxt">Write level-order traversal that prints each level on a separate line, using a Queue in C#.</span><button class="show-btn" onclick="tog('q43')">Show</button></div><div class="ans-block" id="q43-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><div class="code-block"><div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code class="language-csharp">void LevelOrder(Node root) {
+    if (root == null) return;
+    var queue = new Queue&lt;Node&gt;();
+    queue.Enqueue(root);
+    while (queue.Count &gt; 0) {
+        int levelSize = queue.Count; // nodes at this level
+        for (int i = 0; i &lt; levelSize; i++) {
+            Node node = queue.Dequeue();
+            Console.Write(node.val + " ");
+            if (node.left  != null) queue.Enqueue(node.left);
+            if (node.right != null) queue.Enqueue(node.right);
+        }
+        Console.WriteLine(); // new line per level
+    }
+}</code></pre></div></div></div></div></div>
+
+<div class="qcard" id="q44"><div class="qhdr"><span class="qnum">Q44</span><span class="qtype compare">COMPARE</span><span class="qtxt">What is the time complexity of search in a balanced BST vs an unbalanced (skewed) BST? Why?</span><button class="show-btn" onclick="tog('q44')">Show</button></div><div class="ans-block" id="q44-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body"><strong>Balanced BST:</strong> Height = O(log n). Search = O(log n). At each comparison, half the remaining search space is eliminated — same as binary search on a sorted array. <strong>Skewed BST:</strong> Height = O(n). Search = O(n). Each comparison only eliminates one node. Degrades to a linear scan — equivalent to unsorted linked list traversal. This is why self-balancing trees exist.</div></div></div></div>
+
+<div class="qcard" id="q45"><div class="qhdr"><span class="qnum">Q45</span><span class="qtype apply">APPLY</span><span class="qtxt">How do you count total nodes in a complete binary tree in less than O(n) time?</span><button class="show-btn" onclick="tog('q45')">Show</button></div><div class="ans-block" id="q45-a"><div class="ans-inner"><div class="ans-lbl">Answer</div><div class="ans-body">For a complete binary tree, compute leftmost height (go left repeatedly) and rightmost height (go right repeatedly). If equal: left subtree is a perfect binary tree → left count = 2^h − 1, add root, recurse right only. If unequal: right subtree is a perfect tree one level shorter → right count = 2^(h-1) − 1, add root, recurse left only. Each step eliminates half the tree. Time O(log²n) instead of O(n).</div></div></div></div>
+
+</div><!-- recall-wrap -->
+</div><!-- tab-recall -->
+
+</main>
+</div><!-- layout -->
+
+<script>
+// ── TAB SWITCHING ──────────────────────────────────────────
+function switchTab(tab) {
+  ['handbook','recall'].forEach(t => {
+    const el = document.getElementById('tab-' + t);
+    el.style.display = 'none';
+    el.classList.remove('visible');
+  });
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('tab-' + tab);
+  el.style.display = 'block';
+  requestAnimationFrame(() => el.classList.add('visible'));
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    if (b.textContent.toLowerCase().includes(tab === 'handbook' ? 'handbook' : 'recall'))
+      b.classList.add('active');
+  });
+}
+
+// ── SIDEBAR SCROLL ─────────────────────────────────────────
+function goTo(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (!document.getElementById('tab-handbook').classList.contains('visible')) switchTab('handbook');
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + id + "'"))
+      n.classList.add('active');
+  });
+}
+
+// ── INTERSECTION OBSERVER for active nav ──────────────────
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id;
+      document.querySelectorAll('.nav-item').forEach(n => {
+        n.classList.toggle('active', n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + id + "'"));
+      });
+    }
+  });
+}, { rootMargin: '-5% 0px -80% 0px', threshold: 0 });
+document.querySelectorAll('[id]').forEach(el => { if (/^s\d/.test(el.id)) observer.observe(el); });
+
+// ── COPY CODE ──────────────────────────────────────────────
+function copyCode(btn) {
+  const code = btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.textContent).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+
+// ── ACTIVE RECALL ──────────────────────────────────────────
+let revealed = 0;
+const total = 45;
+function updateProg() {
+  document.getElementById('prog').textContent = revealed + ' of ' + total + ' answered';
+}
+function tog(id) {
+  const card  = document.getElementById(id);
+  const block = document.getElementById(id + '-a');
+  const btn   = card.querySelector('.show-btn');
+  if (block.classList.contains('open')) {
+    block.classList.remove('open'); btn.textContent = 'Show'; btn.classList.remove('active');
+    card.classList.remove('revealed'); revealed--;
+  } else {
+    block.classList.add('open'); btn.textContent = 'Hide'; btn.classList.add('active');
+    card.classList.add('revealed'); revealed++;
+  }
+  updateProg();
+}
+function revealAll() {
+  revealed = 0;
+  for (let i = 1; i <= total; i++) {
+    const id = 'q' + i;
+    document.getElementById(id + '-a').classList.add('open');
+    document.getElementById(id).querySelector('.show-btn').textContent = 'Hide';
+    document.getElementById(id).querySelector('.show-btn').classList.add('active');
+    document.getElementById(id).classList.add('revealed');
+    revealed++;
+  }
+  updateProg();
+}
+function hideAll() {
+  for (let i = 1; i <= total; i++) {
+    const id = 'q' + i;
+    document.getElementById(id + '-a').classList.remove('open');
+    document.getElementById(id).querySelector('.show-btn').textContent = 'Show';
+    document.getElementById(id).querySelector('.show-btn').classList.remove('active');
+    document.getElementById(id).classList.remove('revealed');
+  }
+  revealed = 0;
+  updateProg();
+}
+
+// ── INIT ───────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  hljs.highlightAll();
+  document.getElementById('tab-handbook').style.display = 'block';
+  document.getElementById('tab-recall').style.display   = 'none';
+});
+</script>
+</body>
+</html>
