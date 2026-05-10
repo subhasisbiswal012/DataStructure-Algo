@@ -11,6 +11,7 @@
         Console.WriteLine(ln.First.Next.Value);//Second Node value
         Console.WriteLine(ln.Last.Value);// last node value
         Console.WriteLine(ln.Count);
+        Console.WriteLine(ln.First.Previous);
         //Methods
         //Addition
         LinkedListNode<int> l1 = new LinkedListNode<int>(12);

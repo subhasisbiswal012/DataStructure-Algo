@@ -1,2215 +1,1455 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Circular Linked List — KnowledgeForge</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Doubly Linked List — KnowledgeForge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <style>
-:root {
-  --bg: #0d0d0f;
-  --surface: #141417;
-  --card: #1a1a1f;
-  --border: #2a2a32;
-  --accent: #c8f060;
-  --accent2: #60c8f0;
-  --accent3: #f060c8;
-  --text: #f0ede8;
-  --muted: #6b6878;
-  --danger: #f06060;
-  --success: #60f0a0;
+:root{
+  --bg:#0d0d0f;--surface:#141417;--card:#1a1a1f;--border:#2a2a32;
+  --accent:#c8f060;--accent2:#60c8f0;--accent3:#f060c8;
+  --text:#f0ede8;--muted:#6b6878;--danger:#f06060;--success:#60f0a0;
 }
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  background-color: var(--bg);
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background-color:var(--bg);color:var(--text);
+  font-family:system-ui,-apple-system,sans-serif;font-size:0.9rem;line-height:1.7;
   background-image:
-    linear-gradient(rgba(200,240,96,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(200,240,96,0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
-  color: var(--text);
-  font-family: system-ui, -apple-system, sans-serif;
-  font-size: 0.9rem;
-  line-height: 1.7;
-  min-height: 100vh;
+    linear-gradient(rgba(200,240,96,0.02) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(200,240,96,0.02) 1px,transparent 1px);
+  background-size:40px 40px;
+  min-height:100vh;
 }
-
 /* HEADER */
-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(13,13,15,0.95);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem 2rem;
-  gap: 1rem;
+header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(13,13,15,0.95);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.75rem 2rem;gap:1rem;
 }
-
-.logo {
-  font-family: 'Syne', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 800;
-  white-space: nowrap;
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;white-space:nowrap;}
+.logo span{color:var(--accent);}
+.topic-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--muted);text-align:center;flex:1;}
+.tab-buttons{display:flex;gap:0.5rem;white-space:nowrap;}
+.tab-btn{
+  font-family:'Syne',sans-serif;font-weight:700;font-size:0.8rem;
+  padding:0.4rem 1rem;border-radius:6px;cursor:pointer;transition:all 0.2s;
+  border:1px solid var(--border);background:transparent;color:var(--muted);
 }
-.logo span { color: var(--accent); }
-
-.topic-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 0.9rem;
-  color: var(--muted);
-  text-align: center;
-  flex: 1;
-}
-
-.tab-buttons {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.tab-btn {
-  padding: 0.4rem 1rem;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--muted);
-  font-family: 'Syne', sans-serif;
-  font-size: 0.78rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-.tab-btn.active {
-  background: var(--accent);
-  color: #0d0d0f;
-  border-color: var(--accent);
-  font-weight: 700;
-}
+.tab-btn.active{background:var(--accent);color:#0d0d0f;border-color:var(--accent);}
 
 /* TABS */
-.tab-panel { display: none; opacity: 0; transition: opacity 0.2s ease; }
-.tab-panel.active { display: block; opacity: 1; }
+.tab-content{display:none;opacity:0;transition:opacity 0.2s ease;}
+.tab-content.visible{display:block;opacity:1;}
 
 /* HANDBOOK */
-#tab-handbook {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 2rem;
-}
+#tab-handbook{max-width:900px;margin:0 auto;padding:2rem;}
+h1.page-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.8rem;color:var(--text);margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
+h2{font-family:'Syne',sans-serif;font-weight:700;font-size:1.3rem;color:var(--accent);margin:2.5rem 0 1rem;padding-bottom:0.4rem;border-bottom:1px solid rgba(200,240,96,0.2);}
+h3{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--accent2);margin:1.5rem 0 0.6rem;}
+p,li{color:#ccc;font-size:0.875rem;line-height:1.75;}
+ul{padding-left:1.4rem;margin:0.5rem 0;}
+li{margin:0.3rem 0;}
+strong{color:var(--text);}
+section{margin-bottom:3rem;}
+.section-divider{border:none;border-top:1px solid var(--border);margin:2.5rem 0;}
 
-h1.page-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 2rem;
-  color: var(--text);
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border);
-}
-
-h2 {
-  font-family: 'Syne', sans-serif;
-  font-size: 1.3rem;
-  color: var(--accent);
-  margin: 2.5rem 0 1rem;
-  padding-bottom: 0.4rem;
-  border-bottom: 1px solid rgba(200,240,96,0.15);
-}
-
-h3 {
-  font-family: 'Syne', sans-serif;
-  font-size: 1rem;
-  color: var(--accent2);
-  margin: 1.5rem 0 0.6rem;
-}
-
-ul { padding-left: 1.4rem; }
-li { color: #ccc; margin-bottom: 0.3rem; font-size: 0.85rem; line-height: 1.7; }
-li strong { color: var(--text); }
-
-.section-divider {
-  border: none;
-  border-top: 1px solid var(--border);
-  margin: 3rem 0;
-}
-
-/* CALLOUT */
-.callout {
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
-  margin: 1rem 0;
-  font-size: 0.85rem;
-  line-height: 1.6;
-}
-.callout.tip { border-left: 3px solid var(--accent); background: rgba(200,240,96,0.05); }
-.callout.warning { border-left: 3px solid var(--accent3); background: rgba(240,96,200,0.05); }
-.callout.rule { border-left: 3px solid var(--accent2); background: rgba(96,200,240,0.05); }
-.callout strong { color: var(--text); }
+/* CALLOUTS */
+.callout{border-radius:6px;padding:0.75rem 1rem;margin:1rem 0;font-size:0.85rem;border-left:3px solid;}
+.callout.tip{border-color:var(--accent);background:rgba(200,240,96,0.05);}
+.callout.warning{border-color:var(--accent3);background:rgba(240,96,200,0.05);}
+.callout.rule{border-color:var(--accent2);background:rgba(96,200,240,0.05);}
 
 /* CODE BLOCKS */
-.code-block {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  margin: 1rem 0;
-  overflow: hidden;
-}
-.code-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.4rem 0.8rem;
-  border-bottom: 1px solid var(--border);
-  background: rgba(255,255,255,0.02);
-}
-.code-lang {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.72rem;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.copy-btn {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 0.72rem;
-  padding: 0.2rem 0.6rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-family: 'DM Mono', monospace;
-  transition: all 0.2s;
-}
-.copy-btn:hover { border-color: var(--accent); color: var(--accent); }
-.code-block pre { margin: 0; padding: 1rem; overflow-x: auto; }
-.code-block pre code { font-family: 'DM Mono', monospace; font-size: 0.82rem; }
+.code-block{border-radius:8px;border:1px solid var(--border);overflow:hidden;margin:1rem 0;}
+.code-header{display:flex;justify-content:space-between;align-items:center;padding:0.4rem 0.75rem;background:var(--card);border-bottom:1px solid var(--border);}
+.code-lang{font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);}
+.copy-btn{font-size:0.72rem;padding:0.2rem 0.6rem;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace;transition:all 0.15s;}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent);}
+.code-block pre{margin:0;padding:1rem;overflow-x:auto;}
+.code-block pre code{font-family:'DM Mono',monospace;font-size:0.8rem;background:transparent!important;padding:0!important;}
+
+/* TERMINAL */
+.terminal-block{border-radius:8px;border:1px solid var(--border);overflow:hidden;margin:1rem 0;}
+.terminal-header{background:#0a0a0c;padding:0.4rem 0.75rem;border-bottom:1px solid var(--border);font-size:0.75rem;color:var(--muted);}
+.terminal-output{background:#0a0a0c;color:var(--success);font-family:'DM Mono',monospace;font-size:0.8rem;padding:1rem;margin:0;white-space:pre-wrap;}
 
 /* TABLES */
-table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
-thead tr { background: var(--card); }
-thead th {
-  font-family: 'Syne', sans-serif;
-  font-size: 0.75rem;
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 0.6rem 1rem;
-  text-align: left;
-  border: 1px solid var(--border);
-}
-tbody tr:nth-child(odd) { background: var(--surface); }
-tbody tr:nth-child(even) { background: var(--bg); }
-tbody td { padding: 0.6rem 1rem; border: 1px solid var(--border); font-size: 0.82rem; color: #ccc; }
-tbody td code { font-family: 'DM Mono', monospace; color: var(--accent2); font-size: 0.8rem; }
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.84rem;}
+thead tr{background:var(--card);}
+thead th{color:var(--accent);font-family:'Syne',sans-serif;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.05em;padding:0.6rem 1rem;border:1px solid var(--border);text-align:left;}
+tbody tr:nth-child(odd){background:var(--surface);}
+tbody tr:nth-child(even){background:var(--bg);}
+tbody td{padding:0.6rem 1rem;border:1px solid var(--border);color:#ccc;}
 
-/* FIGURE / DIAGRAM */
-figure {
-  margin: 1.5rem 0;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 1.5rem;
-  overflow-x: auto;
-}
-figcaption {
-  font-size: 0.75rem;
-  color: var(--muted);
-  text-align: center;
-  margin-top: 0.75rem;
-  font-family: 'DM Mono', monospace;
-}
+/* FIGURES / DIAGRAMS */
+figure{margin:1.5rem 0;text-align:center;}
+figcaption{font-size:0.78rem;color:var(--muted);margin-top:0.5rem;font-family:'DM Mono',monospace;}
+svg{max-width:100%;height:auto;}
 
-/* METHOD DIAGRAM SECTIONS */
-.method-section {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  margin: 2rem 0;
-  overflow: hidden;
-}
-.method-header {
-  padding: 1rem 1.5rem;
-  background: rgba(200,240,96,0.05);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-.method-name {
-  font-family: 'DM Mono', monospace;
-  font-size: 1rem;
-  color: var(--accent);
-  font-weight: 500;
-}
-.complexity-badge {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.72rem;
-  padding: 0.2rem 0.6rem;
-  border-radius: 4px;
-  background: rgba(96,200,240,0.1);
-  color: var(--accent2);
-  border: 1px solid rgba(96,200,240,0.2);
-}
-.space-badge {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.72rem;
-  padding: 0.2rem 0.6rem;
-  border-radius: 4px;
-  background: rgba(96,240,160,0.1);
-  color: var(--success);
-  border: 1px solid rgba(96,240,160,0.2);
-}
-.complexity-table {
-  display: flex;
-  gap: 0;
-  margin: 1rem 0 1.2rem;
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  overflow: hidden;
-}
-.complexity-cell {
-  flex: 1;
-  padding: 0.6rem 1rem;
-  background: var(--card);
-  border-right: 1px solid var(--border);
-  font-size: 0.82rem;
-}
-.complexity-cell:last-child { border-right: none; }
-.complexity-cell .c-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.68rem;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  display: block;
-  margin-bottom: 0.2rem;
-}
-.complexity-cell .c-value {
-  font-family: 'DM Mono', monospace;
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-.complexity-cell .c-why {
-  font-size: 0.78rem;
-  color: #aaa;
-  display: block;
-  margin-top: 0.15rem;
-  line-height: 1.4;
-}
-.method-body {
-  padding: 1.5rem;
-}
+/* COMPLEXITY BADGE */
+.complexity-row{display:flex;gap:0.75rem;margin:0.75rem 0;flex-wrap:wrap;}
+.badge{display:inline-flex;align-items:center;gap:0.3rem;font-family:'DM Mono',monospace;font-size:0.75rem;padding:0.25rem 0.65rem;border-radius:20px;border:1px solid;}
+.badge.time{border-color:var(--accent);color:var(--accent);background:rgba(200,240,96,0.07);}
+.badge.space{border-color:var(--accent2);color:var(--accent2);background:rgba(96,200,240,0.07);}
 
 /* ACTIVE RECALL */
-#tab-recall {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-}
+#tab-recall{max-width:800px;margin:0 auto;padding:2rem;}
+.recall-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:0.75rem;}
+.recall-header h2{margin:0;border:none;padding:0;font-size:1.2rem;}
+.recall-controls{display:flex;align-items:center;gap:0.75rem;}
+.progress-counter{font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--muted);}
+.control-btn{font-family:'Syne',sans-serif;font-size:0.78rem;padding:0.35rem 0.85rem;border-radius:6px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all 0.2s;}
+.control-btn:hover{border-color:var(--accent);color:var(--accent);}
 
-.recall-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border);
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-.recall-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 1.1rem;
-  color: var(--text);
-}
-.progress-counter {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.78rem;
-  color: var(--muted);
-}
-.progress-counter span { color: var(--accent); font-weight: 700; }
-.recall-controls {
-  display: flex;
-  gap: 0.5rem;
-}
-.recall-controls button {
-  padding: 0.3rem 0.8rem;
-  border-radius: 5px;
-  font-size: 0.78rem;
-  cursor: pointer;
-  font-family: 'DM Mono', monospace;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--muted);
-  transition: all 0.2s;
-}
-.recall-controls button:hover { border-color: var(--accent); color: var(--accent); }
-
-.question-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  margin-bottom: 1rem;
-  overflow: hidden;
-  transition: border-color 0.2s;
-}
-.question-card.revealed { border-color: rgba(200,240,96,0.3); }
-
-.question-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  padding: 1rem 1rem 1rem 1rem;
-  flex-wrap: wrap;
-}
-.q-number {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.72rem;
-  color: var(--muted);
-  white-space: nowrap;
-  padding-top: 2px;
-}
-.q-type {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.68rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
-  white-space: nowrap;
-  font-weight: 500;
-}
-.q-type.def { background: rgba(96,200,240,0.1); color: var(--accent2); }
-.q-type.apply { background: rgba(200,240,96,0.1); color: var(--accent); }
-.q-type.why { background: rgba(240,96,200,0.1); color: var(--accent3); }
-.q-type.compare { background: rgba(200,240,96,0.1); color: var(--accent); }
-.q-type.sequence { background: rgba(96,240,200,0.1); color: #60f0c8; }
-.q-type.gotcha { background: rgba(240,96,96,0.1); color: var(--danger); }
-.q-type.draw { background: rgba(240,200,96,0.1); color: #f0c860; }
-
-.q-text { flex: 1; font-size: 0.87rem; color: var(--text); line-height: 1.5; }
-.show-answer-btn {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 0.72rem;
-  padding: 0.25rem 0.7rem;
-  border-radius: 5px;
-  cursor: pointer;
-  font-family: 'DM Mono', monospace;
-  white-space: nowrap;
-  transition: all 0.2s;
-}
-.show-answer-btn.active { border-color: var(--accent); color: var(--accent); }
-
-.answer-block {
-  border-top: 1px solid var(--border);
-  padding: 1rem 1rem 1rem 1rem;
-  background: rgba(200,240,96,0.02);
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.35s ease;
-}
-.answer-block.open { max-height: 2000px; }
-.answer-label {
-  font-family: 'Syne', sans-serif;
-  font-size: 0.7rem;
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 0.4rem;
-}
-.answer-content { font-size: 0.85rem; color: #ccc; line-height: 1.7; }
-.answer-content strong { color: var(--text); }
-.answer-content code { font-family: 'DM Mono', monospace; color: var(--accent2); font-size: 0.82rem; background: rgba(96,200,240,0.08); padding: 0.1rem 0.3rem; border-radius: 3px; }
-.answer-example {
-  margin-top: 0.75rem;
-  padding: 0.6rem 0.8rem;
-  background: var(--surface);
-  border-radius: 5px;
-  border-left: 2px solid var(--accent);
-  font-size: 0.82rem;
-  color: #aaa;
-}
-.example-label { color: var(--accent); font-family: 'DM Mono', monospace; font-size: 0.72rem; margin-right: 0.4rem; }
-
-/* SVG node helpers used inside diagrams */
-.node-value { font-family: 'DM Mono', monospace; }
-
-/* Animate circular arrow */
-@keyframes spin-slow { from { transform-origin: center; } to { transform-origin: center; } }
-
-/* Step animations for method diagrams */
-.step-highlight { animation: pulse 1.5s ease-in-out infinite; }
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
+.question-card{border:1px solid var(--border);border-radius:8px;background:var(--surface);margin-bottom:1rem;overflow:hidden;transition:border-color 0.2s;}
+.question-card.revealed{border-color:rgba(200,240,96,0.3);}
+.question-header{display:flex;align-items:flex-start;gap:0.75rem;padding:0.9rem 1rem;flex-wrap:wrap;}
+.q-number{font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);white-space:nowrap;padding-top:0.1rem;}
+.q-type{font-family:'DM Mono',monospace;font-size:0.68rem;padding:0.15rem 0.5rem;border-radius:4px;white-space:nowrap;align-self:flex-start;margin-top:0.05rem;}
+.q-type.def{background:rgba(96,200,240,0.1);color:var(--accent2);}
+.q-type.apply{background:rgba(200,240,96,0.1);color:var(--accent);}
+.q-type.why{background:rgba(240,96,200,0.1);color:var(--accent3);}
+.q-type.compare{background:rgba(200,240,96,0.1);color:var(--accent);}
+.q-type.sequence{background:rgba(96,240,200,0.1);color:#60f0c8;}
+.q-type.gotcha{background:rgba(240,96,96,0.1);color:var(--danger);}
+.q-type.draw{background:rgba(240,200,96,0.1);color:#f0c860;}
+.q-text{flex:1;font-size:0.875rem;color:var(--text);line-height:1.5;}
+.show-answer-btn{font-family:'DM Mono',monospace;font-size:0.75rem;padding:0.3rem 0.75rem;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);white-space:nowrap;align-self:flex-start;transition:all 0.2s;}
+.show-answer-btn.active{border-color:var(--accent);color:var(--accent);}
+.answer-block{overflow:hidden;max-height:0;transition:max-height 0.35s ease;}
+.answer-block.open{max-height:2000px;}
+.answer-inner{padding:1rem;border-top:1px solid var(--border);background:var(--card);}
+.answer-label{font-family:'Syne',sans-serif;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent);margin-bottom:0.5rem;}
+.answer-content{font-size:0.85rem;color:#ccc;line-height:1.7;}
+.answer-example{margin-top:0.6rem;padding:0.5rem 0.75rem;border-left:2px solid var(--accent2);background:rgba(96,200,240,0.05);font-size:0.82rem;color:var(--muted);}
+.answer-example .example-label{color:var(--accent2);font-weight:600;}
+.answer-code{margin-top:0.6rem;}
 </style>
 </head>
 <body>
 
 <header>
   <div class="logo">Knowledge<span>Forge</span></div>
-  <div class="topic-title">Circular Linked List — C# Custom Implementation</div>
+  <div class="topic-title">Doubly Linked List</div>
   <div class="tab-buttons">
     <button class="tab-btn active" onclick="switchTab('handbook')">📘 Handbook</button>
     <button class="tab-btn" onclick="switchTab('recall')">🧠 Active Recall</button>
   </div>
 </header>
 
-<!-- ═══════════════════════════════════════════════════════ HANDBOOK ═══ -->
-<div id="tab-handbook" class="tab-panel active">
-<div style="max-width:960px;margin:0 auto;padding:2rem;">
+<!-- ═══════════════════════════════════════════════════ HANDBOOK TAB -->
+<div id="tab-handbook" class="tab-content visible">
+<div style="max-width:900px;margin:0 auto;padding:2rem;">
 
-<h1 class="page-title">Circular Linked List — C# Custom Implementation</h1>
+<h1 class="page-title">Doubly Linked List</h1>
 
-<!-- ── WHAT IS A CIRCULAR LINKED LIST ── -->
-<h2>🔄 What is a Circular Linked List?</h2>
+<!-- ─── SECTION 1: WHY DOUBLY ─── -->
+<section>
+<h2>1. Why a Doubly Linked List?</h2>
 
-<div class="callout tip">💡 Think of it like players sitting at a poker table. After the last player, the turn goes back to the first — there's no "end", it loops forever.</div>
+<div class="callout tip">💡 Think of a singly linked list like a one-way street — you can only drive forward. A doubly linked list is a two-way street — each node knows both its neighbour ahead <em>and</em> its neighbour behind.</div>
+
+<p>A singly linked list has a painful problem: to delete the <strong>last node</strong>, you must walk the entire list just to find the node <em>before</em> tail — because you can't go backwards. A doubly linked list solves this by giving every node a <strong>prev</strong> pointer in addition to the usual <strong>next</strong> pointer.</p>
 
 <ul>
-  <li>A <strong>Circular Linked List</strong> is a chain of nodes where the <strong>last node's <code>next</code> pointer points back to the first node</strong> — not null.</li>
-  <li>Every node has two parts: <strong>element</strong> (the data) and <strong>next</strong> (address of next node).</li>
-  <li>The list has a <strong>head</strong> (first node) and a <strong>tail</strong> (last node), but tail.next ≠ null — it equals head.</li>
-  <li>A single node in a circular list <strong>points to itself</strong> (its own address in <code>next</code>).</li>
+  <li><strong>Singly linked list</strong> — each node stores: <code>element</code> + <code>next</code></li>
+  <li><strong>Doubly linked list</strong> — each node stores: <code>element</code> + <code>next</code> + <code>prev</code></li>
 </ul>
 
 <figure>
-<svg viewBox="0 0 600 260" xmlns="http://www.w3.org/2000/svg" width="100%">
+<svg viewBox="0 0 820 220" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
   <defs>
-    <marker id="arr-g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L8,3 z" fill="#c8f060"/>
-    </marker>
-    <marker id="arr-b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L8,3 z" fill="#6b6878"/>
-    </marker>
+    <marker id="arrow-fwd" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0, 8 3.5, 0 7" fill="#c8f060"/></marker>
+    <marker id="arrow-bwd" markerWidth="8" markerHeight="8" refX="1" refY="3.5" orient="auto"><polygon points="8 0, 0 3.5, 8 7" fill="#f060c8"/></marker>
   </defs>
 
-  <!-- ── LINEAR LL ── -->
-  <text x="16" y="18" fill="#6b6878" font-size="11" font-family="DM Mono,monospace" font-weight="500">LINEAR LINKED LIST  (null-terminated)</text>
+  <!-- HEAD label -->
+  <text x="100" y="30" fill="#6b6878" font-family="DM Mono,monospace" font-size="11" text-anchor="middle">head</text>
+  <line x1="100" y1="35" x2="100" y2="58" stroke="#6b6878" stroke-width="1.5" stroke-dasharray="3,2"/>
 
-  <!-- head label -->
-  <text x="46" y="38" fill="#c8f060" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">head</text>
-  <line x1="46" y1="41" x2="46" y2="52" stroke="#c8f060" stroke-width="1" stroke-dasharray="3,2"/>
-  <!-- tail label -->
-  <text x="286" y="38" fill="#60c8f0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">tail</text>
-  <line x1="286" y1="41" x2="286" y2="52" stroke="#60c8f0" stroke-width="1" stroke-dasharray="3,2"/>
+  <!-- TAIL label -->
+  <text x="700" y="30" fill="#6b6878" font-family="DM Mono,monospace" font-size="11" text-anchor="middle">tail</text>
+  <line x1="700" y1="35" x2="700" y2="58" stroke="#6b6878" stroke-width="1.5" stroke-dasharray="3,2"/>
 
-  <!-- node 42 -->
-  <rect x="16" y="52" width="60" height="36" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
-  <rect x="56" y="52" width="20" height="36" rx="0" fill="#141417" stroke="#2a2a32"/>
-  <text x="36" y="75" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">42</text>
-  <text x="66" y="75" fill="#6b6878" font-size="9" font-family="DM Mono,monospace" text-anchor="middle">→</text>
-  <line x1="76" y1="70" x2="106" y2="70" stroke="#6b6878" stroke-width="1.5" marker-end="url(#arr-b)"/>
-  <!-- node 17 -->
-  <rect x="106" y="52" width="60" height="36" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
-  <rect x="146" y="52" width="20" height="36" rx="0" fill="#141417" stroke="#2a2a32"/>
-  <text x="126" y="75" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">17</text>
-  <text x="156" y="75" fill="#6b6878" font-size="9" font-family="DM Mono,monospace" text-anchor="middle">→</text>
-  <line x1="166" y1="70" x2="196" y2="70" stroke="#6b6878" stroke-width="1.5" marker-end="url(#arr-b)"/>
-  <!-- node 85 -->
-  <rect x="196" y="52" width="60" height="36" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
-  <rect x="236" y="52" width="20" height="36" rx="0" fill="#141417" stroke="#2a2a32"/>
-  <text x="216" y="75" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">85</text>
-  <text x="246" y="75" fill="#6b6878" font-size="9" font-family="DM Mono,monospace" text-anchor="middle">∅</text>
-  <!-- null label -->
-  <text x="264" y="75" fill="#f06060" font-size="11" font-family="DM Mono,monospace">null</text>
+  <!-- NULL left -->
+  <text x="20" y="106" fill="#6b6878" font-family="DM Mono,monospace" font-size="11" text-anchor="middle">null</text>
 
-  <!-- ── CIRCULAR LL ── -->
-  <text x="16" y="126" fill="#6b6878" font-size="11" font-family="DM Mono,monospace" font-weight="500">CIRCULAR LINKED LIST  (loops back)</text>
+  <!-- NODE 1 (42) -->
+  <rect x="60" y="60" width="80" height="90" rx="6" fill="#1a1a1f" stroke="#2a2a32" stroke-width="1.5"/>
+  <text x="100" y="95" fill="#f0ede8" font-family="DM Mono,monospace" font-size="15" text-anchor="middle" font-weight="bold">42</text>
+  <rect x="60" y="108" width="80" height="22" rx="0" fill="rgba(200,240,96,0.08)" stroke="none"/>
+  <text x="100" y="123" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">next →</text>
+  <rect x="60" y="60" width="80" height="22" rx="0" fill="rgba(240,96,200,0.08)" stroke="none"/>
+  <text x="100" y="75" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">← prev</text>
 
-  <!-- head label -->
-  <text x="46" y="146" fill="#c8f060" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">head</text>
-  <line x1="46" y1="149" x2="46" y2="160" stroke="#c8f060" stroke-width="1" stroke-dasharray="3,2"/>
-  <!-- tail label -->
-  <text x="286" y="146" fill="#60c8f0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">tail</text>
-  <line x1="286" y1="149" x2="286" y2="160" stroke="#60c8f0" stroke-width="1" stroke-dasharray="3,2"/>
+  <!-- NODE 2 (17) -->
+  <rect x="260" y="60" width="80" height="90" rx="6" fill="#1a1a1f" stroke="#2a2a32" stroke-width="1.5"/>
+  <text x="300" y="95" fill="#f0ede8" font-family="DM Mono,monospace" font-size="15" text-anchor="middle" font-weight="bold">17</text>
+  <rect x="260" y="108" width="80" height="22" fill="rgba(200,240,96,0.08)"/>
+  <text x="300" y="123" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">next →</text>
+  <rect x="260" y="60" width="80" height="22" fill="rgba(240,96,200,0.08)"/>
+  <text x="300" y="75" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">← prev</text>
 
-  <!-- node 42 -->
-  <rect x="16" y="160" width="60" height="36" rx="5" fill="#1a1a1f" stroke="#c8f060" stroke-width="1.5"/>
-  <rect x="56" y="160" width="20" height="36" rx="0" fill="#141417" stroke="#c8f060" stroke-width="1.5"/>
-  <text x="36" y="183" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">42</text>
-  <line x1="76" y1="178" x2="106" y2="178" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-g)"/>
-  <!-- node 17 -->
-  <rect x="106" y="160" width="60" height="36" rx="5" fill="#1a1a1f" stroke="#c8f060" stroke-width="1.5"/>
-  <rect x="146" y="160" width="20" height="36" rx="0" fill="#141417" stroke="#c8f060" stroke-width="1.5"/>
-  <text x="126" y="183" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">17</text>
-  <line x1="166" y1="178" x2="196" y2="178" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-g)"/>
-  <!-- node 85 -->
-  <rect x="196" y="160" width="60" height="36" rx="5" fill="#1a1a1f" stroke="#c8f060" stroke-width="1.5"/>
-  <rect x="236" y="160" width="20" height="36" rx="0" fill="#141417" stroke="#c8f060" stroke-width="1.5"/>
-  <text x="216" y="183" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">85</text>
+  <!-- NODE 3 (85) -->
+  <rect x="460" y="60" width="80" height="90" rx="6" fill="#1a1a1f" stroke="#2a2a32" stroke-width="1.5"/>
+  <text x="500" y="95" fill="#f0ede8" font-family="DM Mono,monospace" font-size="15" text-anchor="middle" font-weight="bold">85</text>
+  <rect x="460" y="108" width="80" height="22" fill="rgba(200,240,96,0.08)"/>
+  <text x="500" y="123" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">next →</text>
+  <rect x="460" y="60" width="80" height="22" fill="rgba(240,96,200,0.08)"/>
+  <text x="500" y="75" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">← prev</text>
 
-  <!-- circular arc from tail back to head — goes below nodes -->
-  <path d="M256,196 Q256,240 46,240 Q36,240 36,196" stroke="#c8f060" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#arr-g)"/>
-  <text x="148" y="254" fill="#c8f060" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">↺  tail.next = head  (loops back)</text>
+  <!-- NODE 4 (63) -->
+  <rect x="660" y="60" width="80" height="90" rx="6" fill="#1a1a1f" stroke="#2a2a32" stroke-width="1.5"/>
+  <text x="700" y="95" fill="#f0ede8" font-family="DM Mono,monospace" font-size="15" text-anchor="middle" font-weight="bold">63</text>
+  <rect x="660" y="108" width="80" height="22" fill="rgba(200,240,96,0.08)"/>
+  <text x="700" y="123" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">null</text>
+  <rect x="660" y="60" width="80" height="22" fill="rgba(240,96,200,0.08)"/>
+  <text x="700" y="75" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">← prev</text>
+
+  <!-- null → node1 prev arrow (backward) -->
+  <line x1="32" y1="100" x2="58" y2="100" stroke="#f060c8" stroke-width="1.5" marker-start="url(#arrow-bwd)"/>
+
+  <!-- forward arrows (next) -->
+  <line x1="142" y1="119" x2="258" y2="119" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arrow-fwd)"/>
+  <line x1="342" y1="119" x2="458" y2="119" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arrow-fwd)"/>
+  <line x1="542" y1="119" x2="658" y2="119" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arrow-fwd)"/>
+
+  <!-- backward arrows (prev) -->
+  <line x1="258" y1="75" x2="142" y2="75" stroke="#f060c8" stroke-width="1.5" marker-end="url(#arrow-bwd)"/>
+  <line x1="458" y1="75" x2="342" y2="75" stroke="#f060c8" stroke-width="1.5" marker-end="url(#arrow-bwd)"/>
+  <line x1="658" y1="75" x2="542" y2="75" stroke="#f060c8" stroke-width="1.5" marker-end="url(#arrow-bwd)"/>
+
+  <!-- NULL right -->
+  <text x="792" y="125" fill="#6b6878" font-family="DM Mono,monospace" font-size="11" text-anchor="middle">null</text>
+  <line x1="742" y1="119" x2="782" y2="119" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arrow-fwd)"/>
+
+  <!-- legend -->
+  <line x1="60" y1="185" x2="90" y2="185" stroke="#c8f060" stroke-width="2"/>
+  <text x="96" y="189" fill="#c8f060" font-family="DM Mono,monospace" font-size="10">next pointer</text>
+  <line x1="200" y1="185" x2="230" y2="185" stroke="#f060c8" stroke-width="2"/>
+  <text x="236" y="189" fill="#f060c8" font-family="DM Mono,monospace" font-size="10">prev pointer</text>
 </svg>
-<figcaption>Top: Linear linked list — tail.next = null. Bottom: Circular linked list — tail.next = head (dashed arc below).</figcaption>
+<figcaption>Doubly linked list — each node has next (lime) and prev (pink) pointers</figcaption>
 </figure>
 
-<h3>Key Structural Differences vs Linear Linked List</h3>
+<h3>Node Class in C#</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">public class Node
+{
+    public int element;   // the data stored in this node
+    public Node next;     // reference to the node AHEAD
+    public Node prev;     // reference to the node BEHIND ← the new part!
+
+    public Node(int e, Node n, Node p)
+    {
+        element = e;
+        next    = n;
+        prev    = p;
+    }
+}</code></pre>
+</div>
+
+<h3>Comparison: Singly vs Doubly</h3>
 <table>
-  <thead><tr><th>Property</th><th>Linear Linked List</th><th>Circular Linked List</th></tr></thead>
+  <thead><tr><th>Feature</th><th>Singly Linked List</th><th>Doubly Linked List</th></tr></thead>
   <tbody>
-    <tr><td>Last node points to</td><td><code>null</code></td><td><code>head</code></td></tr>
-    <tr><td>Has a true "end"?</td><td>Yes</td><td>No — it loops</td></tr>
-    <tr><td>Single node's next</td><td><code>null</code></td><td>Itself</td></tr>
-    <tr><td>Traversal loop condition</td><td><code>p != null</code></td><td><code>i &lt; size</code> (use counter)</td></tr>
-    <tr><td>Infinite loop risk</td><td>No</td><td>Yes — if you forget the counter</td></tr>
+    <tr><td>Pointer per node</td><td>1 (next only)</td><td>2 (next + prev)</td></tr>
+    <tr><td>Memory per node</td><td>Less</td><td>More (+1 reference)</td></tr>
+    <tr><td>Forward traversal</td><td>✅ O(n)</td><td>✅ O(n)</td></tr>
+    <tr><td>Backward traversal</td><td>❌ Not possible</td><td>✅ O(n)</td></tr>
+    <tr><td>Delete at tail</td><td>❌ O(n) — must traverse</td><td>✅ O(1) — use tail.prev</td></tr>
+    <tr><td>Delete at head</td><td>✅ O(1)</td><td>✅ O(1)</td></tr>
   </tbody>
 </table>
+</section>
 
-<div class="callout warning">⚠️ You <strong>cannot</strong> use <code>while(p != null)</code> to traverse a circular linked list — tail.next points back to head, so p will never be null. You'll loop forever. Always use a counter: <code>while(i &lt; size)</code>.</div>
+<hr class="section-divider"/>
 
-<hr class="section-divider">
+<!-- ─── SECTION 2: ADDLAST ─── -->
+<section>
+<h2>2. addLast — Insert at End</h2>
 
-<!-- ── NODE CLASS ── -->
-<h2>🧱 The Node Class</h2>
-<div class="callout tip">💡 A node is a small container — it holds one piece of data and a forwarding address to the next container in line.</div>
+<div class="callout tip">💡 Creates a new node and stitches it onto the tail. Both the old tail's <code>next</code> and the new node's <code>prev</code> must be updated — that's the doubly-linked twist.</div>
 
 <div class="code-block">
   <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-  <pre><code class="language-csharp">class Node
+  <pre><code class="language-csharp">public void addLast(int e)
 {
-    public int element;   // stores the data value
-    public Node next;     // stores the reference (address) of the next node
-
-    public Node(int e, Node n)
+    Node newest = new Node(e, null, null);  // Step 1: create node
+    if (IsEmpty)
     {
-        element = e;
-        next = n;
+        head = newest;                       // Step 2a: empty list
+        tail = newest;
     }
+    else
+    {
+        tail.next    = newest;               // Step 3: old tail links forward
+        newest.prev  = tail;                 // Step 4: new node links backward ← KEY
+        tail         = newest;               // Step 5: advance tail
+    }
+    Size++;
 }</code></pre>
 </div>
 
 <figure>
-<svg viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg" width="100%">
+<svg viewBox="0 0 760 240" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
   <defs>
-    <marker id="arr-g2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L8,3 z" fill="#c8f060"/>
-    </marker>
+    <marker id="af2" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#c8f060"/></marker>
+    <marker id="ab2" markerWidth="8" markerHeight="8" refX="1" refY="3.5" orient="auto"><polygon points="8 0,0 3.5,8 7" fill="#f060c8"/></marker>
+    <marker id="anew" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#60f0a0"/></marker>
+    <marker id="anewb" markerWidth="8" markerHeight="8" refX="1" refY="3.5" orient="auto"><polygon points="8 0,0 3.5,8 7" fill="#60f0a0"/></marker>
   </defs>
-  <!-- Label -->
-  <text x="80" y="14" fill="#c8f060" font-size="9" font-family="DM Mono,monospace" text-anchor="middle">Node object</text>
-  <!-- Node box -->
-  <rect x="20" y="22" width="120" height="50" rx="6" fill="#1a1a1f" stroke="#c8f060" stroke-width="1.5"/>
-  <line x1="80" y1="22" x2="80" y2="72" stroke="#2a2a32" stroke-width="1"/>
-  <text x="50" y="43" fill="#f0ede8" font-size="14" font-family="DM Mono,monospace" text-anchor="middle" font-weight="500">42</text>
-  <text x="50" y="59" fill="#6b6878" font-size="9" font-family="DM Mono,monospace" text-anchor="middle">element</text>
-  <text x="100" y="43" fill="#60c8f0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">0x4F12</text>
-  <text x="100" y="59" fill="#6b6878" font-size="9" font-family="DM Mono,monospace" text-anchor="middle">next</text>
-  <!-- arrow to next node -->
-  <line x1="140" y1="47" x2="192" y2="47" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-g2)"/>
-  <!-- next node -->
-  <rect x="192" y="22" width="120" height="50" rx="6" fill="#1a1a1f" stroke="#2a2a32"/>
-  <line x1="252" y1="22" x2="252" y2="72" stroke="#2a2a32" stroke-width="1"/>
-  <text x="222" y="43" fill="#f0ede8" font-size="14" font-family="DM Mono,monospace" text-anchor="middle">17</text>
-  <text x="222" y="59" fill="#6b6878" font-size="9" font-family="DM Mono,monospace" text-anchor="middle">element</text>
-  <text x="272" y="43" fill="#60c8f0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">...</text>
-  <text x="272" y="59" fill="#6b6878" font-size="9" font-family="DM Mono,monospace" text-anchor="middle">next</text>
+
+  <!-- Labels row -->
+  <text x="110" y="22" fill="#c8f060" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">head</text>
+  <text x="310" y="22" fill="#6b6878" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">old tail</text>
+  <text x="520" y="22" fill="#60f0a0" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">newest (new tail)</text>
+
+  <!-- Node A -->
+  <rect x="60" y="30" width="100" height="90" rx="6" fill="#1a1a1f" stroke="#2a2a32" stroke-width="1.5"/>
+  <text x="110" y="68" fill="#f0ede8" font-family="DM Mono,monospace" font-size="14" text-anchor="middle" font-weight="bold">42</text>
+  <rect x="60" y="80" width="100" height="20" fill="rgba(200,240,96,0.08)"/>
+  <text x="110" y="94" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">next →</text>
+  <rect x="60" y="30" width="100" height="22" fill="rgba(240,96,200,0.08)"/>
+  <text x="110" y="45" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">null (prev)</text>
+
+  <!-- Node B (old tail) -->
+  <rect x="260" y="30" width="100" height="90" rx="6" fill="#1a1a1f" stroke="#c8f060" stroke-width="1.5"/>
+  <text x="310" y="68" fill="#f0ede8" font-family="DM Mono,monospace" font-size="14" text-anchor="middle" font-weight="bold">17</text>
+  <rect x="260" y="80" width="100" height="20" fill="rgba(200,240,96,0.08)"/>
+  <text x="310" y="94" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">next → (step 3)</text>
+  <rect x="260" y="30" width="100" height="22" fill="rgba(240,96,200,0.08)"/>
+  <text x="310" y="45" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">← prev</text>
+
+  <!-- Node C (new) -->
+  <rect x="460" y="30" width="100" height="90" rx="6" fill="#1a1a1f" stroke="#60f0a0" stroke-width="2"/>
+  <text x="510" y="68" fill="#60f0a0" font-family="DM Mono,monospace" font-size="14" text-anchor="middle" font-weight="bold">99</text>
+  <rect x="460" y="80" width="100" height="20" fill="rgba(96,240,160,0.08)"/>
+  <text x="510" y="94" fill="#60f0a0" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">null (next)</text>
+  <rect x="460" y="30" width="100" height="22" fill="rgba(96,240,160,0.08)"/>
+  <text x="510" y="45" fill="#60f0a0" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">← prev (step 4)</text>
+
+  <!-- existing forward arrow A→B -->
+  <line x1="162" y1="90" x2="258" y2="90" stroke="#c8f060" stroke-width="1.5" marker-end="url(#af2)"/>
+  <!-- new forward arrow B→C (step 3) -->
+  <line x1="362" y1="90" x2="458" y2="90" stroke="#60f0a0" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#anew)"/>
+  <!-- backward A←B -->
+  <line x1="258" y1="45" x2="162" y2="45" stroke="#f060c8" stroke-width="1.5" marker-end="url(#ab2)"/>
+  <!-- new backward C→B (step 4) -->
+  <line x1="458" y1="45" x2="362" y2="45" stroke="#60f0a0" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#anewb)"/>
+
+  <!-- step annotations -->
+  <text x="400" y="108" fill="#60f0a0" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">step 3: tail.next = newest</text>
+  <text x="400" y="34" fill="#60f0a0" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">step 4: newest.prev = tail</text>
+
+  <!-- tail arrow after -->
+  <text x="510" y="148" fill="#60f0a0" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">tail (step 5)</text>
+  <line x1="510" y1="143" x2="510" y2="122" stroke="#60f0a0" stroke-width="1.5" stroke-dasharray="3,2"/>
 </svg>
-<figcaption>Each Node object: left cell = element value, right cell = memory address (next reference) pointing to the next node.</figcaption>
+<figcaption>addLast — step 3 sets old tail's next; step 4 sets new node's prev; step 5 advances tail pointer</figcaption>
 </figure>
 
-<hr class="section-divider">
-
-<!-- ══════════════════════════════════════════ METHOD DIAGRAMS ══════ -->
-<h2>⚙️ Method-by-Method Visual Breakdown</h2>
-
-<!-- ─── addLast ─── -->
-<div class="method-section">
-  <div class="method-header">
-    <span class="method-name">addLast(int e)</span>
-    <span class="complexity-badge">Time: O(1)</span>
-    <span class="space-badge">Space: O(1)</span>
-    <span style="color:var(--muted);font-size:0.8rem;">Add a new node at the END of the list</span>
-  </div>
-  <div class="method-body">
-
-    <div class="callout tip">💡 Think of it like joining the back of a circular queue — you get in line behind the last person, and the last person's "next turn" card now points to you. The <strong>tail</strong> pointer moves to you.</div>
-
-    <div class="complexity-table">
-      <div class="complexity-cell">
-        <span class="c-label">Time — Empty case</span>
-        <span class="c-value" style="color:var(--success)">O(1)</span>
-        <span class="c-why">Direct pointer assignments only — no loop</span>
-      </div>
-      <div class="complexity-cell">
-        <span class="c-label">Time — Non-empty case</span>
-        <span class="c-value" style="color:var(--success)">O(1)</span>
-        <span class="c-why">We hold a direct <code>tail</code> reference — no traversal needed</span>
-      </div>
-      <div class="complexity-cell">
-        <span class="c-label">Space</span>
-        <span class="c-value" style="color:var(--accent)">O(1)</span>
-        <span class="c-why">One new node allocated regardless of list size</span>
-      </div>
-    </div>
-
-    <h3>Case 1 — Empty List</h3>
-    <p style="color:#ccc;font-size:0.85rem;margin-bottom:0.8rem;">When size = 0, the new node becomes both head and tail, and its <code>next</code> points to <strong>itself</strong> (circular).</p>
-
-    <figure>
-    <svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg" width="100%">
-      <defs>
-        <marker id="arr-al1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#c8f060"/></marker>
-        <marker id="arr-al2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#60f0a0"/></marker>
-      </defs>
-
-      <!-- BEFORE -->
-      <text x="10" y="18" fill="#6b6878" font-size="11" font-family="DM Mono,monospace">BEFORE  addLast(7)</text>
-      <rect x="10" y="30" width="140" height="40" rx="5" fill="#141417" stroke="#2a2a32"/>
-      <text x="80" y="55" fill="#6b6878" font-size="12" font-family="DM Mono,monospace" text-anchor="middle">[ empty list ]</text>
-      <text x="10" y="85" fill="#6b6878" font-size="10" font-family="DM Mono,monospace">head = null,  tail = null,  size = 0</text>
-
-      <!-- ARROW between states -->
-      <text x="175" y="55" fill="#c8f060" font-size="18" font-family="DM Mono,monospace">→</text>
-
-      <!-- AFTER -->
-      <text x="210" y="18" fill="#60f0a0" font-size="11" font-family="DM Mono,monospace">AFTER  addLast(7)</text>
-
-      <!-- head / tail labels above node -->
-      <text x="285" y="38" fill="#c8f060" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">head</text>
-      <text x="340" y="38" fill="#60c8f0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">tail</text>
-      <line x1="285" y1="41" x2="285" y2="50" stroke="#c8f060" stroke-width="1.2" stroke-dasharray="3,2"/>
-      <line x1="340" y1="41" x2="340" y2="50" stroke="#60c8f0" stroke-width="1.2" stroke-dasharray="3,2"/>
-
-      <!-- Single node -->
-      <rect x="255" y="50" width="100" height="44" rx="6" fill="#1a1a1f" stroke="#60f0a0" stroke-width="2"/>
-      <line x1="305" y1="50" x2="305" y2="94" stroke="#2a2a32"/>
-      <text x="280" y="77" fill="#f0ede8" font-size="14" font-family="DM Mono,monospace" text-anchor="middle">7</text>
-      <text x="330" y="77" fill="#60c8f0" font-size="9" font-family="DM Mono,monospace" text-anchor="middle">self↩</text>
-
-      <!-- self-loop arrow — goes right then curves back below -->
-      <path d="M355,72 Q400,72 400,100 Q400,130 355,130 Q310,130 310,95" stroke="#c8f060" stroke-width="1.5" fill="none" stroke-dasharray="4,3" marker-end="url(#arr-al1)"/>
-
-      <!-- Steps callout -->
-      <rect x="420" y="30" width="268" height="108" rx="6" fill="#141417" stroke="#2a2a32"/>
-      <text x="435" y="52" fill="#c8f060" font-size="10" font-family="DM Mono,monospace">Steps (isEmpty = true):</text>
-      <text x="435" y="72" fill="#ccc" font-size="10" font-family="DM Mono,monospace">① newest.next = newest  (self)</text>
-      <text x="435" y="92" fill="#ccc" font-size="10" font-family="DM Mono,monospace">② head = newest</text>
-      <text x="435" y="112" fill="#ccc" font-size="10" font-family="DM Mono,monospace">③ tail = newest</text>
-      <text x="435" y="132" fill="#ccc" font-size="10" font-family="DM Mono,monospace">④ size++  →  size = 1</text>
-    </svg>
-    <figcaption>addLast on empty list — the single node points to itself, forming a one-node circle.</figcaption>
-    </figure>
-
-    <h3>Case 2 — Non-Empty List</h3>
-    <p style="color:#ccc;font-size:0.85rem;margin-bottom:0.8rem;">The new node slots in between the current tail and head, then becomes the new tail.</p>
-
-    <figure>
-    <svg viewBox="0 0 760 270" xmlns="http://www.w3.org/2000/svg" width="100%">
-      <defs>
-        <marker id="arr-al3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#c8f060"/></marker>
-        <marker id="arr-al4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#60f0a0"/></marker>
-        <marker id="arr-al5" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#f060c8"/></marker>
-      </defs>
-
-      <!-- ── BEFORE row ── -->
-      <text x="10" y="18" fill="#6b6878" font-size="11" font-family="DM Mono,monospace">BEFORE  addLast(12)  — list: 7 → 4</text>
-
-      <!-- Labels row -->
-      <text x="46" y="38" fill="#c8f060" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">head</text>
-      <line x1="46" y1="41" x2="46" y2="52" stroke="#c8f060" stroke-width="1" stroke-dasharray="3,2"/>
-      <text x="156" y="38" fill="#60c8f0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">tail</text>
-      <line x1="156" y1="41" x2="156" y2="52" stroke="#60c8f0" stroke-width="1" stroke-dasharray="3,2"/>
-
-      <!-- node 7 -->
-      <rect x="10" y="52" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
-      <text x="46" y="77" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">7</text>
-      <line x1="82" y1="72" x2="108" y2="72" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-al3)"/>
-
-      <!-- node 4 (tail) -->
-      <rect x="108" y="52" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#60c8f0" stroke-width="1.5"/>
-      <text x="144" y="77" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">4</text>
-
-      <!-- circular arc back — goes above, clear of labels -->
-      <path d="M180,72 Q205,52 155,30 Q100,12 46,30 Q22,38 22,52" stroke="#c8f060" stroke-width="1.5" fill="none" stroke-dasharray="4,3" marker-end="url(#arr-al3)"/>
-
-      <!-- BIG ARROW -->
-      <text x="215" y="80" fill="#c8f060" font-size="20">→</text>
-
-      <!-- ── AFTER row ── -->
-      <text x="255" y="18" fill="#60f0a0" font-size="11" font-family="DM Mono,monospace">AFTER  addLast(12)</text>
-
-      <!-- Labels row -->
-      <text x="291" y="38" fill="#c8f060" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">head</text>
-      <line x1="291" y1="41" x2="291" y2="52" stroke="#c8f060" stroke-width="1" stroke-dasharray="3,2"/>
-      <text x="511" y="38" fill="#60f0a0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">new tail</text>
-      <line x1="511" y1="41" x2="511" y2="52" stroke="#60f0a0" stroke-width="1" stroke-dasharray="3,2"/>
-
-      <!-- node 7 -->
-      <rect x="255" y="52" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
-      <text x="291" y="77" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">7</text>
-      <line x1="327" y1="72" x2="352" y2="72" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-al3)"/>
-
-      <!-- node 4 -->
-      <rect x="352" y="52" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
-      <text x="388" y="77" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">4</text>
-      <!-- pink arrow: old tail → new node -->
-      <line x1="424" y1="72" x2="449" y2="72" stroke="#f060c8" stroke-width="2" marker-end="url(#arr-al5)"/>
-
-      <!-- NEW node 12 (new tail) -->
-      <rect x="449" y="52" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#60f0a0" stroke-width="2"/>
-      <text x="485" y="77" fill="#60f0a0" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">12</text>
-
-      <!-- circular arc back from new tail -->
-      <path d="M521,72 Q548,52 485,30 Q420,12 291,30 Q268,38 268,52" stroke="#c8f060" stroke-width="1.5" fill="none" stroke-dasharray="4,3" marker-end="url(#arr-al3)"/>
-
-      <!-- Step annotations — well below nodes -->
-      <rect x="10" y="115" width="730" height="142" rx="6" fill="#141417" stroke="#2a2a32"/>
-      <text x="26" y="138" fill="#c8f060" font-size="10" font-family="DM Mono,monospace">Steps (isEmpty = false):</text>
-      <text x="26" y="162" fill="#ccc" font-size="10" font-family="DM Mono,monospace">① newest.next = tail.next   →  newest.next = head  (new node links to head)</text>
-      <text x="26" y="186" fill="#f060c8" font-size="10" font-family="DM Mono,monospace">② tail.next = newest        →  old tail (4) now links to new node (12)  ← pink arrow above</text>
-      <text x="26" y="210" fill="#ccc" font-size="10" font-family="DM Mono,monospace">③ tail = newest             →  tail pointer advances to (12)</text>
-      <text x="26" y="234" fill="#ccc" font-size="10" font-family="DM Mono,monospace">④ size++</text>
-    </svg>
-    <figcaption>addLast inserts a new tail. The pink arrow shows the critical link update: old tail → new node. The dashed arc is the circular wrap-back.</figcaption>
-    </figure>
-
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-      <pre><code class="language-csharp">public void addLast(int e)
-{
-    Node newest = new Node(e, null);
-    if(IsEmpty())
-    {
-        newest.next = newest;   // points to itself — one-node circle
-        head = newest;
-    }
-    else
-    {
-        newest.next = tail.next;  // new node → head (since tail.next = head)
-        tail.next = newest;       // old tail → new node
-    }
-    tail = newest;   // tail always moves to the new node
-    size++;
-}</code></pre>
-    </div>
-  </div>
+<div class="complexity-row">
+  <span class="badge time">⏱ Time: O(1)</span>
+  <span class="badge space">📦 Space: O(1)</span>
 </div>
+<p>All operations are direct pointer assignments — no traversal needed.</p>
+</section>
 
-<!-- ─── addFirst ─── -->
-<div class="method-section">
-  <div class="method-header">
-    <span class="method-name">addFirst(int e)</span>
-    <span class="complexity-badge">Time: O(1)</span>
-    <span class="space-badge">Space: O(1)</span>
-    <span style="color:var(--muted);font-size:0.8rem;">Add a new node at the BEGINNING of the list</span>
-  </div>
-  <div class="method-body">
+<hr class="section-divider"/>
 
-    <div class="callout tip">💡 Imagine cutting in line at the front of a circular queue — tail's "next turn" card needs to be rewritten to point to you, and you point to whoever used to be first.</div>
+<!-- ─── SECTION 3: ADDFIRST ─── -->
+<section>
+<h2>3. addFirst — Insert at Beginning</h2>
 
-    <div class="complexity-table">
-      <div class="complexity-cell">
-        <span class="c-label">Time</span>
-        <span class="c-value" style="color:var(--success)">O(1)</span>
-        <span class="c-why">Both <code>head</code> and <code>tail</code> pointers are directly accessible — no traversal</span>
-      </div>
-      <div class="complexity-cell">
-        <span class="c-label">Space</span>
-        <span class="c-value" style="color:var(--accent)">O(1)</span>
-        <span class="c-why">One new node allocated, three pointer assignments</span>
-      </div>
-      <div class="complexity-cell">
-        <span class="c-label">Key constraint</span>
-        <span class="c-value" style="color:var(--accent3)">Order matters</span>
-        <span class="c-why"><code>tail.next = newest</code> must run before <code>head = newest</code> — or you lose the head reference</span>
-      </div>
-    </div>
+<div class="callout tip">💡 Mirror image of addLast. The new node goes before head. Update <code>newest.next = head</code> then <code>head.prev = newest</code>, then move head.</div>
 
-    <h3>Non-Empty Case (the key scenario)</h3>
-
-    <figure>
-    <svg viewBox="0 0 760 340" xmlns="http://www.w3.org/2000/svg" width="100%">
-      <defs>
-        <marker id="arr-af1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#c8f060"/></marker>
-        <marker id="arr-af2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#f060c8"/></marker>
-        <marker id="arr-af3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#60f0a0"/></marker>
-      </defs>
-
-      <!-- ══ BEFORE ROW ══ -->
-      <text x="10" y="18" fill="#6b6878" font-size="11" font-family="DM Mono,monospace">BEFORE  addFirst(23)  — list: 7 → 4 → 12</text>
-
-      <!-- pointer labels above nodes -->
-      <text x="46" y="40" fill="#c8f060" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">head</text>
-      <line x1="46" y1="43" x2="46" y2="54" stroke="#c8f060" stroke-width="1" stroke-dasharray="3,2"/>
-      <text x="246" y="40" fill="#60c8f0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">tail</text>
-      <line x1="246" y1="43" x2="246" y2="54" stroke="#60c8f0" stroke-width="1" stroke-dasharray="3,2"/>
-
-      <!-- node 7 -->
-      <rect x="10" y="54" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#c8f060" stroke-width="1.5"/>
-      <text x="46" y="79" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">7</text>
-      <line x1="82" y1="74" x2="110" y2="74" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-af1)"/>
-
-      <!-- node 4 -->
-      <rect x="110" y="54" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
-      <text x="146" y="79" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">4</text>
-      <line x1="182" y1="74" x2="210" y2="74" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-af1)"/>
-
-      <!-- node 12 (tail) -->
-      <rect x="210" y="54" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#60c8f0" stroke-width="1.5"/>
-      <text x="246" y="79" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">12</text>
-      <!-- circular arc below -->
-      <path d="M282,74 Q282,110 46,110 Q28,110 28,94" stroke="#c8f060" stroke-width="1.5" fill="none" stroke-dasharray="4,3" marker-end="url(#arr-af1)"/>
-
-      <!-- ══ AFTER ROW ══ -->
-      <text x="10" y="140" fill="#60f0a0" font-size="11" font-family="DM Mono,monospace">AFTER  addFirst(23)</text>
-
-      <!-- pointer labels above nodes -->
-      <text x="46" y="162" fill="#60f0a0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">new head</text>
-      <line x1="46" y1="165" x2="46" y2="176" stroke="#60f0a0" stroke-width="1" stroke-dasharray="3,2"/>
-      <text x="346" y="162" fill="#60c8f0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">tail</text>
-      <line x1="346" y1="165" x2="346" y2="176" stroke="#60c8f0" stroke-width="1" stroke-dasharray="3,2"/>
-
-      <!-- NEW node 23 -->
-      <rect x="10" y="176" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#60f0a0" stroke-width="2"/>
-      <text x="46" y="201" fill="#60f0a0" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">23</text>
-      <line x1="82" y1="196" x2="110" y2="196" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-af1)"/>
-
-      <!-- node 7 -->
-      <rect x="110" y="176" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
-      <text x="146" y="201" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">7</text>
-      <line x1="182" y1="196" x2="210" y2="196" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-af1)"/>
-
-      <!-- node 4 -->
-      <rect x="210" y="176" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
-      <text x="246" y="201" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">4</text>
-      <line x1="282" y1="196" x2="310" y2="196" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-af1)"/>
-
-      <!-- node 12 (tail) -->
-      <rect x="310" y="176" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#60c8f0" stroke-width="1.5"/>
-      <text x="346" y="201" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">12</text>
-      <!-- pink arc: tail.next → new head (23) -->
-      <path d="M382,196 Q382,232 46,232 Q28,232 28,216" stroke="#f060c8" stroke-width="2" fill="none" stroke-dasharray="4,3" marker-end="url(#arr-af2)"/>
-      <text x="215" y="248" fill="#f060c8" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">← ① tail.next = newest  (pink arc — tail must point to new head)</text>
-
-      <!-- Steps box -->
-      <rect x="10" y="262" width="740" height="68" rx="6" fill="#141417" stroke="#2a2a32"/>
-      <text x="26" y="282" fill="#c8f060" font-size="10" font-family="DM Mono,monospace">Steps (isEmpty = false):</text>
-      <text x="26" y="300" fill="#f060c8" font-size="10" font-family="DM Mono,monospace">① tail.next = newest   →  tail (12) links to new node (23) — do this FIRST or you lose the reference</text>
-      <text x="26" y="318" fill="#ccc" font-size="10" font-family="DM Mono,monospace">② newest.next = head   →  new node links to old head (7)       ③ head = newest   ④ size++</text>
-    </svg>
-    <figcaption>addFirst: the new node becomes the head. tail.next must be updated first (pink arc) to preserve the circular link — doing it after moving head loses the reference.</figcaption>
-    </figure>
-
-    <div class="callout warning">⚠️ The order matters: <strong>tail.next = newest</strong> must happen BEFORE <strong>head = newest</strong>. Once you move head, you lose the reference needed to write tail.next correctly.</div>
-
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-      <pre><code class="language-csharp">public void addFirst(int e)
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">public void addFirst(int e)
 {
-    Node newest = new Node(e, null);
-    if(IsEmpty())
+    Node newest = new Node(e, null, null);
+    if (IsEmpty)
     {
-        newest.next = newest;  // single node circle
         head = newest;
         tail = newest;
     }
     else
     {
-        tail.next = newest;    // ① tail must link to new head
-        newest.next = head;    // ② new node links to old head
-        head = newest;         // ③ head advances to new node
+        newest.next  = head;      // Step 3: new node links forward to old head
+        head.prev    = newest;    // Step 4: old head links backward to new node ← KEY
+        head         = newest;    // Step 5: advance head pointer
     }
-    size++;
+    Size++;
 }</code></pre>
-    </div>
-  </div>
 </div>
 
-<!-- ─── addAnywhere ─── -->
-<div class="method-section">
-  <div class="method-header">
-    <span class="method-name">addAnywhere(int e, int pos)</span>
-    <span class="complexity-badge">Time: O(n)</span>
-    <span class="space-badge">Space: O(1)</span>
-    <span style="color:var(--muted);font-size:0.8rem;">Insert at any position in the middle</span>
-  </div>
-  <div class="method-body">
+<figure>
+<svg viewBox="0 0 660 200" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+  <defs>
+    <marker id="af3" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#c8f060"/></marker>
+    <marker id="ab3" markerWidth="8" markerHeight="8" refX="1" refY="3.5" orient="auto"><polygon points="8 0,0 3.5,8 7" fill="#f060c8"/></marker>
+    <marker id="an3" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#60f0a0"/></marker>
+    <marker id="anb3" markerWidth="8" markerHeight="8" refX="1" refY="3.5" orient="auto"><polygon points="8 0,0 3.5,8 7" fill="#60f0a0"/></marker>
+  </defs>
 
-    <div class="callout tip">💡 Like inserting a new player into a specific seat at the poker table — you stop one seat BEFORE the target, break the link, and wire the new player in between.</div>
+  <text x="110" y="18" fill="#60f0a0" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">newest → head (step 5)</text>
+  <text x="320" y="18" fill="#6b6878" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">old head</text>
+  <text x="530" y="18" fill="#6b6878" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">tail</text>
 
-    <div class="complexity-table">
-      <div class="complexity-cell">
-        <span class="c-label">Time — Best case (pos ≈ 1)</span>
-        <span class="c-value" style="color:var(--accent)">O(1)</span>
-        <span class="c-why">Loop runs 0 iterations if inserting near the head</span>
-      </div>
-      <div class="complexity-cell">
-        <span class="c-label">Time — Worst case (pos ≈ n)</span>
-        <span class="c-value" style="color:var(--danger)">O(n)</span>
-        <span class="c-why">Must traverse up to <code>pos−1</code> nodes to reach insertion point</span>
-      </div>
-      <div class="complexity-cell">
-        <span class="c-label">Space</span>
-        <span class="c-value" style="color:var(--accent)">O(1)</span>
-        <span class="c-why">One new node + two pointer rewires regardless of n</span>
-      </div>
-    </div>
+  <!-- new node -->
+  <rect x="60" y="28" width="100" height="90" rx="6" fill="#1a1a1f" stroke="#60f0a0" stroke-width="2"/>
+  <text x="110" y="66" fill="#60f0a0" font-family="DM Mono,monospace" font-size="14" text-anchor="middle" font-weight="bold">5</text>
+  <rect x="60" y="78" width="100" height="20" fill="rgba(96,240,160,0.08)"/>
+  <text x="110" y="92" fill="#60f0a0" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">next → (step 3)</text>
+  <rect x="60" y="28" width="100" height="22" fill="rgba(96,240,160,0.08)"/>
+  <text x="110" y="43" fill="#60f0a0" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">null (prev)</text>
 
-    <figure>
-    <svg viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg" width="100%">
-      <defs>
-        <marker id="arr-aa1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#c8f060"/></marker>
-        <marker id="arr-aa2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#f060c8"/></marker>
-        <marker id="arr-aa3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#60f0a0"/></marker>
-      </defs>
+  <!-- old head -->
+  <rect x="270" y="28" width="100" height="90" rx="6" fill="#1a1a1f" stroke="#c8f060" stroke-width="1.5"/>
+  <text x="320" y="66" fill="#f0ede8" font-family="DM Mono,monospace" font-size="14" text-anchor="middle" font-weight="bold">42</text>
+  <rect x="270" y="78" width="100" height="20" fill="rgba(200,240,96,0.08)"/>
+  <text x="320" y="92" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">next →</text>
+  <rect x="270" y="28" width="100" height="22" fill="rgba(240,96,200,0.08)"/>
+  <text x="320" y="43" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">← prev (step 4)</text>
 
-      <!-- ══ BEFORE ROW ══ -->
-      <text x="10" y="18" fill="#6b6878" font-size="11" font-family="DM Mono,monospace">addAnywhere(99, 3)  — insert at position 3  — list: 7 → 4 → 12 → 8</text>
-      <text x="10" y="36" fill="#6b6878" font-size="10" font-family="DM Mono,monospace">BEFORE:</text>
+  <!-- tail -->
+  <rect x="480" y="28" width="100" height="90" rx="6" fill="#1a1a1f" stroke="#2a2a32" stroke-width="1.5"/>
+  <text x="530" y="66" fill="#f0ede8" font-family="DM Mono,monospace" font-size="14" text-anchor="middle" font-weight="bold">17</text>
+  <rect x="480" y="78" width="100" height="20" fill="rgba(200,240,96,0.08)"/>
+  <text x="530" y="92" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">null</text>
+  <rect x="480" y="28" width="100" height="22" fill="rgba(240,96,200,0.08)"/>
+  <text x="530" y="43" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">← prev</text>
 
-      <!-- pos / pointer labels -->
-      <text x="46" y="52" fill="#c8f060" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">pos=1</text>
-      <text x="136" y="52" fill="#f060c8" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">p stops</text>
-      <text x="136" y="62" fill="#f060c8" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">here (pos=2)</text>
-      <text x="226" y="52" fill="#6b6878" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">pos=3</text>
-      <text x="316" y="52" fill="#60c8f0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">tail</text>
+  <!-- new→oldhead next (step 3) -->
+  <line x1="162" y1="89" x2="268" y2="89" stroke="#60f0a0" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#an3)"/>
+  <!-- oldhead→new prev (step 4) -->
+  <line x1="268" y1="43" x2="162" y2="43" stroke="#60f0a0" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#anb3)"/>
+  <!-- existing B→C forward -->
+  <line x1="372" y1="89" x2="478" y2="89" stroke="#c8f060" stroke-width="1.5" marker-end="url(#af3)"/>
+  <!-- existing C→B backward -->
+  <line x1="478" y1="43" x2="372" y2="43" stroke="#f060c8" stroke-width="1.5" marker-end="url(#ab3)"/>
+</svg>
+<figcaption>addFirst — new node's next points to old head (step 3); old head's prev points back (step 4); head moves (step 5)</figcaption>
+</figure>
 
-      <!-- nodes BEFORE -->
-      <rect x="10" y="66" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#c8f060" stroke-width="1.5"/>
-      <text x="46" y="91" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">7</text>
-      <line x1="82" y1="86" x2="100" y2="86" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-aa1)"/>
+<div class="complexity-row">
+  <span class="badge time">⏱ Time: O(1)</span>
+  <span class="badge space">📦 Space: O(1)</span>
+</div>
+</section>
 
-      <rect x="100" y="66" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#f060c8" stroke-width="2"/>
-      <text x="136" y="91" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">4</text>
-      <!-- dashed old link (will be overwritten) -->
-      <line x1="172" y1="86" x2="190" y2="86" stroke="#f060c8" stroke-width="2" stroke-dasharray="4,2"/>
+<hr class="section-divider"/>
 
-      <rect x="190" y="66" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
-      <text x="226" y="91" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">12</text>
-      <line x1="262" y1="86" x2="280" y2="86" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-aa1)"/>
+<!-- ─── SECTION 4: ADDANYWHERE ─── -->
+<section>
+<h2>4. addAnywhere — Insert at Any Position</h2>
 
-      <rect x="280" y="66" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#60c8f0" stroke-width="1.5"/>
-      <text x="316" y="91" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">8</text>
-      <path d="M352,86 Q352,118 46,118 Q28,118 28,106" stroke="#c8f060" stroke-width="1.5" fill="none" stroke-dasharray="3,3" marker-end="url(#arr-aa1)"/>
+<div class="callout tip">💡 Walk to the node just <em>before</em> the target position. Then do a 4-way pointer swap to insert the new node between <code>p</code> and <code>p.next</code>.</div>
 
-      <!-- ══ AFTER ROW ══ -->
-      <text x="10" y="148" fill="#60f0a0" font-size="10" font-family="DM Mono,monospace">AFTER  (99 inserted at pos 3):</text>
+<div class="callout warning">⚠️ Order matters. Set <code>newest.next</code> and <code>p.next.prev</code> BEFORE changing <code>p.next</code> — otherwise you lose the reference to the node after <code>p</code>.</div>
 
-      <!-- labels -->
-      <text x="46" y="166" fill="#c8f060" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">head</text>
-      <text x="226" y="166" fill="#60f0a0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">new node</text>
-      <text x="406" y="166" fill="#60c8f0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">tail</text>
-
-      <!-- nodes AFTER -->
-      <rect x="10" y="176" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#c8f060" stroke-width="1.5"/>
-      <text x="46" y="201" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">7</text>
-      <line x1="82" y1="196" x2="100" y2="196" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-aa1)"/>
-
-      <rect x="100" y="176" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#f060c8" stroke-width="1.5"/>
-      <text x="136" y="201" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">4</text>
-      <!-- pink: p.next = newest -->
-      <line x1="172" y1="196" x2="190" y2="196" stroke="#f060c8" stroke-width="2" marker-end="url(#arr-aa2)"/>
-
-      <!-- NEW node 99 -->
-      <rect x="190" y="176" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#60f0a0" stroke-width="2"/>
-      <text x="226" y="201" fill="#60f0a0" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">99</text>
-      <!-- green: newest.next = old p.next -->
-      <line x1="262" y1="196" x2="280" y2="196" stroke="#60f0a0" stroke-width="2" marker-end="url(#arr-aa3)"/>
-
-      <rect x="280" y="176" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
-      <text x="316" y="201" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">12</text>
-      <line x1="352" y1="196" x2="370" y2="196" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-aa1)"/>
-
-      <rect x="370" y="176" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#60c8f0" stroke-width="1.5"/>
-      <text x="406" y="201" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">8</text>
-      <path d="M442,196 Q442,228 46,228 Q28,228 28,216" stroke="#c8f060" stroke-width="1.5" fill="none" stroke-dasharray="3,3" marker-end="url(#arr-aa1)"/>
-
-      <!-- Step key box -->
-      <rect x="10" y="248" width="740" height="72" rx="6" fill="#141417" stroke="#2a2a32"/>
-      <text x="26" y="270" fill="#c8f060" font-size="10" font-family="DM Mono,monospace">KEY ORDER:  traverse while(i &lt; pos-1) — p stops one node BEFORE the insertion point</text>
-      <text x="26" y="292" fill="#60f0a0" font-size="10" font-family="DM Mono,monospace">① newest.next = p.next   (green — link FORWARD first, so you don't lose the chain)</text>
-      <text x="26" y="312" fill="#f060c8" font-size="10" font-family="DM Mono,monospace">② p.next = newest        (pink  — then p points to new node. Swapping order = lost nodes!)</text>
-    </svg>
-    <figcaption>addAnywhere: traverse to pos−1, then wire newest in. Order is critical — link forward before overwriting the existing link.</figcaption>
-    </figure>
-
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-      <pre><code class="language-csharp">public void addAnywhere(int e, int pos)
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">public void addAnywhere(int e, int position)
 {
-    if(pos <= 0 || pos >= size)
+    if (position <= 0 || position >= Size)
     {
-        Console.WriteLine("Invalid Entry");
+        Console.WriteLine("Invalid position. Use addFirst for 0, addLast for end.");
         return;
     }
-    Node newest = new Node(e, null);
+
+    Node newest = new Node(e, null, null);
     Node p = head;
-    int i = 1;
-    while(i < pos - 1)   // traverse to node BEFORE insertion point
-    {
+
+    for (int i = 1; i < position - 1; i++)   // traverse to node BEFORE target
         p = p.next;
-        i++;
-    }
-    newest.next = p.next;  // ① new node → what p used to point to
-    p.next = newest;       // ② p → new node
-    size++;
+
+    // 4-way pointer swap:
+    newest.next  = p.next;      // Step A: new node → next node
+    p.next.prev  = newest;      // Step B: next node ← new node (backward)
+    p.next       = newest;      // Step C: prev node → new node
+    newest.prev  = p;           // Step D: new node ← prev node (backward)
+
+    Size++;
 }</code></pre>
-    </div>
-  </div>
 </div>
 
-<!-- ─── removeFirst ─── -->
-<div class="method-section">
-  <div class="method-header">
-    <span class="method-name">removeFirst()</span>
-    <span class="complexity-badge">Time: O(1)</span>
-    <span class="space-badge">Space: O(1)</span>
-    <span style="color:var(--muted);font-size:0.8rem;">Remove the HEAD node</span>
-  </div>
-  <div class="method-body">
+<figure>
+<svg viewBox="0 0 760 270" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+  <defs>
+    <marker id="af4" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#c8f060"/></marker>
+    <marker id="ab4" markerWidth="8" markerHeight="8" refX="1" refY="3.5" orient="auto"><polygon points="8 0,0 3.5,8 7" fill="#f060c8"/></marker>
+    <marker id="an4" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#60f0a0"/></marker>
+    <marker id="anb4" markerWidth="8" markerHeight="8" refX="1" refY="3.5" orient="auto"><polygon points="8 0,0 3.5,8 7" fill="#60f0a0"/></marker>
+  </defs>
 
-    <div class="callout tip">💡 The first player leaves the table. The player who used to be second becomes the new first. But the last player still needs to know who to pass to — so tail.next must be updated to the new head.</div>
+  <text x="110" y="20" fill="#6b6878" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">p (prev node)</text>
+  <text x="380" y="20" fill="#60f0a0" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">newest</text>
+  <text x="640" y="20" fill="#6b6878" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">p.next (next node)</text>
 
-    <div class="complexity-table">
-      <div class="complexity-cell">
-        <span class="c-label">Time</span>
-        <span class="c-value" style="color:var(--success)">O(1)</span>
-        <span class="c-why">Uses only <code>head</code> and <code>tail</code> — no iteration needed</span>
-      </div>
-      <div class="complexity-cell">
-        <span class="c-label">Space</span>
-        <span class="c-value" style="color:var(--accent)">O(1)</span>
-        <span class="c-why">No extra memory — just pointer reassignments</span>
-      </div>
-      <div class="complexity-cell">
-        <span class="c-label">Edge case cost</span>
-        <span class="c-value" style="color:var(--accent3)">O(1)</span>
-        <span class="c-why">Even the empty-list cleanup (<code>head=null, tail=null</code>) is constant time</span>
-      </div>
-    </div>
+  <!-- p -->
+  <rect x="60" y="30" width="100" height="90" rx="6" fill="#1a1a1f" stroke="#2a2a32" stroke-width="1.5"/>
+  <text x="110" y="68" fill="#f0ede8" font-family="DM Mono,monospace" font-size="14" text-anchor="middle" font-weight="bold">42</text>
+  <rect x="60" y="80" width="100" height="20" fill="rgba(200,240,96,0.08)"/>
+  <text x="110" y="94" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">next → (step C)</text>
+  <rect x="60" y="30" width="100" height="22" fill="rgba(240,96,200,0.08)"/>
+  <text x="110" y="45" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">← prev</text>
 
-    <figure>
-    <svg viewBox="0 0 760 310" xmlns="http://www.w3.org/2000/svg" width="100%">
-      <defs>
-        <marker id="arr-rf1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#c8f060"/></marker>
-        <marker id="arr-rf2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#f06060"/></marker>
-      </defs>
+  <!-- newest -->
+  <rect x="330" y="30" width="100" height="90" rx="6" fill="#1a1a1f" stroke="#60f0a0" stroke-width="2"/>
+  <text x="380" y="68" fill="#60f0a0" font-family="DM Mono,monospace" font-size="14" text-anchor="middle" font-weight="bold">99</text>
+  <rect x="330" y="80" width="100" height="20" fill="rgba(96,240,160,0.08)"/>
+  <text x="380" y="94" fill="#60f0a0" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">next → (step A)</text>
+  <rect x="330" y="30" width="100" height="22" fill="rgba(96,240,160,0.08)"/>
+  <text x="380" y="45" fill="#60f0a0" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">← prev (step D)</text>
 
-      <text x="10" y="18" fill="#6b6878" font-size="11" font-family="DM Mono,monospace">removeFirst()  — list: 7 → 4 → 12 → 8</text>
+  <!-- p.next -->
+  <rect x="590" y="30" width="100" height="90" rx="6" fill="#1a1a1f" stroke="#2a2a32" stroke-width="1.5"/>
+  <text x="640" y="68" fill="#f0ede8" font-family="DM Mono,monospace" font-size="14" text-anchor="middle" font-weight="bold">17</text>
+  <rect x="590" y="80" width="100" height="20" fill="rgba(200,240,96,0.08)"/>
+  <text x="640" y="94" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">next →</text>
+  <rect x="590" y="30" width="100" height="22" fill="rgba(240,96,200,0.08)"/>
+  <text x="640" y="45" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">← prev (step B)</text>
 
-      <!-- ══ BEFORE ROW ══ -->
-      <text x="10" y="36" fill="#6b6878" font-size="10" font-family="DM Mono,monospace">BEFORE:</text>
+  <!-- Step A: newest.next → p.next  (green arc over top) -->
+  <path d="M 432 65 Q 510 10 588 65" fill="none" stroke="#60f0a0" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#an4)"/>
+  <text x="510" y="12" fill="#60f0a0" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">A</text>
 
-      <!-- labels -->
-      <text x="46" y="52" fill="#f06060" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">DELETE</text>
-      <text x="136" y="52" fill="#c8f060" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">head</text>
-      <text x="316" y="52" fill="#60c8f0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">tail</text>
-      <line x1="136" y1="55" x2="136" y2="66" stroke="#c8f060" stroke-width="1" stroke-dasharray="3,2"/>
-      <line x1="316" y1="55" x2="316" y2="66" stroke="#60c8f0" stroke-width="1" stroke-dasharray="3,2"/>
+  <!-- Step B: p.next.prev → newest (green arc below) -->
+  <path d="M 588 115 Q 510 165 432 115" fill="none" stroke="#60f0a0" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#anb4)"/>
+  <text x="510" y="175" fill="#60f0a0" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">B</text>
 
-      <!-- node 7 — to delete -->
-      <rect x="10" y="66" width="72" height="40" rx="5" fill="rgba(240,96,96,0.1)" stroke="#f06060" stroke-width="2"/>
-      <text x="46" y="91" fill="#f06060" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">7</text>
-      <line x1="82" y1="86" x2="100" y2="86" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-rf1)"/>
+  <!-- Step C: p.next → newest (green forward) -->
+  <line x1="162" y1="90" x2="328" y2="90" stroke="#60f0a0" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#an4)"/>
+  <text x="245" y="108" fill="#60f0a0" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">C</text>
 
-      <!-- node 4 (new head after) -->
-      <rect x="100" y="66" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#c8f060" stroke-width="1.5"/>
-      <text x="136" y="91" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">4</text>
-      <line x1="172" y1="86" x2="190" y2="86" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-rf1)"/>
+  <!-- Step D: newest.prev → p (green backward) -->
+  <line x1="328" y1="44" x2="162" y2="44" stroke="#60f0a0" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#anb4)"/>
+  <text x="245" y="38" fill="#60f0a0" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">D</text>
 
-      <!-- node 12 -->
-      <rect x="190" y="66" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
-      <text x="226" y="91" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">12</text>
-      <line x1="262" y1="86" x2="280" y2="86" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-rf1)"/>
+  <!-- Step order key -->
+  <text x="60" y="200" fill="#6b6878" font-family="DM Mono,monospace" font-size="9">Order: A → B → C → D  (A and B must come before C!)</text>
+</svg>
+<figcaption>addAnywhere — 4 pointer updates; A and B must happen before C to avoid losing p.next</figcaption>
+</figure>
 
-      <!-- node 8 (tail) -->
-      <rect x="280" y="66" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#60c8f0" stroke-width="1.5"/>
-      <text x="316" y="91" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">8</text>
-      <!-- old circular arc — red, points to node 7 which will be deleted -->
-      <path d="M352,86 Q352,118 46,118 Q28,118 28,106" stroke="#f06060" stroke-width="1.5" fill="none" stroke-dasharray="4,3" marker-end="url(#arr-rf2)"/>
-      <text x="200" y="132" fill="#f06060" font-size="9" font-family="DM Mono,monospace" text-anchor="middle">tail.next currently → node 7 (must be rewired)</text>
-
-      <!-- ══ AFTER ROW ══ -->
-      <text x="10" y="158" fill="#60f0a0" font-size="10" font-family="DM Mono,monospace">AFTER:</text>
-
-      <!-- labels -->
-      <text x="46" y="174" fill="#60f0a0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">new head</text>
-      <text x="226" y="174" fill="#60c8f0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">tail</text>
-      <line x1="46" y1="177" x2="46" y2="188" stroke="#60f0a0" stroke-width="1" stroke-dasharray="3,2"/>
-      <line x1="226" y1="177" x2="226" y2="188" stroke="#60c8f0" stroke-width="1" stroke-dasharray="3,2"/>
-
-      <rect x="10" y="188" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#60f0a0" stroke-width="2"/>
-      <text x="46" y="213" fill="#60f0a0" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">4</text>
-      <line x1="82" y1="208" x2="100" y2="208" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-rf1)"/>
-
-      <rect x="100" y="188" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
-      <text x="136" y="213" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">12</text>
-      <line x1="172" y1="208" x2="190" y2="208" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-rf1)"/>
-
-      <rect x="190" y="188" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#60c8f0" stroke-width="1.5"/>
-      <text x="226" y="213" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">8</text>
-      <!-- updated circular arc → new head (node 4) -->
-      <path d="M262,208 Q262,240 46,240 Q28,240 28,228" stroke="#c8f060" stroke-width="1.5" fill="none" stroke-dasharray="4,3" marker-end="url(#arr-rf1)"/>
-
-      <!-- Steps -->
-      <rect x="10" y="256" width="740" height="48" rx="6" fill="#141417" stroke="#2a2a32"/>
-      <text x="26" y="276" fill="#ccc" font-size="10" font-family="DM Mono,monospace">① e = head.element   ② tail.next = head.next  (rewire tail to new head — BEFORE moving head)   ③ head = head.next</text>
-      <text x="26" y="296" fill="#ccc" font-size="10" font-family="DM Mono,monospace">④ size--   ⑤ if size == 0: head = null, tail = null  (cleanup — prevents dangling reference)</text>
-    </svg>
-    <figcaption>removeFirst: tail.next must be updated BEFORE moving head — it needs the value of head.next (the new head), not head itself.</figcaption>
-    </figure>
-
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-      <pre><code class="language-csharp">public int removeFirst()
-{
-    if(IsEmpty()) { Console.WriteLine("Empty"); return -1; }
-    int e = head.element;          // save value to return
-    tail.next = head.next;         // rewire tail to skip deleted head
-    head = head.next;              // advance head
-    size--;
-    if(IsEmpty()) { head = null; tail = null; }  // cleanup if now empty
-    return e;
-}</code></pre>
-    </div>
-  </div>
+<div class="complexity-row">
+  <span class="badge time">⏱ Time: O(n) — traversal to position</span>
+  <span class="badge space">📦 Space: O(1)</span>
 </div>
+</section>
 
-<!-- ─── removeLast ─── -->
-<div class="method-section">
-  <div class="method-header">
-    <span class="method-name">removeLast()</span>
-    <span class="complexity-badge">Time: O(n)</span>
-    <span class="space-badge">Space: O(1)</span>
-    <span style="color:var(--muted);font-size:0.8rem;">Remove the TAIL node</span>
-  </div>
-  <div class="method-body">
+<hr class="section-divider"/>
 
-    <div class="callout tip">💡 The last player at the table leaves. But you can't jump straight to the last player — you have to walk around the entire table to find the second-to-last person and tell them "you're the new last now, point back to head."</div>
-    <div class="callout warning">⚠️ We can't navigate backwards in a singly-linked list, so we must traverse to <strong>size−1</strong> (the node just before tail) and update from there.</div>
+<!-- ─── SECTION 5: REMOVEFIRST ─── -->
+<section>
+<h2>5. removeFirst — Delete from Beginning</h2>
 
-    <div class="complexity-table">
-      <div class="complexity-cell">
-        <span class="c-label">Time</span>
-        <span class="c-value" style="color:var(--danger)">O(n)</span>
-        <span class="c-why">Must walk from <code>head</code> to node at <code>size−1</code> — no shortcut exists in a singly-linked list</span>
-      </div>
-      <div class="complexity-cell">
-        <span class="c-label">Space</span>
-        <span class="c-value" style="color:var(--accent)">O(1)</span>
-        <span class="c-why">Only a traversal pointer <code>p</code> and counter — no extra allocation</span>
-      </div>
-      <div class="complexity-cell">
-        <span class="c-label">Why not O(1)?</span>
-        <span class="c-value" style="color:var(--accent3)">No prev ptr</span>
-        <span class="c-why">A doubly-linked list would give O(1) via <code>tail.prev</code> — singly-linked pays the traversal cost</span>
-      </div>
-    </div>
+<div class="callout tip">💡 Move head to <code>head.next</code>, then set the new head's <code>prev</code> to null — cutting the backward link to the deleted node.</div>
 
-    <figure>
-    <svg viewBox="0 0 760 310" xmlns="http://www.w3.org/2000/svg" width="100%">
-      <defs>
-        <marker id="arr-rl1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#c8f060"/></marker>
-        <marker id="arr-rl2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#f06060"/></marker>
-        <marker id="arr-rl3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#60f0a0"/></marker>
-      </defs>
-
-      <text x="10" y="18" fill="#6b6878" font-size="11" font-family="DM Mono,monospace">removeLast()  — list: 7 → 4 → 12 → 8  (traverse to size-1 = pos 3)</text>
-
-      <!-- BEFORE ROW -->
-      <text x="10" y="36" fill="#6b6878" font-size="10" font-family="DM Mono,monospace">BEFORE:</text>
-
-      <text x="46" y="52" fill="#c8f060" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">head  i=1</text>
-      <text x="136" y="52" fill="#6b6878" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">i=2</text>
-      <text x="226" y="52" fill="#f060c8" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">p stops (i=3)</text>
-      <text x="316" y="52" fill="#f06060" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">DELETE (tail)</text>
-      <line x1="46" y1="55" x2="46" y2="66" stroke="#c8f060" stroke-width="1" stroke-dasharray="3,2"/>
-      <line x1="226" y1="55" x2="226" y2="66" stroke="#f060c8" stroke-width="1" stroke-dasharray="3,2"/>
-      <line x1="316" y1="55" x2="316" y2="66" stroke="#f06060" stroke-width="1" stroke-dasharray="3,2"/>
-
-      <rect x="10" y="66" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#c8f060" stroke-width="1.5"/>
-      <text x="46" y="91" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">7</text>
-      <line x1="82" y1="86" x2="100" y2="86" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-rl1)"/>
-
-      <rect x="100" y="66" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
-      <text x="136" y="91" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">4</text>
-      <line x1="172" y1="86" x2="190" y2="86" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-rl1)"/>
-
-      <rect x="190" y="66" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#f060c8" stroke-width="2"/>
-      <text x="226" y="91" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">12</text>
-      <line x1="262" y1="86" x2="280" y2="86" stroke="#f06060" stroke-width="2" stroke-dasharray="4,2"/>
-
-      <rect x="280" y="66" width="72" height="40" rx="5" fill="rgba(240,96,96,0.1)" stroke="#f06060" stroke-width="2"/>
-      <text x="316" y="91" fill="#f06060" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">8</text>
-      <path d="M352,86 Q352,118 46,118 Q28,118 28,106" stroke="#c8f060" stroke-width="1.5" fill="none" stroke-dasharray="3,3" marker-end="url(#arr-rl1)"/>
-
-      <!-- AFTER ROW -->
-      <text x="10" y="148" fill="#60f0a0" font-size="10" font-family="DM Mono,monospace">AFTER:</text>
-
-      <text x="46" y="166" fill="#c8f060" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">head</text>
-      <text x="226" y="166" fill="#60f0a0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">new tail</text>
-      <line x1="46" y1="169" x2="46" y2="180" stroke="#c8f060" stroke-width="1" stroke-dasharray="3,2"/>
-      <line x1="226" y1="169" x2="226" y2="180" stroke="#60f0a0" stroke-width="1" stroke-dasharray="3,2"/>
-
-      <rect x="10" y="180" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#c8f060" stroke-width="1.5"/>
-      <text x="46" y="205" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">7</text>
-      <line x1="82" y1="200" x2="100" y2="200" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-rl1)"/>
-
-      <rect x="100" y="180" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
-      <text x="136" y="205" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">4</text>
-      <line x1="172" y1="200" x2="190" y2="200" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-rl1)"/>
-
-      <rect x="190" y="180" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#60f0a0" stroke-width="2"/>
-      <text x="226" y="205" fill="#60f0a0" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">12</text>
-      <path d="M262,200 Q262,232 46,232 Q28,232 28,220" stroke="#c8f060" stroke-width="1.5" fill="none" stroke-dasharray="3,3" marker-end="url(#arr-rl1)"/>
-
-      <!-- Steps box -->
-      <rect x="10" y="252" width="740" height="48" rx="6" fill="#141417" stroke="#2a2a32"/>
-      <text x="26" y="272" fill="#ccc" font-size="10" font-family="DM Mono,monospace">① Traverse while(i &lt; size-1) → stop at pos 3 (node 12).  ② tail = p (node 12 is new tail).  ③ p = p.next (p = old tail node 8).</text>
-      <text x="26" y="292" fill="#ccc" font-size="10" font-family="DM Mono,monospace">④ tail.next = head  (restore circular link!).  ⑤ e = p.element  (save 8 to return).  ⑥ size--.</text>
-    </svg>
-    <figcaption>removeLast traverses to size−1, makes that node the new tail, and sets tail.next = head to preserve the circular link.</figcaption>
-    </figure>
-
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-      <pre><code class="language-csharp">public int removeLast()
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">public int removeFirst()
 {
-    if (IsEmpty()) { Console.WriteLine("Empty"); return -1; }
-    Node p = head;
-    int i = 1;
-    while(i < length() - 1)  // stop at second-to-last node
+    if (IsEmpty)
     {
-        p = p.next;
-        i++;
-    }
-    tail = p;           // p is the new tail
-    p = p.next;         // p now = old tail
-    tail.next = head;   // critical: new tail must point back to head (circular!)
-    int e = p.element;  // save deleted value
-    size--;
-    return e;
-}</code></pre>
-    </div>
-  </div>
-</div>
-
-<!-- ─── removeAnywhere ─── -->
-<div class="method-section">
-  <div class="method-header">
-    <span class="method-name">removeAnywhere(int position)</span>
-    <span class="complexity-badge">Time: O(n)</span>
-    <span class="space-badge">Space: O(1)</span>
-    <span style="color:var(--muted);font-size:0.8rem;">Remove a node at any middle position</span>
-  </div>
-  <div class="method-body">
-
-    <div class="callout tip">💡 Removing a player mid-table — you stop at the player before the one leaving, and rewire that player's "pass to" card to skip over the one leaving.</div>
-
-    <div class="complexity-table">
-      <div class="complexity-cell">
-        <span class="c-label">Time — Best case</span>
-        <span class="c-value" style="color:var(--accent)">O(1)</span>
-        <span class="c-why">If position ≈ 1, the loop body barely runs</span>
-      </div>
-      <div class="complexity-cell">
-        <span class="c-label">Time — Worst case</span>
-        <span class="c-value" style="color:var(--danger)">O(n)</span>
-        <span class="c-why">Must traverse up to <code>pos−1</code> nodes; worst case is near the tail</span>
-      </div>
-      <div class="complexity-cell">
-        <span class="c-label">Space</span>
-        <span class="c-value" style="color:var(--accent)">O(1)</span>
-        <span class="c-why">One traversal pointer + one saved return value — no allocation</span>
-      </div>
-    </div>
-
-    <figure>
-    <svg viewBox="0 0 760 180" xmlns="http://www.w3.org/2000/svg" width="100%">
-      <defs>
-        <marker id="arr-ra1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#c8f060"/></marker>
-        <marker id="arr-ra2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#60f0a0"/></marker>
-      </defs>
-
-      <text x="10" y="18" fill="#6b6878" font-size="11" font-family="DM Mono,monospace">removeAnywhere(3)  — list: 7 → 4 → 12 → 8  (remove position 3 = node 12)</text>
-
-      <!-- BEFORE -->
-      <rect x="10" y="30" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#c8f060" stroke-width="1.5"/>
-      <text x="46" y="55" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">7</text>
-      <text x="12" y="28" fill="#c8f060" font-size="9" font-family="DM Mono,monospace">head</text>
-      <line x1="82" y1="50" x2="100" y2="50" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-ra1)"/>
-
-      <!-- p stops at node 4 (pos=2, the node BEFORE target) -->
-      <rect x="100" y="30" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#f060c8" stroke-width="2"/>
-      <text x="136" y="55" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">4</text>
-      <text x="102" y="28" fill="#f060c8" font-size="9" font-family="DM Mono,monospace">p stops here</text>
-      <!-- p.next.next skip arrow (big jump) -->
-      <path d="M172,50 Q200,10 270,30" stroke="#60f0a0" stroke-width="2" fill="none" marker-end="url(#arr-ra2)"/>
-      <text x="195" y="15" fill="#60f0a0" font-size="9" font-family="DM Mono,monospace">p.next = p.next.next (skip!)</text>
-
-      <!-- node 12 (target to delete) -->
-      <rect x="190" y="30" width="72" height="40" rx="5" fill="rgba(240,96,96,0.12)" stroke="#f06060" stroke-width="2"/>
-      <text x="226" y="55" fill="#f06060" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">12</text>
-      <text x="192" y="28" fill="#f06060" font-size="9" font-family="DM Mono,monospace">← DELETE</text>
-      <line x1="262" y1="50" x2="280" y2="50" stroke="#f06060" stroke-width="1.5" stroke-dasharray="5,3"/>
-
-      <!-- node 8 (tail) -->
-      <rect x="280" y="30" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#60c8f0" stroke-width="1.5"/>
-      <text x="316" y="55" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">8</text>
-      <text x="282" y="28" fill="#60c8f0" font-size="9" font-family="DM Mono,monospace">tail</text>
-      <path d="M352,50 Q378,10 210,10 Q90,10 30,30" stroke="#c8f060" stroke-width="1.5" fill="none" stroke-dasharray="3,3" marker-end="url(#arr-ra1)"/>
-
-      <!-- Steps box -->
-      <rect x="420" y="25" width="330" height="110" rx="6" fill="#141417" stroke="#2a2a32"/>
-      <text x="435" y="45" fill="#c8f060" font-size="10" font-family="DM Mono,monospace">Steps:</text>
-      <text x="435" y="63" fill="#ccc" font-size="10" font-family="DM Mono,monospace">① Traverse while(i &lt; pos-1) → p stops at node 4</text>
-      <text x="435" y="81" fill="#ccc" font-size="10" font-family="DM Mono,monospace">② e = p.next.element   → save 12</text>
-      <text x="435" y="99" fill="#60f0a0" font-size="10" font-family="DM Mono,monospace">③ p.next = p.next.next → 4 now points to 8 (skip 12)</text>
-      <text x="435" y="117" fill="#ccc" font-size="10" font-family="DM Mono,monospace">④ size--  ⑤ return e</text>
-    </svg>
-    <figcaption>removeAnywhere: the trick is the single pointer re-assignment — p.next = p.next.next — which bypasses the target node entirely.</figcaption>
-    </figure>
-
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-      <pre><code class="language-csharp">public int removeAnywhere(int position)
-{
-    if(position <= 0 || position >= size - 1)
-    {
-        Console.WriteLine("Invalid Position");
+        Console.WriteLine("List is Empty.");
         return -1;
     }
-    Node p = head;
-    int i = 1;
-    while(i < position - 1)  // stop one node BEFORE target
+
+    int e    = head.element;     // save value to return
+    head     = head.next;        // advance head to next node
+    Size--;
+
+    if (IsEmpty)
     {
-        p = p.next;
-        i++;
+        tail = null;             // list is now empty — clear tail too
+        head = null;
     }
-    int e = p.next.element;     // save the value being deleted
-    p.next = p.next.next;       // skip over the deleted node
-    size--;
+    else
+    {
+        head.prev = null;        // ← KEY: sever backward link to deleted node
+    }
+
     return e;
 }</code></pre>
-    </div>
-  </div>
 </div>
 
-<!-- ─── display ─── -->
-<div class="method-section">
-  <div class="method-header">
-    <span class="method-name">display()</span>
-    <span class="complexity-badge">Time: O(n)</span>
-    <span class="space-badge">Space: O(1)</span>
-    <span style="color:var(--muted);font-size:0.8rem;">Traverse and print all elements</span>
-  </div>
-  <div class="method-body">
+<figure>
+<svg viewBox="0 0 660 200" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+  <defs>
+    <marker id="af5" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#c8f060"/></marker>
+    <marker id="ab5" markerWidth="8" markerHeight="8" refX="1" refY="3.5" orient="auto"><polygon points="8 0,0 3.5,8 7" fill="#f060c8"/></marker>
+  </defs>
 
-    <div class="callout warning">⚠️ <strong>Cannot use <code>while(p != null)</code></strong> — p will never be null in a circular list. The loop uses a <strong>counter</strong>: <code>while(i &lt; length())</code>.</div>
+  <!-- deleted node (greyed) -->
+  <rect x="40" y="40" width="100" height="80" rx="6" fill="#141417" stroke="#2a2a32" stroke-width="1.5" opacity="0.5"/>
+  <text x="90" y="76" fill="#6b6878" font-family="DM Mono,monospace" font-size="13" text-anchor="middle">42</text>
+  <line x1="40" y1="40" x2="140" y2="120" stroke="#f06060" stroke-width="1.5"/>
+  <line x1="140" y1="40" x2="40" y2="120" stroke="#f06060" stroke-width="1.5"/>
+  <text x="90" y="140" fill="#f06060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">deleted</text>
 
-    <div class="complexity-table">
-      <div class="complexity-cell">
-        <span class="c-label">Time</span>
-        <span class="c-value" style="color:var(--danger)">O(n)</span>
-        <span class="c-why">Every node is visited exactly once — proportional to list size</span>
-      </div>
-      <div class="complexity-cell">
-        <span class="c-label">Space</span>
-        <span class="c-value" style="color:var(--accent)">O(1)</span>
-        <span class="c-why">Only a pointer <code>p</code> and counter <code>i</code> — no extra structures</span>
-      </div>
-      <div class="complexity-cell">
-        <span class="c-label">Infinite loop risk</span>
-        <span class="c-value" style="color:var(--danger)">High</span>
-        <span class="c-why">Without the counter, <code>p != null</code> never triggers — loop runs forever</span>
-      </div>
-    </div>
+  <!-- new head -->
+  <rect x="260" y="40" width="100" height="80" rx="6" fill="#1a1a1f" stroke="#c8f060" stroke-width="2"/>
+  <text x="310" y="78" fill="#f0ede8" font-family="DM Mono,monospace" font-size="13" text-anchor="middle" font-weight="bold">17</text>
+  <rect x="260" y="96" width="100" height="20" fill="rgba(200,240,96,0.08)"/>
+  <text x="310" y="110" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">next →</text>
+  <rect x="260" y="40" width="100" height="22" fill="rgba(240,96,200,0.08)"/>
+  <text x="310" y="55" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">null ← (set to null)</text>
+  <text x="310" y="158" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">new head</text>
 
-    <figure>
-    <svg viewBox="0 0 760 190" xmlns="http://www.w3.org/2000/svg" width="100%">
-      <defs>
-        <marker id="arr-d1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#c8f060"/></marker>
-        <marker id="arr-d2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#60c8f0"/></marker>
-      </defs>
+  <!-- next node -->
+  <rect x="480" y="40" width="100" height="80" rx="6" fill="#1a1a1f" stroke="#2a2a32" stroke-width="1.5"/>
+  <text x="530" y="78" fill="#f0ede8" font-family="DM Mono,monospace" font-size="13" text-anchor="middle" font-weight="bold">85</text>
+  <rect x="480" y="96" width="100" height="20" fill="rgba(200,240,96,0.08)"/>
+  <text x="530" y="110" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">next →</text>
+  <rect x="480" y="40" width="100" height="22" fill="rgba(240,96,200,0.08)"/>
+  <text x="530" y="55" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">← prev</text>
 
-      <!-- list: 7 → 4 → 12 → 8 -->
-      <rect x="20" y="30" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#c8f060" stroke-width="2"/>
-      <text x="56" y="55" fill="#c8f060" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">7</text>
-      <line x1="92" y1="50" x2="115" y2="50" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-d1)"/>
-      <text x="56" y="25" fill="#c8f060" font-size="9" font-family="DM Mono,monospace" text-anchor="middle">p, i=0</text>
-      <!-- print indicator -->
-      <text x="56" y="83" fill="#60f0a0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">print 7</text>
-      <line x1="56" y1="70" x2="56" y2="80" stroke="#60f0a0" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="362" y1="106" x2="478" y2="106" stroke="#c8f060" stroke-width="1.5" marker-end="url(#af5)"/>
+  <line x1="478" y1="55" x2="362" y2="55" stroke="#f060c8" stroke-width="1.5" marker-end="url(#ab5)"/>
 
-      <rect x="115" y="30" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
-      <text x="151" y="55" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">4</text>
-      <line x1="187" y1="50" x2="210" y2="50" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-d1)"/>
-      <text x="151" y="25" fill="#6b6878" font-size="9" font-family="DM Mono,monospace" text-anchor="middle">i=1</text>
-      <text x="151" y="83" fill="#60f0a0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">print 4</text>
-      <line x1="151" y1="70" x2="151" y2="80" stroke="#60f0a0" stroke-width="1" stroke-dasharray="3,2"/>
+  <!-- head.prev = null label -->
+  <text x="200" y="35" fill="#f06060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">head.prev = null ✓</text>
+</svg>
+<figcaption>removeFirst — old head crossed out; new head's prev pointer set to null</figcaption>
+</figure>
 
-      <rect x="210" y="30" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#2a2a32"/>
-      <text x="246" y="55" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">12</text>
-      <line x1="282" y1="50" x2="305" y2="50" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-d1)"/>
-      <text x="246" y="25" fill="#6b6878" font-size="9" font-family="DM Mono,monospace" text-anchor="middle">i=2</text>
-      <text x="246" y="83" fill="#60f0a0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">print 12</text>
-      <line x1="246" y1="70" x2="246" y2="80" stroke="#60f0a0" stroke-width="1" stroke-dasharray="3,2"/>
+<div class="complexity-row">
+  <span class="badge time">⏱ Time: O(1)</span>
+  <span class="badge space">📦 Space: O(1)</span>
+</div>
+</section>
 
-      <rect x="305" y="30" width="72" height="40" rx="5" fill="#1a1a1f" stroke="#60c8f0" stroke-width="1.5"/>
-      <text x="341" y="55" fill="#f0ede8" font-size="13" font-family="DM Mono,monospace" text-anchor="middle">8</text>
-      <text x="305" y="25" fill="#6b6878" font-size="9" font-family="DM Mono,monospace">i=3</text>
-      <text x="341" y="83" fill="#60f0a0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">print 8</text>
-      <line x1="341" y1="70" x2="341" y2="80" stroke="#60f0a0" stroke-width="1" stroke-dasharray="3,2"/>
+<hr class="section-divider"/>
 
-      <!-- circular arc -->
-      <path d="M377,50 Q410,10 250,10 Q100,10 40,30" stroke="#c8f060" stroke-width="1.5" fill="none" stroke-dasharray="4,3" marker-end="url(#arr-d1)"/>
+<!-- ─── SECTION 6: REMOVELAST ─── -->
+<section>
+<h2>6. removeLast — Delete from End</h2>
 
-      <!-- STOP indicator -->
-      <rect x="410" y="32" width="115" height="36" rx="5" fill="rgba(240,96,96,0.07)" stroke="#f06060" stroke-width="1.5"/>
-      <text x="467" y="54" fill="#f06060" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">i=4 → STOP</text>
-      <text x="467" y="66" fill="#6b6878" font-size="9" font-family="DM Mono,monospace" text-anchor="middle">4 &lt; 4 = false</text>
+<div class="callout tip">💡 This is the BIG win of doubly linked lists. Instead of traversing the whole list to find the second-last node, you just use <code>tail.prev</code> directly — instant O(1) access.</div>
 
-      <!-- Counter box -->
-      <rect x="10" y="105" width="740" height="75" rx="6" fill="#141417" stroke="#2a2a32"/>
-      <text x="25" y="125" fill="#c8f060" font-size="10" font-family="DM Mono,monospace">Traversal (size = 4):</text>
-      <text x="25" y="143" fill="#ccc" font-size="10" font-family="DM Mono,monospace">i=0: print 7,  p=p.next,  i++   →   i=1: print 4,  p=p.next,  i++   →   i=2: print 12,  p=p.next,  i++   →   i=3: print 8,  p=p.next,  i++</text>
-      <text x="25" y="161" fill="#f06060" font-size="10" font-family="DM Mono,monospace">i=4: while(4 &lt; 4) = FALSE → loop exits. Without size counter, p.next would go back to node 7 and loop forever!</text>
-      <text x="25" y="175" fill="#60f0a0" font-size="10" font-family="DM Mono,monospace">Output:  7,   4,   12,   8</text>
-    </svg>
-    <figcaption>display() uses a counter i, not a null check. When i reaches size, the loop exits before the circular wrap causes an infinite loop.</figcaption>
-    </figure>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">public int removeLast()
+{
+    if (IsEmpty)
+    {
+        Console.WriteLine("List is Empty.");
+        return -1;
+    }
 
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-      <pre><code class="language-csharp">public void display()
+    int e   = tail.element;   // save value to return
+    tail    = tail.prev;      // ← KEY: jump directly to second-last node
+    tail.next = null;          // sever forward link to deleted node
+    Size--;
+
+    if (IsEmpty)
+    {
+        head = null;
+        tail = null;
+    }
+
+    return e;
+}</code></pre>
+</div>
+
+<figure>
+<svg viewBox="0 0 660 200" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+  <defs>
+    <marker id="af6" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#c8f060"/></marker>
+    <marker id="ab6" markerWidth="8" markerHeight="8" refX="1" refY="3.5" orient="auto"><polygon points="8 0,0 3.5,8 7" fill="#f060c8"/></marker>
+  </defs>
+
+  <!-- head -->
+  <rect x="40" y="40" width="100" height="80" rx="6" fill="#1a1a1f" stroke="#2a2a32" stroke-width="1.5"/>
+  <text x="90" y="78" fill="#f0ede8" font-family="DM Mono,monospace" font-size="13" text-anchor="middle" font-weight="bold">17</text>
+  <rect x="40" y="96" width="100" height="20" fill="rgba(200,240,96,0.08)"/>
+  <text x="90" y="110" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">next →</text>
+  <rect x="40" y="40" width="100" height="22" fill="rgba(240,96,200,0.08)"/>
+  <text x="90" y="55" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">null (prev)</text>
+
+  <!-- new tail -->
+  <rect x="260" y="40" width="100" height="80" rx="6" fill="#1a1a1f" stroke="#c8f060" stroke-width="2"/>
+  <text x="310" y="78" fill="#f0ede8" font-family="DM Mono,monospace" font-size="13" text-anchor="middle" font-weight="bold">85</text>
+  <rect x="260" y="96" width="100" height="20" fill="rgba(200,240,96,0.08)"/>
+  <text x="310" y="110" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">null ← (set to null)</text>
+  <rect x="260" y="40" width="100" height="22" fill="rgba(240,96,200,0.08)"/>
+  <text x="310" y="55" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">← prev</text>
+  <text x="310" y="155" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">new tail</text>
+
+  <!-- deleted tail -->
+  <rect x="480" y="40" width="100" height="80" rx="6" fill="#141417" stroke="#2a2a32" stroke-width="1.5" opacity="0.5"/>
+  <text x="530" y="78" fill="#6b6878" font-family="DM Mono,monospace" font-size="13" text-anchor="middle">63</text>
+  <line x1="480" y1="40" x2="580" y2="120" stroke="#f06060" stroke-width="1.5"/>
+  <line x1="580" y1="40" x2="480" y2="120" stroke="#f06060" stroke-width="1.5"/>
+  <text x="530" y="140" fill="#f06060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">deleted</text>
+
+  <line x1="142" y1="106" x2="258" y2="106" stroke="#c8f060" stroke-width="1.5" marker-end="url(#af6)"/>
+  <line x1="258" y1="55" x2="142" y2="55" stroke="#f060c8" stroke-width="1.5" marker-end="url(#ab6)"/>
+
+  <!-- prev pointer arrow from new tail to deleted (before deletion) -->
+  <path d="M 362 55 Q 440 20 478 55" fill="none" stroke="#f060c8" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.4"/>
+  <text x="430" y="15" fill="#6b6878" font-family="DM Mono,monospace" font-size="8" text-anchor="middle">tail.prev used here</text>
+
+  <text x="310" y="178" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">tail.next = null ✓</text>
+</svg>
+<figcaption>removeLast — tail.prev gives instant access to second-last node; no traversal needed (unlike singly linked list)</figcaption>
+</figure>
+
+<div class="complexity-row">
+  <span class="badge time">⏱ Time: O(1) ← major advantage over singly linked!</span>
+  <span class="badge space">📦 Space: O(1)</span>
+</div>
+</section>
+
+<hr class="section-divider"/>
+
+<!-- ─── SECTION 7: REMOVEANYWHERE ─── -->
+<section>
+<h2>7. removeAnywhere — Delete at Any Position</h2>
+
+<div class="callout tip">💡 Walk to the node just before target. Then bypass the target node by redirecting both <code>p.next</code> and <code>p.next.next.prev</code> around it.</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">public int removeAnywhere(int position)
+{
+    if (position <= 0 || position >= Size)
+    {
+        Console.WriteLine("Use removeFirst or removeLast for ends.");
+        return -1;
+    }
+
+    Node p = head;
+    for (int i = 1; i < position - 1; i++)    // traverse to node BEFORE target
+        p = p.next;
+
+    int e    = p.next.element;    // save deleted element
+    p.next   = p.next.next;       // bypass target node (forward link)
+    p.next.prev = p;              // ← KEY: fix backward link of successor node
+
+    Size--;
+    return e;
+}</code></pre>
+</div>
+
+<figure>
+<svg viewBox="0 0 760 230" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+  <defs>
+    <marker id="af7" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#c8f060"/></marker>
+    <marker id="ab7" markerWidth="8" markerHeight="8" refX="1" refY="3.5" orient="auto"><polygon points="8 0,0 3.5,8 7" fill="#f060c8"/></marker>
+    <marker id="ar7" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#f06060"/></marker>
+    <marker id="arb7" markerWidth="8" markerHeight="8" refX="1" refY="3.5" orient="auto"><polygon points="8 0,0 3.5,8 7" fill="#f06060"/></marker>
+  </defs>
+
+  <!-- p -->
+  <text x="110" y="20" fill="#6b6878" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">p</text>
+  <rect x="60" y="28" width="100" height="80" rx="6" fill="#1a1a1f" stroke="#2a2a32" stroke-width="1.5"/>
+  <text x="110" y="66" fill="#f0ede8" font-family="DM Mono,monospace" font-size="13" text-anchor="middle" font-weight="bold">42</text>
+  <rect x="60" y="88" width="100" height="18" fill="rgba(200,240,96,0.08)"/>
+  <text x="110" y="100" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">next → (skip!)</text>
+  <rect x="60" y="28" width="100" height="20" fill="rgba(240,96,200,0.08)"/>
+  <text x="110" y="42" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">← prev</text>
+
+  <!-- target (deleted) -->
+  <text x="310" y="20" fill="#f06060" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">p.next (target)</text>
+  <rect x="260" y="28" width="100" height="80" rx="6" fill="#1a1a1f" stroke="#f06060" stroke-width="1.5" opacity="0.6"/>
+  <text x="310" y="66" fill="#f06060" font-family="DM Mono,monospace" font-size="13" text-anchor="middle">17</text>
+  <line x1="260" y1="28" x2="360" y2="108" stroke="#f06060" stroke-width="1.5" opacity="0.6"/>
+  <line x1="360" y1="28" x2="260" y2="108" stroke="#f06060" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- successor -->
+  <text x="560" y="20" fill="#6b6878" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">p.next.next (successor)</text>
+  <rect x="510" y="28" width="100" height="80" rx="6" fill="#1a1a1f" stroke="#2a2a32" stroke-width="1.5"/>
+  <text x="560" y="66" fill="#f0ede8" font-family="DM Mono,monospace" font-size="13" text-anchor="middle" font-weight="bold">85</text>
+  <rect x="510" y="88" width="100" height="18" fill="rgba(200,240,96,0.08)"/>
+  <text x="560" y="100" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">next →</text>
+  <rect x="510" y="28" width="100" height="20" fill="rgba(240,96,200,0.08)"/>
+  <text x="560" y="42" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">← prev (fix to p)</text>
+
+  <!-- skip forward arrow (p → successor) -->
+  <path d="M 162 96 Q 310 155 508 96" fill="none" stroke="#f06060" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#ar7)"/>
+  <text x="335" y="168" fill="#f06060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">p.next = p.next.next (skip target)</text>
+
+  <!-- fix backward arrow (successor → p) -->
+  <path d="M 508 42 Q 340 5 162 42" fill="none" stroke="#f06060" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arb7)"/>
+  <text x="335" y="10" fill="#f06060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">p.next.prev = p (fix backward)</text>
+</svg>
+<figcaption>removeAnywhere — forward link skips target; backward link of successor updated to point to p</figcaption>
+</figure>
+
+<div class="complexity-row">
+  <span class="badge time">⏱ Time: O(n) — traversal to position</span>
+  <span class="badge space">📦 Space: O(1)</span>
+</div>
+</section>
+
+<hr class="section-divider"/>
+
+<!-- ─── SECTION 8: DISPLAY / TRAVERSAL ─── -->
+<section>
+<h2>8. Display / Traversal</h2>
+
+<div class="callout tip">💡 Same as singly linked list — start at head, walk via <code>next</code> until null. The <code>prev</code> pointers enable backward traversal too (tail → head).</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code class="language-csharp">// Forward traversal (head → tail)
+public void display()
 {
     Node p = head;
-    int i = 0;
-    while(i < length())      // counter-based — NOT while(p != null)!
+    while (p != null)
     {
-        Console.WriteLine(p.element + ", ");
+        Console.Write(p.element + ", ");
         p = p.next;
-        i++;
+    }
+    Console.WriteLine();
+}
+
+// Backward traversal (tail → head) — bonus power of doubly linked!
+public void displayReverse()
+{
+    Node p = tail;
+    while (p != null)
+    {
+        Console.Write(p.element + ", ");
+        p = p.prev;
     }
     Console.WriteLine();
 }</code></pre>
-    </div>
-  </div>
 </div>
 
-<hr class="section-divider">
+<div class="complexity-row">
+  <span class="badge time">⏱ Time: O(n)</span>
+  <span class="badge space">📦 Space: O(1)</span>
+</div>
+</section>
 
-<!-- ── COMPLEXITY SUMMARY ── -->
+<hr class="section-divider"/>
+
+<!-- ─── SECTION 9: COMPLEXITY SUMMARY ─── -->
+<section>
+<h2>9. Complexity Summary</h2>
+
+<table>
+  <thead><tr><th>Method</th><th>Time</th><th>Space</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>addFirst</td><td style="color:var(--success)">O(1)</td><td>O(1)</td><td>Constant — head pointer update</td></tr>
+    <tr><td>addLast</td><td style="color:var(--success)">O(1)</td><td>O(1)</td><td>Constant — tail pointer update</td></tr>
+    <tr><td>addAnywhere</td><td style="color:var(--accent)">O(n)</td><td>O(1)</td><td>Traversal to position</td></tr>
+    <tr><td>removeFirst</td><td style="color:var(--success)">O(1)</td><td>O(1)</td><td>Constant — head.next + null prev</td></tr>
+    <tr><td>removeLast</td><td style="color:var(--success)">O(1) ✨</td><td>O(1)</td><td>O(1) only because of prev pointer!</td></tr>
+    <tr><td>removeAnywhere</td><td style="color:var(--accent)">O(n)</td><td>O(1)</td><td>Traversal to position</td></tr>
+    <tr><td>display</td><td style="color:var(--accent)">O(n)</td><td>O(1)</td><td>Visits every node once</td></tr>
+    <tr><td>Space (whole list)</td><td>—</td><td style="color:var(--accent)">O(n)</td><td>n nodes × 3 fields each</td></tr>
+  </tbody>
+</table>
+</section>
+
+<hr class="section-divider"/>
+
+<!-- ─── SECTION 10: QUICK REFERENCE ─── -->
+<section>
 <h2>⚡ Quick Reference</h2>
 
-<h3>Complexity Summary</h3>
 <table>
-  <thead><tr><th>Method</th><th>Time</th><th>Space</th><th>Reason</th></tr></thead>
+  <thead><tr><th>Term</th><th>Definition</th></tr></thead>
   <tbody>
-    <tr><td><code>addLast(e)</code></td><td>O(1)</td><td>O(1)</td><td>Direct <code>tail</code> pointer — no traversal</td></tr>
-    <tr><td><code>addFirst(e)</code></td><td>O(1)</td><td>O(1)</td><td>Direct <code>head</code> and <code>tail</code> pointers</td></tr>
-    <tr><td><code>addAnywhere(e, pos)</code></td><td>O(n)</td><td>O(1)</td><td>Must traverse to <code>pos−1</code></td></tr>
-    <tr><td><code>removeFirst()</code></td><td>O(1)</td><td>O(1)</td><td>Direct head and tail updates only</td></tr>
-    <tr><td><code>removeLast()</code></td><td>O(n)</td><td>O(1)</td><td>Must traverse to second-to-last node — no <code>prev</code> pointer</td></tr>
-    <tr><td><code>removeAnywhere(pos)</code></td><td>O(n)</td><td>O(1)</td><td>Must traverse to <code>pos−1</code></td></tr>
-    <tr><td><code>display()</code></td><td>O(n)</td><td>O(1)</td><td>Visits every node once with counter loop</td></tr>
-    <tr><td><code>IsEmpty()</code></td><td>O(1)</td><td>O(1)</td><td><code>size == 0</code> check</td></tr>
-    <tr><td><code>length()</code></td><td>O(1)</td><td>O(1)</td><td>Returns stored <code>size</code> variable directly</td></tr>
+    <tr><td>Node</td><td>Object holding: element (data) + next (forward ref) + prev (backward ref)</td></tr>
+    <tr><td>head</td><td>Reference to the first node; losing it = losing the entire list</td></tr>
+    <tr><td>tail</td><td>Reference to the last node; enables O(1) removeLast</td></tr>
+    <tr><td>next</td><td>Pointer from current node to the node ahead</td></tr>
+    <tr><td>prev</td><td>Pointer from current node to the node behind — the doubly-linked difference</td></tr>
+    <tr><td>Traversal</td><td>Walking node-by-node from head (forward) or tail (backward) until null</td></tr>
+    <tr><td>Link hopping</td><td>Following next/prev references between non-contiguous memory locations</td></tr>
   </tbody>
 </table>
 
-<h3>Circular vs Linear — Key Gotchas in Code</h3>
-<table>
-  <thead><tr><th>Scenario</th><th>Linear Linked List</th><th>Circular Linked List</th></tr></thead>
+<table style="margin-top:1rem;">
+  <thead><tr><th>Syntax / Method</th><th>Purpose</th></tr></thead>
   <tbody>
-    <tr><td>Last node's next</td><td>Set to <code>null</code></td><td>Set to <code>head</code></td></tr>
-    <tr><td>Single node's next</td><td><code>null</code></td><td><code>itself</code> (self-reference)</td></tr>
-    <tr><td>Traversal loop</td><td><code>while(p != null)</code></td><td><code>while(i &lt; size)</code></td></tr>
-    <tr><td>addFirst — tail update</td><td>Not needed</td><td><strong>tail.next = newest</strong> (mandatory)</td></tr>
-    <tr><td>removeFirst — tail update</td><td>Not needed</td><td><strong>tail.next = head.next</strong> (mandatory)</td></tr>
-    <tr><td>removeLast — final link</td><td>Set to <code>null</code></td><td><strong>tail.next = head</strong></td></tr>
+    <tr><td><code>new Node(e, null, null)</code></td><td>Create a new isolated node</td></tr>
+    <tr><td><code>head = head.next</code></td><td>Advance head (removeFirst)</td></tr>
+    <tr><td><code>head.prev = null</code></td><td>Sever backward link after removeFirst</td></tr>
+    <tr><td><code>tail = tail.prev</code></td><td>Retreat tail (removeLast) — O(1)!</td></tr>
+    <tr><td><code>tail.next = null</code></td><td>Sever forward link after removeLast</td></tr>
+    <tr><td><code>newest.next = p.next; p.next.prev = newest; p.next = newest; newest.prev = p</code></td><td>4-step addAnywhere pointer swap</td></tr>
+    <tr><td><code>p.next = p.next.next; p.next.prev = p</code></td><td>2-step removeAnywhere bypass</td></tr>
   </tbody>
 </table>
+</section>
 
 </div>
-</div>
+</div><!-- end handbook -->
 
-<!-- ═══════════════════════════════════════════════════════ RECALL ═══ -->
-<div id="tab-recall" class="tab-panel">
+<!-- ═══════════════════════════════════════════════════ RECALL TAB -->
+<div id="tab-recall" class="tab-content">
 <div style="max-width:800px;margin:0 auto;padding:2rem;">
 
-  <div class="recall-topbar">
-    <div class="recall-title">🧠 Active Recall — Circular Linked List</div>
-    <div class="recall-controls">
-      <button onclick="revealAll()">Reveal All</button>
-      <button onclick="hideAll()">Hide All</button>
-    </div>
-    <div class="progress-counter"><span id="prog-count">0</span> of <span id="prog-total">0</span> answered</div>
+<div class="recall-header">
+  <h2 style="font-family:'Syne',sans-serif;color:var(--accent);border:none;padding:0;margin:0;">🧠 Active Recall</h2>
+  <div class="recall-controls">
+    <span class="progress-counter" id="progress-counter">0 of 22 answered</span>
+    <button class="control-btn" onclick="revealAll()">Reveal All</button>
+    <button class="control-btn" onclick="hideAll()">Hide All</button>
   </div>
+</div>
 
-  <!-- Q1 -->
-  <div class="question-card" id="q1">
-    <div class="question-header">
-      <span class="q-number">Q01</span>
-      <span class="q-type def">DEF</span>
-      <span class="q-text">What is the one structural property that makes a circular linked list different from a linear one?</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q1')">Show Answer</button>
-    </div>
-    <div class="answer-block" id="q1-answer">
-      <div class="answer-label">Answer</div>
-      <div class="answer-content">The <strong>last node's <code>next</code> pointer points back to <code>head</code></strong> instead of <code>null</code>. This creates a closed loop — there is no "end" to the list.</div>
-      <div class="answer-example"><span class="example-label">Example:</span> In a list 7→4→12, the node holding 12 has its <code>next</code> field set to the memory address of node 7, not null.</div>
-    </div>
+<!-- Q1 -->
+<div class="question-card" id="q1">
+  <div class="question-header">
+    <span class="q-number">Q01</span><span class="q-type def">DEF</span>
+    <span class="q-text">What is a doubly linked list and how is its node structure different from a singly linked list?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q1')">Show Answer</button>
   </div>
-
-  <!-- Q2 -->
-  <div class="question-card" id="q2">
-    <div class="question-header">
-      <span class="q-number">Q02</span>
-      <span class="q-type gotcha">GOTCHA</span>
-      <span class="q-text">Why can't you use <code>while(p != null)</code> to traverse a circular linked list?</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q2')">Show Answer</button>
-    </div>
-    <div class="answer-block" id="q2-answer">
+  <div class="answer-block" id="q1-answer">
+    <div class="answer-inner">
       <div class="answer-label">Answer</div>
-      <div class="answer-content">Because <code>p.next</code> will <strong>never be null</strong> — the tail points back to head. The loop will keep going around the circle forever (infinite loop). You must use a <strong>counter: <code>while(i &lt; size)</code></strong>.</div>
-      <div class="answer-example"><span class="example-label">Fix:</span> <code>int i = 0; while(i &lt; length()) { ... p = p.next; i++; }</code></div>
+      <div class="answer-content">A doubly linked list is a sequence of nodes where each node holds three things: <strong>element</strong> (the data), <strong>next</strong> (reference to the node ahead), and <strong>prev</strong> (reference to the node behind). A singly linked list only has element + next — it can't look backwards.</div>
+      <div class="answer-example"><span class="example-label">Example:</span> Node(17) in doubly linked: <code>element=17, next→Node(85), prev→Node(42)</code></div>
     </div>
   </div>
+</div>
 
-  <!-- Q3 -->
-  <div class="question-card" id="q3">
-    <div class="question-header">
-      <span class="q-number">Q03</span>
-      <span class="q-type sequence">SEQUENCE</span>
-      <span class="q-text">Walk through the exact steps of <code>addLast(e)</code> when the list is NOT empty.</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q3')">Show Answer</button>
-    </div>
-    <div class="answer-block" id="q3-answer">
+<!-- Q2 -->
+<div class="question-card" id="q2">
+  <div class="question-header">
+    <span class="q-number">Q02</span><span class="q-type why">WHY</span>
+    <span class="q-text">Why is removeLast O(1) in a doubly linked list but O(n) in a singly linked list?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q2')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q2-answer">
+    <div class="answer-inner">
       <div class="answer-label">Answer</div>
-      <div class="answer-content">
-        <strong>① Create newest node</strong> with element e and null next.<br>
-        <strong>② newest.next = tail.next</strong> — since tail.next = head, newest now links to head.<br>
-        <strong>③ tail.next = newest</strong> — old tail now links forward to newest.<br>
-        <strong>④ tail = newest</strong> — tail pointer advances to the new node.<br>
-        <strong>⑤ size++</strong>
+      <div class="answer-content">To delete the last node, you need to update the second-last node's <strong>next</strong> to null. In a singly linked list, you can only move forward — so you must traverse the whole list (O(n)) to reach the node before tail. In a doubly linked list, <code>tail.prev</code> gives instant access to that node — no traversal needed, so it's O(1).</div>
+      <div class="answer-example"><span class="example-label">Code:</span> <code>tail = tail.prev; tail.next = null;</code> — two lines, no loop</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q3 -->
+<div class="question-card" id="q3">
+  <div class="question-header">
+    <span class="q-number">Q03</span><span class="q-type apply">APPLY</span>
+    <span class="q-text">Write the C# code to add a node with value 99 at the beginning of a non-empty doubly linked list.</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q3')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q3-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content answer-code">
+        <div class="code-block" style="margin-top:0.5rem;">
+          <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-csharp">Node newest   = new Node(99, null, null);
+newest.next   = head;      // new node → old head
+head.prev     = newest;    // old head ← new node
+head          = newest;    // move head pointer
+Size++;</code></pre>
+        </div>
       </div>
-      <div class="answer-example"><span class="example-label">Why step ② first?</span> newest.next = tail.next must happen before tail.next is overwritten in step ③. Otherwise newest can't find the head.</div>
+      <div class="answer-example"><span class="example-label">Key:</span> Set newest.next and head.prev BEFORE moving head. Order matters.</div>
     </div>
   </div>
+</div>
 
-  <!-- Q4 -->
-  <div class="question-card" id="q4">
-    <div class="question-header">
-      <span class="q-number">Q04</span>
-      <span class="q-type apply">APPLY</span>
-      <span class="q-text">A list contains: head→[7]→[4]→[12]←tail, and tail.next = head. Write the exact pointer assignments that happen when you call <code>addFirst(23)</code>.</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q4')">Show Answer</button>
+<!-- Q4 -->
+<div class="question-card" id="q4">
+  <div class="question-header">
+    <span class="q-number">Q04</span><span class="q-type gotcha">GOTCHA</span>
+    <span class="q-text">In addAnywhere, why must you set newest.next and p.next.prev BEFORE setting p.next = newest?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q4')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q4-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">If you set <code>p.next = newest</code> first, you overwrite the only reference to the node that was originally after p. That node becomes unreachable — you've lost everything from that point forward. Always save the reference to the next node (via <code>newest.next = p.next</code>) before changing <code>p.next</code>.</div>
+      <div class="answer-example"><span class="example-label">Rule:</span> Read before overwrite. Steps A and B (set newest.next, fix successor.prev) must complete before step C (p.next = newest).</div>
     </div>
-    <div class="answer-block" id="q4-answer">
+  </div>
+</div>
+
+<!-- Q5 -->
+<div class="question-card" id="q5">
+  <div class="question-header">
+    <span class="q-number">Q05</span><span class="q-type sequence">SEQUENCE</span>
+    <span class="q-text">List the exact sequence of pointer updates to insert a new node between node p and node p.next in a doubly linked list.</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q5')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q5-answer">
+    <div class="answer-inner">
       <div class="answer-label">Answer</div>
       <div class="answer-content">
-        <code>Node newest = new Node(23, null);</code><br>
-        <code>tail.next = newest;</code>  ← node 12 now links to node 23<br>
-        <code>newest.next = head;</code>  ← node 23 links to node 7 (old head)<br>
-        <code>head = newest;</code>       ← head pointer moves to node 23<br>
-        <code>size++;</code><br><br>
-        <strong>Result:</strong> head→[23]→[7]→[4]→[12]→(back to 23)←tail
-      </div>
-      <div class="answer-example"><span class="example-label">Critical order:</span> tail.next = newest BEFORE head = newest. If you move head first, you can't set tail.next correctly.</div>
-    </div>
-  </div>
-
-  <!-- Q5 -->
-  <div class="question-card" id="q5">
-    <div class="question-header">
-      <span class="q-number">Q05</span>
-      <span class="q-type gotcha">GOTCHA</span>
-      <span class="q-text">In <code>addFirst()</code>, why must <code>tail.next = newest</code> happen BEFORE <code>head = newest</code>?</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q5')">Show Answer</button>
-    </div>
-    <div class="answer-block" id="q5-answer">
-      <div class="answer-label">Answer</div>
-      <div class="answer-content">Once you write <code>head = newest</code>, the variable <code>head</code> now points to the new node. You lose the reference to the old head. But <code>tail.next</code> still needs to point to the <strong>new head (newest)</strong>, not the old one. If you swap the order, <code>tail.next = head</code> would assign the <em>new</em> head to tail.next — which happens to be correct, BUT the issue is that <code>newest.next = head</code> would then point to itself. The safe, readable order that the code uses avoids all of this.</div>
-    </div>
-  </div>
-
-  <!-- Q6 -->
-  <div class="question-card" id="q6">
-    <div class="question-header">
-      <span class="q-number">Q06</span>
-      <span class="q-type apply">APPLY</span>
-      <span class="q-text">In <code>addAnywhere(e, pos)</code>, what are the two pointer assignments made after traversal, and why does the ORDER matter?</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q6')">Show Answer</button>
-    </div>
-    <div class="answer-block" id="q6-answer">
-      <div class="answer-label">Answer</div>
-      <div class="answer-content">
-        <strong>① newest.next = p.next</strong> — new node links forward to what p used to link to.<br>
-        <strong>② p.next = newest</strong> — p now links to the new node.<br><br>
-        <strong>Order matters because:</strong> if you do ② first (<code>p.next = newest</code>), then <code>p.next</code> is already newest, so <code>newest.next = p.next</code> would make newest point to <em>itself</em>. You'd lose all nodes after the insertion point.
-      </div>
-      <div class="answer-example"><span class="example-label">Rule:</span> Always link the new node FORWARD first, then cut and rewire the previous link.</div>
-    </div>
-  </div>
-
-  <!-- Q7 -->
-  <div class="question-card" id="q7">
-    <div class="question-header">
-      <span class="q-number">Q07</span>
-      <span class="q-type sequence">SEQUENCE</span>
-      <span class="q-text">List the steps of <code>removeFirst()</code> in a circular linked list. What extra step is required that isn't needed in a linear list?</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q7')">Show Answer</button>
-    </div>
-    <div class="answer-block" id="q7-answer">
-      <div class="answer-label">Answer</div>
-      <div class="answer-content">
-        ① <code>e = head.element</code> — save value to return.<br>
-        ② <code>tail.next = head.next</code> — <strong>this is the extra circular step</strong> — tail must now skip the deleted head and point to the new head.<br>
-        ③ <code>head = head.next</code> — head advances.<br>
-        ④ <code>size--</code><br>
-        ⑤ If size = 0, set head = null and tail = null.
-      </div>
-      <div class="answer-example"><span class="example-label">Extra step explained:</span> In a linear list, tail doesn't care about head. In a circular list, tail.next = head is the defining link — it must always be updated when head changes.</div>
-    </div>
-  </div>
-
-  <!-- Q8 -->
-  <div class="question-card" id="q8">
-    <div class="question-header">
-      <span class="q-number">Q08</span>
-      <span class="q-type why">WHY</span>
-      <span class="q-text">Why is <code>removeLast()</code> O(n) even though we have a direct <code>tail</code> reference?</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q8')">Show Answer</button>
-    </div>
-    <div class="answer-block" id="q8-answer">
-      <div class="answer-label">Answer</div>
-      <div class="answer-content">Because after deleting tail, the <strong>new tail is the node just before the deleted one</strong> — and singly-linked nodes have no <code>previous</code> pointer. You can't reach the second-to-last node from tail directly. The only way is to traverse from head until you reach the node at <code>size - 1</code>. That traversal is O(n).</div>
-      <div class="answer-example"><span class="example-label">Fix (if needed):</span> A doubly-linked list would make this O(1) because each node also stores a <code>prev</code> pointer.</div>
-    </div>
-  </div>
-
-  <!-- Q9 -->
-  <div class="question-card" id="q9">
-    <div class="question-header">
-      <span class="q-number">Q09</span>
-      <span class="q-type apply">APPLY</span>
-      <span class="q-text">In <code>removeLast()</code>, after traversal, the code does: <code>tail = p; p = p.next; tail.next = head;</code>. What does each line do? Why must <code>tail.next = head</code> come BEFORE accessing <code>p.element</code>?</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q9')">Show Answer</button>
-    </div>
-    <div class="answer-block" id="q9-answer">
-      <div class="answer-label">Answer</div>
-      <div class="answer-content">
-        <code>tail = p</code> — the node we stopped at (second-to-last) becomes the new tail.<br>
-        <code>p = p.next</code> — p now points to the old tail (the node being deleted).<br>
-        <code>tail.next = head</code> — the new tail must wrap back to head to maintain circular property.<br><br>
-        <strong>Order:</strong> tail.next = head must happen after <code>tail = p</code> so we know which node is the new tail. There's no issue with reading <code>p.element</code> after — p still points to the old tail node in memory (just no longer reachable from the list).
+        <strong>Step A:</strong> <code>newest.next = p.next</code> — new node points forward to successor<br/>
+        <strong>Step B:</strong> <code>p.next.prev = newest</code> — successor points backward to new node<br/>
+        <strong>Step C:</strong> <code>p.next = newest</code> — predecessor points forward to new node<br/>
+        <strong>Step D:</strong> <code>newest.prev = p</code> — new node points backward to predecessor<br/>
+        A and B must come before C. D can be last.
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Q10 -->
-  <div class="question-card" id="q10">
-    <div class="question-header">
-      <span class="q-number">Q10</span>
-      <span class="q-type compare">COMPARE</span>
-      <span class="q-text">How does a single-node circular linked list differ from a single-node linear linked list?</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q10')">Show Answer</button>
-    </div>
-    <div class="answer-block" id="q10-answer">
+<!-- Q6 -->
+<div class="question-card" id="q6">
+  <div class="question-header">
+    <span class="q-number">Q06</span><span class="q-type apply">APPLY</span>
+    <span class="q-text">Write the C# code for removeFirst in a doubly linked list, including the edge case where the list becomes empty after deletion.</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q6')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q6-answer">
+    <div class="answer-inner">
       <div class="answer-label">Answer</div>
-      <div class="answer-content">
-        <strong>Linear:</strong> node.next = null. The list has a clear end.<br>
-        <strong>Circular:</strong> node.next = node itself (self-loop). The list is already circular even with one node. head = tail = newest, and newest.next = newest.
+      <div class="answer-content answer-code">
+        <div class="code-block" style="margin-top:0.5rem;">
+          <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-csharp">int e = head.element;
+head = head.next;
+Size--;
+if (IsEmpty) { head = null; tail = null; }
+else { head.prev = null; }  // ← key: remove backward link
+return e;</code></pre>
+        </div>
       </div>
-      <div class="answer-example"><span class="example-label">In code (addLast empty case):</span> <code>newest.next = newest; head = newest;</code> — the self-reference is what makes it circular from the start.</div>
+      <div class="answer-example"><span class="example-label">Key:</span> head.prev = null prevents the new head from still referencing the deleted node.</div>
     </div>
   </div>
+</div>
 
-  <!-- Q11 -->
-  <div class="question-card" id="q11">
-    <div class="question-header">
-      <span class="q-number">Q11</span>
-      <span class="q-type draw">DRAW</span>
-      <span class="q-text">Draw the state of a circular linked list after: <code>addLast(7)</code>, <code>addLast(4)</code>, <code>addFirst(23)</code>. Show head, tail, and all next pointers including the circular wrap.</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q11')">Show Answer</button>
+<!-- Q7 -->
+<div class="question-card" id="q7">
+  <div class="question-header">
+    <span class="q-number">Q07</span><span class="q-type compare">COMPARE</span>
+    <span class="q-text">Compare the time complexity of all operations between a singly and doubly linked list. Which operations differ and why?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q7')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q7-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">
+        Most operations are the same. The one key difference:<br/>
+        <strong>removeLast:</strong> Singly = O(n) (must traverse to find second-last). Doubly = O(1) (tail.prev is direct).<br/>
+        Everything else — addFirst, addLast, removeFirst — is O(1) in both. addAnywhere and removeAnywhere are O(n) in both (traversal required).
+      </div>
+      <div class="answer-example"><span class="example-label">Trade-off:</span> Doubly linked list costs one extra pointer per node (more memory) but gains O(1) removeLast.</div>
     </div>
-    <div class="answer-block" id="q11-answer">
+  </div>
+</div>
+
+<!-- Q8 -->
+<div class="question-card" id="q8">
+  <div class="question-header">
+    <span class="q-number">Q08</span><span class="q-type draw">DRAW</span>
+    <span class="q-text">Draw a doubly linked list with nodes 10 → 20 → 30. Label head, tail, next pointers, prev pointers, and null sentinels.</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q8')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q8-answer">
+    <div class="answer-inner">
       <div class="answer-label">Answer</div>
       <figure>
-      <svg viewBox="0 0 600 130" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <svg viewBox="0 0 680 190" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
         <defs>
-          <marker id="arr-q11" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#c8f060"/></marker>
+          <marker id="af8" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><polygon points="0 0,8 3.5,0 7" fill="#c8f060"/></marker>
+          <marker id="ab8" markerWidth="8" markerHeight="8" refX="1" refY="3.5" orient="auto"><polygon points="8 0,0 3.5,8 7" fill="#f060c8"/></marker>
         </defs>
-        <!-- node 23 (head) -->
-        <rect x="30" y="40" width="80" height="44" rx="6" fill="#1a1a1f" stroke="#c8f060" stroke-width="2"/>
-        <text x="70" y="67" fill="#c8f060" font-size="15" font-family="DM Mono,monospace" text-anchor="middle">23</text>
-        <text x="70" y="30" fill="#c8f060" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">head</text>
-        <line x1="110" y1="62" x2="140" y2="62" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-q11)"/>
+        <text x="150" y="18" fill="#c8f060" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">head</text>
+        <line x1="150" y1="22" x2="150" y2="38" stroke="#c8f060" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="530" y="18" fill="#c8f060" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">tail</text>
+        <line x1="530" y1="22" x2="530" y2="38" stroke="#c8f060" stroke-width="1.5" stroke-dasharray="3,2"/>
 
-        <!-- node 7 -->
-        <rect x="140" y="40" width="80" height="44" rx="6" fill="#1a1a1f" stroke="#2a2a32"/>
-        <text x="180" y="67" fill="#f0ede8" font-size="15" font-family="DM Mono,monospace" text-anchor="middle">7</text>
-        <line x1="220" y1="62" x2="250" y2="62" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr-q11)"/>
+        <rect x="100" y="38" width="100" height="80" rx="6" fill="#1a1a1f" stroke="#c8f060" stroke-width="1.5"/>
+        <text x="150" y="75" fill="#f0ede8" font-family="DM Mono,monospace" font-size="15" text-anchor="middle" font-weight="bold">10</text>
+        <rect x="100" y="98" width="100" height="18" fill="rgba(200,240,96,0.08)"/>
+        <text x="150" y="111" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">next →</text>
+        <rect x="100" y="38" width="100" height="22" fill="rgba(240,96,200,0.08)"/>
+        <text x="150" y="53" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">null (prev)</text>
 
-        <!-- node 4 (tail) -->
-        <rect x="250" y="40" width="80" height="44" rx="6" fill="#1a1a1f" stroke="#60c8f0" stroke-width="2"/>
-        <text x="290" y="67" fill="#f0ede8" font-size="15" font-family="DM Mono,monospace" text-anchor="middle">4</text>
-        <text x="290" y="30" fill="#60c8f0" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">tail</text>
+        <rect x="280" y="38" width="100" height="80" rx="6" fill="#1a1a1f" stroke="#2a2a32" stroke-width="1.5"/>
+        <text x="330" y="75" fill="#f0ede8" font-family="DM Mono,monospace" font-size="15" text-anchor="middle" font-weight="bold">20</text>
+        <rect x="280" y="98" width="100" height="18" fill="rgba(200,240,96,0.08)"/>
+        <text x="330" y="111" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">next →</text>
+        <rect x="280" y="38" width="100" height="22" fill="rgba(240,96,200,0.08)"/>
+        <text x="330" y="53" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">← prev</text>
 
-        <!-- circular arc -->
-        <path d="M330,62 Q380,10 200,10 Q90,10 50,40" stroke="#c8f060" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#arr-q11)"/>
+        <rect x="460" y="38" width="100" height="80" rx="6" fill="#1a1a1f" stroke="#c8f060" stroke-width="1.5"/>
+        <text x="510" y="75" fill="#f0ede8" font-family="DM Mono,monospace" font-size="15" text-anchor="middle" font-weight="bold">30</text>
+        <rect x="460" y="98" width="100" height="18" fill="rgba(200,240,96,0.08)"/>
+        <text x="510" y="111" fill="#c8f060" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">null (next)</text>
+        <rect x="460" y="38" width="100" height="22" fill="rgba(240,96,200,0.08)"/>
+        <text x="510" y="53" fill="#f060c8" font-family="DM Mono,monospace" font-size="9" text-anchor="middle">← prev</text>
 
-        <text x="200" y="115" fill="#6b6878" font-size="10" font-family="DM Mono,monospace" text-anchor="middle">head→[23]→[7]→[4]→(back to 23)  |  tail = node 4  |  size = 3</text>
+        <line x1="202" y1="107" x2="278" y2="107" stroke="#c8f060" stroke-width="1.5" marker-end="url(#af8)"/>
+        <line x1="382" y1="107" x2="458" y2="107" stroke="#c8f060" stroke-width="1.5" marker-end="url(#af8)"/>
+        <line x1="278" y1="52" x2="202" y2="52" stroke="#f060c8" stroke-width="1.5" marker-end="url(#ab8)"/>
+        <line x1="458" y1="52" x2="382" y2="52" stroke="#f060c8" stroke-width="1.5" marker-end="url(#ab8)"/>
+        <text x="25" y="111" fill="#6b6878" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">null</text>
+        <text x="625" y="111" fill="#6b6878" font-family="DM Mono,monospace" font-size="10" text-anchor="middle">null</text>
       </svg>
-      <figcaption>Check your arrows: 23→7→4→back to 23 (dashed arc). head on 23, tail on 4.</figcaption>
+      <figcaption>Check your labels against this.</figcaption>
       </figure>
     </div>
   </div>
+</div>
 
-  <!-- Q12 -->
-  <div class="question-card" id="q12">
-    <div class="question-header">
-      <span class="q-number">Q12</span>
-      <span class="q-type apply">APPLY</span>
-      <span class="q-text">Write the complete <code>removeAnywhere(int position)</code> method for a circular linked list from memory.</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q12')">Show Answer</button>
+<!-- Q9 -->
+<div class="question-card" id="q9">
+  <div class="question-header">
+    <span class="q-number">Q09</span><span class="q-type gotcha">GOTCHA</span>
+    <span class="q-text">What happens if you forget to set head.prev = null in removeFirst? What bug does this cause?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q9')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q9-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">The new head's <code>prev</code> still points to the deleted node. That deleted node is now unreachable from the list (nothing points <em>to</em> it), but it still has a reference <em>from</em> the new head. This is a <strong>memory leak</strong> — the garbage collector may not collect the deleted node because a pointer to it still exists. It can also cause logical bugs if you ever traverse backwards from head.</div>
+      <div class="answer-example"><span class="example-label">Fix:</span> Always add <code>head.prev = null;</code> after advancing head in removeFirst.</div>
     </div>
-    <div class="answer-block" id="q12-answer">
+  </div>
+</div>
+
+<!-- Q10 -->
+<div class="question-card" id="q10">
+  <div class="question-header">
+    <span class="q-number">Q10</span><span class="q-type apply">APPLY</span>
+    <span class="q-text">Trace through addLast(99) on a list [42 → 17]. What are the exact pointer assignments made, in order?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q10')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q10-answer">
+    <div class="answer-inner">
       <div class="answer-label">Answer</div>
       <div class="answer-content">
-        <div class="code-block" style="margin-top:0.5rem;">
-          <div class="code-header"><span class="code-lang">csharp</span></div>
-          <pre><code class="language-csharp">public int removeAnywhere(int position)
-{
-    if(position <= 0 || position >= size - 1)
-    {
-        Console.WriteLine("Invalid Position");
-        return -1;
-    }
-    Node p = head;
-    int i = 1;
-    while(i < position - 1)  // stop one node BEFORE target
-    {
-        p = p.next;
-        i++;
-    }
-    int e = p.next.element;   // save value being deleted
-    p.next = p.next.next;     // skip over deleted node
-    size--;
-    return e;
-}</code></pre>
-        </div>
+        1. <code>Node newest = new Node(99, null, null)</code> — create node<br/>
+        2. List is not empty, so skip empty branch<br/>
+        3. <code>tail.next = newest</code> — Node(17)'s next now points to Node(99)<br/>
+        4. <code>newest.prev = tail</code> — Node(99)'s prev points back to Node(17)<br/>
+        5. <code>tail = newest</code> — tail reference moves to Node(99)<br/>
+        6. <code>Size++</code> — size becomes 3<br/>
+        Result: [42 ↔ 17 ↔ 99]
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Q13 -->
-  <div class="question-card" id="q13">
-    <div class="question-header">
-      <span class="q-number">Q13</span>
-      <span class="q-type why">WHY</span>
-      <span class="q-text">Why is a circular linked list useful for modeling things like card games (poker, rummy)?</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q13')">Show Answer</button>
-    </div>
-    <div class="answer-block" id="q13-answer">
+<!-- Q11 -->
+<div class="question-card" id="q11">
+  <div class="question-header">
+    <span class="q-number">Q11</span><span class="q-type def">DEF</span>
+    <span class="q-text">What does "link hopping" mean in the context of linked list traversal?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q11')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q11-answer">
+    <div class="answer-inner">
       <div class="answer-label">Answer</div>
-      <div class="answer-content">In a card game, turns cycle — after the last player, the first player goes again. A circular linked list models this naturally: traversing from any node and calling <code>p = p.next</code> forever will keep cycling through all players in order. There's no artificial "end" to manage. A linear list would need special-case logic ("if we're at the last player, wrap to first"), but in a circular list that wrapping is built into the structure itself.</div>
+      <div class="answer-content">Link hopping is the process of moving from one node to the next by following the <strong>next</strong> (or <strong>prev</strong>) pointer, rather than jumping to a memory address directly. Each hop follows a reference stored in the current node — like following a chain of directions one step at a time until you reach null.</div>
+      <div class="answer-example"><span class="example-label">Code:</span> <code>p = p.next;</code> is one hop forward.</div>
     </div>
   </div>
+</div>
 
-  <!-- Q14 -->
-  <div class="question-card" id="q14">
-    <div class="question-header">
-      <span class="q-number">Q14</span>
-      <span class="q-type gotcha">GOTCHA</span>
-      <span class="q-text">What happens in <code>removeFirst()</code> if the list has exactly 1 element after deletion? What extra cleanup must happen?</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q14')">Show Answer</button>
-    </div>
-    <div class="answer-block" id="q14-answer">
+<!-- Q12 -->
+<div class="question-card" id="q12">
+  <div class="question-header">
+    <span class="q-number">Q12</span><span class="q-type why">WHY</span>
+    <span class="q-text">Why should you never directly manipulate the head pointer during traversal? What do you use instead?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q12')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q12-answer">
+    <div class="answer-inner">
       <div class="answer-label">Answer</div>
-      <div class="answer-content">After <code>size--</code>, if size becomes 0 (empty), both <code>head</code> and <code>tail</code> must be set to <code>null</code>. Without this cleanup, tail still points to the deleted node's memory address — leaving a dangling reference that could cause bugs or memory issues.</div>
-      <div class="answer-example"><span class="example-label">Code:</span> <code>if(IsEmpty()) { head = null; tail = null; }</code></div>
+      <div class="answer-content">If you use <code>head</code> as your traversal pointer and advance it (<code>head = head.next</code>), you permanently lose the reference to the start of the list. There's no way to get back — the entire list before your current position becomes inaccessible. Always create a separate temporary pointer (<code>Node p = head</code>) and advance <em>that</em> while keeping <code>head</code> untouched.</div>
     </div>
   </div>
+</div>
 
-  <!-- Q15 -->
-  <div class="question-card" id="q15">
-    <div class="question-header">
-      <span class="q-number">Q15</span>
-      <span class="q-type compare">COMPARE</span>
-      <span class="q-text">Which operations are O(1) vs O(n) in a circular linked list, and what determines which category an operation falls into?</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q15')">Show Answer</button>
-    </div>
-    <div class="answer-block" id="q15-answer">
+<!-- Q13 -->
+<div class="question-card" id="q13">
+  <div class="question-header">
+    <span class="q-number">Q13</span><span class="q-type apply">APPLY</span>
+    <span class="q-text">Given a doubly linked list [10 ↔ 20 ↔ 30 ↔ 40], write the pointer updates to remove the node at position 2 (value 20).</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q13')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q13-answer">
+    <div class="answer-inner">
       <div class="answer-label">Answer</div>
       <div class="answer-content">
-        <strong>O(1) operations:</strong> addFirst, addLast, removeFirst, length, isEmpty — because they only use existing head/tail pointers with no loops.<br><br>
-        <strong>O(n) operations:</strong> addAnywhere, removeLast, removeAnywhere, display — because they require traversal (a while loop that runs proportional to the list size).<br><br>
-        <strong>The deciding factor:</strong> Does the operation need to walk through the list to find a node, or can it act directly using head/tail pointers?
+        Traverse to position 1 (p = Node(10)):<br/>
+        1. <code>int e = p.next.element</code> → e = 20<br/>
+        2. <code>p.next = p.next.next</code> → Node(10).next = Node(30) — skip Node(20)<br/>
+        3. <code>p.next.prev = p</code> → Node(30).prev = Node(10) — fix backward link<br/>
+        4. <code>Size--</code><br/>
+        Result: [10 ↔ 30 ↔ 40]
       </div>
     </div>
   </div>
+</div>
 
-  <!-- ─── INTERVIEW QUESTIONS DIVIDER ─── -->
-  <div style="margin:2rem 0 1.2rem; padding: 0.75rem 1rem; background: rgba(200,240,96,0.04); border: 1px solid rgba(200,240,96,0.15); border-radius:8px; display:flex; align-items:center; gap:0.8rem;">
-    <span style="font-family:'Syne',sans-serif;font-size:0.85rem;color:var(--accent);font-weight:700;">🎯 Real Interview Questions</span>
-    <span style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);">Questions asked at actual tech interviews — Google, Amazon, Microsoft, Flipkart</span>
+<!-- Q14 -->
+<div class="question-card" id="q14">
+  <div class="question-header">
+    <span class="q-number">Q14</span><span class="q-type compare">COMPARE</span>
+    <span class="q-text">When would you choose a doubly linked list over a singly linked list? When would singly be better?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q14')">Show Answer</button>
   </div>
-
-  <!-- Q16 -->
-  <div class="question-card" id="q16">
-    <div class="question-header">
-      <span class="q-number">Q16</span>
-      <span class="q-type apply">APPLY</span>
-      <span class="q-text"><strong>[Amazon]</strong> Detect whether a linked list has a cycle. Write the algorithm and explain its time and space complexity.</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q16')">Show Answer</button>
-    </div>
-    <div class="answer-block" id="q16-answer">
-      <div class="answer-label">Answer</div>
-      <div class="answer-content">Use <strong>Floyd's Cycle Detection (Tortoise and Hare)</strong>: two pointers — <code>slow</code> moves one step at a time, <code>fast</code> moves two steps. If they ever meet, there is a cycle. If <code>fast</code> reaches null, no cycle.
-      <div class="code-block" style="margin-top:0.8rem;">
-        <div class="code-header"><span class="code-lang">csharp</span></div>
-        <pre><code class="language-csharp">public bool HasCycle(Node head)
-{
-    Node slow = head, fast = head;
-    while (fast != null && fast.next != null)
-    {
-        slow = slow.next;
-        fast = fast.next.next;
-        if (slow == fast) return true;   // cycle detected
-    }
-    return false;   // fast hit null → no cycle
-}</code></pre>
-      </div>
-      </div>
-      <div class="answer-example"><span class="example-label">Complexity:</span> Time O(n) — fast catches slow within one full loop. Space O(1) — only two pointers, no extra data structure.</div>
-    </div>
-  </div>
-
-  <!-- Q17 -->
-  <div class="question-card" id="q17">
-    <div class="question-header">
-      <span class="q-number">Q17</span>
-      <span class="q-type apply">APPLY</span>
-      <span class="q-text"><strong>[Google]</strong> Given a circular linked list, find the <em>starting node</em> of the cycle (not just detect it). What algorithm do you use and why does it work?</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q17')">Show Answer</button>
-    </div>
-    <div class="answer-block" id="q17-answer">
+  <div class="answer-block" id="q14-answer">
+    <div class="answer-inner">
       <div class="answer-label">Answer</div>
       <div class="answer-content">
-        <strong>Phase 1:</strong> Use Floyd's algorithm — let <code>slow</code> and <code>fast</code> meet inside the cycle.<br>
-        <strong>Phase 2:</strong> Reset one pointer to <code>head</code>. Move both pointers one step at a time. They meet at the <strong>cycle start node</strong>.<br><br>
-        <strong>Why it works:</strong> The math behind Floyd's shows that the distance from <code>head</code> to the cycle entry equals the distance from the meeting point to the cycle entry (going forward). So when both pointers advance at the same speed from their respective starting positions, they converge exactly at the entry.
-      <div class="code-block" style="margin-top:0.8rem;">
-        <div class="code-header"><span class="code-lang">csharp</span></div>
-        <pre><code class="language-csharp">// Phase 1: find meeting point
-Node slow = head, fast = head;
-while (fast != null && fast.next != null) {
-    slow = slow.next; fast = fast.next.next;
-    if (slow == fast) break;
-}
-// Phase 2: find cycle entry
-slow = head;
-while (slow != fast) { slow = slow.next; fast = fast.next; }
-return slow;   // cycle start node</code></pre>
+        <strong>Choose doubly when:</strong> You need O(1) deletions at both ends (head and tail), backward traversal, implementing a deque, or building a browser history (forward/backward navigation).<br/><br/>
+        <strong>Choose singly when:</strong> Memory is very tight (doubly uses one extra pointer per node), you only ever traverse forward, or the list is append-only (stacks, queues with one-way flow).
       </div>
-      </div>
-      <div class="answer-example"><span class="example-label">Complexity:</span> Time O(n), Space O(1).</div>
     </div>
   </div>
+</div>
 
-  <!-- Q18 -->
-  <div class="question-card" id="q18">
-    <div class="question-header">
-      <span class="q-number">Q18</span>
-      <span class="q-type why">WHY</span>
-      <span class="q-text"><strong>[Microsoft]</strong> When would you choose a circular linked list over an array or a regular linked list? Give two concrete real-world use cases.</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q18')">Show Answer</button>
+<!-- Q15 -->
+<div class="question-card" id="q15">
+  <div class="question-header">
+    <span class="q-number">Q15</span><span class="q-type gotcha">GOTCHA</span>
+    <span class="q-text">What edge case must you handle in addLast and addFirst when the list is empty?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q15')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q15-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">When the list is empty, <strong>both head and tail must point to the same new node</strong>. If you skip this and only update one of them, tail (or head) will remain null, making either the end or beginning of the list unreachable. This causes NullReferenceException on the very next operation.</div>
+      <div class="answer-example"><span class="example-label">Code:</span> <code>if (IsEmpty) &#123; head = newest; tail = newest; &#125;</code></div>
     </div>
-    <div class="answer-block" id="q18-answer">
+  </div>
+</div>
+
+<!-- Q16 -->
+<div class="question-card" id="q16">
+  <div class="question-header">
+    <span class="q-number">Q16</span><span class="q-type apply">APPLY</span>
+    <span class="q-text">What is the output of display() after this sequence: addLast(12), addLast(17), addLast(19), addFirst(9), addFirst(10)?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q16')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q16-answer">
+    <div class="answer-inner">
       <div class="answer-label">Answer</div>
       <div class="answer-content">
-        <strong>1. Round-Robin CPU Scheduling:</strong> The OS cycles through processes in a fixed order — after the last process, it wraps back to the first. A circular linked list models this naturally: <code>p = p.next</code> always gives the next process, with no end-check needed.<br><br>
-        <strong>2. Multiplayer Board Games:</strong> Player turns cycle — after the last player, control returns to player 1. With a circular list, the "next player" logic is identical for every seat: just traverse forward.<br><br>
-        <strong>Over arrays:</strong> Dynamic insertion/removal of players (processes) is O(1) vs O(n) for arrays.<br>
-        <strong>Over linear lists:</strong> No special "wrap-around" condition needed — the structure handles it structurally.
+        After addLast(12, 17, 19): [12, 17, 19]<br/>
+        After addFirst(9): [9, 12, 17, 19]<br/>
+        After addFirst(10): [10, 9, 12, 17, 19]<br/>
+        <strong>Output:</strong> <code>10, 9, 12, 17, 19,</code>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Q19 -->
-  <div class="question-card" id="q19">
-    <div class="question-header">
-      <span class="q-number">Q19</span>
-      <span class="q-type apply">APPLY</span>
-      <span class="q-text"><strong>[Flipkart]</strong> Write a function to find the length of the loop in a circular linked list using Floyd's algorithm. You may NOT use the <code>size</code> field.</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q19')">Show Answer</button>
-    </div>
-    <div class="answer-block" id="q19-answer">
+<!-- Q17 -->
+<div class="question-card" id="q17">
+  <div class="question-header">
+    <span class="q-number">Q17</span><span class="q-type why">WHY</span>
+    <span class="q-text">Why does a doubly linked list need more memory than a singly linked list? Is there ever a scenario where this extra cost is not worth it?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q17')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q17-answer">
+    <div class="answer-inner">
       <div class="answer-label">Answer</div>
-      <div class="answer-content">After detecting the meeting point with Floyd's, keep one pointer fixed at the meeting point and move the other one step at a time, counting until it returns to the meeting point.
-      <div class="code-block" style="margin-top:0.8rem;">
-        <div class="code-header"><span class="code-lang">csharp</span></div>
-        <pre><code class="language-csharp">public int CycleLength(Node head)
-{
-    Node slow = head, fast = head;
-    // Phase 1: find meeting point
-    while (fast != null && fast.next != null) {
-        slow = slow.next; fast = fast.next.next;
-        if (slow == fast) {
-            // Phase 2: count loop length
-            int count = 1;
-            Node current = slow.next;
-            while (current != slow) { current = current.next; count++; }
-            return count;
-        }
-    }
-    return 0;   // no cycle
-}</code></pre>
-      </div>
-      </div>
-      <div class="answer-example"><span class="example-label">Complexity:</span> Time O(n), Space O(1).</div>
+      <div class="answer-content">Each node in a doubly linked list stores an extra <strong>prev</strong> reference (typically 4–8 bytes, same size as next). For a list of n nodes, that's n extra pointer-sized allocations. If you have a list of millions of nodes, this doubles the pointer overhead. Not worth it if: you only ever traverse forward, never delete from the tail, and memory is constrained (embedded systems, high-frequency data pipelines).</div>
     </div>
   </div>
+</div>
 
-  <!-- Q20 -->
-  <div class="question-card" id="q20">
-    <div class="question-header">
-      <span class="q-number">Q20</span>
-      <span class="q-type compare">COMPARE</span>
-      <span class="q-text"><strong>[Amazon]</strong> Compare singly circular, doubly circular, and doubly linear linked lists across: <code>removeLast()</code> time complexity, memory per node, and backward traversal.</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q20')">Show Answer</button>
-    </div>
-    <div class="answer-block" id="q20-answer">
+<!-- Q18 -->
+<div class="question-card" id="q18">
+  <div class="question-header">
+    <span class="q-number">Q18</span><span class="q-type sequence">SEQUENCE</span>
+    <span class="q-text">What is the correct order of steps in removeLast for a doubly linked list with more than one node?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q18')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q18-answer">
+    <div class="answer-inner">
       <div class="answer-label">Answer</div>
       <div class="answer-content">
-        <table style="margin-top:0.5rem;">
-          <thead><tr><th>Property</th><th>Singly Circular</th><th>Doubly Circular</th><th>Doubly Linear</th></tr></thead>
-          <tbody>
-            <tr><td><code>removeLast()</code></td><td style="color:var(--danger)">O(n) — no prev ptr</td><td style="color:var(--success)">O(1) — tail.prev exists</td><td style="color:var(--success)">O(1) — tail.prev exists</td></tr>
-            <tr><td>Memory per node</td><td>1 pointer (next)</td><td>2 pointers (next + prev)</td><td>2 pointers (next + prev)</td></tr>
-            <tr><td>Backward traversal</td><td style="color:var(--danger)">Not possible</td><td style="color:var(--success)">Yes — use prev</td><td style="color:var(--success)">Yes — use prev</td></tr>
-            <tr><td>Circular wrap</td><td style="color:var(--success)">Yes</td><td style="color:var(--success)">Yes (both ways)</td><td style="color:var(--danger)">No</td></tr>
-          </tbody>
-        </table>
+        1. <code>int e = tail.element</code> — save value to return<br/>
+        2. <code>tail = tail.prev</code> — move tail to second-last node<br/>
+        3. <code>tail.next = null</code> — sever forward link to deleted node<br/>
+        4. <code>Size--</code><br/>
+        5. Return e
       </div>
-      <div class="answer-example"><span class="example-label">Rule of thumb:</span> If you need O(1) removeLast and backward traversal, use doubly linked. If memory is tight and you only traverse forward, singly circular is sufficient.</div>
     </div>
   </div>
+</div>
 
-  <!-- Q21 -->
-  <div class="question-card" id="q21">
-    <div class="question-header">
-      <span class="q-number">Q21</span>
-      <span class="q-type apply">APPLY</span>
-      <span class="q-text"><strong>[Google]</strong> Split a circular linked list of even size into two equal circular linked lists. Describe the algorithm and the pointer assignments required.</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q21')">Show Answer</button>
-    </div>
-    <div class="answer-block" id="q21-answer">
+<!-- Q19 -->
+<div class="question-card" id="q19">
+  <div class="question-header">
+    <span class="q-number">Q19</span><span class="q-type apply">APPLY</span>
+    <span class="q-text">An interviewer asks: "How would you implement a browser's back/forward navigation using a doubly linked list?" Sketch the approach.</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q19')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q19-answer">
+    <div class="answer-inner">
       <div class="answer-label">Answer</div>
       <div class="answer-content">
-        <strong>Algorithm (slow/fast pointer to find midpoint):</strong><br>
-        ① Use slow (1 step) and fast (2 steps) — when fast completes the loop, slow is at the midpoint.<br>
-        ② <strong>Head of list 2</strong> = slow.next.<br>
-        ③ <strong>Break the first half's circle:</strong> fast.next = head  (fast is at the last node; it must point back to head, not slow.next).<br>
-        ④ <strong>Break the second half's circle:</strong> slow.next = head2  (slow's next was already head2; now slow.next becomes the new circular wrap of list 2, which should already close correctly — verify fast.next == head2 to close list 2's circle).<br><br>
-        <strong>Result:</strong> Two independent circular lists: list1 = head to slow, list2 = head2 back to itself.
+        Each page URL is a node. A <code>current</code> pointer tracks where you are.<br/>
+        <strong>Visit new page:</strong> Insert a new node after <code>current</code>, truncate everything after it (new branch), advance <code>current</code>.<br/>
+        <strong>Back:</strong> <code>current = current.prev</code> (if prev != null)<br/>
+        <strong>Forward:</strong> <code>current = current.next</code> (if next != null)<br/><br/>
+        The <code>prev</code> pointer enables O(1) back navigation — exactly what makes doubly linked lists the right choice here.
       </div>
-      <div class="answer-example"><span class="example-label">Complexity:</span> Time O(n) — one pass with slow/fast. Space O(1) — only pointer manipulation.</div>
     </div>
   </div>
+</div>
 
-  <!-- Q22 -->
-  <div class="question-card" id="q22">
-    <div class="question-header">
-      <span class="q-number">Q22</span>
-      <span class="q-type gotcha">GOTCHA</span>
-      <span class="q-text"><strong>[Microsoft]</strong> A junior dev writes <code>while(p.next != head)</code> to traverse a circular linked list. What is the bug, and under what condition does it silently produce wrong output instead of crashing?</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q22')">Show Answer</button>
+<!-- Q20 -->
+<div class="question-card" id="q20">
+  <div class="question-header">
+    <span class="q-number">Q20</span><span class="q-type gotcha">GOTCHA</span>
+    <span class="q-text">In removeAnywhere, after doing p.next = p.next.next, you must also do p.next.prev = p. What breaks if you skip this?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q20')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q20-answer">
+    <div class="answer-inner">
+      <div class="answer-label">Answer</div>
+      <div class="answer-content">If you skip <code>p.next.prev = p</code>, the successor node's <code>prev</code> still points to the <strong>deleted node</strong>. If you later traverse backwards from anywhere after that point, you'll pass through the deleted node — which should no longer exist. You also lose the ability to correctly use backward traversal or backward-dependent operations from that region of the list.</div>
+      <div class="answer-example"><span class="example-label">Rule:</span> Every doubly-linked pointer update is a pair — fix both directions, always.</div>
     </div>
-    <div class="answer-block" id="q22-answer">
+  </div>
+</div>
+
+<!-- Q21 -->
+<div class="question-card" id="q21">
+  <div class="question-header">
+    <span class="q-number">Q21</span><span class="q-type compare">COMPARE</span>
+    <span class="q-text">How does a doubly linked list differ from an array in terms of memory layout and access patterns?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q21')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q21-answer">
+    <div class="answer-inner">
       <div class="answer-label">Answer</div>
       <div class="answer-content">
-        <strong>The bug:</strong> <code>while(p.next != head)</code> starts with <code>p = head</code> and stops one node early — it never processes the last node (whose <code>next</code> is <code>head</code>). The final element is silently skipped.<br><br>
-        <strong>Condition for silent failure:</strong> It doesn't crash because the loop terminates normally — it just exits one iteration too soon. No exception is thrown. If you're summing elements or searching, the last node is invisible to the algorithm.<br><br>
-        <strong>Fixes:</strong> Either use a counter <code>while(i &lt; size)</code>, or use a do-while loop: <code>do { process(p); p = p.next; } while(p != head);</code>
+        <strong>Array:</strong> Contiguous memory — all elements are adjacent. Index access is O(1) because you can compute an address directly (base + index × size). Insertion/deletion in the middle requires shifting elements: O(n).<br/><br/>
+        <strong>Doubly Linked List:</strong> Nodes scattered anywhere in memory — connected only by pointers. Random access is O(n) because you must hop from head. Insertion/deletion (once positioned) is O(1) — just pointer reassignment.
       </div>
-      <div class="answer-example"><span class="example-label">Classic interview trap:</span> Off-by-one errors in circular structures are a favourite for interviewers — always trace through with a 1-node list and a 2-node list to verify boundary behaviour.</div>
     </div>
   </div>
+</div>
 
-  <!-- Q23 -->
-  <div class="question-card" id="q23">
-    <div class="question-header">
-      <span class="q-number">Q23</span>
-      <span class="q-type apply">APPLY</span>
-      <span class="q-text"><strong>[Amazon]</strong> Implement the <strong>Josephus Problem</strong>: <em>n</em> people stand in a circle, every <em>k</em>-th person is eliminated. Find the position of the survivor. Describe how a circular linked list solves this naturally.</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q23')">Show Answer</button>
-    </div>
-    <div class="answer-block" id="q23-answer">
+<!-- Q22 -->
+<div class="question-card" id="q22">
+  <div class="question-header">
+    <span class="q-number">Q22</span><span class="q-type apply">APPLY</span>
+    <span class="q-text">What is the overall space complexity of a doubly linked list with n nodes, and what contributes to it?</span>
+    <button class="show-answer-btn" onclick="toggleAnswer('q22')">Show Answer</button>
+  </div>
+  <div class="answer-block" id="q22-answer">
+    <div class="answer-inner">
       <div class="answer-label">Answer</div>
       <div class="answer-content">
-        A circular linked list is the natural model — each node represents a person, <code>node.next</code> is the next person in the circle.<br><br>
-        <strong>Algorithm:</strong> Start at head. Advance <code>k−1</code> steps (so pointer <code>p</code> lands on the person <em>before</em> the one being eliminated). Remove <code>p.next</code> using <code>p.next = p.next.next</code>. Repeat until one node remains (it points to itself).
-      <div class="code-block" style="margin-top:0.8rem;">
-        <div class="code-header"><span class="code-lang">csharp</span></div>
-        <pre><code class="language-csharp">public int Josephus(int n, int k)
-{
-    // Build circular list 1..n
-    Node head = new Node(1, null); head.next = head;
-    Node tail = head;
-    for (int i = 2; i <= n; i++) {
-        tail.next = new Node(i, head);
-        tail = tail.next;
-    }
-    Node p = tail;   // start one step before head
-    while (p.next != p) {
-        for (int i = 0; i < k - 1; i++) p = p.next;   // advance k-1
-        p.next = p.next.next;                           // eliminate
-    }
-    return p.element;   // survivor
-}</code></pre>
+        <strong>Space: O(n)</strong><br/>
+        Each of the n nodes stores 3 fields: element (the data value), next (one reference/pointer), prev (one reference/pointer). So total memory = n × (sizeof element + sizeof next + sizeof prev). The head, tail, and size variables add O(1) overhead. Total: O(n).
       </div>
-      </div>
-      <div class="answer-example"><span class="example-label">Complexity:</span> Time O(n·k), Space O(n). The mathematical recurrence solution is O(n) time O(1) space — but the linked list version demonstrates the data structure directly.</div>
+      <div class="answer-example"><span class="example-label">vs Singly:</span> Singly linked = n × 2 fields. Doubly = n × 3 fields — 50% more pointer overhead.</div>
     </div>
   </div>
-
-  <!-- Q24 -->
-  <div class="question-card" id="q24">
-    <div class="question-header">
-      <span class="q-number">Q24</span>
-      <span class="q-type sequence">SEQUENCE</span>
-      <span class="q-text"><strong>[Infosys / TCS]</strong> Explain the exact sequence of pointer changes needed to <strong>reverse</strong> a circular linked list in-place. What is the time and space complexity?</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q24')">Show Answer</button>
-    </div>
-    <div class="answer-block" id="q24-answer">
-      <div class="answer-label">Answer</div>
-      <div class="answer-content">
-        <strong>Strategy:</strong> Similar to reversing a linear linked list, but the final step must restore the circular link.<br><br>
-        ① Use three pointers: <code>prev = tail</code> (will become new tail, initially set to null for the reversal logic), <code>current = head</code>, <code>next = null</code>.<br>
-        ② Traverse the list with a counter. For each node: save <code>next = current.next</code>, reverse <code>current.next = prev</code>, advance <code>prev = current</code>, advance <code>current = next</code>.<br>
-        ③ After n iterations: <code>prev</code> is the new head. Set <code>tail = head</code> (old head is now the last node).<br>
-        ④ Restore circular link: <code>tail.next = prev</code> (new head). Set <code>head = prev</code>.<br><br>
-        <strong>Result:</strong> All next pointers are reversed, head and tail are swapped, and the circular link is re-established.
-      </div>
-      <div class="answer-example"><span class="example-label">Complexity:</span> Time O(n) — single pass. Space O(1) — three pointers only, no extra memory.</div>
-    </div>
-  </div>
-
-  <!-- Q25 -->
-  <div class="question-card" id="q25">
-    <div class="question-header">
-      <span class="q-number">Q25</span>
-      <span class="q-type why">WHY</span>
-      <span class="q-text"><strong>[Google / System Design]</strong> A music player needs a "loop all songs" feature. Would you implement the queue internally as an array, a linear linked list, or a circular linked list? Justify every choice with a specific complexity reason.</span>
-      <button class="show-answer-btn" onclick="toggleAnswer('q25')">Show Answer</button>
-    </div>
-    <div class="answer-block" id="q25-answer">
-      <div class="answer-label">Answer</div>
-      <div class="answer-content">
-        <strong>Circular linked list is the best fit.</strong> Here's the comparison:<br><br>
-        <strong>Array:</strong> Loop-all requires a mod operation (<code>index % n</code>) — O(1) access, but inserting/removing songs mid-playlist is O(n) due to shifting. Fixed size unless resized.<br><br>
-        <strong>Linear linked list:</strong> Insert/remove is O(1) with a pointer, but "loop all" requires an explicit check: <em>if at last node, jump to head</em>. This conditional must execute on every "next song" call — extra branching logic for a fundamental operation.<br><br>
-        <strong>Circular linked list:</strong> "Next song" is always <code>current = current.next</code> — no branch, no mod. Looping is the default behaviour, not a special case. Adding/removing songs is O(1) at head/tail, O(n) mid-list. The structure directly models the domain.
-      </div>
-      <div class="answer-example"><span class="example-label">Key insight:</span> When the real-world problem has a cyclic structure (circular playlist, round-robin, turn-based games), a circular linked list eliminates conditional wrap-around logic — the data structure itself encodes the invariant.</div>
-    </div>
-  </div>
+</div>
 
 </div>
-</div>
+</div><!-- end recall -->
 
 <script>
-// Tab switching
-function switchTab(name) {
-  document.querySelectorAll('.tab-panel').forEach(p => {
-    p.classList.remove('active');
-    p.style.opacity = '0';
+// ─── TAB SWITCHING ───────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(t => {
+    t.classList.remove('visible');
+    t.style.display = 'none';
   });
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  const panel = document.getElementById('tab-' + name);
-  panel.classList.add('active');
-  setTimeout(() => panel.style.opacity = '1', 10);
+  const el = document.getElementById('tab-' + tab);
+  el.style.display = 'block';
+  requestAnimationFrame(() => el.classList.add('visible'));
   document.querySelectorAll('.tab-btn').forEach(b => {
-    if((name === 'handbook' && b.textContent.includes('Handbook')) ||
-       (name === 'recall' && b.textContent.includes('Recall'))) {
+    if (b.textContent.toLowerCase().includes(tab === 'handbook' ? 'handbook' : 'recall'))
       b.classList.add('active');
-    }
   });
 }
 
-// Copy button
+// ─── COPY CODE ───────────────────────────────────────────────────
 function copyCode(btn) {
-  const code = btn.closest('.code-block').querySelector('code').innerText;
-  navigator.clipboard.writeText(code).then(() => {
+  const code = btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.textContent).then(() => {
     btn.textContent = 'Copied!';
     setTimeout(() => btn.textContent = 'Copy', 1500);
   });
 }
 
-// Active recall — toggle answers
-let revealed = new Set();
+// ─── ACTIVE RECALL ───────────────────────────────────────────────
+let revealedCount = 0;
+const totalQuestions = 22;
 
-function updateCounter() {
-  const total = document.querySelectorAll('.question-card').length;
-  document.getElementById('prog-count').textContent = revealed.size;
-  document.getElementById('prog-total').textContent = total;
+function updateProgress() {
+  document.getElementById('progress-counter').textContent =
+    revealedCount + ' of ' + totalQuestions + ' answered';
 }
 
 function toggleAnswer(id) {
-  const card = document.getElementById(id);
-  const block = document.getElementById(id + '-answer');
-  const btn = card.querySelector('.show-answer-btn');
-  if(block.classList.contains('open')) {
+  const card   = document.getElementById(id);
+  const block  = document.getElementById(id + '-answer');
+  const btn    = card.querySelector('.show-answer-btn');
+  const isOpen = block.classList.contains('open');
+
+  if (isOpen) {
     block.classList.remove('open');
-    btn.classList.remove('active');
     btn.textContent = 'Show Answer';
+    btn.classList.remove('active');
     card.classList.remove('revealed');
-    revealed.delete(id);
+    revealedCount--;
   } else {
     block.classList.add('open');
-    btn.classList.add('active');
     btn.textContent = 'Hide Answer';
+    btn.classList.add('active');
     card.classList.add('revealed');
-    revealed.add(id);
+    revealedCount++;
   }
-  updateCounter();
+  updateProgress();
 }
 
 function revealAll() {
+  revealedCount = 0;
   document.querySelectorAll('.question-card').forEach(card => {
-    const id = card.id;
+    const id    = card.id;
     const block = document.getElementById(id + '-answer');
-    const btn = card.querySelector('.show-answer-btn');
+    const btn   = card.querySelector('.show-answer-btn');
     block.classList.add('open');
-    btn.classList.add('active');
     btn.textContent = 'Hide Answer';
+    btn.classList.add('active');
     card.classList.add('revealed');
-    revealed.add(id);
+    revealedCount++;
   });
-  updateCounter();
+  updateProgress();
 }
 
 function hideAll() {
   document.querySelectorAll('.question-card').forEach(card => {
-    const id = card.id;
+    const id    = card.id;
     const block = document.getElementById(id + '-answer');
-    const btn = card.querySelector('.show-answer-btn');
+    const btn   = card.querySelector('.show-answer-btn');
     block.classList.remove('open');
-    btn.classList.remove('active');
     btn.textContent = 'Show Answer';
+    btn.classList.remove('active');
     card.classList.remove('revealed');
   });
-  revealed.clear();
-  updateCounter();
+  revealedCount = 0;
+  updateProgress();
 }
 
-// Init
+// ─── INIT ────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   hljs.highlightAll();
-  updateCounter();
+  // ensure first tab visible
+  document.getElementById('tab-handbook').style.display = 'block';
+  document.getElementById('tab-recall').style.display = 'none';
 });
 </script>
 </body>

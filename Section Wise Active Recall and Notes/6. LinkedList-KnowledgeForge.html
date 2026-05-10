@@ -251,6 +251,73 @@ tbody td{padding:.55rem .95rem;border:1px solid var(--border);color:#ccc;vertica
     </tbody>
   </table>
 
+  <h2>🗂️ Types of Linked Lists</h2>
+  <p>There are 5 types. You need to know all of them — but in practice, 3 dominate everything.</p>
+
+  <table>
+    <thead><tr><th>Type</th><th>Structure</th><th>Key Trait</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Singly Linked List</strong></td><td>Each node has one pointer: <code>next</code></td><td>Traversal is one-directional (head → tail only). Simple, low memory overhead.</td></tr>
+      <tr><td><strong>Doubly Linked List</strong></td><td>Each node has two pointers: <code>next</code> + <code>previous</code></td><td>Traverse both directions. RemoveLast is O(1). Costs more memory per node.</td></tr>
+      <tr><td><strong>Circular Singly Linked List</strong></td><td>Like singly, but the last node's <code>next</code> points back to <code>head</code> instead of null</td><td>No null terminator — traversal loops forever unless you track the start. Used in round-robin schedulers.</td></tr>
+      <tr><td><strong>Circular Doubly Linked List</strong></td><td>Like doubly, but tail's <code>next</code> → head AND head's <code>previous</code> → tail</td><td>Fully circular in both directions. Used in browser history, media player queues.</td></tr>
+      <tr><td><strong>Skip List</strong></td><td>Multiple layers of linked lists with "express lanes" — upper layers skip over many nodes</td><td>Probabilistic structure. Search/insert/delete in O(log n) average. Used in Redis, LevelDB.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>🔑 The 3 You'll Actually Use</h3>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.85rem;margin:1rem 0;">
+    <div style="background:var(--card);border:2px solid var(--accent);border-radius:10px;padding:1.1rem 1.2rem;">
+      <div style="font-family:'Syne',sans-serif;font-size:.85rem;font-weight:800;color:var(--accent);margin-bottom:.5rem;">① Singly Linked List</div>
+      <div class="node-chain" style="margin:.5rem 0;padding:.5rem .6rem;">
+        <div class="nd-box"><div class="nd-val">A</div><div class="nd-ptr">→B</div></div>
+        <span class="nd-arr">→</span>
+        <div class="nd-box"><div class="nd-val">B</div><div class="nd-ptr">→C</div></div>
+        <span class="nd-arr">→</span>
+        <div class="nd-box"><div class="nd-val">C</div><div class="nd-ptr null-p">null</div></div>
+      </div>
+      <ul style="font-size:.78rem;color:#bbb;padding-left:1rem;margin-top:.4rem;">
+        <li>One pointer per node (<code>next</code> only)</li>
+        <li>Forward traversal only</li>
+        <li>RemoveLast is O(n)</li>
+        <li>Lowest memory cost</li>
+      </ul>
+    </div>
+    <div style="background:var(--card);border:2px solid var(--accent2);border-radius:10px;padding:1.1rem 1.2rem;">
+      <div style="font-family:'Syne',sans-serif;font-size:.85rem;font-weight:800;color:var(--accent2);margin-bottom:.5rem;">② Doubly Linked List</div>
+      <div class="node-chain" style="margin:.5rem 0;padding:.5rem .6rem;">
+        <div class="nd-box"><div class="nd-val">A</div><div class="nd-ptr">↔B</div></div>
+        <span class="nd-arr">↔</span>
+        <div class="nd-box"><div class="nd-val">B</div><div class="nd-ptr">↔C</div></div>
+        <span class="nd-arr">↔</span>
+        <div class="nd-box"><div class="nd-val">C</div><div class="nd-ptr null-p">↔null</div></div>
+      </div>
+      <ul style="font-size:.78rem;color:#bbb;padding-left:1rem;margin-top:.4rem;">
+        <li>Two pointers: <code>next</code> + <code>previous</code></li>
+        <li>Traverse in both directions</li>
+        <li>RemoveLast is O(1)</li>
+        <li>Higher memory per node</li>
+      </ul>
+    </div>
+    <div style="background:var(--card);border:2px solid var(--accent3);border-radius:10px;padding:1.1rem 1.2rem;">
+      <div style="font-family:'Syne',sans-serif;font-size:.85rem;font-weight:800;color:var(--accent3);margin-bottom:.5rem;">③ Circular Linked List</div>
+      <div class="node-chain" style="margin:.5rem 0;padding:.5rem .6rem;">
+        <div class="nd-box"><div class="nd-val">A</div><div class="nd-ptr">→B</div></div>
+        <span class="nd-arr">→</span>
+        <div class="nd-box"><div class="nd-val">B</div><div class="nd-ptr">→C</div></div>
+        <span class="nd-arr">→</span>
+        <div class="nd-box"><div class="nd-val">C</div><div class="nd-ptr" style="color:var(--accent3);">→A</div></div>
+      </div>
+      <ul style="font-size:.78rem;color:#bbb;padding-left:1rem;margin-top:.4rem;">
+        <li>Tail's <code>next</code> → head (loops back)</li>
+        <li>No null terminator</li>
+        <li>Used in round-robin, ring buffers</li>
+        <li>Infinite traversal risk without break</li>
+      </ul>
+    </div>
+  </div>
+
   <h2>🔗 Anatomy of a Node</h2>
   <div class="ll-viz">
     <div class="ll-title">Single Node Structure</div>
@@ -361,6 +428,30 @@ tbody td{padding:.55rem .95rem;border:1px solid var(--border);color:#ccc;vertica
 <div class="inner">
   <h1 class="ptitle">C# Built-in <code>LinkedList&lt;T&gt;</code></h1>
   <p class="psub">System.Collections.Generic · Doubly-linked · Generic · Production-ready</p>
+
+  <div style="background:linear-gradient(135deg,rgba(96,200,240,.12),rgba(96,200,240,.04));border:2px solid var(--accent2);border-radius:12px;padding:1.4rem 1.8rem;margin:1.2rem 0;text-align:center;">
+    <div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--accent2);margin-bottom:.4rem;">🔷 DOUBLY LINKED LIST</div>
+    <div style="font-family:'DM Mono',monospace;font-size:.85rem;color:#ccc;">C#'s built-in <code>LinkedList&lt;T&gt;</code> is a <strong style="color:var(--accent2);">Doubly Linked List</strong></div>
+    <div style="margin-top:.8rem;display:flex;justify-content:center;align-items:center;gap:.5rem;flex-wrap:wrap;">
+      <div style="font-family:'DM Mono',monospace;font-size:.78rem;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:.4rem .8rem;color:var(--muted);">null ←</div>
+      <div style="border:2px solid var(--accent2);border-radius:6px;overflow:hidden;font-family:'DM Mono',monospace;font-size:.78rem;">
+        <div style="background:var(--node-data);padding:.3rem .7rem;color:var(--accent2);text-align:center;">A</div>
+        <div style="background:var(--node-ptr);padding:.2rem .7rem;color:var(--success);text-align:center;font-size:.65rem;">prev | next</div>
+      </div>
+      <div style="color:var(--accent2);font-size:1.1rem;">↔</div>
+      <div style="border:2px solid var(--accent2);border-radius:6px;overflow:hidden;font-family:'DM Mono',monospace;font-size:.78rem;">
+        <div style="background:var(--node-data);padding:.3rem .7rem;color:var(--accent2);text-align:center;">B</div>
+        <div style="background:var(--node-ptr);padding:.2rem .7rem;color:var(--success);text-align:center;font-size:.65rem;">prev | next</div>
+      </div>
+      <div style="color:var(--accent2);font-size:1.1rem;">↔</div>
+      <div style="border:2px solid var(--accent2);border-radius:6px;overflow:hidden;font-family:'DM Mono',monospace;font-size:.78rem;">
+        <div style="background:var(--node-data);padding:.3rem .7rem;color:var(--accent2);text-align:center;">C</div>
+        <div style="background:var(--node-ptr);padding:.2rem .7rem;color:var(--success);text-align:center;font-size:.65rem;">prev | next</div>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:.78rem;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:.4rem .8rem;color:var(--muted);">→ null</div>
+    </div>
+    <div style="margin-top:.8rem;font-size:.78rem;color:var(--muted);">Every <code>LinkedListNode&lt;T&gt;</code> has <code style="color:var(--accent2);">Next</code> and <code style="color:var(--accent2);">Previous</code> — traverse in both directions · <code>First</code> and <code>Last</code> direct access</div>
+  </div>
 
   <div class="callout rule">📌 C# provides a built-in <strong>doubly-linked list</strong> via <code>System.Collections.Generic.LinkedList&lt;T&gt;</code>. Every node is a <code>LinkedListNode&lt;T&gt;</code> with references to both <code>Next</code> and <code>Previous</code>. The list itself exposes <code>First</code> and <code>Last</code> sentinels. Click any method card below to jump to its detailed explanation.</div>
 
@@ -1135,6 +1226,29 @@ Console.WriteLine(l.search(99)); // -1 (not found)</code></pre></div>
   <h1 class="ptitle">Custom Linked List Implementation</h1>
   <p class="psub">Hand-built Node + LinkedList class · Singly-linked · From the course</p>
 
+  <div style="background:linear-gradient(135deg,rgba(200,240,96,.1),rgba(200,240,96,.03));border:2px solid var(--accent);border-radius:12px;padding:1.4rem 1.8rem;margin:1.2rem 0;text-align:center;">
+    <div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:.4rem;">🛠️ SINGLY LINKED LIST</div>
+    <div style="font-family:'DM Mono',monospace;font-size:.85rem;color:#ccc;">The custom implementation from the course is a <strong style="color:var(--accent);">Singly Linked List</strong></div>
+    <div style="margin-top:.8rem;display:flex;justify-content:center;align-items:center;gap:.5rem;flex-wrap:wrap;">
+      <div style="font-family:'DM Mono',monospace;font-size:.68rem;color:var(--accent3);">HEAD ↓</div>
+      <div style="border:2px solid var(--accent);border-radius:6px;overflow:hidden;font-family:'DM Mono',monospace;font-size:.78rem;">
+        <div style="background:var(--node-data);padding:.3rem .7rem;color:var(--accent2);text-align:center;">A</div>
+        <div style="background:var(--node-ptr);padding:.2rem .7rem;color:var(--success);text-align:center;font-size:.65rem;">next only</div>
+      </div>
+      <div style="color:var(--accent);font-size:1.1rem;">→</div>
+      <div style="border:2px solid var(--accent);border-radius:6px;overflow:hidden;font-family:'DM Mono',monospace;font-size:.78rem;">
+        <div style="background:var(--node-data);padding:.3rem .7rem;color:var(--accent2);text-align:center;">B</div>
+        <div style="background:var(--node-ptr);padding:.2rem .7rem;color:var(--success);text-align:center;font-size:.65rem;">next only</div>
+      </div>
+      <div style="color:var(--accent);font-size:1.1rem;">→</div>
+      <div style="border:2px solid var(--accent);border-radius:6px;overflow:hidden;font-family:'DM Mono',monospace;font-size:.78rem;">
+        <div style="background:var(--node-data);padding:.3rem .7rem;color:var(--accent2);text-align:center;">C</div>
+        <div style="background:var(--node-ptr);padding:.2rem .7rem;color:var(--danger);text-align:center;font-size:.65rem;">null</div>
+      </div>
+    </div>
+    <div style="margin-top:.8rem;font-size:.78rem;color:var(--muted);">Each node has only <code style="color:var(--accent);">next</code> — one direction, no going back · <code>RemoveLast()</code> is O(n) because there is no <code>previous</code></div>
+  </div>
+
   <div class="callout info">💡 The course builds a linked list from scratch to understand the internals. This is a <strong>singly-linked</strong> list (each node has only a <code>next</code> pointer, no <code>previous</code>). The C# built-in is doubly-linked.</div>
 
   <h2>🔷 Node Class</h2>
@@ -1398,27 +1512,27 @@ Console.WriteLine(l.search(99)); // -1 (not found)</code></pre></div>
 
   <div class="qcard" id="q20"><div class="qhead"><span class="qnum">Q20</span><span class="qtag interview">INTERVIEW</span><span class="qtext">When would you choose a linked list over an array in production code? When would you choose an array?</span><button class="qbtn" onclick="rcToggle('q20')">Show</button></div><div class="qans" id="q20-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>Choose LinkedList when:</strong><ul><li>Frequent insertions/deletions at the front or known positions (O(1) vs array's O(n) shift)</li><li>Unknown or highly variable size — no wasted pre-allocated space</li><li>Implementing a queue or deque where both ends are used</li><li>Memory is fragmented — can't allocate one large contiguous block</li></ul><strong>Choose Array when:</strong><ul><li>Need random access by index — O(1) vs LL's O(n)</li><li>Frequent iteration over all elements — cache locality is 5–10× faster</li><li>Size is known and stable — no allocation overhead</li><li>Binary search needed — requires random access</li></ul></div></div></div>
 
-  <div class="qcard" id="q21"><div class="qhead"><span class="qnum">Q21</span><span class="qtag interview">INTERVIEW</span><span class="qtext">What is the difference between <code>Remove(T value)</code> and <code>Remove(LinkedListNode&lt;T&gt; node)</code>? Which is O(1) and why?</span><button class="qbtn" onclick="rcToggle('q21')">Show</button></div><div class="qans" id="q21-a"><div class="qa-label">Answer</div><div class="qa-body"><code>Remove(T value)</code> is <strong>O(n)</strong> — it must first scan the list to find the node with that value, then remove it.<br><br><code>Remove(LinkedListNode&lt;T&gt; node)</code> is <strong>O(1)</strong> — you already have the node reference. It directly rewires: <code>node.Previous.Next = node.Next</code> and <code>node.Next.Previous = node.Previous</code>. This is the key advantage of a doubly-linked list: once you have a node reference, removal is constant time.</div></div></div></div>
+  <div class="qcard" id="q21"><div class="qhead"><span class="qnum">Q21</span><span class="qtag interview">INTERVIEW</span><span class="qtext">What is the difference between <code>Remove(T value)</code> and <code>Remove(LinkedListNode&lt;T&gt; node)</code>? Which is O(1) and why?</span><button class="qbtn" onclick="rcToggle('q21')">Show</button></div><div class="qans" id="q21-a"><div class="qa-label">Answer</div><div class="qa-body"><code>Remove(T value)</code> is <strong>O(n)</strong> — it must first scan the list to find the node with that value, then remove it.<br><br><code>Remove(LinkedListNode&lt;T&gt; node)</code> is <strong>O(1)</strong> — you already have the node reference. It directly rewires: <code>node.Previous.Next = node.Next</code> and <code>node.Next.Previous = node.Previous</code>. This is the key advantage of a doubly-linked list: once you have a node reference, removal is constant time.</div></div></div>
 
-  <div class="qcard" id="q22"><div class="qhead"><span class="qnum">Q22</span><span class="qtag interview">INTERVIEW</span><span class="qtext">Explain the two-pointer (p, q) technique used in <code>insertSorted()</code>. Why is one pointer not enough?</span><button class="qbtn" onclick="rcToggle('q22')">Show</button></div><div class="qans" id="q22-a"><div class="qa-label">Answer</div><div class="qa-body">In a singly-linked list, once <code>p</code> moves past the insertion point, you can't go back (no previous pointer). You need <code>q</code> to trail one step behind <code>p</code> so that when <code>p.element ≥ e</code> (overshoot), <code>q</code> is the node before the insertion point. Insert between <code>q</code> and <code>p</code>: <code>newest.next = q.next</code>, <code>q.next = newest</code>. With only one pointer, you'd have lost the reference to the insertion predecessor.</div></div></div></div>
+  <div class="qcard" id="q22"><div class="qhead"><span class="qnum">Q22</span><span class="qtag interview">INTERVIEW</span><span class="qtext">Explain the two-pointer (p, q) technique used in <code>insertSorted()</code>. Why is one pointer not enough?</span><button class="qbtn" onclick="rcToggle('q22')">Show</button></div><div class="qans" id="q22-a"><div class="qa-label">Answer</div><div class="qa-body">In a singly-linked list, once <code>p</code> moves past the insertion point, you can't go back (no previous pointer). You need <code>q</code> to trail one step behind <code>p</code> so that when <code>p.element ≥ e</code> (overshoot), <code>q</code> is the node before the insertion point. Insert between <code>q</code> and <code>p</code>: <code>newest.next = q.next</code>, <code>q.next = newest</code>. With only one pointer, you'd have lost the reference to the insertion predecessor.</div></div></div>
 
   <div class="qcard" id="q23"><div class="qhead"><span class="qnum">Q23</span><span class="qtag interview">INTERVIEW</span><span class="qtext">How would you merge two sorted linked lists into one sorted list?</span><button class="qbtn" onclick="rcToggle('q23')">Show</button></div><div class="qans" id="q23-a"><div class="qa-label">Answer — Two Pointer Merge</div><div class="qa-body">Use a dummy head node. Compare the current heads of both lists; append the smaller one to the result, advance that pointer. Append remaining elements when one list is exhausted.<div class="qa-eg"><span class="qa-eg-lbl">Approach:</span> <code>Node dummy = new Node(0, null);<br>Node curr = dummy;<br>while (a != null &amp;&amp; b != null) {<br>&nbsp;&nbsp;if (a.element &lt;= b.element) { curr.next = a; a = a.next; }<br>&nbsp;&nbsp;else { curr.next = b; b = b.next; }<br>&nbsp;&nbsp;curr = curr.next;<br>}<br>curr.next = (a != null) ? a : b;<br>return dummy.next;</code><br>Time: O(n+m) · Space: O(1)</div></div></div></div>
 
-  <div class="qcard" id="q24"><div class="qhead"><span class="qnum">Q24</span><span class="qtag gotcha">GOTCHA</span><span class="qtext">What exception does <code>RemoveFirst()</code> / <code>RemoveLast()</code> throw when called on an empty list? How do you guard against it?</span><button class="qbtn" onclick="rcToggle('q24')">Show</button></div><div class="qans" id="q24-a"><div class="qa-label">Answer</div><div class="qa-body">Both throw <code>InvalidOperationException</code> with message "The LinkedList is empty." Guard with:<br><code>if (list.Count > 0) list.RemoveFirst();</code><br>Or check <code>list.First != null</code>. Unlike the custom implementation which returns -1 on error, the built-in throws — always check before calling on potentially-empty lists.</div></div></div></div>
+  <div class="qcard" id="q24"><div class="qhead"><span class="qnum">Q24</span><span class="qtag gotcha">GOTCHA</span><span class="qtext">What exception does <code>RemoveFirst()</code> / <code>RemoveLast()</code> throw when called on an empty list? How do you guard against it?</span><button class="qbtn" onclick="rcToggle('q24')">Show</button></div><div class="qans" id="q24-a"><div class="qa-label">Answer</div><div class="qa-body">Both throw <code>InvalidOperationException</code> with message "The LinkedList is empty." Guard with:<br><code>if (list.Count > 0) list.RemoveFirst();</code><br>Or check <code>list.First != null</code>. Unlike the custom implementation which returns -1 on error, the built-in throws — always check before calling on potentially-empty lists.</div></div></div>
 
-  <div class="qcard" id="q25"><div class="qhead"><span class="qnum">Q25</span><span class="qtag interview">INTERVIEW</span><span class="qtext">C#'s <code>LinkedList&lt;T&gt;</code> is doubly-linked and supports <code>First</code>/<code>Last</code> direct access. Name two data structures that are commonly implemented using it.</span><button class="qbtn" onclick="rcToggle('q25')">Show</button></div><div class="qans" id="q25-a"><div class="qa-label">Answer</div><div class="qa-body"><ul><li><strong>Deque (Double-Ended Queue)</strong> — AddFirst/AddLast/RemoveFirst/RemoveLast are all O(1). Perfect for deque semantics.</li><li><strong>LRU Cache</strong> — Most Recently Used node moves to front O(1) via Remove(node) + AddFirst. Node lookup is O(1) with a dictionary storing node references. Classic interview favourite.</li><li>Also: <strong>Stack</strong> (AddFirst/RemoveFirst) and <strong>Queue</strong> (AddLast/RemoveFirst), though <code>Stack&lt;T&gt;</code> / <code>Queue&lt;T&gt;</code> are more common for those.</li></ul></div></div></div></div>
+  <div class="qcard" id="q25"><div class="qhead"><span class="qnum">Q25</span><span class="qtag interview">INTERVIEW</span><span class="qtext">C#'s <code>LinkedList&lt;T&gt;</code> is doubly-linked and supports <code>First</code>/<code>Last</code> direct access. Name two data structures that are commonly implemented using it.</span><button class="qbtn" onclick="rcToggle('q25')">Show</button></div><div class="qans" id="q25-a"><div class="qa-label">Answer</div><div class="qa-body"><ul><li><strong>Deque (Double-Ended Queue)</strong> — AddFirst/AddLast/RemoveFirst/RemoveLast are all O(1). Perfect for deque semantics.</li><li><strong>LRU Cache</strong> — Most Recently Used node moves to front O(1) via Remove(node) + AddFirst. Node lookup is O(1) with a dictionary storing node references. Classic interview favourite.</li><li>Also: <strong>Stack</strong> (AddFirst/RemoveFirst) and <strong>Queue</strong> (AddLast/RemoveFirst), though <code>Stack&lt;T&gt;</code> / <code>Queue&lt;T&gt;</code> are more common for those.</li></ul></div></div></div>
 
-  <div class="qcard" id="q26"><div class="qhead"><span class="qnum">Q26</span><span class="qtag interview">INTERVIEW</span><span class="qtext">What is an LRU Cache and how does a linked list help implement it efficiently?</span><button class="qbtn" onclick="rcToggle('q26')">Show</button></div><div class="qans" id="q26-a"><div class="qa-label">Answer</div><div class="qa-body">An LRU (Least Recently Used) Cache keeps the N most recently accessed items and evicts the least recently used when full.<br><br><strong>Implementation using <code>LinkedList&lt;T&gt;</code> + <code>Dictionary&lt;K, LinkedListNode&gt;</code>:</strong><ul><li><strong>Access/Add</strong>: Move node to front (Remove(node) = O(1), AddFirst = O(1)) — total O(1)</li><li><strong>Evict</strong>: RemoveLast() = O(1) — removes LRU item</li><li><strong>Lookup</strong>: Dictionary maps key → node reference for O(1) access</li></ul>Without a doubly-linked list, moving a node to front would be O(n). The doubly-linked structure makes the entire cache O(1) per operation.</div></div></div></div>
+  <div class="qcard" id="q26"><div class="qhead"><span class="qnum">Q26</span><span class="qtag interview">INTERVIEW</span><span class="qtext">What is an LRU Cache and how does a linked list help implement it efficiently?</span><button class="qbtn" onclick="rcToggle('q26')">Show</button></div><div class="qans" id="q26-a"><div class="qa-label">Answer</div><div class="qa-body">An LRU (Least Recently Used) Cache keeps the N most recently accessed items and evicts the least recently used when full.<br><br><strong>Implementation using <code>LinkedList&lt;T&gt;</code> + <code>Dictionary&lt;K, LinkedListNode&gt;</code>:</strong><ul><li><strong>Access/Add</strong>: Move node to front (Remove(node) = O(1), AddFirst = O(1)) — total O(1)</li><li><strong>Evict</strong>: RemoveLast() = O(1) — removes LRU item</li><li><strong>Lookup</strong>: Dictionary maps key → node reference for O(1) access</li></ul>Without a doubly-linked list, moving a node to front would be O(n). The doubly-linked structure makes the entire cache O(1) per operation.</div></div></div>
 
-  <div class="qcard" id="q27"><div class="qhead"><span class="qnum">Q27</span><span class="qtag trace">TRACE</span><span class="qtext">Trace the state of list [7 → 4 → 12 → 8 → 3] after: <code>RemoveFirst()</code>, then <code>AddFirst(99)</code>, then <code>RemoveLast()</code>.</span><button class="qbtn" onclick="rcToggle('q27')">Show</button></div><div class="qans" id="q27-a"><div class="qa-label">Answer</div><div class="qa-body"><ol><li>Start: <code>7 → 4 → 12 → 8 → 3</code></li><li>RemoveFirst() removes 7: <code>4 → 12 → 8 → 3</code></li><li>AddFirst(99): <code>99 → 4 → 12 → 8 → 3</code></li><li>RemoveLast() removes 3: <code>99 → 4 → 12 → 8</code></li></ol>Final list: <strong>99 → 4 → 12 → 8</strong>, Count = 4</div></div></div></div>
+  <div class="qcard" id="q27"><div class="qhead"><span class="qnum">Q27</span><span class="qtag trace">TRACE</span><span class="qtext">Trace the state of list [7 → 4 → 12 → 8 → 3] after: <code>RemoveFirst()</code>, then <code>AddFirst(99)</code>, then <code>RemoveLast()</code>.</span><button class="qbtn" onclick="rcToggle('q27')">Show</button></div><div class="qans" id="q27-a"><div class="qa-label">Answer</div><div class="qa-body"><ol><li>Start: <code>7 → 4 → 12 → 8 → 3</code></li><li>RemoveFirst() removes 7: <code>4 → 12 → 8 → 3</code></li><li>AddFirst(99): <code>99 → 4 → 12 → 8 → 3</code></li><li>RemoveLast() removes 3: <code>99 → 4 → 12 → 8</code></li></ol>Final list: <strong>99 → 4 → 12 → 8</strong>, Count = 4</div></div></div>
 
-  <div class="qcard" id="q28"><div class="qhead"><span class="qnum">Q28</span><span class="qtag gotcha">GOTCHA</span><span class="qtext">Can you pass a node from one <code>LinkedList&lt;T&gt;</code> to <code>AddBefore()</code> of a different <code>LinkedList&lt;T&gt;</code>? What happens?</span><button class="qbtn" onclick="rcToggle('q28')">Show</button></div><div class="qans" id="q28-a"><div class="qa-label">Answer</div><div class="qa-body">No. <code>LinkedListNode&lt;T&gt;</code> has a <code>List</code> property that records which list it belongs to. If you pass a node that belongs to a different list (or has already been removed/cleared), <code>AddBefore()</code>, <code>AddAfter()</code>, and <code>Remove(node)</code> all throw <code>InvalidOperationException</code>. Always use nodes from the same list instance.</div></div></div></div>
+  <div class="qcard" id="q28"><div class="qhead"><span class="qnum">Q28</span><span class="qtag gotcha">GOTCHA</span><span class="qtext">Can you pass a node from one <code>LinkedList&lt;T&gt;</code> to <code>AddBefore()</code> of a different <code>LinkedList&lt;T&gt;</code>? What happens?</span><button class="qbtn" onclick="rcToggle('q28')">Show</button></div><div class="qans" id="q28-a"><div class="qa-label">Answer</div><div class="qa-body">No. <code>LinkedListNode&lt;T&gt;</code> has a <code>List</code> property that records which list it belongs to. If you pass a node that belongs to a different list (or has already been removed/cleared), <code>AddBefore()</code>, <code>AddAfter()</code>, and <code>Remove(node)</code> all throw <code>InvalidOperationException</code>. Always use nodes from the same list instance.</div></div></div>
 
-  <div class="qcard" id="q29"><div class="qhead"><span class="qnum">Q29</span><span class="qtag why">WHY</span><span class="qtext">Why is iteration over a linked list slower than over an array in practice, even though both are O(n)?</span><button class="qbtn" onclick="rcToggle('q29')">Show</button></div><div class="qans" id="q29-a"><div class="qa-label">Answer — Cache Locality</div><div class="qa-body">Arrays store elements contiguously — when the CPU loads one element, it prefetches the next cache line (64 bytes = 16 ints) automatically. Almost every access is a cache hit. Linked list nodes are scattered across RAM — each <code>node.next</code> pointer dereference likely causes a <strong>cache miss</strong>, requiring a fresh RAM fetch (~100ns vs ~1ns for cache). For n=1,000,000 elements, iterating a linked list can be 5–10× slower than an array despite the same O(n) Big-O.</div></div></div></div>
+  <div class="qcard" id="q29"><div class="qhead"><span class="qnum">Q29</span><span class="qtag why">WHY</span><span class="qtext">Why is iteration over a linked list slower than over an array in practice, even though both are O(n)?</span><button class="qbtn" onclick="rcToggle('q29')">Show</button></div><div class="qans" id="q29-a"><div class="qa-label">Answer — Cache Locality</div><div class="qa-body">Arrays store elements contiguously — when the CPU loads one element, it prefetches the next cache line (64 bytes = 16 ints) automatically. Almost every access is a cache hit. Linked list nodes are scattered across RAM — each <code>node.next</code> pointer dereference likely causes a <strong>cache miss</strong>, requiring a fresh RAM fetch (~100ns vs ~1ns for cache). For n=1,000,000 elements, iterating a linked list can be 5–10× slower than an array despite the same O(n) Big-O.</div></div></div>
 
   <div class="qcard" id="q30"><div class="qhead"><span class="qnum">Q30</span><span class="qtag interview">INTERVIEW</span><span class="qtext">How do you check if a linked list is a palindrome?</span><button class="qbtn" onclick="rcToggle('q30')">Show</button></div><div class="qans" id="q30-a"><div class="qa-label">Answer</div><div class="qa-body">Three steps: (1) Find the middle using slow/fast pointers. (2) Reverse the second half in-place. (3) Compare first half and reversed second half node-by-node.<div class="qa-eg"><span class="qa-eg-lbl">Result:</span> If all values match → palindrome. Optionally restore the list by reversing the second half again. Time: O(n) · Space: O(1).</div></div></div></div>
 
-  <div class="qcard" id="q31"><div class="qhead"><span class="qnum">Q31</span><span class="qtag interview">INTERVIEW</span><span class="qtext">Explain the <code>Count</code> property vs manually counting nodes with a loop. When does the difference matter?</span><button class="qbtn" onclick="rcToggle('q31')">Show</button></div><div class="qans" id="q31-a"><div class="qa-label">Answer</div><div class="qa-body"><code>Count</code> (built-in) and <code>size</code> (custom) are maintained as an integer field — accessing them is O(1). Counting nodes with a traversal loop is O(n). The difference matters when you call <code>Count</code> (or <code>length()</code>) inside a loop:<br><code>for (int i = 0; i &lt; list.Count; i++) ...</code> — this is O(n) total since Count is O(1).<br>If Count were O(n), the loop would be O(n²). Always prefer stored-counter implementations for size queries on production linked lists.</div></div></div></div>
+  <div class="qcard" id="q31"><div class="qhead"><span class="qnum">Q31</span><span class="qtag interview">INTERVIEW</span><span class="qtext">Explain the <code>Count</code> property vs manually counting nodes with a loop. When does the difference matter?</span><button class="qbtn" onclick="rcToggle('q31')">Show</button></div><div class="qans" id="q31-a"><div class="qa-label">Answer</div><div class="qa-body"><code>Count</code> (built-in) and <code>size</code> (custom) are maintained as an integer field — accessing them is O(1). Counting nodes with a traversal loop is O(n). The difference matters when you call <code>Count</code> (or <code>length()</code>) inside a loop:<br><code>for (int i = 0; i &lt; list.Count; i++) ...</code> — this is O(n) total since Count is O(1).<br>If Count were O(n), the loop would be O(n²). Always prefer stored-counter implementations for size queries on production linked lists.</div></div></div>
 </div>
 </div>
 
