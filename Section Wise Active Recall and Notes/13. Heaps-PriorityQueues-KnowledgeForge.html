@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heaps & Priority Queues — KnowledgeForge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/csharp.min.js"></script>
+<style>
+:root{
+  --bg:#0d0d0f;--surface:#141417;--card:#1a1a1f;--border:#2a2a32;
+  --accent:#c8f060;--accent2:#60c8f0;--accent3:#f060c8;
+  --text:#f0ede8;--muted:#6b6878;--danger:#f06060;--success:#60f0a0;--warn:#f0c860;
+  --fs-base: clamp(0.82rem, 1vw, 0.95rem);
+  --fs-sm: clamp(0.72rem, 0.85vw, 0.82rem);
+  --fs-xs: clamp(0.65rem, 0.75vw, 0.74rem);
+  --fs-h1: clamp(1.5rem, 2.5vw, 2.2rem);
+  --fs-h2: clamp(1rem, 1.5vw, 1.25rem);
+  --fs-h3: clamp(0.88rem, 1.1vw, 1rem);
+  --spacing: clamp(1rem, 2vw, 2rem);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background-color:var(--bg);
+  background-image:linear-gradient(rgba(200,240,96,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(200,240,96,.018) 1px,transparent 1px);
+  background-size:40px 40px;
+  color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:var(--fs-base);line-height:1.7;min-height:100vh;
+}
+
+/* ── HEADER ── */
+header{position:sticky;top:0;z-index:300;background:rgba(13,13,15,.97);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:.65rem clamp(1rem,2vw,2rem);display:flex;align-items:center;gap:clamp(.5rem,1vw,1rem);flex-wrap:wrap;}
+.logo{font-family:'Syne',sans-serif;font-size:clamp(.9rem,1.2vw,1.1rem);font-weight:800;white-space:nowrap;flex-shrink:0;}
+.logo span{color:var(--accent);}
+.header-nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0;}
+.header-nav::-webkit-scrollbar{display:none;}
+.nav-btn{font-family:'Syne',sans-serif;font-size:var(--fs-xs);font-weight:700;padding:.3rem clamp(.5rem,.8vw,.85rem);border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;white-space:nowrap;}
+.nav-btn:hover{color:var(--text);border-color:var(--muted);}
+.nav-btn.active{background:var(--accent);color:#0d0d0f;border-color:var(--accent);}
+
+/* ── DRAWER TOGGLE ── */
+.drawer-toggle{font-family:'Syne',sans-serif;font-size:var(--fs-xs);font-weight:700;padding:.3rem .65rem;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;white-space:nowrap;flex-shrink:0;}
+.drawer-toggle:hover{color:var(--text);border-color:var(--muted);}
+
+/* ── INDEX DRAWER ── */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;display:none;backdrop-filter:blur(4px);}
+.drawer-overlay.open{display:block;}
+.drawer{position:fixed;top:0;right:-340px;width:320px;max-width:90vw;height:100vh;background:var(--surface);border-left:1px solid var(--border);z-index:500;transition:right .3s ease;overflow-y:auto;padding:1.2rem 1.4rem;}
+.drawer.open{right:0;}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;padding-bottom:.8rem;border-bottom:1px solid var(--border);}
+.drawer-title{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800;color:var(--accent);}
+.drawer-close{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:4px;padding:.2rem .5rem;cursor:pointer;font-size:.75rem;}
+.drawer-close:hover{color:var(--text);}
+.drawer-section{margin-bottom:1rem;}
+.drawer-section-label{font-family:'Syne',sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.45rem;}
+.drawer-link{display:block;font-size:.8rem;color:#bbb;padding:.3rem .5rem;border-radius:4px;cursor:pointer;transition:all .18s;border:1px solid transparent;margin-bottom:2px;text-decoration:none;}
+.drawer-link:hover{color:var(--accent);background:rgba(200,240,96,.06);border-color:rgba(200,240,96,.15);}
+
+/* ── PAGES ── */
+.page{display:none;visibility:hidden;position:absolute;left:-9999px;}
+.page.active{display:block;visibility:visible;position:static;left:auto;}
+.inner{max-width:min(960px, 95vw);margin:0 auto;padding:var(--spacing) clamp(1rem,2vw,2rem);}
+
+/* ── TYPOGRAPHY ── */
+h1.ptitle{font-family:'Syne',sans-serif;font-size:var(--fs-h1);font-weight:800;color:var(--text);margin-bottom:.3rem;line-height:1.2;}
+.psub{font-family:'DM Mono',monospace;font-size:var(--fs-sm);color:var(--muted);margin-bottom:1.8rem;}
+h2{font-family:'Syne',sans-serif;font-size:var(--fs-h2);font-weight:800;color:var(--accent);border-bottom:1px solid rgba(200,240,96,.18);padding-bottom:.38rem;margin:2.2rem 0 .9rem;scroll-margin-top:80px;}
+h3{font-family:'Syne',sans-serif;font-size:var(--fs-h3);font-weight:700;color:var(--accent2);margin:1.3rem 0 .4rem;scroll-margin-top:80px;}
+p{color:#ccc;font-size:var(--fs-sm);margin-bottom:.6rem;}
+ul,ol{padding-left:1.3rem;color:#ccc;font-size:var(--fs-sm);}
+li{margin-bottom:.28rem;}
+strong{color:var(--text);}
+code{font-family:'DM Mono',monospace;font-size:var(--fs-xs);background:rgba(42,42,50,.8);padding:.05rem .3rem;border-radius:3px;color:var(--accent2);}
+
+/* ── CALLOUTS ── */
+.callout{padding:.72rem 1rem;border-radius:7px;font-size:var(--fs-sm);margin:.8rem 0;line-height:1.65;}
+.tip{border-left:3px solid var(--accent);background:rgba(200,240,96,.05);color:#ccc;}
+.warning{border-left:3px solid var(--accent3);background:rgba(240,96,200,.05);color:#ccc;}
+.rule{border-left:3px solid var(--accent2);background:rgba(96,200,240,.05);color:#ccc;}
+.info{border-left:3px solid var(--warn);background:rgba(240,200,96,.05);color:#ccc;}
+.danger{border-left:3px solid var(--danger);background:rgba(240,96,96,.05);color:#ccc;}
+
+/* ── CODE BLOCKS ── */
+.cb{background:var(--card);border:1px solid var(--border);border-radius:7px;margin:.9rem 0;overflow:hidden;}
+.cb-head{display:flex;justify-content:space-between;align-items:center;padding:.34rem .72rem;border-bottom:1px solid var(--border);}
+.cb-lang{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:var(--muted);text-transform:uppercase;}
+.cp{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:var(--muted);background:transparent;border:1px solid var(--border);padding:.14rem .42rem;border-radius:4px;cursor:pointer;transition:all .2s;}
+.cp:hover{color:var(--text);border-color:var(--muted);}
+.cb pre{margin:0;}
+.cb pre code{font-family:'DM Mono',monospace;font-size:clamp(.72rem,.9vw,.82rem);padding:.8rem 1rem !important;display:block;background:transparent!important;line-height:1.6;}
+
+/* ── TABLES ── */
+table{width:100%;border-collapse:collapse;margin:.8rem 0;font-size:var(--fs-sm);}
+thead th{font-family:'Syne',sans-serif;font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.05em;color:var(--accent);background:var(--card);padding:.52rem .85rem;text-align:left;border:1px solid var(--border);}
+tbody tr:nth-child(odd){background:var(--surface);}
+tbody tr:nth-child(even){background:var(--bg);}
+tbody td{padding:.48rem .85rem;border:1px solid var(--border);color:#ccc;vertical-align:top;}
+.badge{display:inline-block;font-family:'DM Mono',monospace;font-size:var(--fs-xs);padding:.08rem .34rem;border-radius:3px;font-weight:500;}
+.b-green{background:rgba(96,240,160,.12);color:var(--success);}
+.b-red{background:rgba(240,96,96,.12);color:var(--danger);}
+.b-blue{background:rgba(96,200,240,.12);color:var(--accent2);}
+.b-yellow{background:rgba(240,200,96,.12);color:var(--warn);}
+
+/* ── SVG DIAGRAM CONTAINER ── */
+.diagram-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:clamp(.8rem,1.5vw,1.4rem);margin:1.2rem 0;overflow-x:auto;}
+.diagram-title{font-family:'Syne',sans-serif;font-size:var(--fs-xs);font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.8rem;}
+.diagram-wrap svg{display:block;width:100%;height:auto;max-width:100%;}
+figcaption{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:var(--muted);text-align:center;margin-top:.5rem;}
+
+/* ── SIDE-BY-SIDE LAYOUT ── */
+.side-by-side{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;align-items:start;}
+.side-by-side .cb{margin:0;}
+.side-panel{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:.8rem 1rem;overflow-x:auto;}
+.side-panel-title{font-family:'Syne',sans-serif;font-size:var(--fs-xs);font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem;}
+@media(max-width:820px){.side-by-side{grid-template-columns:1fr;}}
+
+/* ── HEAP VALIDATION GRID ── */
+.heap-examples-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.2rem 0;}
+.heap-ex-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;}
+.heap-ex-card.valid{border-top:3px solid var(--success);}
+.heap-ex-card.invalid{border-top:3px solid var(--danger);}
+.heap-verdict{font-family:'Syne',sans-serif;font-size:var(--fs-xs);font-weight:700;margin-bottom:.5rem;}
+.heap-verdict.ok{color:var(--success);}
+.heap-verdict.no{color:var(--danger);}
+@media(max-width:700px){.heap-examples-grid{grid-template-columns:1fr;}}
+
+/* ── STEP LIST ── */
+.step-list{list-style:none;padding:0;margin:.5rem 0;}
+.step-list li{display:flex;gap:.65rem;margin-bottom:.38rem;font-size:var(--fs-sm);color:#ccc;align-items:flex-start;}
+.step-num{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:var(--accent);background:rgba(200,240,96,.1);border-radius:3px;padding:.04rem .3rem;flex-shrink:0;margin-top:.12rem;}
+.step-num.red{background:rgba(240,96,96,.15);color:var(--danger);}
+
+/* ── COMPLEXITY PILLS ── */
+.cx-row{display:flex;gap:.5rem;flex-wrap:wrap;margin:.5rem 0;}
+.cx-pill{font-family:'DM Mono',monospace;font-size:var(--fs-xs);padding:.18rem .5rem;border-radius:4px;border:1px solid var(--border);}
+.cx-best .cx-pill{color:var(--success);border-color:rgba(96,240,160,.3);background:rgba(96,240,160,.08);}
+.cx-avg .cx-pill{color:var(--accent);border-color:rgba(200,240,96,.3);background:rgba(200,240,96,.08);}
+.cx-worst .cx-pill{color:var(--danger);border-color:rgba(240,96,96,.3);background:rgba(240,96,96,.08);}
+.cx-space .cx-pill{color:var(--accent2);border-color:rgba(96,200,240,.3);background:rgba(96,200,240,.08);}
+.cx-label{font-family:'Syne',sans-serif;font-size:var(--fs-xs);font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-right:.3rem;}
+
+/* ── RECALL ── */
+.rc-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;padding-bottom:.8rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:.5rem;}
+.rc-ctr{font-family:'DM Mono',monospace;font-size:var(--fs-sm);color:var(--muted);}
+.rc-ctr span{color:var(--accent);font-weight:600;}
+.rc-bulk{display:flex;gap:.4rem;}
+.rcbtn{font-family:'Syne',sans-serif;font-size:var(--fs-xs);font-weight:700;padding:.26rem .6rem;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;}
+.rcbtn:hover{color:var(--text);border-color:var(--muted);}
+.rc-section-label{font-family:'Syne',sans-serif;font-size:var(--fs-sm);font-weight:700;color:var(--accent2);margin:1.5rem 0 .6rem;padding-bottom:.3rem;border-bottom:1px solid var(--border);}
+.qcard{background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:.5rem;overflow:hidden;transition:border-color .2s;}
+.qcard.revealed{border-color:rgba(200,240,96,.3);}
+.qhead{display:flex;align-items:flex-start;gap:.5rem;padding:.75rem .9rem;flex-wrap:wrap;}
+.qnum{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:var(--muted);flex-shrink:0;margin-top:.1rem;}
+.qtag{font-family:'Syne',sans-serif;font-size:var(--fs-xs);font-weight:700;padding:.1rem .36rem;border-radius:4px;flex-shrink:0;margin-top:.05rem;}
+.qtag.def{background:rgba(96,200,240,.12);color:var(--accent2);}
+.qtag.apply{background:rgba(200,240,96,.12);color:var(--accent);}
+.qtag.why{background:rgba(240,96,200,.12);color:var(--accent3);}
+.qtag.compare{background:rgba(200,240,96,.12);color:var(--accent);}
+.qtag.gotcha{background:rgba(240,96,96,.12);color:var(--danger);}
+.qtag.trace{background:rgba(240,200,96,.12);color:var(--warn);}
+.qtag.interview{background:rgba(96,240,160,.12);color:var(--success);}
+.qtext{font-size:var(--fs-sm);color:var(--text);flex:1;line-height:1.5;}
+.qbtn{font-family:'DM Mono',monospace;font-size:var(--fs-xs);padding:.22rem .52rem;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;flex-shrink:0;white-space:nowrap;}
+.qbtn.open{border-color:var(--accent);color:var(--accent);}
+.qans{border-top:1px solid var(--border);padding:.8rem .9rem;background:var(--surface);overflow:hidden;max-height:0;transition:max-height .35s ease;}
+.qans.open{max-height:4000px;}
+.qa-label{font-family:'Syne',sans-serif;font-size:var(--fs-xs);font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:.38rem;}
+.qa-body{font-size:var(--fs-sm);color:#ccc;line-height:1.65;}
+.qa-body strong{color:var(--text);}
+.qa-body ul,.qa-body ol{padding-left:1.2rem;margin-top:.3rem;}
+.qa-body li{margin-bottom:.2rem;}
+.qa-body code{font-family:'DM Mono',monospace;font-size:var(--fs-xs);background:rgba(42,42,50,.7);padding:.04rem .28rem;border-radius:3px;color:var(--accent2);}
+
+/* ── INSERT ANIMATION PANEL ── */
+.insert-steps{display:flex;flex-direction:column;gap:.4rem;}
+.ins-step{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:.55rem .85rem;font-size:var(--fs-sm);}
+.ins-step-head{font-family:'Syne',sans-serif;font-size:var(--fs-xs);font-weight:700;color:var(--accent);margin-bottom:.2rem;}
+.ins-step-desc{color:#ccc;}
+.ins-step.swap{border-color:rgba(240,96,200,.3);background:rgba(240,96,200,.04);}
+.ins-step.ok{border-color:rgba(96,240,160,.3);background:rgba(96,240,160,.04);}
+
+@media(max-width:640px){
+  header{padding:.55rem 1rem;}
+  .inner{padding:1.2rem .8rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── INDEX DRAWER ── -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="indexDrawer">
+  <div class="drawer-head">
+    <span class="drawer-title">📑 Quick Index</span>
+    <button class="drawer-close" onclick="closeDrawer()">✕ Close</button>
+  </div>
+
+  <div class="drawer-section">
+    <div class="drawer-section-label">📘 Handbook</div>
+    <a class="drawer-link" onclick="jumpTo('page-handbook','s-pq')">1. Priority Queues — Overview</a>
+    <a class="drawer-link" onclick="jumpTo('page-handbook','s-pq-cs')">2. C# PriorityQueue&lt;T,P&gt;</a>
+    <a class="drawer-link" onclick="jumpTo('page-handbook','s-heap-def')">3. Heap — Definition & Properties</a>
+    <a class="drawer-link" onclick="jumpTo('page-handbook','s-heap-examples')">4. Heap Validation — 3 Examples</a>
+    <a class="drawer-link" onclick="jumpTo('page-handbook','s-heap-types')">5. Types of Heaps</a>
+    <a class="drawer-link" onclick="jumpTo('page-handbook','s-heap-adt')">6. Heap ADT — Properties & Methods</a>
+    <a class="drawer-link" onclick="jumpTo('page-handbook','s-insert-concept')">7. Insertion — Concept & Diagram</a>
+    <a class="drawer-link" onclick="jumpTo('page-handbook','s-insert-algo')">8. Insertion — Algorithm Walkthrough</a>
+    <a class="drawer-link" onclick="jumpTo('page-handbook','s-delete-concept')">9. Deletion — Concept & Examples</a>
+    <a class="drawer-link" onclick="jumpTo('page-handbook','s-delete-algo')">10. Deletion — Algorithm Walkthrough</a>
+    <a class="drawer-link" onclick="jumpTo('page-handbook','s-sort-concept')">11. Heap Sort — Concept</a>
+    <a class="drawer-link" onclick="jumpTo('page-handbook','s-sort-algo')">12. Heap Sort — Algorithm</a>
+    <a class="drawer-link" onclick="jumpTo('page-handbook','s-complexity')">13. Complexity Summary</a>
+  </div>
+  <div class="drawer-section">
+    <div class="drawer-section-label">🧠 Active Recall</div>
+    <a class="drawer-link" onclick="jumpTo('page-recall','rc-fundamentals')">Fundamentals (Q1–Q10)</a>
+    <a class="drawer-link" onclick="jumpTo('page-recall','rc-algo')">Algorithm (Q11–Q20)</a>
+    <a class="drawer-link" onclick="jumpTo('page-recall','rc-interview')">Interview Questions (Q21–Q40)</a>
+  </div>
+</div>
+
+<header>
+  <div class="logo">Knowledge<span>Forge</span></div>
+  <nav class="header-nav">
+    <button class="nav-btn active" onclick="showPage('handbook',this)">📘 Handbook</button>
+    <button class="nav-btn" onclick="showPage('recall',this)">🧠 Active Recall</button>
+  </nav>
+  <button class="drawer-toggle" onclick="openDrawer()">📑 Index</button>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════
+     PAGE 1 — HANDBOOK
+══════════════════════════════════════════════════════════ -->
+<div class="page active" id="page-handbook">
+<div class="inner">
+
+  <h1 class="ptitle">Heaps &amp; Priority Queues</h1>
+  <p class="psub">Binary Heap · Max/Min Heap · Insert O(log n) · Delete O(log n) · Heap Sort O(n log n)</p>
+
+  <!-- ─────────────────────────────────────────── -->
+  <h2 id="s-pq">🚦 1. Priority Queues</h2>
+
+  <div class="callout tip">💡 Think of a hospital emergency room — patients don't get treated in arrival order. The most critical case goes first. That's a priority queue.</div>
+
+  <h3>What is a Priority Queue?</h3>
+  <p>A <strong>Priority Queue</strong> is an abstract data type where each element has an associated <strong>priority key</strong>. Unlike a regular queue (FIFO), elements are removed in priority order — the highest priority element is always served first, regardless of when it was inserted.</p>
+  <ul>
+    <li>Elements are <strong>inserted</strong> just like a regular queue.</li>
+    <li>Elements are <strong>removed</strong> based on priority (smallest key = highest priority in min-heap; largest key = highest priority in max-heap).</li>
+    <li>Priority is a separate value assigned at insertion time.</li>
+  </ul>
+
+  <h3>Queue vs Priority Queue</h3>
+  <table>
+    <thead><tr><th>Feature</th><th>Regular Queue</th><th>Priority Queue</th></tr></thead>
+    <tbody>
+      <tr><td>Removal Order</td><td>FIFO — first in, first out</td><td>Priority-first — highest priority out first</td></tr>
+      <tr><td>Key/Value</td><td>No priority concept</td><td>Each element has a priority key</td></tr>
+      <tr><td>Use Case</td><td>Print spooler, breadth-first search</td><td>Scheduling, pathfinding, hospital triage</td></tr>
+      <tr><td>Insertion</td><td>Always at end</td><td>Anywhere — order maintained by heap structure</td></tr>
+      <tr><td>Deletion</td><td>Always from front</td><td>Always the highest-priority element</td></tr>
+      <tr><td>Best Implementation</td><td>Array / LinkedList</td><td>Heap (binary tree)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>How Priority Queues Work</h3>
+
+  <figure>
+    <div class="diagram-wrap">
+      <div class="diagram-title">Priority Queue — Insertion vs Removal Flow</div>
+      <svg viewBox="0 0 700 160" xmlns="http://www.w3.org/2000/svg" style="min-width:400px;">
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#c8f060"/></marker>
+        </defs>
+        <!-- insert items -->
+        <rect x="10" y="50" width="100" height="60" rx="6" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="60" y="74" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="10">INSERT</text>
+        <text x="60" y="90" text-anchor="middle" fill="#c8f060" font-family="DM Mono" font-size="11">Patient A</text>
+        <text x="60" y="103" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="9">priority=3</text>
+
+        <rect x="125" y="50" width="100" height="60" rx="6" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="175" y="74" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="10">INSERT</text>
+        <text x="175" y="90" text-anchor="middle" fill="#c8f060" font-family="DM Mono" font-size="11">Patient B</text>
+        <text x="175" y="103" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="9">priority=1 🔴</text>
+
+        <rect x="240" y="50" width="100" height="60" rx="6" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="290" y="74" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="10">INSERT</text>
+        <text x="290" y="90" text-anchor="middle" fill="#c8f060" font-family="DM Mono" font-size="11">Patient C</text>
+        <text x="290" y="103" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="9">priority=2</text>
+
+        <!-- arrow to PQ -->
+        <line x1="355" y1="80" x2="400" y2="80" stroke="#c8f060" stroke-width="1.5" marker-end="url(#arr)"/>
+
+        <!-- PQ box -->
+        <rect x="402" y="20" width="140" height="120" rx="8" fill="#141417" stroke="#c8f060" stroke-opacity=".4"/>
+        <text x="472" y="42" text-anchor="middle" fill="#c8f060" font-family="Syne" font-size="11" font-weight="700">PRIORITY QUEUE</text>
+        <text x="472" y="62" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="10">Patient B  [1]</text>
+        <text x="472" y="78" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="10">Patient C  [2]</text>
+        <text x="472" y="94" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="10">Patient A  [3]</text>
+        <text x="472" y="128" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="8">sorted by priority internally</text>
+
+        <!-- arrow out -->
+        <line x1="546" y1="80" x2="590" y2="80" stroke="#60f0a0" stroke-width="1.5" marker-end="url(#arr)"/>
+
+        <!-- output -->
+        <rect x="592" y="50" width="100" height="60" rx="6" fill="#1a1a1f" stroke="#60f0a0" stroke-opacity=".5"/>
+        <text x="642" y="74" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="10">DEQUEUE</text>
+        <text x="642" y="90" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="11">Patient B</text>
+        <text x="642" y="103" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="9">highest priority!</text>
+      </svg>
+    </div>
+    <figcaption>Patient B (priority=1) exits first — even though inserted second. Lower number = higher priority in min-priority-queue.</figcaption>
+  </figure>
+
+  <h3>Real-World Use Cases</h3>
+  <table>
+    <thead><tr><th>Application</th><th>What's the "Queue"</th><th>Priority Criterion</th></tr></thead>
+    <tbody>
+      <tr><td>Hospital Triage</td><td>Patients waiting</td><td>Injury severity — critical first</td></tr>
+      <tr><td>Air Traffic Control</td><td>Aircraft waiting to land</td><td>Fuel level + distance from runway</td></tr>
+      <tr><td>Travel Booking</td><td>Waitlist for cancelled seats</td><td>Senior citizens / medical urgency first</td></tr>
+      <tr><td>OS Task Scheduler</td><td>Processes waiting for CPU</td><td>Process priority level</td></tr>
+      <tr><td>Dijkstra's Algorithm</td><td>Unvisited nodes</td><td>Smallest known distance from source</td></tr>
+      <tr><td>A* Pathfinding</td><td>Grid cells to explore</td><td>f(n) = g(n) + h(n) cost</td></tr>
+      <tr><td>Huffman Encoding</td><td>Character frequencies</td><td>Lowest frequency merged first</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ─────────────────────────────────────────── -->
+  <h2 id="s-pq-cs">🔷 2. C# Built-in <code>PriorityQueue&lt;TElement, TPriority&gt;</code></h2>
+
+  <div class="callout rule">📌 .NET 6+ ships <code>System.Collections.Generic.PriorityQueue&lt;TElement, TPriority&gt;</code> — a <strong>min-heap</strong> where the element with the <strong>smallest priority value</strong> dequeues first.</div>
+
+  <h3>Key Properties</h3>
+  <table>
+    <thead><tr><th>Member</th><th>Type</th><th>Description</th><th>Time</th></tr></thead>
+    <tbody>
+      <tr><td><code>Count</code></td><td><code>int</code></td><td>Number of elements currently in the queue</td><td><span class="badge b-green">O(1)</span></td></tr>
+      <tr><td><code>Comparer</code></td><td><code>IComparer&lt;TPriority&gt;</code></td><td>The comparer used to order priorities</td><td><span class="badge b-green">O(1)</span></td></tr>
+      <tr><td><code>UnorderedItems</code></td><td><code>UnorderedItemsCollection</code></td><td>View of all (element, priority) pairs — no guaranteed order</td><td><span class="badge b-green">O(1)</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Key Methods</h3>
+  <table>
+    <thead><tr><th>Method</th><th>Description</th><th>Time</th></tr></thead>
+    <tbody>
+      <tr><td><code>Enqueue(element, priority)</code></td><td>Add element with given priority</td><td><span class="badge b-green">O(log n)</span></td></tr>
+      <tr><td><code>Dequeue()</code></td><td>Remove and return element with lowest priority. Throws if empty.</td><td><span class="badge b-green">O(log n)</span></td></tr>
+      <tr><td><code>Peek()</code></td><td>Return element with lowest priority without removing. Throws if empty.</td><td><span class="badge b-green">O(1)</span></td></tr>
+      <tr><td><code>TryDequeue(out el, out pri)</code></td><td>Safe dequeue — returns false if empty instead of throwing</td><td><span class="badge b-green">O(log n)</span></td></tr>
+      <tr><td><code>TryPeek(out el, out pri)</code></td><td>Safe peek — returns false if empty</td><td><span class="badge b-green">O(1)</span></td></tr>
+      <tr><td><code>EnqueueRange(items)</code></td><td>Bulk-add items from IEnumerable&lt;(TElement, TPriority)&gt;</td><td><span class="badge b-red">O(n log n)</span></td></tr>
+      <tr><td><code>Clear()</code></td><td>Remove all elements</td><td><span class="badge b-red">O(n)</span></td></tr>
+      <tr><td><code>EnsureCapacity(cap)</code></td><td>Pre-allocate internal array capacity</td><td><span class="badge b-green">O(1) amortized</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="cb">
+    <div class="cb-head"><span class="cb-lang">csharp — PriorityQueue&lt;T,P&gt; examples</span><button class="cp" onclick="copyCode(this)">Copy</button></div>
+    <pre><code class="language-csharp">using System.Collections.Generic;
+
+// ── Basic usage — hospital triage (min-priority = most critical) ──────────
+var triage = new PriorityQueue&lt;string, int&gt;();
+triage.Enqueue("Patient A - sprained ankle",  3);  // least urgent
+triage.Enqueue("Patient B - cardiac arrest",  1);  // most urgent
+triage.Enqueue("Patient C - broken arm",      2);
+
+while (triage.Count > 0)
+{
+    string patient = triage.Dequeue();
+    Console.WriteLine($"Treating: {patient}");
+}
+// Output:
+// Treating: Patient B - cardiac arrest
+// Treating: Patient C - broken arm
+// Treating: Patient A - sprained ankle
+
+// ── Safe peek & dequeue (no exceptions) ──────────────────────────────────
+var pq = new PriorityQueue&lt;string, int&gt;();
+pq.Enqueue("Task A", 5);
+pq.Enqueue("Task B", 2);
+
+if (pq.TryPeek(out string? top, out int pri))
+    Console.WriteLine($"Next up: {top} (priority {pri})"); // Task B (priority 2)
+
+if (pq.TryDequeue(out string? done, out int donePri))
+    Console.WriteLine($"Done: {done}"); // Task B
+
+// ── Custom comparer — max priority queue (largest = most urgent) ──────────
+var maxPQ = new PriorityQueue&lt;string, int&gt;(
+    Comparer&lt;int&gt;.Create((a, b) =&gt; b.CompareTo(a))  // reverse order!
+);
+maxPQ.Enqueue("Low priority task",  10);
+maxPQ.Enqueue("High priority task", 100);
+Console.WriteLine(maxPQ.Dequeue()); // "High priority task" — 100 out first
+
+// ── EnqueueRange — bulk insert ────────────────────────────────────────────
+var tasks = new List&lt;(string, int)&gt;
+{
+    ("Build", 2), ("Test", 1), ("Deploy", 3)
+};
+var pipeline = new PriorityQueue&lt;string, int&gt;();
+pipeline.EnqueueRange(tasks);
+Console.WriteLine(pipeline.Dequeue()); // "Test" — priority 1 first
+</code></pre>
+  </div>
+
+  <!-- ─────────────────────────────────────────── -->
+  <h2 id="s-heap-def">🌳 3. Heap Data Structure — Definition &amp; Properties</h2>
+
+  <div class="callout tip">💡 A Heap is the most efficient way to implement a priority queue. Think of it as a <strong>partially sorted binary tree</strong> — not fully sorted, but with one guarantee: every parent is "better" than its children.</div>
+
+  <h3>What is a Heap?</h3>
+  <p>A <strong>Heap</strong> (also called a Binary Heap) is a binary tree that satisfies two strict properties simultaneously:</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;">
+    <div class="callout rule" style="margin:0;">
+      <strong>🔵 Structural Property</strong><br>
+      Must be a <strong>Complete Binary Tree</strong>:<br>
+      • Every level is fully filled except possibly the last level<br>
+      • Last level is filled from <strong>left to right</strong>, no gaps
+    </div>
+    <div class="callout rule" style="margin:0;">
+      <strong>🟢 Relational Property</strong><br>
+      For a <strong>Max Heap</strong>: every parent ≥ all its children<br>
+      For a <strong>Min Heap</strong>: every parent ≤ all its children<br>
+      Rule applies at every parent-child pair in the tree
+    </div>
+  </div>
+
+  <div class="callout warning">⚠️ A Heap is <strong>NOT a Binary Search Tree (BST)</strong>. BST requires left child &lt; parent &lt; right child. A heap only cares about parent vs children — sibling nodes have no required ordering.</div>
+
+  <h3>Array Representation — The Key Insight</h3>
+  <p>Heaps are stored in arrays (not actual tree nodes) using a mathematical index relationship:</p>
+  <ul>
+    <li>Root is stored at <strong>index 1</strong> (index 0 is unused for clean math)</li>
+    <li>For node at index <code>i</code>: Left child = <code>2i</code>, Right child = <code>2i+1</code></li>
+    <li>For node at index <code>i</code>: Parent = <code>⌊i/2⌋</code> (integer division)</li>
+  </ul>
+
+  <figure>
+    <div class="diagram-wrap">
+      <div class="diagram-title">Array ↔ Tree Mapping</div>
+      <svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg" style="min-width:380px;">
+        <defs>
+          <marker id="a1" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#c8f060"/></marker>
+        </defs>
+        <!-- Array boxes at top -->
+        <text x="10" y="22" fill="#6b6878" font-family="DM Mono" font-size="10">Index:</text>
+        <text x="10" y="50" fill="#6b6878" font-family="DM Mono" font-size="10">Value:</text>
+
+        <!-- indices -->
+        <text x="110" y="22" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="9">0</text>
+        <text x="165" y="22" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="9">1</text>
+        <text x="220" y="22" text-anchor="middle" fill="#c8f060" font-family="DM Mono" font-size="9">2</text>
+        <text x="275" y="22" text-anchor="middle" fill="#c8f060" font-family="DM Mono" font-size="9">3</text>
+        <text x="330" y="22" text-anchor="middle" fill="#60c8f0" font-family="DM Mono" font-size="9">4</text>
+        <text x="385" y="22" text-anchor="middle" fill="#60c8f0" font-family="DM Mono" font-size="9">5</text>
+        <text x="440" y="22" text-anchor="middle" fill="#60c8f0" font-family="DM Mono" font-size="9">6</text>
+
+        <!-- array cells -->
+        <rect x="83" y="28" width="55" height="30" rx="3" fill="#141417" stroke="#2a2a32"/>
+        <text x="110" y="49" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="11">-1</text>
+
+        <rect x="138" y="28" width="55" height="30" rx="3" fill="#1a1a1f" stroke="#f060c8" stroke-width="1.5"/>
+        <text x="165" y="49" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">21</text>
+
+        <rect x="193" y="28" width="55" height="30" rx="3" fill="#1a1a1f" stroke="#c8f060" stroke-opacity=".5"/>
+        <text x="220" y="49" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">15</text>
+
+        <rect x="248" y="28" width="55" height="30" rx="3" fill="#1a1a1f" stroke="#c8f060" stroke-opacity=".5"/>
+        <text x="275" y="49" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">20</text>
+
+        <rect x="303" y="28" width="55" height="30" rx="3" fill="#1a1a1f" stroke="#60c8f0" stroke-opacity=".5"/>
+        <text x="330" y="49" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">14</text>
+
+        <rect x="358" y="28" width="55" height="30" rx="3" fill="#1a1a1f" stroke="#60c8f0" stroke-opacity=".5"/>
+        <text x="385" y="49" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">10</text>
+
+        <rect x="413" y="28" width="55" height="30" rx="3" fill="#1a1a1f" stroke="#60c8f0" stroke-opacity=".5"/>
+        <text x="440" y="49" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">2</text>
+
+        <!-- tree below -->
+        <!-- root 21 at index 1 -->
+        <circle cx="330" cy="120" r="22" fill="#1a1a1f" stroke="#f060c8" stroke-width="2"/>
+        <text x="330" y="125" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="13" font-weight="500">21</text>
+        <text x="330" y="108" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="8">idx:1</text>
+
+        <!-- level 2 -->
+        <circle cx="210" cy="175" r="19" fill="#1a1a1f" stroke="#c8f060" stroke-opacity=".6"/>
+        <text x="210" y="180" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="12">15</text>
+        <text x="210" y="163" text-anchor="middle" fill="#c8f060" font-family="DM Mono" font-size="8">idx:2</text>
+
+        <circle cx="450" cy="175" r="19" fill="#1a1a1f" stroke="#c8f060" stroke-opacity=".6"/>
+        <text x="450" y="180" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="12">20</text>
+        <text x="450" y="163" text-anchor="middle" fill="#c8f060" font-family="DM Mono" font-size="8">idx:3</text>
+
+        <!-- edges -->
+        <line x1="313" y1="135" x2="227" y2="162" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="347" y1="135" x2="433" y2="162" stroke="#2a2a32" stroke-width="1.5"/>
+
+        <!-- formulas -->
+        <text x="590" y="120" fill="#6b6878" font-family="DM Mono" font-size="9">Left  = 2×i</text>
+        <text x="590" y="135" fill="#6b6878" font-family="DM Mono" font-size="9">Right = 2×i+1</text>
+        <text x="590" y="150" fill="#6b6878" font-family="DM Mono" font-size="9">Parent= ⌊i/2⌋</text>
+      </svg>
+    </div>
+    <figcaption>Heap stored as array — index 0 unused so parent/child math stays clean with integer division.</figcaption>
+  </figure>
+
+  <!-- ─────────────────────────────────────────── -->
+  <h2 id="s-heap-examples">🔍 4. Heap Validation — 3 Tree Examples</h2>
+  <div class="callout rule">📌 Both properties must hold simultaneously. One violation = not a valid heap. Check every parent-child pair, and check that no gaps exist in the last level.</div>
+
+  <div class="heap-examples-grid">
+    <!-- VALID HEAP -->
+    <div class="heap-ex-card valid">
+      <div class="heap-verdict ok">✅ VALID Max Heap</div>
+      <figure>
+        <svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="30" r="20" fill="#1a2a1a" stroke="#60f0a0" stroke-width="2"/>
+          <text x="100" y="35" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="13" font-weight="500">8</text>
+          <circle cx="50" cy="90" r="18" fill="#1a1a1f" stroke="#2a2a32"/>
+          <text x="50" y="95" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="12">6</text>
+          <circle cx="150" cy="90" r="18" fill="#1a1a1f" stroke="#2a2a32"/>
+          <text x="150" y="95" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="12">2</text>
+          <circle cx="25" cy="145" r="15" fill="#1a1a1f" stroke="#2a2a32"/>
+          <text x="25" y="150" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">5</text>
+          <circle cx="75" cy="145" r="15" fill="#1a1a1f" stroke="#2a2a32"/>
+          <text x="75" y="150" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">4</text>
+          <line x1="84" y1="45" x2="63" y2="73" stroke="#2a2a32" stroke-width="1.5"/>
+          <line x1="116" y1="45" x2="137" y2="73" stroke="#2a2a32" stroke-width="1.5"/>
+          <line x1="38" y1="105" x2="32" y2="131" stroke="#2a2a32" stroke-width="1.5"/>
+          <line x1="62" y1="105" x2="68" y2="131" stroke="#2a2a32" stroke-width="1.5"/>
+          <!-- check marks -->
+          <text x="100" y="12" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="8">8≥6 ✓  8≥2 ✓</text>
+          <text x="100" y="118" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="8">6≥5 ✓  6≥4 ✓</text>
+        </svg>
+      </figure>
+      <ul style="font-size:var(--fs-xs);color:#ccc;margin-top:.4rem;">
+        <li>8 ≥ 6, 8 ≥ 2 ✓</li>
+        <li>6 ≥ 5, 6 ≥ 4 ✓</li>
+        <li>Complete binary tree ✓</li>
+        <li>All levels filled, no gaps ✓</li>
+      </ul>
+    </div>
+
+    <!-- INVALID - MISSING NODE -->
+    <div class="heap-ex-card invalid">
+      <div class="heap-verdict no">❌ INVALID — Structural Violation</div>
+      <figure>
+        <svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="30" r="20" fill="#1a1a1f" stroke="#2a2a32"/>
+          <text x="100" y="35" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="13">8</text>
+          <circle cx="50" cy="90" r="18" fill="#1a1a1f" stroke="#2a2a32"/>
+          <text x="50" y="95" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="12">6</text>
+          <circle cx="150" cy="90" r="18" fill="#1a1a1f" stroke="#2a2a32"/>
+          <text x="150" y="95" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="12">2</text>
+          <!-- missing left child, only right -->
+          <circle cx="75" cy="145" r="15" fill="#2a1a1a" stroke="#f06060" stroke-width="2" stroke-dasharray="4,2"/>
+          <text x="75" y="150" text-anchor="middle" fill="#f06060" font-family="DM Mono" font-size="11">?</text>
+          <circle cx="25" cy="145" r="15" fill="#1a1a1f" stroke="#f06060" stroke-width="1.5"/>
+          <text x="25" y="150" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">4</text>
+          <line x1="84" y1="45" x2="63" y2="73" stroke="#2a2a32" stroke-width="1.5"/>
+          <line x1="116" y1="45" x2="137" y2="73" stroke="#2a2a32" stroke-width="1.5"/>
+          <line x1="38" y1="105" x2="32" y2="131" stroke="#2a2a32" stroke-width="1.5"/>
+          <line x1="62" y1="105" x2="68" y2="131" stroke="#f06060" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <text x="100" y="12" text-anchor="middle" fill="#f06060" font-family="DM Mono" font-size="8">GAP! left child missing</text>
+        </svg>
+      </figure>
+      <ul style="font-size:var(--fs-xs);color:#ccc;margin-top:.4rem;">
+        <li style="color:var(--danger);">Left child of node 6 missing ✗</li>
+        <li style="color:var(--danger);">Right child exists but left doesn't — gap in last level ✗</li>
+        <li>Structural property VIOLATED</li>
+        <li>Must fill left before right in each level</li>
+      </ul>
+    </div>
+
+    <!-- INVALID - RELATIONAL VIOLATION -->
+    <div class="heap-ex-card invalid">
+      <div class="heap-verdict no">❌ INVALID — Relational Violation</div>
+      <figure>
+        <svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="30" r="20" fill="#1a1a1f" stroke="#2a2a32"/>
+          <text x="100" y="35" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="13">8</text>
+          <circle cx="50" cy="90" r="18" fill="#2a1a1a" stroke="#f06060" stroke-width="2"/>
+          <text x="50" y="95" text-anchor="middle" fill="#f06060" font-family="DM Mono" font-size="12">4</text>
+          <circle cx="150" cy="90" r="18" fill="#1a1a1f" stroke="#2a2a32"/>
+          <text x="150" y="95" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="12">2</text>
+          <circle cx="25" cy="145" r="15" fill="#1a1a1f" stroke="#f06060" stroke-width="2"/>
+          <text x="25" y="150" text-anchor="middle" fill="#f06060" font-family="DM Mono" font-size="11">5</text>
+          <circle cx="75" cy="145" r="15" fill="#1a1a1f" stroke="#2a2a32"/>
+          <text x="75" y="150" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">3</text>
+          <line x1="84" y1="45" x2="63" y2="73" stroke="#2a2a32" stroke-width="1.5"/>
+          <line x1="116" y1="45" x2="137" y2="73" stroke="#2a2a32" stroke-width="1.5"/>
+          <line x1="38" y1="105" x2="32" y2="131" stroke="#f06060" stroke-width="2"/>
+          <line x1="62" y1="105" x2="68" y2="131" stroke="#2a2a32" stroke-width="1.5"/>
+          <text x="100" y="12" text-anchor="middle" fill="#f06060" font-family="DM Mono" font-size="8">4 &lt; 5: parent &lt; child ✗</text>
+        </svg>
+      </figure>
+      <ul style="font-size:var(--fs-xs);color:#ccc;margin-top:.4rem;">
+        <li style="color:var(--danger);">Node 4 has child 5 — parent &lt; child ✗</li>
+        <li style="color:var(--danger);">Max heap requires parent ≥ all children</li>
+        <li>Structural property OK (complete tree)</li>
+        <li>Relational property VIOLATED</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────── -->
+  <h2 id="s-heap-types">🔀 5. Types of Heaps</h2>
+  <table>
+    <thead><tr><th>Type</th><th>Rule</th><th>Root Contains</th><th>Common Use</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Max Heap</strong></td><td>Parent ≥ Children (at every node)</td><td>Maximum element</td><td>Priority queues, Heap Sort, Dijkstra's (max variant)</td></tr>
+      <tr><td><strong>Min Heap</strong></td><td>Parent ≤ Children (at every node)</td><td>Minimum element</td><td>C# PriorityQueue&lt;T,P&gt;, A*, Prim's MST</td></tr>
+      <tr><td><strong>Binomial Heap</strong></td><td>Collection of binomial trees</td><td>Multiple trees</td><td>Efficient merge operations O(log n)</td></tr>
+      <tr><td><strong>Fibonacci Heap</strong></td><td>Lazy structure, amortized O(1) insert</td><td>Minimum</td><td>Advanced graph algorithms — Dijkstra's optimal</td></tr>
+      <tr><td><strong>d-ary Heap</strong></td><td>Each node has d children instead of 2</td><td>Max or Min</td><td>Cache-optimized, fewer levels</td></tr>
+    </tbody>
+  </table>
+  <div class="callout tip">💡 In this course and in C#'s built-in — you'll work with Binary Heaps (2 children per node). The course implements a <strong>Max Heap</strong>. C#'s <code>PriorityQueue</code> is a <strong>Min Heap</strong>.</div>
+
+  <!-- ─────────────────────────────────────────── -->
+  <h2 id="s-heap-adt">📋 6. Heap ADT — Properties &amp; Methods</h2>
+  <h3>Members (Data Fields)</h3>
+  <table>
+    <thead><tr><th>Field</th><th>C# Name</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td>Max Capacity</td><td><code>maxSize</code></td><td>Upper limit of elements the heap can hold</td></tr>
+      <tr><td>Current Count</td><td><code>currentSize</code></td><td>Number of elements currently in the heap</td></tr>
+      <tr><td>Array Store</td><td><code>data[]</code></td><td>Array storing heap elements (index 1 = root)</td></tr>
+    </tbody>
+  </table>
+  <h3>Methods</h3>
+  <table>
+    <thead><tr><th>Method</th><th>Description</th><th>Time</th></tr></thead>
+    <tbody>
+      <tr><td><code>Insert(int value)</code></td><td>Add element, maintain heap properties via up-bubbling</td><td><span class="badge b-blue">O(log n)</span></td></tr>
+      <tr><td><code>Delete()</code></td><td>Remove & return root (max), restore via down-bubbling</td><td><span class="badge b-blue">O(log n)</span></td></tr>
+      <tr><td><code>Max()</code></td><td>Return root value without removing</td><td><span class="badge b-green">O(1)</span></td></tr>
+      <tr><td><code>Display()</code></td><td>Print all elements in array order</td><td><span class="badge b-red">O(n)</span></td></tr>
+      <tr><td><code>HeapSort(arr)</code></td><td>Sort array using heap operations</td><td><span class="badge b-red">O(n log n)</span></td></tr>
+      <tr><td><code>IsEmpty</code></td><td>Property — true if currentSize == 0</td><td><span class="badge b-green">O(1)</span></td></tr>
+      <tr><td><code>Length</code></td><td>Property — returns currentSize</td><td><span class="badge b-green">O(1)</span></td></tr>
+    </tbody>
+  </table>
+
+  <!-- ─────────────────────────────────────────── -->
+  <h2 id="s-insert-concept">⬆️ 7. Insertion — Concept &amp; Graphical Representation</h2>
+
+  <div class="callout rule">📌 <strong>Two-Phase Insert:</strong> (1) Place the new node at the next available position to maintain the complete binary tree shape. (2) Bubble it UP by swapping with its parent until the relational property is satisfied.</div>
+
+  <h3>Insert Process Step-by-Step</h3>
+  <ol>
+    <li>Place new node at the <strong>next available slot</strong> (leftmost open spot in the last level, or start of next level if full).</li>
+    <li>Compare it with its parent: <code>new &gt; parent</code> in a max heap?</li>
+    <li>If yes → <strong>swap</strong> (bubble up). If no → done.</li>
+    <li>Repeat from the new position until reaching root or no swap needed.</li>
+  </ol>
+
+  <h3>Insertion Sequence: 20 → 14 → 2 → 15 → 10 → 21</h3>
+
+  <figure>
+    <div class="diagram-wrap">
+      <div class="diagram-title">Step-by-step insertion with bubbling (up-heaping)</div>
+      <svg viewBox="0 0 720 420" xmlns="http://www.w3.org/2000/svg" style="min-width:480px;">
+        <defs>
+          <marker id="swap-arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#f060c8"/></marker>
+          <marker id="ok-arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#60f0a0"/></marker>
+        </defs>
+
+        <!-- STEP 1: Insert 20 -->
+        <text x="15" y="18" fill="#c8f060" font-family="Syne" font-size="11" font-weight="700">Step 1: Insert 20</text>
+        <circle cx="83" cy="50" r="20" fill="#1e2a3a" stroke="#c8f060" stroke-width="2"/>
+        <text x="83" y="55" text-anchor="middle" fill="#c8f060" font-family="DM Mono" font-size="13">20</text>
+        <text x="83" y="82" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="9">root → done</text>
+
+        <!-- STEP 2: Insert 14 -->
+        <text x="175" y="18" fill="#c8f060" font-family="Syne" font-size="11" font-weight="700">Step 2: Insert 14</text>
+        <circle cx="222" cy="45" r="18" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="222" y="50" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="12">20</text>
+        <circle cx="185" cy="90" r="16" fill="#1e2a3a" stroke="#c8f060" stroke-width="2"/>
+        <text x="185" y="95" text-anchor="middle" fill="#c8f060" font-family="DM Mono" font-size="11">14</text>
+        <line x1="208" y1="60" x2="195" y2="75" stroke="#2a2a32" stroke-width="1.5"/>
+        <text x="210" y="82" fill="#60f0a0" font-family="DM Mono" font-size="9">14&lt;20 ✓ done</text>
+
+        <!-- STEP 3: Insert 2 -->
+        <text x="310" y="18" fill="#c8f060" font-family="Syne" font-size="11" font-weight="700">Step 3: Insert 2</text>
+        <circle cx="370" cy="45" r="18" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="370" y="50" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="12">20</text>
+        <circle cx="340" cy="90" r="16" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="340" y="95" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">14</text>
+        <circle cx="400" cy="90" r="16" fill="#1e2a3a" stroke="#c8f060" stroke-width="2"/>
+        <text x="400" y="95" text-anchor="middle" fill="#c8f060" font-family="DM Mono" font-size="11">2</text>
+        <line x1="356" y1="60" x2="347" y2="75" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="382" y1="60" x2="393" y2="75" stroke="#2a2a32" stroke-width="1.5"/>
+        <text x="370" y="118" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="9">2&lt;20 ✓ done</text>
+
+        <!-- STEP 4: Insert 15 — SWAP with 14 -->
+        <text x="480" y="18" fill="#c8f060" font-family="Syne" font-size="11" font-weight="700">Step 4: Insert 15</text>
+        <circle cx="565" cy="45" r="18" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="565" y="50" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="12">20</text>
+        <circle cx="535" cy="90" r="16" fill="#2a1a1a" stroke="#f060c8" stroke-width="2"/>
+        <text x="535" y="95" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="11">14</text>
+        <circle cx="595" cy="90" r="16" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="595" y="95" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">2</text>
+        <circle cx="515" cy="135" r="14" fill="#2a1a1a" stroke="#f060c8" stroke-width="2"/>
+        <text x="515" y="140" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="11">15</text>
+        <line x1="551" y1="60" x2="542" y2="75" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="579" y1="60" x2="588" y2="75" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="524" y1="105" x2="518" y2="122" stroke="#f060c8" stroke-width="1.5"/>
+        <!-- swap arrow -->
+        <path d="M 523 115 C 540 108 540 93 535 88" stroke="#f060c8" fill="none" stroke-width="1.5" marker-end="url(#swap-arr)"/>
+        <text x="548" y="113" fill="#f060c8" font-family="DM Mono" font-size="8">SWAP!</text>
+        <text x="535" y="158" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="9">15&gt;14 → swap</text>
+
+        <!-- STEP 5-6: big row below -->
+        <text x="15" y="195" fill="#c8f060" font-family="Syne" font-size="11" font-weight="700">Step 5: Insert 10</text>
+        <!-- result of step4: 20,15,2,14 -->
+        <circle cx="83" cy="230" r="18" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="83" y="235" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="12">20</text>
+        <circle cx="53" cy="272" r="16" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="53" y="277" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">15</text>
+        <circle cx="113" cy="272" r="16" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="113" y="277" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">2</text>
+        <circle cx="33" cy="310" r="14" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="33" y="315" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">14</text>
+        <circle cx="68" cy="310" r="14" fill="#1e2a3a" stroke="#c8f060" stroke-width="2"/>
+        <text x="68" y="315" text-anchor="middle" fill="#c8f060" font-family="DM Mono" font-size="11">10</text>
+        <line x1="70" y1="245" x2="62" y2="257" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="96" y1="245" x2="106" y2="257" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="42" y1="287" x2="38" y2="296" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="62" y1="287" x2="65" y2="296" stroke="#2a2a32" stroke-width="1.5"/>
+        <text x="83" y="338" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="9">10&lt;15 ✓ done</text>
+
+        <!-- Step 6: Insert 21 — double bubble -->
+        <text x="200" y="195" fill="#c8f060" font-family="Syne" font-size="11" font-weight="700">Step 6: Insert 21 — TWO swaps!</text>
+
+        <!-- State 6a: before swaps -->
+        <text x="210" y="210" fill="#6b6878" font-family="DM Mono" font-size="9">initial position</text>
+        <circle cx="265" cy="230" r="18" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="265" y="235" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="12">20</text>
+        <circle cx="235" cy="272" r="16" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="235" y="277" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">15</text>
+        <circle cx="295" cy="272" r="16" fill="#2a1a1a" stroke="#f060c8" stroke-width="2"/>
+        <text x="295" y="277" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="11">2</text>
+        <circle cx="215" cy="310" r="14" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="215" y="315" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">14</text>
+        <circle cx="250" cy="310" r="14" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="250" y="315" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">10</text>
+        <circle cx="278" cy="310" r="14" fill="#2a1a1a" stroke="#f060c8" stroke-width="2"/>
+        <text x="278" y="315" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="11">21</text>
+        <line x1="252" y1="245" x2="244" y2="257" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="278" y1="245" x2="288" y2="257" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="224" y1="287" x2="218" y2="297" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="244" y1="287" x2="248" y2="297" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="284" y1="287" x2="279" y2="297" stroke="#2a2a32" stroke-width="1.5"/>
+        <text x="265" y="338" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="9">21&gt;2 → swap 1</text>
+
+        <!-- Arrow between states -->
+        <line x1="330" y1="270" x2="360" y2="270" stroke="#f060c8" stroke-width="1.5" marker-end="url(#swap-arr)"/>
+
+        <!-- State 6b after swap1 (21↔2), need swap2 -->
+        <text x="372" y="210" fill="#6b6878" font-family="DM Mono" font-size="9">after swap 1 → 21&gt;20 → swap 2</text>
+        <circle cx="430" cy="230" r="18" fill="#2a1a1a" stroke="#f060c8" stroke-width="2"/>
+        <text x="430" y="235" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="12">20</text>
+        <circle cx="400" cy="272" r="16" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="400" y="277" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">15</text>
+        <circle cx="460" cy="272" r="16" fill="#2a1a1a" stroke="#f060c8" stroke-width="2"/>
+        <text x="460" y="277" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="11">21</text>
+        <circle cx="380" cy="310" r="14" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="380" y="315" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">14</text>
+        <circle cx="415" cy="310" r="14" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="415" y="315" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">10</text>
+        <circle cx="444" cy="310" r="14" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="444" y="315" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">2</text>
+        <line x1="417" y1="245" x2="409" y2="257" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="443" y1="245" x2="453" y2="257" stroke="#f060c8" stroke-width="1.5"/>
+        <line x1="389" y1="287" x2="383" y2="297" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="409" y1="287" x2="413" y2="297" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="449" y1="287" x2="446" y2="297" stroke="#2a2a32" stroke-width="1.5"/>
+        <text x="430" y="338" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="9">21&gt;20 → swap 2!</text>
+
+        <!-- Arrow to final -->
+        <line x1="496" y1="270" x2="526" y2="270" stroke="#60f0a0" stroke-width="1.5" marker-end="url(#ok-arr)"/>
+
+        <!-- Final state -->
+        <text x="538" y="210" fill="#60f0a0" font-family="DM Mono" font-size="9">✓ FINAL — valid max heap</text>
+        <circle cx="595" cy="230" r="18" fill="#1a2a1a" stroke="#60f0a0" stroke-width="2"/>
+        <text x="595" y="235" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="12">21</text>
+        <circle cx="565" cy="272" r="16" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="565" y="277" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">15</text>
+        <circle cx="625" cy="272" r="16" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="625" y="277" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">20</text>
+        <circle cx="545" cy="310" r="14" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="545" y="315" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">14</text>
+        <circle cx="580" cy="310" r="14" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="580" y="315" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">10</text>
+        <circle cx="610" cy="310" r="14" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="610" y="315" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">2</text>
+        <line x1="582" y1="245" x2="574" y2="257" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="608" y1="245" x2="618" y2="257" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="554" y1="287" x2="548" y2="297" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="574" y1="287" x2="578" y2="297" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="618" y1="287" x2="612" y2="297" stroke="#2a2a32" stroke-width="1.5"/>
+
+        <!-- Array representation at bottom -->
+        <text x="370" y="370" fill="#6b6878" font-family="DM Mono" font-size="9">Array: [_,21,15,20,14,10,2]  idx:0=unused</text>
+      </svg>
+    </div>
+    <figcaption>Inserting 21 requires two swaps (up-bubbles): 21↔2, then 21↔20 — reaches root as new maximum.</figcaption>
+  </figure>
+
+  <div class="cx-row">
+    <span class="cx-label">Insert</span>
+    <span class="cx-best cx-pill">O(1) — placement</span>
+    <span class="cx-worst cx-pill">O(log n) — bubbling worst case</span>
+    <span class="cx-space cx-pill">O(1) space</span>
+  </div>
+
+  <!-- ─────────────────────────────────────────── -->
+  <h2 id="s-insert-algo">⚙️ 8. Insert — Algorithm &amp; Code Walkthrough</h2>
+
+  <div class="callout tip">💡 The algorithm uses a <strong>single variable trick</strong>: instead of swapping twice per step, it bubbles the parent value DOWN and saves the new value until its final position is found. Then it assigns once.</div>
+
+  <div class="side-by-side">
+    <div>
+      <div class="cb">
+        <div class="cb-head"><span class="cb-lang">csharp — Insert()</span><button class="cp" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-csharp">public void Insert(int value)
+{
+    // Guard: heap full
+    if (currentSize == maxSize)
+    {
+        Console.WriteLine("Heap is full.");
+        return;
+    }
+
+    // ① Place at next slot
+    currentSize++;
+    int index = currentSize;
+
+    // ② Bubble UP while:
+    //    - not at root (index > 1)
+    //    - value greater than parent
+    while (index > 1 &&
+           value > data[index / 2])
+    {
+        // Move parent DOWN
+        data[index] = data[index / 2];
+
+        // Jump UP to parent position
+        index /= 2;
+    }
+
+    // ③ Final placement
+    data[index] = value;
+}</code></pre>
+      </div>
+    </div>
+    <div class="side-panel">
+      <div class="side-panel-title">Trace: Insert 21 into [20, 15, 2, 14, 10]</div>
+      <div class="insert-steps">
+        <div class="ins-step ok">
+          <div class="ins-step-head">① Place at index 6</div>
+          <div class="ins-step-desc">currentSize++ → 6. index=6. Array[6]=placeholder. value=21.</div>
+        </div>
+        <div class="ins-step swap">
+          <div class="ins-step-head">② Loop iter 1: index=6, parent=index/2=3</div>
+          <div class="ins-step-desc">data[3]=2. value(21) &gt; data[3](2) → move 2 down: data[6]=2. index=3.</div>
+        </div>
+        <div class="ins-step swap">
+          <div class="ins-step-head">② Loop iter 2: index=3, parent=index/2=1</div>
+          <div class="ins-step-desc">data[1]=20. value(21) &gt; data[1](20) → move 20 down: data[3]=20. index=1.</div>
+        </div>
+        <div class="ins-step ok">
+          <div class="ins-step-head">② Loop exits: index=1 (root)</div>
+          <div class="ins-step-desc">index &gt; 1 is false. Exit loop.</div>
+        </div>
+        <div class="ins-step ok">
+          <div class="ins-step-head">③ Place: data[1] = 21</div>
+          <div class="ins-step-desc">Result: [_,21,15,20,14,10,2] ✓</div>
+        </div>
+      </div>
+      <div style="margin-top:.8rem;">
+        <figure>
+          <svg viewBox="0 0 260 130" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="130" cy="28" r="18" fill="#1a2a1a" stroke="#60f0a0" stroke-width="2"/>
+            <text x="130" y="33" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="12">21</text>
+            <text x="130" y="14" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="8">idx:1 ROOT</text>
+            <circle cx="80" cy="72" r="16" fill="#1a1a1f" stroke="#2a2a32"/>
+            <text x="80" y="77" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">15</text>
+            <circle cx="180" cy="72" r="16" fill="#1a1a1f" stroke="#2a2a32"/>
+            <text x="180" y="77" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">20</text>
+            <circle cx="55" cy="112" r="14" fill="#1a1a1f" stroke="#2a2a32"/>
+            <text x="55" y="117" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">14</text>
+            <circle cx="100" cy="112" r="14" fill="#1a1a1f" stroke="#2a2a32"/>
+            <text x="100" y="117" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">10</text>
+            <circle cx="155" cy="112" r="14" fill="#1a1a1f" stroke="#2a2a32"/>
+            <text x="155" y="117" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">2</text>
+            <line x1="116" y1="43" x2="93" y2="57" stroke="#2a2a32" stroke-width="1.5"/>
+            <line x1="144" y1="43" x2="167" y2="57" stroke="#2a2a32" stroke-width="1.5"/>
+            <line x1="69" y1="87" x2="61" y2="98" stroke="#2a2a32" stroke-width="1.5"/>
+            <line x1="89" y1="87" x2="97" y2="98" stroke="#2a2a32" stroke-width="1.5"/>
+            <line x1="170" y1="87" x2="158" y2="98" stroke="#2a2a32" stroke-width="1.5"/>
+          </svg>
+          <figcaption>Final heap after inserting 21</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout warning">⚠️ <strong>Key detail in the code:</strong> The loop condition is <code>j &lt; currentSize</code> — NOT <code>j &lt;= currentSize</code>. This matters for the last element: if <code>j == currentSize</code>, there's only a left child, no right. Accessing <code>data[j+1]</code> would be out of bounds without the right condition.</div>
+
+  <!-- ─────────────────────────────────────────── -->
+  <h2 id="s-delete-concept">⬇️ 9. Deletion — Concept &amp; 3 Tree Examples</h2>
+
+  <div class="callout rule">📌 <strong>Always delete the ROOT</strong> (max element in max heap). Replace it with the last node, remove that last node, then bubble DOWN to restore the relational property.</div>
+
+  <h3>Why replace with the last node?</h3>
+  <ul>
+    <li>Simply removing the root leaves two disconnected subtrees — structural property broken.</li>
+    <li>Moving the last node to root preserves the <strong>complete binary tree shape</strong> (just reduces size by 1).</li>
+    <li>The last node will likely violate the relational property at root — fix it by bubbling DOWN.</li>
+  </ul>
+
+  <h3>Down-Heap Bubbling Rules</h3>
+  <ul>
+    <li>Compare the displaced node with its <strong>larger child</strong> (in max heap).</li>
+    <li>If the node is smaller than the larger child → <strong>swap</strong>.</li>
+    <li>Continue downward until no swap needed or reached a leaf.</li>
+    <li><strong>Edge case:</strong> if node has only a left child, compare only with that one.</li>
+  </ul>
+
+  <figure>
+    <div class="diagram-wrap">
+      <div class="diagram-title">Deletion Examples — Three cases</div>
+      <svg viewBox="0 0 720 360" xmlns="http://www.w3.org/2000/svg" style="min-width:520px;">
+        <defs>
+          <marker id="da" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#f060c8"/></marker>
+          <marker id="ga" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#60f0a0"/></marker>
+        </defs>
+
+        <!-- Ex 1: Delete 21 from [21,15,20,14,10,2] -->
+        <text x="10" y="18" fill="#c8f060" font-family="Syne" font-size="11" font-weight="700">Example 1: Delete 21 from heap</text>
+
+        <!-- Before -->
+        <text x="10" y="35" fill="#6b6878" font-family="DM Mono" font-size="9">BEFORE</text>
+        <circle cx="83" cy="58" r="17" fill="#2a1a1a" stroke="#f06060" stroke-width="2"/>
+        <text x="83" y="63" text-anchor="middle" fill="#f06060" font-family="DM Mono" font-size="12">21</text>
+        <circle cx="53" cy="95" r="15" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="53" y="100" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">15</text>
+        <circle cx="113" cy="95" r="15" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="113" y="100" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">20</text>
+        <circle cx="33" cy="130" r="13" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="33" y="135" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="10">14</text>
+        <circle cx="65" cy="130" r="13" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="65" y="135" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="10">10</text>
+        <circle cx="93" cy="130" r="13" fill="#1e2a1e" stroke="#60f0a0" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="93" y="135" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="10">2</text>
+        <line x1="71" y1="71" x2="62" y2="81" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="95" y1="71" x2="104" y2="81" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="44" y1="109" x2="38" y2="118" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="59" y1="109" x2="63" y2="118" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="101" y1="109" x2="96" y2="118" stroke="#2a2a32" stroke-width="1.5"/>
+        <text x="83" y="155" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="8">last node = 2</text>
+
+        <line x1="155" y1="90" x2="185" y2="90" stroke="#f060c8" stroke-width="1.5" marker-end="url(#da)"/>
+        <text x="168" y="83" fill="#f060c8" font-family="DM Mono" font-size="8">2→root</text>
+
+        <!-- After step1: 2 at root, bubble down -->
+        <text x="190" y="35" fill="#6b6878" font-family="DM Mono" font-size="9">2 at root, bubble down</text>
+        <circle cx="243" cy="58" r="17" fill="#2a1a1a" stroke="#f060c8" stroke-width="2"/>
+        <text x="243" y="63" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="12">2</text>
+        <circle cx="213" cy="95" r="15" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="213" y="100" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">15</text>
+        <circle cx="273" cy="95" r="15" fill="#1e2a3a" stroke="#60c8f0" stroke-width="2"/>
+        <text x="273" y="100" text-anchor="middle" fill="#60c8f0" font-family="DM Mono" font-size="11">20</text>
+        <circle cx="193" cy="130" r="13" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="193" y="135" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="10">14</text>
+        <circle cx="225" cy="130" r="13" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="225" y="135" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="10">10</text>
+        <line x1="231" y1="71" x2="222" y2="81" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="255" y1="71" x2="264" y2="81" stroke="#f060c8" stroke-width="2"/>
+        <line x1="204" y1="109" x2="198" y2="118" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="219" y1="109" x2="223" y2="118" stroke="#2a2a32" stroke-width="1.5"/>
+        <text x="243" y="155" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="8">2&lt;20 → swap!</text>
+
+        <line x1="315" y1="90" x2="345" y2="90" stroke="#60f0a0" stroke-width="1.5" marker-end="url(#ga)"/>
+        <text x="326" y="83" fill="#60f0a0" font-family="DM Mono" font-size="8">done ✓</text>
+
+        <!-- Final -->
+        <text x="350" y="35" fill="#60f0a0" font-family="DM Mono" font-size="9">✓ valid heap</text>
+        <circle cx="403" cy="58" r="17" fill="#1a2a1a" stroke="#60f0a0" stroke-width="2"/>
+        <text x="403" y="63" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="12">20</text>
+        <circle cx="373" cy="95" r="15" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="373" y="100" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">15</text>
+        <circle cx="433" cy="95" r="15" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="433" y="100" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">2</text>
+        <circle cx="353" cy="130" r="13" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="353" y="135" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="10">14</text>
+        <circle cx="385" cy="130" r="13" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="385" y="135" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="10">10</text>
+        <line x1="391" y1="71" x2="382" y2="81" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="415" y1="71" x2="424" y2="81" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="364" y1="109" x2="358" y2="118" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="379" y1="109" x2="383" y2="118" stroke="#2a2a32" stroke-width="1.5"/>
+        <text x="403" y="155" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="8">1 swap sufficient ✓</text>
+
+        <!-- Ex 2: Delete 20, multi-level bubble -->
+        <text x="10" y="195" fill="#c8f060" font-family="Syne" font-size="11" font-weight="700">Example 2: Delete 20 — multi-level bubble (from result above)</text>
+
+        <text x="10" y="210" fill="#6b6878" font-family="DM Mono" font-size="9">Move last(10)→root</text>
+        <circle cx="75" cy="235" r="17" fill="#2a1a1a" stroke="#f060c8" stroke-width="2"/>
+        <text x="75" y="240" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="12">10</text>
+        <circle cx="47" cy="270" r="14" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="47" y="275" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">15</text>
+        <circle cx="103" cy="270" r="14" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="103" y="275" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">2</text>
+        <circle cx="30" cy="305" r="12" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="30" y="310" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="10">14</text>
+        <line x1="63" y1="248" x2="55" y2="257" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="87" y1="248" x2="95" y2="257" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="38" y1="284" x2="33" y2="294" stroke="#2a2a32" stroke-width="1.5"/>
+        <text x="75" y="328" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="8">10&lt;15 → swap</text>
+
+        <line x1="137" y1="268" x2="160" y2="268" stroke="#f060c8" stroke-width="1.5" marker-end="url(#da)"/>
+
+        <text x="165" y="210" fill="#6b6878" font-family="DM Mono" font-size="9">swap 1: 10↔15</text>
+        <circle cx="225" cy="235" r="17" fill="#1a2a1a" stroke="#60f0a0" stroke-width="2"/>
+        <text x="225" y="240" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="12">15</text>
+        <circle cx="197" cy="270" r="14" fill="#2a1a1a" stroke="#f060c8" stroke-width="2"/>
+        <text x="197" y="275" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="11">10</text>
+        <circle cx="253" cy="270" r="14" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="253" y="275" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">2</text>
+        <circle cx="178" cy="305" r="12" fill="#1e2a3a" stroke="#60c8f0" stroke-width="1.5"/>
+        <text x="178" y="310" text-anchor="middle" fill="#60c8f0" font-family="DM Mono" font-size="10">14</text>
+        <line x1="213" y1="248" x2="205" y2="257" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="237" y1="248" x2="245" y2="257" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="188" y1="284" x2="181" y2="294" stroke="#f060c8" stroke-width="2"/>
+        <text x="225" y="328" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="8">10&lt;14 → swap</text>
+
+        <line x1="290" y1="268" x2="313" y2="268" stroke="#f060c8" stroke-width="1.5" marker-end="url(#da)"/>
+
+        <text x="318" y="210" fill="#60f0a0" font-family="DM Mono" font-size="9">swap 2: 10↔14 → ✓</text>
+        <circle cx="378" cy="235" r="17" fill="#1a2a1a" stroke="#60f0a0" stroke-width="2"/>
+        <text x="378" y="240" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="12">15</text>
+        <circle cx="350" cy="270" r="14" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="350" y="275" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">14</text>
+        <circle cx="406" cy="270" r="14" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="406" y="275" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">2</text>
+        <circle cx="330" cy="305" r="12" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="330" y="310" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="10">10</text>
+        <line x1="366" y1="248" x2="358" y2="257" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="390" y1="248" x2="398" y2="257" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="341" y1="284" x2="334" y2="294" stroke="#2a2a32" stroke-width="1.5"/>
+        <text x="378" y="328" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="8">done — 2 swaps needed</text>
+
+        <!-- complexity note -->
+        <text x="470" y="215" fill="#c8f060" font-family="Syne" font-size="10" font-weight="700">Complexity:</text>
+        <text x="470" y="232" fill="#6b6878" font-family="DM Mono" font-size="9">Replace root: O(1)</text>
+        <text x="470" y="247" fill="#6b6878" font-family="DM Mono" font-size="9">Down-bubble: O(log n)</text>
+        <text x="470" y="262" fill="#6b6878" font-family="DM Mono" font-size="9">Total: O(log n)</text>
+        <text x="470" y="285" fill="#6b6878" font-family="DM Mono" font-size="9">Max swaps = tree height</text>
+        <text x="470" y="300" fill="#6b6878" font-family="DM Mono" font-size="9">= ⌊log₂(n)⌋</text>
+      </svg>
+    </div>
+    <figcaption>Deletion always removes root, replaces with last node, then down-bubbles. Example 1: 1 swap. Example 2: 2 swaps.</figcaption>
+  </figure>
+
+  <!-- ─────────────────────────────────────────── -->
+  <h2 id="s-delete-algo">🗑️ 10. Delete — Algorithm &amp; Code Walkthrough</h2>
+
+  <div class="side-by-side">
+    <div>
+      <div class="cb">
+        <div class="cb-head"><span class="cb-lang">csharp — Delete()</span><button class="cp" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-csharp">public int Delete()
+{
+    if (IsEmpty)
+    {
+        Console.WriteLine("Heap empty.");
+        return -1;
+    }
+
+    // ① Save root — this is our return value
+    int deletedRoot = data[1];
+
+    // ② Move last node to root
+    data[1] = data[currentSize];
+    data[currentSize] = -1; // clear last slot
+    currentSize--;
+
+    // ③ Down-heap bubble
+    int i = 1;          // start at root
+    int j = 2 * i;      // left child
+
+    while (j &lt;= currentSize)
+    {
+        // Pick larger child (if right exists)
+        if (j &lt; currentSize &&
+            data[j] &lt; data[j + 1])
+        {
+            j++; // right child is larger
+        }
+
+        // Swap if parent < larger child
+        if (data[i] &lt; data[j])
+        {
+            int temp = data[i];
+            data[i] = data[j];
+            data[j] = temp;
+
+            // Move down
+            i = j;
+            j = 2 * i;
+        }
+        else
+        {
+            break; // heap property satisfied
+        }
+    }
+
+    return deletedRoot;
+}</code></pre>
+      </div>
+    </div>
+    <div class="side-panel">
+      <div class="side-panel-title">Delete 21 from [21, 15, 20, 14, 10, 2]</div>
+      <div class="insert-steps">
+        <div class="ins-step ok">
+          <div class="ins-step-head">① Save root: deletedRoot = 21</div>
+          <div class="ins-step-desc">data[1] = 21. We'll return this at the end.</div>
+        </div>
+        <div class="ins-step swap">
+          <div class="ins-step-head">② Move last to root</div>
+          <div class="ins-step-desc">data[1] = data[6] = 2. data[6] = -1. currentSize = 5.<br>Array: [_, 2, 15, 20, 14, 10]</div>
+        </div>
+        <div class="ins-step swap">
+          <div class="ins-step-head">③ Loop i=1, j=2</div>
+          <div class="ins-step-desc">j &lt; currentSize(5): compare j(15) vs j+1(20). 15 &lt; 20 → j=3 (right is bigger). data[i](2) &lt; data[j](20) → SWAP. i=3, j=6.</div>
+        </div>
+        <div class="ins-step ok">
+          <div class="ins-step-head">③ Loop exits: j=6 &gt; currentSize(5)</div>
+          <div class="ins-step-desc">Array: [_, 20, 15, 2, 14, 10]. Done.</div>
+        </div>
+        <div class="ins-step ok">
+          <div class="ins-step-head">Return 21 ✓</div>
+          <div class="ins-step-desc">Heap is valid. Root is now 20 (next maximum).</div>
+        </div>
+      </div>
+      <figure style="margin-top:.8rem;">
+        <svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="130" cy="25" r="17" fill="#1a2a1a" stroke="#60f0a0" stroke-width="2"/>
+          <text x="130" y="30" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="12">20</text>
+          <circle cx="85" cy="65" r="15" fill="#1a1a1f" stroke="#2a2a32"/>
+          <text x="85" y="70" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">15</text>
+          <circle cx="175" cy="65" r="15" fill="#1a1a1f" stroke="#2a2a32"/>
+          <text x="175" y="70" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">2</text>
+          <circle cx="60" cy="103" r="13" fill="#1a1a1f" stroke="#2a2a32"/>
+          <text x="60" y="108" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="10">14</text>
+          <circle cx="105" cy="103" r="13" fill="#1a1a1f" stroke="#2a2a32"/>
+          <text x="105" y="108" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="10">10</text>
+          <line x1="117" y1="39" x2="98" y2="51" stroke="#2a2a32" stroke-width="1.5"/>
+          <line x1="143" y1="39" x2="162" y2="51" stroke="#2a2a32" stroke-width="1.5"/>
+          <line x1="74" y1="79" x2="66" y2="90" stroke="#2a2a32" stroke-width="1.5"/>
+          <line x1="94" y1="79" x2="102" y2="90" stroke="#2a2a32" stroke-width="1.5"/>
+        </svg>
+        <figcaption>Result after deleting 21</figcaption>
+      </figure>
+      <div class="callout warning" style="margin-top:.6rem;font-size:var(--fs-xs);">⚠️ Critical: condition is <code>j &lt; currentSize</code> when checking right child — not <code>j+1 &lt;= currentSize</code>. Same thing but easier to miss.</div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────── -->
+  <h2 id="s-sort-concept">🔀 11. Heap Sort — Concept</h2>
+
+  <div class="callout tip">💡 Heap Sort is essentially: "Build a max-heap, then keep deleting the max. Each deleted max goes to the end of the array — building sorted order from back to front."</div>
+
+  <h3>Two Phases</h3>
+  <ul>
+    <li><strong>Phase 1 — Build Heap:</strong> Insert all n elements from the array into a max-heap, one by one. Each insert is O(log n). Total: O(n log n).</li>
+    <li><strong>Phase 2 — Extract Sorted:</strong> Delete the root (max) n times. Each delete is O(log n). Write deleted elements back into the array from index n-1 down to 0. Total: O(n log n).</li>
+  </ul>
+
+  <div class="callout rule">📌 Deletion always gives the <em>current maximum</em>. Writing it from right to left fills the array in ascending order. Final array: [smallest ... largest].</div>
+
+  <figure>
+    <div class="diagram-wrap">
+      <div class="diagram-title">Heap Sort — Full trace with [20, 14, 2, 15, 10, 21]</div>
+      <svg viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg" style="min-width:500px;">
+        <!-- Phase 1 label -->
+        <rect x="5" y="5" width="708" height="22" rx="4" fill="rgba(200,240,96,0.06)" stroke="rgba(200,240,96,0.2)"/>
+        <text x="360" y="20" text-anchor="middle" fill="#c8f060" font-family="Syne" font-size="11" font-weight="700">PHASE 1 — INSERT ALL INTO HEAP</text>
+
+        <!-- array input -->
+        <text x="15" y="48" fill="#6b6878" font-family="DM Mono" font-size="9">Input array: [20, 14, 2, 15, 10, 21]</text>
+        <!-- array boxes -->
+        <rect x="15" y="54" width="36" height="24" rx="3" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="33" y="70" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">20</text>
+        <rect x="55" y="54" width="36" height="24" rx="3" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="73" y="70" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">14</text>
+        <rect x="95" y="54" width="36" height="24" rx="3" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="113" y="70" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">2</text>
+        <rect x="135" y="54" width="36" height="24" rx="3" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="153" y="70" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">15</text>
+        <rect x="175" y="54" width="36" height="24" rx="3" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="193" y="70" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">10</text>
+        <rect x="215" y="54" width="36" height="24" rx="3" fill="#1a1a1f" stroke="#c8f060" stroke-width="1.5"/>
+        <text x="233" y="70" text-anchor="middle" fill="#c8f060" font-family="DM Mono" font-size="11">21</text>
+
+        <!-- resulting heap tree -->
+        <text x="340" y="48" fill="#6b6878" font-family="DM Mono" font-size="9">After all inserts → Max Heap:</text>
+        <circle cx="490" cy="72" r="18" fill="#1a2a1a" stroke="#60f0a0" stroke-width="2"/>
+        <text x="490" y="77" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="12">21</text>
+        <circle cx="455" cy="108" r="15" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="455" y="113" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">15</text>
+        <circle cx="525" cy="108" r="15" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="525" y="113" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="11">20</text>
+        <circle cx="435" cy="142" r="13" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="435" y="147" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="10">14</text>
+        <circle cx="470" cy="142" r="13" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="470" y="147" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="10">10</text>
+        <circle cx="508" cy="142" r="13" fill="#1a1a1f" stroke="#2a2a32"/>
+        <text x="508" y="147" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="10">2</text>
+        <line x1="477" y1="87" x2="466" y2="94" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="503" y1="87" x2="514" y2="94" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="446" y1="122" x2="440" y2="130" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="461" y1="122" x2="467" y2="130" stroke="#2a2a32" stroke-width="1.5"/>
+        <line x1="516" y1="122" x2="511" y2="130" stroke="#2a2a32" stroke-width="1.5"/>
+
+        <!-- Phase 2 -->
+        <rect x="5" y="170" width="708" height="22" rx="4" fill="rgba(96,200,240,0.06)" stroke="rgba(96,200,240,0.2)"/>
+        <text x="360" y="185" text-anchor="middle" fill="#60c8f0" font-family="Syne" font-size="11" font-weight="700">PHASE 2 — DELETE FROM HEAP → SORTED ARRAY</text>
+
+        <!-- deletion sequence -->
+        <text x="15" y="210" fill="#6b6878" font-family="DM Mono" font-size="9">Delete sequence (each delete returns max):</text>
+
+        <!-- delete boxes with arrows -->
+        <rect x="15" y="218" width="60" height="40" rx="4" fill="#1a1a1f" stroke="#f060c8" stroke-opacity=".5"/>
+        <text x="45" y="234" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="10">Delete</text>
+        <text x="45" y="248" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="12" font-weight="500">21</text>
+        <text x="45" y="270" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="8">→ arr[5]</text>
+
+        <rect x="90" y="218" width="60" height="40" rx="4" fill="#1a1a1f" stroke="#f060c8" stroke-opacity=".5"/>
+        <text x="120" y="234" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="10">Delete</text>
+        <text x="120" y="248" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="12" font-weight="500">20</text>
+        <text x="120" y="270" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="8">→ arr[4]</text>
+
+        <rect x="165" y="218" width="60" height="40" rx="4" fill="#1a1a1f" stroke="#f060c8" stroke-opacity=".5"/>
+        <text x="195" y="234" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="10">Delete</text>
+        <text x="195" y="248" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="12" font-weight="500">15</text>
+        <text x="195" y="270" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="8">→ arr[3]</text>
+
+        <rect x="240" y="218" width="60" height="40" rx="4" fill="#1a1a1f" stroke="#f060c8" stroke-opacity=".5"/>
+        <text x="270" y="234" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="10">Delete</text>
+        <text x="270" y="248" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="12" font-weight="500">14</text>
+        <text x="270" y="270" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="8">→ arr[2]</text>
+
+        <rect x="315" y="218" width="60" height="40" rx="4" fill="#1a1a1f" stroke="#f060c8" stroke-opacity=".5"/>
+        <text x="345" y="234" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="10">Delete</text>
+        <text x="345" y="248" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="12" font-weight="500">10</text>
+        <text x="345" y="270" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="8">→ arr[1]</text>
+
+        <rect x="390" y="218" width="60" height="40" rx="4" fill="#1a1a1f" stroke="#f060c8" stroke-opacity=".5"/>
+        <text x="420" y="234" text-anchor="middle" fill="#f060c8" font-family="DM Mono" font-size="10">Delete</text>
+        <text x="420" y="248" text-anchor="middle" fill="#f0ede8" font-family="DM Mono" font-size="12" font-weight="500">2</text>
+        <text x="420" y="270" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="8">→ arr[0]</text>
+
+        <!-- Final sorted array -->
+        <text x="490" y="210" fill="#60f0a0" font-family="Syne" font-size="10" font-weight="700">Final sorted array:</text>
+        <rect x="490" y="218" width="36" height="40" rx="3" fill="#1a2a1a" stroke="#60f0a0" stroke-opacity=".6"/>
+        <text x="508" y="233" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="8">[0]</text>
+        <text x="508" y="248" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="12">2</text>
+
+        <rect x="530" y="218" width="36" height="40" rx="3" fill="#1a2a1a" stroke="#60f0a0" stroke-opacity=".6"/>
+        <text x="548" y="233" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="8">[1]</text>
+        <text x="548" y="248" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="12">10</text>
+
+        <rect x="570" y="218" width="36" height="40" rx="3" fill="#1a2a1a" stroke="#60f0a0" stroke-opacity=".6"/>
+        <text x="588" y="233" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="8">[2]</text>
+        <text x="588" y="248" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="12">14</text>
+
+        <rect x="610" y="218" width="36" height="40" rx="3" fill="#1a2a1a" stroke="#60f0a0" stroke-opacity=".6"/>
+        <text x="628" y="233" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="8">[3]</text>
+        <text x="628" y="248" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="12">15</text>
+
+        <rect x="650" y="218" width="36" height="40" rx="3" fill="#1a2a1a" stroke="#60f0a0" stroke-opacity=".6"/>
+        <text x="668" y="233" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="8">[4]</text>
+        <text x="668" y="248" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="12">20</text>
+
+        <rect x="690" y="218" width="22" height="40" rx="3" fill="#1a2a1a" stroke="#60f0a0" stroke-opacity=".6"/>
+        <text x="701" y="233" text-anchor="middle" fill="#6b6878" font-family="DM Mono" font-size="7">[5]</text>
+        <text x="701" y="248" text-anchor="middle" fill="#60f0a0" font-family="DM Mono" font-size="12">21</text>
+
+        <!-- complexity strip -->
+        <rect x="5" y="285" width="708" height="28" rx="4" fill="rgba(200,240,96,0.03)" stroke="rgba(200,240,96,0.15)"/>
+        <text x="20" y="303" fill="#c8f060" font-family="DM Mono" font-size="9">Phase 1: O(n log n)</text>
+        <text x="200" y="303" fill="#c8f060" font-family="DM Mono" font-size="9">Phase 2: O(n log n)</text>
+        <text x="400" y="303" fill="#60f0a0" font-family="DM Mono" font-size="9" font-weight="700">Total: O(n log n)  ·  Space: O(n) — needs heap array</text>
+      </svg>
+    </div>
+    <figcaption>Elements deleted largest-first, written back right-to-left, resulting in ascending sorted order.</figcaption>
+  </figure>
+
+  <!-- ─────────────────────────────────────────── -->
+  <h2 id="s-sort-algo">🔢 12. Heap Sort — Algorithm &amp; Code Walkthrough</h2>
+
+  <div class="side-by-side">
+    <div>
+      <div class="cb">
+        <div class="cb-head"><span class="cb-lang">csharp — HeapSort()</span><button class="cp" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-csharp">public void HeapSort(int[] arr)
+{
+    int n = arr.Length;
+    Heap heap = new Heap();
+
+    // ── Phase 1: Build heap ──────────────────
+    // Insert every element from arr into heap
+    // Each insert: O(log n)
+    // Total phase 1: O(n log n)
+    for (int i = 0; i &lt; n; i++)
+    {
+        heap.Insert(arr[i]);
+    }
+
+    // ── Phase 2: Extract sorted ──────────────
+    // Delete root (max) n times
+    // Write each deleted max from arr[n-1] downward
+    // Each delete: O(log n)
+    // Total phase 2: O(n log n)
+    for (int i = n - 1; i &gt;= 0; i--)
+    {
+        arr[i] = heap.Delete();
+    }
+    // arr now contains elements in ascending order
+}
+
+// Usage:
+static void Main(string[] args)
+{
+    int[] ints = { 12, 345, 13, 4325, 123, 4525 };
+    new Heap().HeapSort(ints);
+    // ints = [12, 13, 123, 345, 4325, 4525]
+    foreach (int num in ints)
+        Console.Write(num + " ");
+}</code></pre>
+      </div>
+    </div>
+    <div class="side-panel">
+      <div class="side-panel-title">Trace: HeapSort([12, 345, 13, 4325, 123, 4525])</div>
+      <div class="insert-steps">
+        <div class="ins-step ok">
+          <div class="ins-step-head">Phase 1 — Insertions</div>
+          <div class="ins-step-desc">
+            Insert 12 → root. Heap: [12]<br>
+            Insert 345 → bubble up. Heap: [345, 12]<br>
+            Insert 13 → no swap. Heap: [345, 12, 13]<br>
+            Insert 4325 → bubble up twice → new root. Heap: [4325, 345, 13, 12]<br>
+            Insert 123 → no swap (123 &lt; 345). Heap: [4325, 345, 13, 12, 123]<br>
+            Insert 4525 → bubble up: 4525 &gt; 13, then 4525 &gt; 4325 → new root.
+          </div>
+        </div>
+        <div class="ins-step ok">
+          <div class="ins-step-head">Heap after Phase 1</div>
+          <div class="ins-step-desc">Array: [_, 4525, 345, 4325, 12, 123, 13]<br>Root = 4525 (largest)</div>
+        </div>
+        <div class="ins-step swap">
+          <div class="ins-step-head">Phase 2 — Deletions</div>
+          <div class="ins-step-desc">
+            Delete 4525 → arr[5]=4525<br>
+            Delete 4325 → arr[4]=4325<br>
+            Delete 345  → arr[3]=345<br>
+            Delete 123  → arr[2]=123<br>
+            Delete 13   → arr[1]=13<br>
+            Delete 12   → arr[0]=12
+          </div>
+        </div>
+        <div class="ins-step ok">
+          <div class="ins-step-head">Result ✓</div>
+          <div class="ins-step-desc">arr = [12, 13, 123, 345, 4325, 4525] — ascending order!</div>
+        </div>
+      </div>
+      <div class="callout warning" style="margin-top:.6rem;font-size:var(--fs-xs);">⚠️ The loop in Phase 2 starts at <code>i = n-1</code> and goes DOWN to 0. Largest deleted value → rightmost slot. Ensures ascending order, not descending.</div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────── -->
+  <h2 id="s-complexity">⏱️ 13. Complexity Summary</h2>
+  <table>
+    <thead><tr><th>Operation</th><th>Time</th><th>Reason</th><th>Space</th></tr></thead>
+    <tbody>
+      <tr><td>Insert</td><td><span class="badge b-blue">O(log n)</span></td><td>Up-bubble height = ⌊log₂ n⌋</td><td><span class="badge b-green">O(1)</span></td></tr>
+      <tr><td>Delete (root)</td><td><span class="badge b-blue">O(log n)</span></td><td>Down-bubble height = ⌊log₂ n⌋</td><td><span class="badge b-green">O(1)</span></td></tr>
+      <tr><td>Max / Peek</td><td><span class="badge b-green">O(1)</span></td><td>Root is always index 1</td><td><span class="badge b-green">O(1)</span></td></tr>
+      <tr><td>Build Heap (n inserts)</td><td><span class="badge b-red">O(n log n)</span></td><td>n × O(log n) inserts</td><td><span class="badge b-blue">O(n)</span></td></tr>
+      <tr><td>Heap Sort</td><td><span class="badge b-red">O(n log n)</span></td><td>Phase1 + Phase2 = 2 × O(n log n)</td><td><span class="badge b-blue">O(n)</span></td></tr>
+      <tr><td>Display / traverse</td><td><span class="badge b-red">O(n)</span></td><td>Visit every element</td><td><span class="badge b-green">O(1)</span></td></tr>
+      <tr><td>IsEmpty / Count</td><td><span class="badge b-green">O(1)</span></td><td>Stored counter field</td><td><span class="badge b-green">O(1)</span></td></tr>
+    </tbody>
+  </table>
+
+  <table style="margin-top:1rem;">
+    <thead><tr><th>Sort Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Space</th><th>Stable?</th></tr></thead>
+    <tbody>
+      <tr><td>Heap Sort</td><td><span class="badge b-blue">O(n log n)</span></td><td><span class="badge b-blue">O(n log n)</span></td><td><span class="badge b-blue">O(n log n)</span></td><td><span class="badge b-blue">O(n)*</span></td><td>❌ No</td></tr>
+      <tr><td>Quick Sort</td><td><span class="badge b-green">O(n log n)</span></td><td><span class="badge b-green">O(n log n)</span></td><td><span class="badge b-red">O(n²)</span></td><td><span class="badge b-green">O(log n)</span></td><td>❌ No</td></tr>
+      <tr><td>Merge Sort</td><td><span class="badge b-blue">O(n log n)</span></td><td><span class="badge b-blue">O(n log n)</span></td><td><span class="badge b-blue">O(n log n)</span></td><td><span class="badge b-red">O(n)</span></td><td>✅ Yes</td></tr>
+      <tr><td>Bubble Sort</td><td><span class="badge b-green">O(n)</span></td><td><span class="badge b-red">O(n²)</span></td><td><span class="badge b-red">O(n²)</span></td><td><span class="badge b-green">O(1)</span></td><td>✅ Yes</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:var(--fs-xs);color:var(--muted);">*Heap Sort as implemented here uses O(n) space for the separate heap array. An in-place variant can achieve O(1) space.</p>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     PAGE 2 — ACTIVE RECALL
+══════════════════════════════════════════════════════════ -->
+<div class="page" id="page-recall">
+<div class="inner">
+
+  <h1 class="ptitle">Active Recall</h1>
+  <p class="psub">40 questions · 20 from course notes · 20 real interview questions</p>
+
+  <div class="rc-topbar">
+    <div class="rc-ctr"><span id="rc-ans">0</span> of <span id="rc-tot">40</span> revealed</div>
+    <div class="rc-bulk">
+      <button class="rcbtn" onclick="rcAll(true)">Reveal All</button>
+      <button class="rcbtn" onclick="rcAll(false)">Hide All</button>
+    </div>
+  </div>
+
+  <!-- ─── FUNDAMENTALS ─── -->
+  <div class="rc-section-label" id="rc-fundamentals">📚 Course Notes — Fundamentals (Q1–Q10)</div>
+
+  <div class="qcard" id="q1"><div class="qhead"><span class="qnum">Q01</span><span class="qtag def">DEF</span><span class="qtext">What is a Priority Queue and how does it differ from a regular Queue?</span><button class="qbtn" onclick="rcToggle('q1')">Show</button></div><div class="qans" id="q1-a"><div class="qa-label">Answer</div><div class="qa-body">A <strong>Priority Queue</strong> is a collection where each element has an assigned <strong>priority key</strong>. Elements are removed in priority order — the highest priority element exits first, regardless of insertion order. A regular queue is strict FIFO (first in, first out): the element that was inserted earliest always exits first. Priority queue breaks FIFO — a late-arriving element with higher priority can exit before earlier ones.</div></div></div>
+
+  <div class="qcard" id="q2"><div class="qhead"><span class="qnum">Q02</span><span class="qtag def">DEF</span><span class="qtext">What are the two properties every valid heap must satisfy? Describe each.</span><button class="qbtn" onclick="rcToggle('q2')">Show</button></div><div class="qans" id="q2-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>1. Structural Property:</strong> The heap must be a <strong>complete binary tree</strong> — every level except possibly the last must be fully filled, and the last level must be filled left-to-right with no gaps.<br><br><strong>2. Relational Property:</strong> For a max heap, every parent node's key must be <strong>≥</strong> the keys of all its children. For a min heap, every parent must be <strong>≤</strong> all its children. This rule applies at every parent-child pair in the entire tree.</div></div></div>
+
+  <div class="qcard" id="q3"><div class="qhead"><span class="qnum">Q03</span><span class="qtag def">DEF</span><span class="qtext">What is the parent-child index formula for a heap stored in an array? Why is index 0 left unused?</span><button class="qbtn" onclick="rcToggle('q3')">Show</button></div><div class="qans" id="q3-a"><div class="qa-label">Answer</div><div class="qa-body">For a node at index <code>i</code>:<ul><li><strong>Left child</strong> = <code>2i</code></li><li><strong>Right child</strong> = <code>2i + 1</code></li><li><strong>Parent</strong> = <code>⌊i / 2⌋</code> (integer division)</li></ul>Index 0 is left unused because if root were at index 0: parent of node at index i would be <code>⌊(i-1)/2⌋</code> — messier formula, and left child of 0 would be at index 1 but right child at index 2 doesn't fit cleanly. Starting at index 1 keeps the math clean: <code>parent = i/2</code> always works with no edge cases.</div></div></div>
+
+  <div class="qcard" id="q4"><div class="qhead"><span class="qnum">Q04</span><span class="qtag why">WHY</span><span class="qtext">Why is a Heap NOT a Binary Search Tree (BST)? What's the key difference?</span><button class="qbtn" onclick="rcToggle('q4')">Show</button></div><div class="qans" id="q4-a"><div class="qa-label">Answer</div><div class="qa-body">A BST requires: <strong>left child &lt; parent &lt; right child</strong> — a strict ordering relationship between siblings and all descendants. In a heap, siblings have <strong>no required ordering</strong> relative to each other. The only rule is parent vs its direct children. So in a max heap, the left child could be 15 and right child could be 20 — both are less than parent (21), which is valid. But in a BST, left must always be less than right's subtree, which isn't required here. Heap = partial ordering. BST = total ordering.</div></div></div>
+
+  <div class="qcard" id="q5"><div class="qhead"><span class="qnum">Q05</span><span class="qtag apply">APPLY</span><span class="qtext">What does "up-heap bubbling" mean during insertion, and when does it stop?</span><button class="qbtn" onclick="rcToggle('q5')">Show</button></div><div class="qans" id="q5-a"><div class="qa-label">Answer</div><div class="qa-body">After placing a new element at the next available slot (maintaining structural property), <strong>up-heap bubbling</strong> restores the relational property. It works like this: compare the new element with its parent. If new &gt; parent (max heap) → swap them. Then compare with the new parent. Repeat.<br><br>It stops when either: (1) the element is no longer greater than its parent — relational property satisfied, or (2) the element reaches the root (index 1) — can't go higher.</div></div></div>
+
+  <div class="qcard" id="q6"><div class="qhead"><span class="qnum">Q06</span><span class="qtag trace">TRACE</span><span class="qtext">Trace inserting 21 into a heap containing [20, 15, 2, 14, 10]. Show index values and swaps.</span><button class="qbtn" onclick="rcToggle('q6')">Show</button></div><div class="qans" id="q6-a"><div class="qa-label">Answer</div><div class="qa-body">Array (1-indexed): [_, 20, 15, 2, 14, 10]<br>currentSize++ → 6. index = 6. value = 21.<br><br><strong>Loop iter 1:</strong> index=6, parent=6/2=3. data[3]=2. 21 &gt; 2 → data[6]=2, index=3.<br><strong>Loop iter 2:</strong> index=3, parent=3/2=1. data[1]=20. 21 &gt; 20 → data[3]=20, index=1.<br><strong>Loop exits:</strong> index=1, condition index&gt;1 is false.<br><strong>Final:</strong> data[1]=21.<br><br>Result: [_, 21, 15, 20, 14, 10, 2]. Two swaps. 21 becomes new root.</div></div></div>
+
+  <div class="qcard" id="q7"><div class="qhead"><span class="qnum">Q07</span><span class="qtag why">WHY</span><span class="qtext">Why does the Insert algorithm move the parent value DOWN instead of doing a traditional two-variable swap?</span><button class="qbtn" onclick="rcToggle('q7')">Show</button></div><div class="qans" id="q7-a"><div class="qa-label">Answer</div><div class="qa-body">A traditional swap requires a temp variable and 3 assignments per level. The algorithm's approach is more efficient: it holds the new value in a variable, then <strong>shifts parents down</strong> without writing the new value at each level. The new value is only written once, at its final position. This cuts the total write operations by roughly half. It's also cleaner in the loop — only one move per iteration instead of three.</div></div></div>
+
+  <div class="qcard" id="q8"><div class="qhead"><span class="qnum">Q08</span><span class="qtag apply">APPLY</span><span class="qtext">During deletion, why do we replace the root with the LAST node specifically, and not any other node?</span><button class="qbtn" onclick="rcToggle('q8')">Show</button></div><div class="qans" id="q8-a"><div class="qa-label">Answer</div><div class="qa-body">Replacing with the last node is the <strong>only choice that preserves the structural property (complete binary tree)</strong>. If we removed the root and left the two subtrees, we'd have a disconnected tree — no longer a valid structure. If we replaced with a random middle node, we'd create a gap, violating the complete binary tree requirement. The last node is the only node whose removal doesn't create a gap. After moving it to root, we restore the relational property through down-bubbling.</div></div></div>
+
+  <div class="qcard" id="q9"><div class="qhead"><span class="qnum">Q09</span><span class="qtag trace">TRACE</span><span class="qtext">Trace deleting from heap [21, 15, 20, 14, 10, 2]. Show which child is chosen at each level and why.</span><button class="qbtn" onclick="rcToggle('q9')">Show</button></div><div class="qans" id="q9-a"><div class="qa-label">Answer</div><div class="qa-body">Save root=21. Move data[6]=2 to data[1]. data[6]=-1, currentSize=5.<br>Array: [_, 2, 15, 20, 14, 10]<br><br><strong>Loop: i=1, j=2</strong>. j&lt;currentSize(5): compare data[2]=15 vs data[3]=20. 15&lt;20 → j=3 (right child is larger). data[1](2) &lt; data[3](20) → swap. i=3, j=6.<br><br><strong>Loop exits:</strong> j=6 &gt; currentSize=5.<br><br>Result: [_, 20, 15, 2, 14, 10]. Return 21. One swap needed.</div></div></div>
+
+  <div class="qcard" id="q10"><div class="qhead"><span class="qnum">Q10</span><span class="qtag why">WHY</span><span class="qtext">Why is the loop condition in Delete() <code>j &lt;= currentSize</code> and not <code>j &lt; currentSize</code>?</span><button class="qbtn" onclick="rcToggle('q10')">Show</button></div><div class="qans" id="q10-a"><div class="qa-label">Answer</div><div class="qa-body">The outer loop uses <code>j &lt;= currentSize</code> to continue as long as the left child exists. Inside the loop, the right child comparison uses <code>j &lt; currentSize</code> (strict less than) before accessing <code>data[j+1]</code>. If <code>j == currentSize</code>, there is only a left child — accessing <code>data[j+1]</code> would be out of bounds. So the outer loop allows <code>j == currentSize</code> (leaf with only left child) but the inner right-child check is strictly <code>j &lt; currentSize</code> to prevent array overflow.</div></div></div>
+
+  <!-- ─── ALGORITHM ─── -->
+  <div class="rc-section-label" id="rc-algo">⚙️ Algorithm & Application (Q11–Q20)</div>
+
+  <div class="qcard" id="q11"><div class="qhead"><span class="qnum">Q11</span><span class="qtag apply">APPLY</span><span class="qtext">What is the time complexity of Insert, Delete, and HeapSort? Justify each with Big-O reasoning.</span><button class="qbtn" onclick="rcToggle('q11')">Show</button></div><div class="qans" id="q11-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>Insert: O(log n)</strong> — The new element bubbles up at most h levels, where h = height of a complete binary tree = ⌊log₂ n⌋. So at most log n comparisons/moves.<br><br><strong>Delete: O(log n)</strong> — Same reasoning. The displaced last node bubbles down at most h levels = log n comparisons.<br><br><strong>HeapSort: O(n log n)</strong> — Phase 1: n inserts × O(log n) each = O(n log n). Phase 2: n deletes × O(log n) each = O(n log n). Total = 2 × O(n log n) = O(n log n).</div></div></div>
+
+  <div class="qcard" id="q12"><div class="qhead"><span class="qnum">Q12</span><span class="qtag apply">APPLY</span><span class="qtext">Write the C# code to use <code>PriorityQueue&lt;T,P&gt;</code> to process tasks by priority (lowest number = highest priority).</span><button class="qbtn" onclick="rcToggle('q12')">Show</button></div><div class="qans" id="q12-a"><div class="qa-label">Answer</div><div class="qa-body"><code>var pq = new PriorityQueue&lt;string, int&gt;();<br>pq.Enqueue("Fix critical bug", 1);<br>pq.Enqueue("Write docs", 5);<br>pq.Enqueue("Code review", 3);<br><br>while (pq.TryDequeue(out string? task, out int pri))<br>&nbsp;&nbsp;Console.WriteLine($"[{pri}] {task}");<br>// Output:<br>// [1] Fix critical bug<br>// [3] Code review<br>// [5] Write docs</code></div></div></div>
+
+  <div class="qcard" id="q13"><div class="qhead"><span class="qnum">Q13</span><span class="qtag gotcha">GOTCHA</span><span class="qtext">What happens if you access <code>data[j+1]</code> inside the Delete loop without first checking <code>j &lt; currentSize</code>?</span><button class="qbtn" onclick="rcToggle('q13')">Show</button></div><div class="qans" id="q13-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>Index out of bounds / undefined behaviour.</strong> When <code>j == currentSize</code>, the node at index j is the last valid element — there is no right child at <code>j+1</code>. Accessing <code>data[j+1]</code> would read beyond the used portion of the array. In the course's implementation (fixed-size array initialized with -1), this would compare against -1, which could accidentally trigger a swap. Always guard: <code>if (j &lt; currentSize &amp;&amp; data[j] &lt; data[j+1])</code>.</div></div></div>
+
+  <div class="qcard" id="q14"><div class="qhead"><span class="qnum">Q14</span><span class="qtag compare">COMPARE</span><span class="qtext">Compare a Max Heap and a Min Heap — definition, root value, and C# built-in behavior.</span><button class="qbtn" onclick="rcToggle('q14')">Show</button></div><div class="qans" id="q14-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>Max Heap:</strong> Parent ≥ all children. Root = maximum element. Delete always returns the largest value. The course's custom implementation is a max heap.<br><br><strong>Min Heap:</strong> Parent ≤ all children. Root = minimum element. Delete returns the smallest value. C#'s <code>PriorityQueue&lt;TElement, TPriority&gt;</code> is a min heap — smallest priority number exits first.<br><br>To get a max-priority behavior from C#'s built-in, pass a custom comparer: <code>Comparer&lt;int&gt;.Create((a,b) =&gt; b.CompareTo(a))</code>.</div></div></div>
+
+  <div class="qcard" id="q15"><div class="qhead"><span class="qnum">Q15</span><span class="qtag trace">TRACE</span><span class="qtext">Trace HeapSort on [5, 3, 8, 1, 4]. Show the heap array state after Phase 1, then list each deletion.</span><button class="qbtn" onclick="rcToggle('q15')">Show</button></div><div class="qans" id="q15-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>Phase 1 — insertions:</strong><br>Insert 5: [_, 5]<br>Insert 3: [_, 5, 3] (3&lt;5, no bubble)<br>Insert 8: [_, 8, 3, 5] (8&gt;5, bubble to root)<br>Insert 1: [_, 8, 3, 5, 1] (1&lt;3, no bubble)<br>Insert 4: [_, 8, 4, 5, 1, 3] (4&gt;3, swap with 3)<br><br><strong>Phase 2 — deletions:</strong><br>Delete 8 → arr[4]=8<br>Delete 5 → arr[3]=5<br>Delete 4 → arr[2]=4<br>Delete 3 → arr[1]=3<br>Delete 1 → arr[0]=1<br><br><strong>Result:</strong> [1, 3, 4, 5, 8] ✓ ascending</div></div></div>
+
+  <div class="qcard" id="q16"><div class="qhead"><span class="qnum">Q16</span><span class="qtag why">WHY</span><span class="qtext">HeapSort writes deleted values into the array from index n-1 downward. Why, not from index 0 upward?</span><button class="qbtn" onclick="rcToggle('q16')">Show</button></div><div class="qans" id="q16-a"><div class="qa-label">Answer</div><div class="qa-body">Deletions from a max heap return values in <strong>descending order</strong> — largest first. To produce an <strong>ascending</strong> sorted array, the largest value must go to the end (index n-1), second-largest to n-2, and so on. Writing from right to left matches the descending output of deletions to produce ascending order. If you wrote from index 0, you'd get descending-sorted output — which is wrong for standard sort semantics.</div></div></div>
+
+  <div class="qcard" id="q17"><div class="qhead"><span class="qnum">Q17</span><span class="qtag gotcha">GOTCHA</span><span class="qtext">The <code>Heap</code> constructor initializes all array values to -1. Why? What happens if you don't?</span><button class="qbtn" onclick="rcToggle('q17')">Show</button></div><div class="qans" id="q17-a"><div class="qa-label">Answer</div><div class="qa-body">Initializing to -1 ensures that unused slots have a sentinel value that can't be confused with real heap data (assuming non-negative integers). During deletion, <code>data[currentSize] = -1</code> clears the removed last slot — without this, the slot still holds the old value. If the loop in Delete() reads that stale value (especially if a bug causes <code>j</code> to overshoot), it could trigger a false comparison with a non-existent node. The -1 sentinel makes debugging easier and prevents false swaps.</div></div></div>
+
+  <div class="qcard" id="q18"><div class="qhead"><span class="qnum">Q18</span><span class="qtag apply">APPLY</span><span class="qtext">Given <code>PriorityQueue&lt;T,P&gt;</code>, how do you implement a max-priority queue where larger numbers have higher priority?</span><button class="qbtn" onclick="rcToggle('q18')">Show</button></div><div class="qans" id="q18-a"><div class="qa-label">Answer</div><div class="qa-body"><code>// C#'s built-in is MIN heap — smallest number exits first<br>// To make it MAX: reverse the comparator<br><br>var maxPQ = new PriorityQueue&lt;string, int&gt;(<br>&nbsp;&nbsp;Comparer&lt;int&gt;.Create((a, b) =&gt; b.CompareTo(a))<br>);<br>maxPQ.Enqueue("Low", 10);<br>maxPQ.Enqueue("High", 100);<br>Console.WriteLine(maxPQ.Dequeue()); // "High" — 100 exits first</code></div></div></div>
+
+  <div class="qcard" id="q19"><div class="qhead"><span class="qnum">Q19</span><span class="qtag compare">COMPARE</span><span class="qtext">Compare HeapSort vs MergeSort — which is better and when?</span><button class="qbtn" onclick="rcToggle('q19')">Show</button></div><div class="qans" id="q19-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>HeapSort:</strong> O(n log n) all cases. Heap array needs O(n) extra space in the course's implementation (in-place variant exists with O(1) space). Not stable — equal elements may be reordered. Poor cache performance due to non-sequential memory access in the heap.<br><br><strong>MergeSort:</strong> O(n log n) all cases. O(n) extra space. Stable — equal elements preserve order. Excellent cache performance, sequential memory access.<br><br><strong>Choose MergeSort</strong> when stability matters or data is sequential (linked lists). <strong>Choose HeapSort</strong> when in-place sorting is needed with guaranteed O(n log n) worst case (unlike QuickSort's O(n²) worst).</div></div></div>
+
+  <div class="qcard" id="q20"><div class="qhead"><span class="qnum">Q20</span><span class="qtag gotcha">GOTCHA</span><span class="qtext">Can a heap have duplicate values? Does that violate any property?</span><button class="qbtn" onclick="rcToggle('q20')">Show</button></div><div class="qans" id="q20-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>Yes, duplicates are fully valid.</strong> Neither the structural property nor the relational property prohibits equal values. The relational property says parent <strong>≥</strong> children (not strictly greater). So if a parent is 15 and a child is also 15, that satisfies the max heap condition. Duplicates are common in practice — for example, multiple tasks with the same priority level. The heap handles them correctly; the deletion order of equal elements is not guaranteed.</div></div></div>
+
+  <!-- ─── INTERVIEW ─── -->
+  <div class="rc-section-label" id="rc-interview">🟢 Real Interview Questions (Q21–Q40)</div>
+
+  <div class="qcard" id="q21"><div class="qhead"><span class="qnum">Q21</span><span class="qtag interview">INTERVIEW</span><span class="qtext">What data structure would you use to find the K largest elements in a stream of numbers efficiently?</span><button class="qbtn" onclick="rcToggle('q21')">Show</button></div><div class="qans" id="q21-a"><div class="qa-label">Answer</div><div class="qa-body">Use a <strong>min-heap of size K</strong>. Process each incoming number: if heap.Count &lt; K, enqueue it. Otherwise, if the number &gt; heap.Peek() (current minimum), dequeue the minimum and enqueue the new number. After processing all elements, the heap contains the K largest.<br><br><code>var minHeap = new PriorityQueue&lt;int,int&gt;();<br>foreach (int n in stream) {<br>&nbsp;&nbsp;if (minHeap.Count &lt; K) minHeap.Enqueue(n, n);<br>&nbsp;&nbsp;else if (minHeap.TryPeek(out _, out int min) &amp;&amp; n &gt; min) {<br>&nbsp;&nbsp;&nbsp;&nbsp;minHeap.Dequeue(); minHeap.Enqueue(n, n);<br>&nbsp;&nbsp;}<br>}</code><br>Time: O(n log K). Space: O(K).</div></div></div>
+
+  <div class="qcard" id="q22"><div class="qhead"><span class="qnum">Q22</span><span class="qtag interview">INTERVIEW</span><span class="qtext">How would you implement an LRU Cache using a heap? What's the limitation?</span><button class="qbtn" onclick="rcToggle('q22')">Show</button></div><div class="qans" id="q22-a"><div class="qa-label">Answer</div><div class="qa-body">A heap is a <strong>poor choice</strong> for LRU Cache. Here's why: LRU requires updating the priority of an existing element when it's accessed (re-queue it to "most recent"). Heap doesn't support O(1) arbitrary priority updates — you'd need to scan O(n) to find and remove the element, then re-insert it O(log n).<br><br><strong>Better approach:</strong> Use <code>LinkedList&lt;T&gt;</code> + <code>Dictionary&lt;K, LinkedListNode&gt;</code>. Dictionary provides O(1) lookup, LinkedList provides O(1) move-to-front. Total: O(1) per get/put. A heap would make LRU O(n) per access — unusable at scale.</div></div></div>
+
+  <div class="qcard" id="q23"><div class="qhead"><span class="qnum">Q23</span><span class="qtag interview">INTERVIEW</span><span class="qtext">How would you merge K sorted arrays into one sorted array efficiently?</span><button class="qbtn" onclick="rcToggle('q23')">Show</button></div><div class="qans" id="q23-a"><div class="qa-label">Answer</div><div class="qa-body">Use a <strong>min-heap of size K</strong> (one entry per array). Each entry stores (value, array_index, element_index). Algorithm: initialize heap with the first element of each array. Then repeatedly: dequeue the minimum → add to result → enqueue the next element from that same array.<br><br>Time: O(n log K) where n = total elements. Space: O(K) for the heap. This is the optimal approach — used in database merge joins and external sorting.</div></div></div>
+
+  <div class="qcard" id="q24"><div class="qhead"><span class="qnum">Q24</span><span class="qtag interview">INTERVIEW</span><span class="qtext">Explain how Dijkstra's shortest path algorithm uses a priority queue and what happens if you use a regular queue instead.</span><button class="qbtn" onclick="rcToggle('q24')">Show</button></div><div class="qans" id="q24-a"><div class="qa-label">Answer</div><div class="qa-body">Dijkstra's maintains a min-heap of unvisited nodes, keyed by their current shortest-known distance from the source. At each step, it dequeues the node with minimum distance (the greedy choice), relaxes its neighbors, and enqueues updated distances. This gives O((V + E) log V) with a binary heap.<br><br>With a regular queue: nodes are processed in FIFO order, not distance order. The greedy property breaks — you might process a far node before a nearby one. This produces <strong>incorrect shortest paths</strong>, not just slower ones.</div></div></div>
+
+  <div class="qcard" id="q25"><div class="qhead"><span class="qnum">Q25</span><span class="qtag interview">INTERVIEW</span><span class="qtext">What is the "heapify" operation and how does it build a heap in O(n) time instead of O(n log n)?</span><button class="qbtn" onclick="rcToggle('q25')">Show</button></div><div class="qans" id="q25-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>Heapify (Floyd's algorithm):</strong> Given an array, call down-heapify on every non-leaf node starting from the last non-leaf (index ⌊n/2⌋) down to the root. This builds a valid heap in O(n) time.<br><br><strong>Why O(n) not O(n log n)?</strong> Most nodes are near the leaves (where down-bubbling is short or zero). Mathematically: the sum of work at all levels = O(n) when accounting for how many nodes exist at each height. In contrast, n individual insertions each bubble from leaf to root = O(n log n). Heapify is preferred when you have all data upfront.</div></div></div>
+
+  <div class="qcard" id="q26"><div class="qhead"><span class="qnum">Q26</span><span class="qtag interview">INTERVIEW</span><span class="qtext">Find the median of a stream of numbers in O(log n) per insertion and O(1) per query. What data structures do you use?</span><button class="qbtn" onclick="rcToggle('q26')">Show</button></div><div class="qans" id="q26-a"><div class="qa-label">Answer</div><div class="qa-body">Use <strong>two heaps</strong>: a max-heap (left half) and a min-heap (right half). Invariant: max-heap.Count == min-heap.Count or max-heap.Count == min-heap.Count + 1.<br><br>Insert: route to correct heap based on value, then rebalance if sizes differ by more than 1 (move top of larger to smaller).<br><br>Query: if equal sizes → median = (maxHeap.Peek() + minHeap.Peek()) / 2. If left is larger → median = maxHeap.Peek().<br><br>This is the "two-heap median" pattern — classic interview question at Google/Amazon/Microsoft.</div></div></div>
+
+  <div class="qcard" id="q27"><div class="qhead"><span class="qnum">Q27</span><span class="qtag interview">INTERVIEW</span><span class="qtext">What is the time complexity of deleting an arbitrary element (not the root) from a heap? How would you do it?</span><button class="qbtn" onclick="rcToggle('q27')">Show</button></div><div class="qans" id="q27-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>O(n) total</strong>: O(n) to find the element (linear scan — no random access in heap), then O(log n) to restore heap property after removal.<br><br>Process: Find the element's index (O(n)). Replace it with the last element (like normal deletion). Decrement size. Then apply either up-heap or down-heap bubbling depending on whether the replacement is larger or smaller than the removed element (O(log n)).<br><br>To achieve O(log n) deletion of arbitrary elements, combine a heap with a HashMap: key → index. Update the map during every swap. This is how Fibonacci heaps and decrease-key operations work.</div></div></div>
+
+  <div class="qcard" id="q28"><div class="qhead"><span class="qnum">Q28</span><span class="qtag interview">INTERVIEW</span><span class="qtext">How does a priority queue help in Huffman Encoding for data compression?</span><button class="qbtn" onclick="rcToggle('q28')">Show</button></div><div class="qans" id="q28-a"><div class="qa-label">Answer</div><div class="qa-body">Huffman Encoding assigns shorter bit sequences to more frequent characters. Algorithm: <ol><li>Count frequency of each character → create leaf nodes.</li><li>Insert all leaf nodes into a min-heap (priority = frequency).</li><li>Repeatedly: dequeue the two lowest-frequency nodes, create a new parent node with their combined frequency, enqueue the parent.</li><li>Repeat until one node remains — the root of the Huffman tree.</li></ol>The priority queue ensures the two least frequent characters are always merged first, producing optimal prefix-free codes. Without a heap, finding the minimum each time would be O(n) per step — O(n²) total. With heap: O(n log n).</div></div></div>
+
+  <div class="qcard" id="q29"><div class="qhead"><span class="qnum">Q29</span><span class="qtag interview">INTERVIEW</span><span class="qtext">Is HeapSort stable? Why does this matter, and when would you avoid it?</span><button class="qbtn" onclick="rcToggle('q29')">Show</button></div><div class="qans" id="q29-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>HeapSort is NOT stable.</strong> Two elements with equal keys may swap their relative order during the heapify/down-heap process.<br><br><strong>Why it matters:</strong> If you sort employees by department but want ties broken by employee ID (original order), an unstable sort may scramble the ID order within each department.<br><br><strong>When to avoid:</strong> Any situation where maintaining the original order of equal elements is required — e.g., sorting database rows, UI list rendering, multi-key sorts where the secondary key is the original order. Use MergeSort or TimSort (C#'s <code>Array.Sort</code> and LINQ <code>OrderBy</code> are stable since .NET 4.5+) instead.</div></div></div>
+
+  <div class="qcard" id="q30"><div class="qhead"><span class="qnum">Q30</span><span class="qtag interview">INTERVIEW</span><span class="qtext">Given a nearly sorted array (each element is at most K positions away from its sorted position), sort it in O(n log K). How?</span><button class="qbtn" onclick="rcToggle('q30')">Show</button></div><div class="qans" id="q30-a"><div class="qa-label">Answer</div><div class="qa-body">Use a <strong>min-heap of size K+1</strong>: <ol><li>Insert first K+1 elements into the heap.</li><li>For each remaining element i from K+1 to n-1: dequeue minimum → write to arr[i-K-1], enqueue arr[i].</li><li>After loop: drain the heap into remaining positions.</li></ol>Why it works: since each element is at most K positions away, the correct element for position i must be within the next K+1 elements. The heap always contains the K+1 candidates for the current output position.<br><br>Time: O(n log K) — optimal for this problem. Regular sort would be O(n log n).</div></div></div>
+
+  <div class="qcard" id="q31"><div class="qhead"><span class="qnum">Q31</span><span class="qtag interview">INTERVIEW</span><span class="qtext">What's the difference between <code>Dequeue()</code> and <code>TryDequeue()</code> in C#'s PriorityQueue? When should you use each?</span><button class="qbtn" onclick="rcToggle('q31')">Show</button></div><div class="qans" id="q31-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>Dequeue():</strong> Removes and returns the element with lowest priority. <strong>Throws InvalidOperationException</strong> if the queue is empty. Use when you're certain the queue is non-empty, or you want the exception to bubble up.<br><br><strong>TryDequeue(out element, out priority):</strong> Returns <code>true</code> and sets output params if queue has elements. Returns <code>false</code> silently if empty — no exception. Use in loops, in code where you're not sure if the queue has remaining elements, or in defensive programming: <code>while (pq.TryDequeue(out var item, out var pri)) { ... }</code>. This is safer and the idiomatic C# pattern for consuming a queue fully.</div></div></div>
+
+  <div class="qcard" id="q32"><div class="qhead"><span class="qnum">Q32</span><span class="qtag interview">INTERVIEW</span><span class="qtext">How would you implement a task scheduler that can handle task deadlines and priorities simultaneously?</span><button class="qbtn" onclick="rcToggle('q32')">Show</button></div><div class="qans" id="q32-a"><div class="qa-label">Answer</div><div class="qa-body">Use a composite priority: combine deadline and priority into a single comparable value. One approach: priority key = deadline × weight + priority_level. Or use two-level sorting with a custom comparer — first by deadline (earlier deadline = higher priority), ties broken by priority level.<br><br><code>var scheduler = new PriorityQueue&lt;Task, (DateTime deadline, int priority)&gt;(<br>&nbsp;&nbsp;Comparer&lt;(DateTime, int)&gt;.Create((a, b) =&gt; {<br>&nbsp;&nbsp;&nbsp;&nbsp;int d = a.Item1.CompareTo(b.Item1);<br>&nbsp;&nbsp;&nbsp;&nbsp;return d != 0 ? d : a.Item2.CompareTo(b.Item2);<br>&nbsp;&nbsp;}));</code><br>This is how real-time OS schedulers work — EDF (Earliest Deadline First) policy.</div></div></div>
+
+  <div class="qcard" id="q33"><div class="qhead"><span class="qnum">Q33</span><span class="qtag interview">INTERVIEW</span><span class="qtext">What is a d-ary heap and when would you prefer it over a binary heap?</span><button class="qbtn" onclick="rcToggle('q33')">Show</button></div><div class="qans" id="q33-a"><div class="qa-label">Answer</div><div class="qa-body">A <strong>d-ary heap</strong> has d children per node instead of 2. Height = log_d(n), so down-heap operations do fewer swaps (shorter height) but compare more children per node (d comparisons per level).<br><br><strong>Trade-off:</strong> Insert (up-heap) is faster with larger d — fewer levels to climb. Delete (down-heap) is slightly slower — more comparisons per level.<br><br><strong>When preferred:</strong> When insertions are far more frequent than deletions (e.g., Dijkstra's with dense graphs). A 4-ary or 8-ary heap reduces cache misses on modern CPUs because more children fit in a single cache line — better memory locality than binary heap for large n.</div></div></div>
+
+  <div class="qcard" id="q34"><div class="qhead"><span class="qnum">Q34</span><span class="qtag interview">INTERVIEW</span><span class="qtext">Given two sorted arrays of sizes m and n, find the (m+n)/2 th smallest element. Can you use a heap?</span><button class="qbtn" onclick="rcToggle('q34')">Show</button></div><div class="qans" id="q34-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>Heap approach (not optimal but correct):</strong> Merge both into a min-heap, then dequeue (m+n)/2 times. Time: O((m+n) log(m+n)). Space: O(m+n).<br><br><strong>Better approach:</strong> Since both arrays are already sorted, use a two-pointer merge technique: advance the pointer of the smaller current element, count steps until you reach position (m+n)/2. Time: O(m+n). Space: O(1).<br><br><strong>Optimal approach:</strong> Binary search on one array. Time: O(log(min(m,n))). Space: O(1).<br><br>The heap approach is valid but not the interview-expected optimal solution here.</div></div></div>
+
+  <div class="qcard" id="q35"><div class="qhead"><span class="qnum">Q35</span><span class="qtag interview">INTERVIEW</span><span class="qtext">What is a Fibonacci Heap and why is it theoretically superior for Dijkstra's algorithm?</span><button class="qbtn" onclick="rcToggle('q35')">Show</button></div><div class="qans" id="q35-a"><div class="qa-label">Answer</div><div class="qa-body">A <strong>Fibonacci Heap</strong> is a lazy heap with amortized O(1) insert, O(1) decrease-key, and O(log n) delete-min. This makes Dijkstra's run in O(V log V + E) — optimal for sparse graphs.<br><br>Binary heap Dijkstra's: O((V + E) log V). With Fibonacci heap: O(E + V log V). For dense graphs where E >> V, this is a significant improvement.<br><br><strong>Why not used in practice:</strong> Fibonacci heaps have enormous constant factors and complex implementation. Cache performance is poor. For real-world graph sizes, a well-implemented binary heap outperforms Fibonacci heaps despite worse theoretical complexity.</div></div></div>
+
+  <div class="qcard" id="q36"><div class="qhead"><span class="qnum">Q36</span><span class="qtag interview">INTERVIEW</span><span class="qtext">How would you check if a given binary tree is a valid Max Heap?</span><button class="qbtn" onclick="rcToggle('q36')">Show</button></div><div class="qans" id="q36-a"><div class="qa-label">Answer</div><div class="qa-body">Two checks required:<br><br><strong>1. Structural check (complete binary tree):</strong> BFS level-order traversal. Count total nodes n. In a complete binary tree, if you encounter a null child, all subsequent nodes in BFS order must also be null. Flag any non-null node after first null as violation.<br><br><strong>2. Relational check:</strong> For every non-leaf node, verify <code>node.value ≥ leftChild.value</code> AND <code>node.value ≥ rightChild.value</code>. Do this recursively for all nodes.<br><br>Both checks must pass. Time: O(n). Space: O(h) for recursion stack or O(n) for BFS queue.</div></div></div>
+
+  <div class="qcard" id="q37"><div class="qhead"><span class="qnum">Q37</span><span class="qtag interview">INTERVIEW</span><span class="qtext">Design a system to always return the most recently added item that hasn't been processed, and items with equal priority should be processed in FIFO order. What data structure?</span><button class="qbtn" onclick="rcToggle('q37')">Show</button></div><div class="qans" id="q37-a"><div class="qa-label">Answer</div><div class="qa-body">Use a <strong>priority queue with tie-breaking by insertion order</strong>. Key = (priority, sequence_number) where sequence_number is a monotonically increasing counter assigned at insertion.<br><br><code>int seq = 0;<br>var pq = new PriorityQueue&lt;Task, (int priority, int seq)&gt;(<br>&nbsp;&nbsp;Comparer&lt;(int,int)&gt;.Create((a,b) =&gt; {<br>&nbsp;&nbsp;&nbsp;&nbsp;int p = a.Item1.CompareTo(b.Item1);<br>&nbsp;&nbsp;&nbsp;&nbsp;return p != 0 ? p : a.Item2.CompareTo(b.Item2);<br>&nbsp;&nbsp;}));<br>pq.Enqueue(task, (priority, seq++));</code><br>Higher priority exits first. Equal priority → smaller seq exits first (FIFO). This is the standard stable priority queue pattern.</div></div></div>
+
+  <div class="qcard" id="q38"><div class="qhead"><span class="qnum">Q38</span><span class="qtag interview">INTERVIEW</span><span class="qtext">What are the main real-world applications of heaps in systems programming and databases?</span><button class="qbtn" onclick="rcToggle('q38')">Show</button></div><div class="qans" id="q38-a"><div class="qa-label">Answer</div><div class="qa-body"><ul><li><strong>OS Process Scheduling:</strong> CPU schedulers (CFS in Linux) use red-black trees / heaps to maintain runnable processes sorted by virtual runtime.</li><li><strong>Network QoS:</strong> Packet queues prioritize traffic (VOIP over FTP) using weighted priority queues.</li><li><strong>Database Query Planning:</strong> Top-N queries use a heap to find the N largest rows without full sort.</li><li><strong>Event-driven simulation:</strong> Next-event simulation engines use a min-heap of (timestamp, event) — process earliest event first.</li><li><strong>Memory allocators:</strong> Some free-list implementations use a heap to always allocate from the best-fit or smallest-fit block.</li><li><strong>Timer wheels:</strong> Kernel timers use heaps to efficiently fire the next-expiring timer.</li></ul></div></div></div>
+
+  <div class="qcard" id="q39"><div class="qhead"><span class="qnum">Q39</span><span class="qtag interview">INTERVIEW</span><span class="qtext">What is the space complexity of the HeapSort implementation in the course? How could you reduce it to O(1) extra space?</span><button class="qbtn" onclick="rcToggle('q39')">Show</button></div><div class="qans" id="q39-a"><div class="qa-label">Answer</div><div class="qa-body">The course implementation creates a <strong>new Heap object</strong> with a separate array — <strong>O(n) extra space</strong>.<br><br><strong>In-place HeapSort (O(1) space):</strong><br>Phase 1: Call heapify (Floyd's algorithm) directly on the input array — convert it into a max-heap in-place. O(n).<br>Phase 2: Repeatedly swap arr[0] (root/max) with arr[lastUnsortedIndex], reduce heap size by 1, then down-heapify at index 0. This sorts the array in-place.<br><br>In-place HeapSort is O(n log n) time and O(1) extra space — the same array serves as both heap storage and sorted output. This is the production-quality version.</div></div></div>
+
+  <div class="qcard" id="q40"><div class="qhead"><span class="qnum">Q40</span><span class="qtag interview">INTERVIEW</span><span class="qtext">A colleague says "I'll just use Array.Sort() — it's already O(n log n), why learn HeapSort?" How do you respond?</span><button class="qbtn" onclick="rcToggle('q40')">Show</button></div><div class="qans" id="q40-a"><div class="qa-label">Answer</div><div class="qa-body"><strong>Valid point for most cases — Array.Sort() (TimSort) is usually faster in practice.</strong> But HeapSort has specific advantages:<br><br><ul><li><strong>Worst-case guarantee:</strong> HeapSort is O(n log n) worst case. QuickSort (used in Array.Sort for primitives) is O(n²) worst case on adversarial inputs.</li><li><strong>Understanding heap:</strong> Heap Sort teaches the heap data structure itself — which is essential for priority queues, Dijkstra's, scheduling. The sort is a by-product.</li><li><strong>Streaming/online:</strong> Heap-based selection (top-K) doesn't require all data upfront. TimSort does.</li><li><strong>Embedded/real-time systems:</strong> Where predictable worst-case is required and random pivots aren't acceptable.</li></ul>Agree to use Array.Sort() in production, but understand when heaps are the right tool.</div></div></div>
+
+</div>
+</div>
+
+<script>
+/* ── PAGE NAV ── */
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ── DRAWER ── */
+function openDrawer() {
+  document.getElementById('indexDrawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('open');
+}
+function closeDrawer() {
+  document.getElementById('indexDrawer').classList.remove('open');
+  document.getElementById('drawerOverlay').classList.remove('open');
+}
+function jumpTo(pageId, sectionId) {
+  const pageName = pageId.replace('page-','');
+  const btn = [...document.querySelectorAll('.nav-btn')].find(b => b.getAttribute('onclick')?.includes("'"+pageName+"'"));
+  if (btn) showPage(pageName, btn);
+  closeDrawer();
+  setTimeout(() => {
+    const el = document.getElementById(sectionId);
+    if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }, 100);
+}
+
+/* ── CODE COPY ── */
+function copyCode(btn) {
+  const code = btn.closest('.cb').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+
+/* ── RECALL ── */
+const answered = new Set();
+function rcToggle(id) {
+  const card = document.getElementById(id);
+  const ans  = document.getElementById(id + '-a');
+  const btn  = card.querySelector('.qbtn');
+  const open = ans.classList.toggle('open');
+  card.classList.toggle('revealed', open);
+  btn.textContent = open ? 'Hide' : 'Show';
+  btn.classList.toggle('open', open);
+  open ? answered.add(id) : answered.delete(id);
+  document.getElementById('rc-ans').textContent = answered.size;
+}
+function rcAll(show) {
+  document.querySelectorAll('.qcard').forEach(card => {
+    const id  = card.id;
+    const ans = document.getElementById(id + '-a');
+    const btn = card.querySelector('.qbtn');
+    if (show) { ans.classList.add('open'); card.classList.add('revealed'); btn.textContent='Hide'; btn.classList.add('open'); answered.add(id); }
+    else       { ans.classList.remove('open'); card.classList.remove('revealed'); btn.textContent='Show'; btn.classList.remove('open'); answered.delete(id); }
+  });
+  document.getElementById('rc-ans').textContent = answered.size;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  hljs.highlightAll();
+  document.getElementById('rc-tot').textContent = document.querySelectorAll('.qcard').length;
+});
+</script>
+</body>
+</html>
