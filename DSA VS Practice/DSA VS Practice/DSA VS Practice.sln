@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "8. Queue & Deque", "..\8. Q
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "10. Binary Search Trees BST", "..\10. Binary Search Trees BST\10. Binary Search Trees BST.csproj", "{C9AD683C-1934-4A45-B075-D5F2E281DD73}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "11. Heaps", "..\11. Heaps\11. Heaps.csproj", "{297C8B48-2751-402B-918E-B76CC100F794}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{C9AD683C-1934-4A45-B075-D5F2E281DD73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9AD683C-1934-4A45-B075-D5F2E281DD73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9AD683C-1934-4A45-B075-D5F2E281DD73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{297C8B48-2751-402B-918E-B76CC100F794}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{297C8B48-2751-402B-918E-B76CC100F794}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{297C8B48-2751-402B-918E-B76CC100F794}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{297C8B48-2751-402B-918E-B76CC100F794}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
